@@ -9,7 +9,7 @@ from reportlab.platypus.tableofcontents import TableOfContents
 
 import os as _os_path
 # Output next to this script (docs/), so the builder works from any checkout.
-OUT = _os_path.join(_os_path.dirname(_os_path.abspath(__file__)), "ARC_WhestBench_2026_Complete_Notes.pdf")
+OUT = _os_path.path.join(_os_path.path.dirname(_os_path.path.abspath(__file__)), "ARC_WhestBench_2026_Complete_Notes.pdf")
 
 styles = getSampleStyleSheet()
 H1 = ParagraphStyle('H1', parent=styles['Heading1'], keepWithNext=1, fontSize=17, spaceBefore=14, spaceAfter=8, textColor=colors.HexColor('#1a2b4c'))
