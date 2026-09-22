@@ -1,0 +1,110 @@
+Mechanistic Estimation of Neural Networks:
+Deep Third-Cumulant Representation
+Q1: Representation of the Deep Third-Cumulant Content
+The fundamental wall in V29 is that the Khatri-Rao product of two low-rank matrices in-
+flates the rank: while A and P have r ∼ 150 effective directions, A ◦P has r2 ∼ 22,500
+s s s s
+directions, requiring O(n2r) FLOPs to materialize per source. However, because the legs
+of an old source are transported solely by left-multiplication—P ← Wdiag(w )P —their
+s 1 s
+internalcoordinatesinthecomovingbasisneverchange.
+The solution is the Latent-Space Pooled Cumulant Tensor, which synthesizes hints
+(a)and(d). Itcollapsesthesumoveralloldsourcesintoasinglestatictensorinthelatent
+space,absorbingtheReLUnon-linearityentirelyintheO(n)basistransport.
+1. The Mathematical Object Carried
+InsteadofmaintainingS separateoldsources,carryexactlytwoobjectsfortheentireold
+tier:
+• AsinglesharedtransportbasisQ(l) ∈ Rn×r.
+• Asinglestatic pooledTuckercoreTold ∈ Rr×r×r.
+2. The Per-Layer Update Rule
+Whenayoungsourcereachesage5atlayerl,itsdenselegsareprojectedontoQ: F =
+A,s
+QTA , F = QTP . We form its static core T (a,b,c) = (cid:80) F (a,j)F (b,j)F (c,j) and
+s P,s s s j A,s P,s A,s
+permanentlyaddittothepool:
+Told ← Told+T
+s
+Duringtheforwardpass,Told iscompletelystatic. Weonlyupdatethebasistoabsorbthe
+HermiteReLUtransport:
+Q(l+1) = W(l+1)diag(w (l) )Q(l)
+1
+ToevaluatethecontributiontotheslicesDold andDold forthenextReLUclosure,wecom-
+21 3
+putethecontractionofthepooledtensordirectlyagainstthebasisandthebirth-sidenon-
+linearityw :
+2
+(cid:88)
+M = Q Q Told
+ic ia ib abc
+a,b
+D = diag(w )MQT
+21,old 2
+(Note: If Q requires re-orthonormalization Q → QR to maintain condition number, the core
+updatesasTold ← Told× R−1.)
+1,2,3
+1
+3. Cost in Units Per Layer
+• Basistransport(n2r): 0.15unitsatr = 150.
+• Corecontraction(nr3 toformM,n2r toformD ): 3.2unitsatr = 150(10.7unitsat
+21
+r = 224).
+• Totalmarginalcost: ∼ 3.4unitsperlayerfortheentireoldtier(downfromV29’s107
+units).
+4. What it Loses vs. Exact Transport
+Algebraically,thisloseszeroprecisionrelativetocomputingtheper-sourceTuckerexpan-
+(cid:80)
+sions. Summing the cores before contraction is a mathematically exact identity: (Q⊗
+s
+Q)T QT ≡ (Q⊗Q)( (cid:80) T )QT. Theonlylossrelativetoexactdensetransportisthetrunca-
+s s s
+tiontorankr,whichV29alreadyaccepts.
+5. First Falsifying Experiment
+InalocalCPUrun,extractthestaticF ,F factorsofthe10oldsourcesatlayer14from
+A,s P,s
+V29. Compute their individual D contributions via the standard dense route (A ◦P ◦
+21 s s
+w )AT andsumthem. Inparallel,formTold = (cid:80) T andevaluatediag(w )(Q◦Q)ToldQT.
+2 s s s 2
+Thetwon×nmatricesmustmatchtofloat64machineprecision.
+Q2: Hypotheses for the Leaders’ Method
+Given that the leaders’ bill (133–165 units) exactly equals V29’s cost without the old tier
+(∼ 154 units), they must be computing the deep third-cumulant content for strictly ≤ 10
+marginalunits.
+Hypothesis 1: The Pooled Tensor (Rank-Tuned)
+TheleadersarerunningexactlytheLatent-SpacePooledTensorderivedinQ1. Byrealizing
+thatoldsourcescanbebundledofflineintoasingleO(r3)object,theyreducedtheoldtier
+costfromO(S·n2r)toO(1·nr3). Iftheytunethesharedranktor ≈ 128−150,thepooled
+tiercostsroughly2to4unitsperlayer. Addedtothe154-unityoung-tierbase,thisyields
+156–158units,droppingperfectlyintothe133–165unitbounds.
+• ObservableSignature: TheirruntimewillscaleexactlyasO(nr3)ratherthanlinearly
+withdepthornumberofsources. Ontheleaderboard,theywillexhibitastrictlyflat
+per-layercostafterlayer5.
+Hypothesis 2: Parity-Aware Quenched Covariance Regeneration
+They developed a memoryless layer-local regeneration law for D that respects the
+21,old
+strictparityconstraint(E[H |C] = 0). Sincethedeepoff-diagonalsmustbeanoddfunction
+s
+ofW(l),theyprojectthecovariancethroughtheweightmatrixtoformareactionfield. For
+instance,theyusealearnedscalarrecurrence:
+D (l+1) ≈ α W(l+1)diag(w )D (l) +β (W(l+1)C(l))
+21,old l 1 21,old l
+2
+• Observable Signature: The marginal cost of this operation is exactly 1 unit (one
+n×n×nmatmulforW ·C). FalsifylocallybyregressingtheexactV29D atlayer
+21,old
+14againstW(14)C(13) andthetransportedD slice;ifR2 > 0.95,thisistheirmethod.
+21
+Hypothesis 3: Young-Tier Shadowing (Asymptotic Alignment)
+Deep in the network, the repeated application of random Jacobians causes the principal
+vectorsoftheoldsourcestoalignwiththeoldestoftheyoungsources(age4). Insteadof
+carrying old sources explicitly, the leaders simply inflate the amplitude of the age-3 and
+age-4youngsourcesusingascalingscalarλ to“shadow”thedeeptailofthecumulant.
+l
+• Observable Signature: Zero rank-dependent cost; old tier cost is strictly 0 units.
+Falsify locally by measuring the cosine similarity of the principal subspace of D
+21,old
+against D . If they are highly aligned (cosine > 0.9), the old sources have lost
+21,age=4
+theirindependentdirectionalinformationandactonlyasamagnitudemultiplieron
+theyoungsources.
+3

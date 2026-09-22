@@ -1,0 +1,33 @@
+dumped layer 10: ka=6 k=9
+dumped layer 11: ka=7 k=10
+dumped layer 13: ka=9 k=12
+dumped layer 14: ka=10 k=13
+done
+layers 10->11 (6 old sources), B = W^T diag(w1):
+   R^2 =   0.0300   ['F1 (BoB)H B^T']  coef [0.9787]
+   R^2 =   0.0002   ['F2 B H B^T']  coef [-0.0126]
+   R^2 =   0.0000   ['F3 W C']  coef [-0.]
+   R^2 =   0.0000   ['F4 B H']  coef [-0.0002]
+   R^2 =   0.0300   ['F1 (BoB)H B^T', 'F3 W C']  coef [ 0.9787 -0.    ]
+   R^2 =   0.0302   ['F1 (BoB)H B^T', 'F2 B H B^T', 'F3 W C', 'F4 B H']  coef [ 9.779e-01 -1.090e-02 -0.000e+00  2.000e-04]
+layers 10->11 (6 old sources), B = W diag(w1):
+   R^2 =   0.0001   ['F1 (BoB)H B^T']  coef [0.0507]
+   R^2 =   0.0000   ['F2 B H B^T']  coef [-0.0001]
+   R^2 =   0.0000   ['F3 W C']  coef [-0.]
+   R^2 =   0.0000   ['F4 B H']  coef [-0.0009]
+   R^2 =   0.0001   ['F1 (BoB)H B^T', 'F3 W C']  coef [ 0.0507 -0.    ]
+   R^2 =   0.0001   ['F1 (BoB)H B^T', 'F2 B H B^T', 'F3 W C', 'F4 B H']  coef [ 0.0507 -0.0001 -0.     -0.0009]
+layers 13->14 (9 old sources), B = W^T diag(w1):
+   R^2 =   0.0468   ['F1 (BoB)H B^T']  coef [1.0438]
+   R^2 =   0.0004   ['F2 B H B^T']  coef [-0.0181]
+   R^2 =   0.0000   ['F3 W C']  coef [0.]
+   R^2 =   0.0000   ['F4 B H']  coef [0.0011]
+   R^2 =   0.0468   ['F1 (BoB)H B^T', 'F3 W C']  coef [1.0438 0.    ]
+   R^2 =   0.0470   ['F1 (BoB)H B^T', 'F2 B H B^T', 'F3 W C', 'F4 B H']  coef [ 1.0423e+00 -1.3500e-02  0.0000e+00  5.0000e-04]
+layers 13->14 (9 old sources), B = W diag(w1):
+   R^2 =   0.0000   ['F1 (BoB)H B^T']  coef [0.0093]
+   R^2 =   0.0000   ['F2 B H B^T']  coef [0.0004]
+   R^2 =   0.0000   ['F3 W C']  coef [0.]
+   R^2 =   0.0000   ['F4 B H']  coef [0.0008]
+   R^2 =   0.0000   ['F1 (BoB)H B^T', 'F3 W C']  coef [0.0092 0.    ]
+   R^2 =   0.0000   ['F1 (BoB)H B^T', 'F2 B H B^T', 'F3 W C', 'F4 B H']  coef [0.0092 0.0005 0.     0.0008]

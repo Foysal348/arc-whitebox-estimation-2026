@@ -1,0 +1,156 @@
+Deep third-cumulant representations below the dense-Hadamard wall
+Mechanistic estimate for the n=1024, L=16 random ReLU MLP; 1U=231 FLOPs, budget =1024U.
+Executive answer. The new spectrum measurement kills low-rank approximations of A◦P, but it does not kill
+compression of the quadratic-form queries that are actually contracted against the right leg. I would test, in this order:
+(1) a degree-2 TensorSketch/Hermite feature representation of those queries; (2) an isotropic self-averaging closure for
+the traceless “noise” part; (3) a diagonal-Hermite version in the shared basis. I do not see a new exact identity that
+beats V29’s O(n2r) route without exploiting extra structure. Earlier D /D slices are not an exact Markov state.
+21 3
+Q1. Representations for deep content
+Common rewrite. Let Q∈Rn×r be the shared old-source basis, qT its ith row, and let a ,p ,f ∈Rr be column j of
+i j j j
+the factor matrices for the two left legs and the right leg. A representative term is
+X
+H =(A◦P)D FTQT =UQT, U = w f (qTa )(qTp ).
+w ic j cj i j i j
+j
+Define
+X
+S = w f a pT, U =qTS q .
+c j cj j j ic i c i
+j
+[DERIVED] Thus the hard object is a family of quadratic forms {S }r , not the full-rank matrix A◦P itself. The
+c c=1
+measured flat spectrum of A◦P does not determine the effective dimension of this query family.
+A. Degree-2 Hermite / TensorSketch queries – my first test
+Let z =q ⊗q ∈Rr2 and b =a ⊗p . With Z containing zT as rows and K containing b as columns,
+i i i j j j i j
+U =ZKD FT.
+w
+Use a TensorSketch/CountSketch S ∈Rd×r2, computable on a⊗p without materializing the tensor:
+U ≈ΦΨD FT, Φ=ZST, Ψ=SK.
+w
+For all old sources, sum the d×r matrices Ψ D FT first; multiply by the shared Φ once, sum the four contraction
+s w s
+families in n×r, then do one final QT multiply. This is an approximate-matrix-multiplication view, not a low-rank
+approximation of A◦P. TensorSketch is specifically designed to sketch tensor-product features without forming them [1].
+[DERIVED] Ignoring the already-existing compressed-factor transport, the contraction cost for m old sources and t=4
+families is
+dr r
+C ≃t(m+1) + U/layer,
+sk n2 n
+with sketch construction below about 0.05U here. At layer 14 (m=10):
+d=64 d=128 d=256
+r =224 0.82 1.42 2.63
+r =384 1.41 2.44 4.50
+If factor transport is two r×n full legs per source, add roughly 2mr2/n2U (uniform-r upper estimate: 0.96U at r =224,
+2.81U at r =384). The actual nested-rank mix is smaller.
+[CONJECTURE] What is lost is only the quadratic-feature component orthogonal to the sketch. Flat singular values
+make d=64 aggressive, but aggregation over sources and the low-rank right factor may reduce the required d drastically.
+[MEASURE] First falsifier: on the saved layer-14 legs, compute exact aggregate old U before the final QT. Try
+d=32,64,128,256,512, 10 seeds. If median relative RMS error is >2% at d=128 (or has a heavy >3% tail), this will
+not reach leader cost. This is one-network BLAS plus sketches; no forward Monte Carlo is needed.
+1
+B. Self-averaged trace closure for the noise-like part
+For an old, mixed basis, model a row as isotropic conditional on its leverage ℓ =∥q ∥2:
+i i
+ℓ
+E[(qTa)(qTp)|ℓ ]≈ iaTp.
+i i i r
+Then
+U¯ = ℓ i X w f (aTp ).
+ic r j cj j j
+j
+This carries only the factor columns plus the leverage vector; no dense Hadamard product. [DERIVED] Runtime
+contraction is O(nr) per source/family plus one shared n×r by r×n multiply, so the new contraction cost is essentially
+r/n=0.219U (r =224) or 0.375U (r =384) per layer, plus compressed-factor transport.
+A useful variance diagnostic follows from Wick’s rule. For Gaussian-isotropic q,
+Cov(z ,z )∝(aTa )(pTp )+(aTp )(pTa ), z =(qTa )(qTp ).
+j k j k j k j k j k j j j
+[CONJECTURE] If the traceless quadratic part is truly noise, its contraction with FT may concentrate even though
+A◦P is full-rank. If instead the target is dominated by quenched anisotropy, this closure dies immediately.
+[MEASURE] First falsifier, including the requested resampling test: choose one age-7–10 source. Freeze
+its birth state and resample the later weight suffix 8–16 times; compute its exact U at one target layer. Let µ be
+the resampled mean and σ the RMS deviation. The fixed-network target can be replaced by expectation only if
+cond
+σ /∥µ∥ ≲0.02 (also test the aggregate old sum, where cancellation can help). A ratio >0.1 falsifies self-averaging
+cond F
+decisively.
+C. Diagonal Hermite closure in Q coordinates
+Keep the coordinate-square Hermite features but drop cross-coordinate products. Approximate each S by its diagonal
+c
+in the current shared basis:
+U ≈(Q◦Q)D, D =(F ◦F )D FT ∈Rr×r.
+A P w
+[DERIVED] This never forms A, P, or A◦P. For m sources and four families, after aggregating the D matrices,
+s
+r2 r
+C ≃4(m+1) + U/layer.
+diag n2 n
+At m=10: 2.32U for r =224, 6.56U for r =384, again plus factor transport. It loses all off-diagonal quadratic Hermite
+modes. A common rotation that approximately jointly diagonalizes sampled S could improve accuracy, but rotating
+c
+every source factor costs about r2/n2U per full leg and must earn that cost.
+[MEASURE] First falsifier: from stored factors, compute exact aggregate U and this diagonal approximation at
+P
+layers 10 and 14. If error is >5%, try one common rotation fitted from 4–8 random linear combinations S(y)= y S .
+c c c
+If the best rotated diagonal remains >2%, discard this route.
+D. Can earlier D /D slices be an exact state?
+21 3
+Let K be a symmetric third-cumulant tensor and L the next dense linearized map. With v =LTe ,
+a a
+D′ (a,c)=K(v ,v ,v ).
+21 a a c
+[DERIVED] The current D gives only K(e ,e ,e ), so it is insufficient for generic dense v . An exact one-step
+21 i i c a
+sufficient state is
+S (a,k)=K(v ,v ,e )∈Rn×n, D′ =S LT.
+L a a k 21 L
+Butclosureforarbitraryfuturemapsrequiresthequadraticmapq(v)=K(v,v,·), withnn(n+1)/2=Θ(n3)parameters.
+Therefore there is no exact slice-only Markov state of O(n2) size without extra structure. Precomputing only p future
+slices and then dropping the source is just a delayed window and is covered by your dead window result.
+A genuinely new version would need a history-dependent aggregate response closure that regenerates future-pulled slices
+from extra matrix state. One or two n×n response matrices would cost roughly 1–2U/layer. [MEASURE] Falsify
+it by measuring whether K(v,v,·) for 64 random dense v can be predicted to 2% from (C,D ,D ) plus one previous
+21 3
+response matrix. Your +0.02R2 result for scalar/live features does not test this high-dimensional equivariant state.
+2
+E. Exact identity question
+[DERIVED] The useful exact association is already
+H = (cid:2) ((QF )◦(QF ))D FT(cid:3) QT,
+A P w A
+which is O(n2r) once the dense left evaluations exist and is essentially V29’s re-contraction. Avoiding those evaluations
+turns the problem into multiplying the row-Khatri–Rao matrix [q ⊗q ]T (n×r2) by the column-Khatri–Rao matrix
+i i
+[a ⊗p ] (r2×n). With r2 ≥ n and your observed full numerical rank, low rank alone supplies no exact shortcut. I
+j j
+see no generic exact O(nr2) or lower identity; any such win must exploit additional structure such as diagonalizability,
+concentration, or sketchability tested above.
+Q2. Three hypotheses for the leaders, ranked
+1. Aggregate response state (highest prior). [CONJECTURE] They may sum old-source history into 1–2 dense
+response matrices updated recursively, rather than retain source identities. This uniquely matches “young-tier cost
+plus almost nothing” and can preserve quenched information that a memoryless slice closure loses. Distinguishing
+signature: cost becomes O(L) after the age cutoff, not O(L2) in source-layer pairs; deterministic error; increasing depth
+from 16 to 24 should add roughly a constant 1–2 units/layer, not an expanding old tier.
+2. Quadratic-feature sketch of old contractions. [CONJECTURE] This is Proposal A with d≈64–128 and
+aggressive aggregation across sources/families. Signature: a smooth accuracy-versus-d curve and seed-to-seed variation;
+local D21 error is nearly zero-mean. At d = 64, layer-14 contraction cost is only 0.82U for rank 224 before factor
+transport.
+3. Trace/diagonal Hermite closure of the old residual. [CONJECTURE] Leaders may keep only the coherent
+low-orderquadraticmodesandtreattheflatremainderstatistically. Thetraceversioncostsabout0.22U/layeratr =224
+(plus factor transport); the diagonal version is about 2.32U/layer at m = 10,r = 224. Signature: essentially flat or
+weakly growing cost versus number of old sources, deterministic results, and a sharp correlation between success and the
+fraction of U explained by the isotropic/diagonal quadratic component – not by the singular spectrum of A◦P.
+Q3. If these fail: the next single measurement
+[MEASURE] Measure the quadratic-query compression curve on one layer-14 network: for the aggregate old
+contribution before QT, record relative RMS error for (i) isotropic trace only, (ii) diagonal Hermite, and (iii) TensorSketch
+widths d = 16,32,64,128,256,512. This is the right spectrum to measure now. It directly returns the minimum
+quadratic-feature dimension d actually seen by D . If d ≤ 128, a leader-cost old tier is credible; if it is > 512,
+2% 21 2%
+both self-averaging and sketch-based explanations are largely dead, and I would concentrate on an aggregate response
+recursion rather than another tensor factorization.
+Reference. [1] N. Pham and R. Pagh, “Fast and Scalable Polynomial Kernels via Explicit Feature Maps,” KDD 2013,
+DOI: 10.1145/2487575.2487591. TensorSketch computes sketches of tensor products without explicitly materializing the
+tensor.
+3

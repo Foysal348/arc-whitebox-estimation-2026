@@ -1,0 +1,120 @@
+{
+  "scope": "algebra checks and saved seed-7 L14 dump; no truth MSE rerun",
+  "pair_lift": {
+    "exact_relative_error": 2.930536761104196e-16,
+    "diagonal_only_relative_error": 0.7095300268945869
+  },
+  "d21_formula_error": 1.4512427632181163e-16,
+  "birth_support": {
+    "B1_distinct_norm": 30.52495141067987,
+    "B3_distinct_norm": 0.0
+  },
+  "chaos_identity": {
+    "offdiag_abs_error": 2.4868995751603507e-14,
+    "diagonal_abs_error": 1.9539925233402755e-14
+  },
+  "saved_network": {
+    "file": "query_dump_L14.npz",
+    "n": 1024,
+    "basis_rank": 384,
+    "old_sources": 10,
+    "checks": [
+      {
+        "source_slot": 0,
+        "P_shape": [
+          1024,
+          1024
+        ],
+        "leg_reconstruction_error": 1.1113500130231948e-06,
+        "centered_square_fraction": 0.8158371174368508,
+        "diagonal_pair_lift_error": 0.7922235710474136
+      },
+      {
+        "source_slot": 9,
+        "P_shape": [
+          1024,
+          1024
+        ],
+        "leg_reconstruction_error": 1.960329716133766e-06,
+        "centered_square_fraction": 0.8160397646184945,
+        "diagonal_pair_lift_error": 0.8084802945038961
+      }
+    ]
+  },
+  "costs": [
+    {
+      "r": 160,
+      "pair_features": 12880,
+      "pair_feature_MiB_float32": 50.3125,
+      "direct_QX_u": 0.15625,
+      "square_lift_Q2X2_u": 12.578125,
+      "dense_core_MiB_float32": 15.625,
+      "prompt_optimistic_slice_u": 0.9765625,
+      "prompt_optimistic_rotation_u": 0.91552734375,
+      "prompt_optimistic_slice_join_rotation_u": 2.86865234375
+    },
+    {
+      "r": 224,
+      "pair_features": 25200,
+      "pair_feature_MiB_float32": 98.4375,
+      "direct_QX_u": 0.21875,
+      "square_lift_Q2X2_u": 24.609375,
+      "dense_core_MiB_float32": 42.875,
+      "prompt_optimistic_slice_u": 2.6796875,
+      "prompt_optimistic_rotation_u": 3.51708984375,
+      "prompt_optimistic_slice_join_rotation_u": 8.87646484375
+    },
+    {
+      "r": 250,
+      "pair_features": 31375,
+      "pair_feature_MiB_float32": 122.55859375,
+      "direct_QX_u": 0.244140625,
+      "square_lift_Q2X2_u": 30.6396484375,
+      "dense_core_MiB_float32": 59.604644775390625,
+      "prompt_optimistic_slice_u": 3.725290298461914,
+      "prompt_optimistic_rotation_u": 5.456968210637569,
+      "prompt_optimistic_slice_join_rotation_u": 12.907548807561398
+    },
+    {
+      "r": 256,
+      "pair_features": 32896,
+      "pair_feature_MiB_float32": 128.5,
+      "direct_QX_u": 0.25,
+      "square_lift_Q2X2_u": 32.125,
+      "dense_core_MiB_float32": 64.0,
+      "prompt_optimistic_slice_u": 4.0,
+      "prompt_optimistic_rotation_u": 6.0,
+      "prompt_optimistic_slice_join_rotation_u": 14.0
+    },
+    {
+      "r": 384,
+      "pair_features": 73920,
+      "pair_feature_MiB_float32": 288.75,
+      "direct_QX_u": 0.375,
+      "square_lift_Q2X2_u": 72.1875,
+      "dense_core_MiB_float32": 216.0,
+      "prompt_optimistic_slice_u": 13.5,
+      "prompt_optimistic_rotation_u": 30.375,
+      "prompt_optimistic_slice_join_rotation_u": 57.375
+    },
+    {
+      "r": 1024,
+      "pair_features": 524800,
+      "pair_feature_MiB_float32": 2050.0,
+      "direct_QX_u": 1.0,
+      "square_lift_Q2X2_u": 512.5,
+      "dense_core_MiB_float32": 4096.0,
+      "prompt_optimistic_slice_u": 256.0,
+      "prompt_optimistic_rotation_u": 1536.0,
+      "prompt_optimistic_slice_join_rotation_u": 2048.0
+    }
+  ],
+  "sha256": {
+    "mlp_cumulant_propagation/src/mlp_kprop/factor_k3.py": "1ed340e2c69cab00b8cc805f5fe7e1b5d2719ca8683ad90564df702e19f2e106",
+    "mlp_cumulant_propagation/src/mlp_kprop/kprop_harmonic.py": "91bacf459af2a9bf7901726cdd04fd6a4898c7054814f1f6995e250a1b6ff571",
+    "submission_v29m8f5/estimator.py": "b98ce631a7d54902141191f0709df66336cdacb32dacf81348b41cdd78bf0d2d",
+    "probe_query.py": "e2278e1f4e0cafe9da08f55d9d6605f476d7a0f1dd8b513c1e126dbe3f31263d",
+    "probe_agg.py": "1d8a0a542873c350bc0c4495252f1e70a3d1b547c8ce828ae64ef49ba3597906"
+  },
+  "elapsed_seconds": 1.0958000000100583
+}

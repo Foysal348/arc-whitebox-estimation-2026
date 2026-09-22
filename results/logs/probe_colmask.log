@@ -1,0 +1,6 @@
+[ref] 133s
+[q=1.0,1.0,0.7] MSE vs full chain 6.686e-09   (129s)  kept columns per slot: {0: None, 1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None, 9: 717, 10: 717, 11: 717, 12: 717, 13: 717, 14: 717}
+[q=1.0,0.9,0.75] MSE vs full chain 5.849e-09   (132s)  kept columns per slot: {0: None, 1: None, 2: None, 3: None, 4: None, 5: 922, 6: 922, 7: 922, 8: 922, 9: 768, 10: 768, 11: 768, 12: 768, 13: 768, 14: 768}
+[q=1.0,0.8,0.65] MSE vs full chain 1.180e-08   (112s)  kept columns per slot: {0: None, 1: None, 2: None, 3: None, 4: None, 5: 819, 6: 819, 7: 819, 8: 819, 9: 666, 10: 666, 11: 666, 12: 666, 13: 666, 14: 666}
+[q=0.9,0.8,0.65] MSE vs full chain 2.761e-08   (105s)  kept columns per slot: {0: 922, 1: 922, 2: 922, 3: 922, 4: 922, 5: 819, 6: 819, 7: 819, 8: 819, 9: 666, 10: 666, 11: 666, 12: 666, 13: 666, 14: 666}
+[q=1.0,0.85,0.6] MSE vs full chain 1.333e-08   (99s)  kept columns per slot: {0: None, 1: None, 2: None, 3: None, 4: None, 5: 870, 6: 870, 7: 870, 8: 870, 9: 614, 10: 614, 11: 614, 12: 614, 13: 614, 14: 614}

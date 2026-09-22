@@ -1,0 +1,15 @@
+{
+ "id": "foysalemonshanto/whest-k4teacher",
+ "title": "whest-k4teacher",
+ "code_file": "whest-k4teacher.ipynb",
+ "language": "python",
+ "kernel_type": "notebook",
+ "is_private": true,
+ "enable_gpu": true,
+ "enable_internet": true,
+ "dataset_sources": [
+  "foysalemonshanto/whest-k4-code"
+ ],
+ "competition_sources": [],
+ "kernel_sources": []
+}

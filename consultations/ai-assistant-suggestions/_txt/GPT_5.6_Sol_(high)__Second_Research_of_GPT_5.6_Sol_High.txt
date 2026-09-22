@@ -1,0 +1,126 @@
+Second Research of GPT 5.6 High Sol
+Mechanistic estimation of deep third-cumulant content in random ReLU MLPs
+Scope. Second-round analysis after the measured closure of low-rank product sketches, self-averaging,
+source dropping, slice-only closures, Tucker/CP routes, Strassen, sampling hybrids, and learned
+corrections. Claims are labeled Derived, Conjecture, or Measure-this.
+Q1 - Aggregate response state: the surviving idea
+[Derived] Representation. Write the deep third-cumulant tensor as a block-term / one-mode-separable
+approximation
+K_old ≈ Σ_{a=1}^k R(G_a, v_a), R(G,v) = sym(G ⊗ v),
+with G_a ∈ R^{n×n} symmetric and v_a ∈ R^n. Under linear transport B = W diag(w1), the family is closed
+exactly:
+G_a' = B G_a B^T, v_a' = B v_a.
+Its required slices are
+D21_ic = Σ_a [(G_a)_ii (v_a)_c + 2 (G_a)_ic (v_a)_i],
+D3_i = 3 Σ_a (G_a)_ii (v_a)_i.
+One component can already generate a full-rank D21 because G_a is dense. Therefore the near-full spatial
+rank of A∘P and the ≈230 spatial rank needed for 2% error in U do not imply k≈230. The relevant quantity
+is separation rank between the symmetric two-index block and the third index.
+Concrete fitting procedure
+For a source at the age gate,
+K_s = Σ_j d_j sym(a_j a_j^T ⊗ p_j), d_j = w2_j.
+Use a two-stage fit.
+Stage 1 - block-term SVD initializer. Matricize the unsymmetrized tensor as (12)|3:
+M = Σ_j d_j vec_s(a_j a_j^T) p_j^T = X P^T.
+The right Gram can be formed without materializing the n^2×n matrix:
+M^T M = P K_X P^T, (K_X)_{jl} = d_j d_l (a_j^T a_l)^2.
+Take the top k eigenvectors v_a of this n×n Gram. Recover each dense G_a from
+G_a ∝ A diag(d ⊙ P^T v_a) A^T.
+[Derived cost] A^T A costs ≈1 unit. The two dense multiplies for P K_X P^T cost ≈2 units. Constructing k
+dense G_a matrices costs ≈k units. Initial fitting is therefore about (3+k) units once at the gate. This is too
+expensive if repeated blindly in production, but ideal for the first falsification experiment.
+Stage 2 - query-weighted refinement. Refine the factors directly against the four existing query channels:
+min_{G_a,v_a} Σ_{m=1}^4 ||U_m - Q_m(Σ_a R(G_a,v_a))||_F^2 / ||U_m||_F^2.
+For fixed v_a, the problem is linear in G_a; use variable projection or CG, then update v_a with a small
+nonlinear optimizer. Because evaluating the slices of R(G,v) is O(k n^2), direct slice fitting is cheap. If the
+n×384 intermediates U_m must be reproduced explicitly, fit on a fixed 64-128 column sketch and validate
+on the full U_m.
+[Cost] A slice-only refinement iteration is roughly 10-50 k n^2 FLOPs, i.e. about 0.005-0.025 k units/iteration.
+A 128-column projected-U refinement remains below about 0.2 k units/iteration.
+What k is economically plausible?
+[Conjecture] Current-layer query error may need only k=1-4 even though each U has high spatial rank.
+Future-stable representation is probably k=2-6. But transport dominates:
+transport ≈ 2k units/layer.
+ k=1: ≈20 units over ten deep layers.
+ k=2: ≈40 units.
+ k=4: ≈80 units.
+ k=6: ≈120 units.
+Thus k>4 is not economically interesting, and a leaderboard-compatible mechanism strongly points to k≤2,
+or to an algebraically equivalent state with the same effective response rank.
+First falsifier
+[Measure-this] On one stored age-4 source (.npz legs available), fit k=1,2,4,8. Measure all four full query
+errors at the gate. Then transport teacher and fitted tensor through the actual next one and three B
+matrices, without refitting, and re-measure the four queries.
+Kill the idea if k>4 is needed for <2% at the gate, or if k≤2 gives <2% initially but exceeds roughly 4% after
+one transport. This is the highest-value experiment in this round and is comfortably under one hour on a
+CPU for one source/layer.
+Q2 - Other genuinely source-free formulations
+1. Finite-horizon observability / balanced truncation
+[Conjecture - credible] Treat deep transport as a linear time-varying system
+K_{l+1} = B_l^{⊗3} K_l + S_l, y_l = Q_l K_l,
+where y_l denotes the four query outputs. Instead of preserving K_l, preserve only coordinates in the
+subspace observable along the actual remaining quenched weight sequence:
+z_{l+1} = A_l^(r) z_l + b_l, y_l ≈ Σ_{a=1}^k z_{la} Y_{la}.
+This is not the already-dead adjoint idea: the old sources are merged into one reduced global state rather
+than contracted one source at a time. The relevant rank is a finite-horizon Hankel/observability rank, not
+the instantaneous spatial rank of U.
+[Cost] If Y_{la} are dense n×n output templates, online reconstruction is O(k n^2), below 0.001k units/layer.
+A naive backward construction of block-dual modes is roughly 2k units/layer, with birth projection at most
+another k units/layer. It is only interesting for k≤2.
+[First falsifier] At layers 10 and 14, stack the four channel-normalized query outputs from all old sources as
+samples and compute an SVD across sources. If the first two cross-source modes do not explain at least
+99.96% of squared energy (the 2% RMS target), a two-state observability model is dead immediately. This
+should run in minutes from stored query matrices.
+2. Conditional odd-Wiener-chaos model
+[Conjecture - lower probability, but not ruled out by parity alone] T1 proves E[y | even statistics]=0. It does
+not prove that y is unpredictable from the realized odd current-layer weight W_l. For fixed incoming K,
+(K')_{iic} = Σ_{abd} B_{ia} B_{ib} B_{cd} K_{abd}.
+Decompose B_i B_i^T into its covariance plus a centered quadratic fluctuation. The covariance term gives a
+first-Hermite contribution
+(K')^(1)_{iic} = Σ_d B_{cd} t_d, t_d = Σ_{ab} (Σ_B)_{ab} K_{abd}.
+If T2 is exactly the projection onto this first-Wiener-chaos term, then its 12-16% floor already kills the
+zeroth-order version. The only genuinely new hypothesis is that, after aggregation over all old sources, the
+residual Hermite-3 component has a very small conditional covariance rank.
+Carry a partial-trace vector t_l plus m coefficients of residual quenched modes. The slice realization is O(m
+n^2), effectively <0.01 units/layer for m≤8, provided the residual templates themselves admit a cheap
+recurrence.
+[First falsifier] Freeze one pre-layer old state. On 128 selected output rows, resample the current Gaussian
+W_l 32-64 times, subtract the analytic first-Hermite component, and PCA the residual query responses. Kill
+the idea unless the first m≤8 modes retain >99.96% of residual energy. My prior is that this fails.
+3. Second-order chaos / Hessian-state formulation
+[Derived rejection] Approximate each hidden fluctuation by
+δh_i ≈ J_i ξ + ξ^T H_i ξ - tr(H_i).
+Then
+J' = D1 W J,
+H'_i = D1_i Σ_j W_{ij} H_j + D2_i (WJ)_i (WJ)_i^T.
+This is genuinely source-free: new births are automatically summed into H. But with chaos dimension m,
+storing H costs n m^2 and transporting its output index costs about 2 n^2 m^2 FLOPs, i.e.
+cost ≈ m^2 / n units/layer.
+ m=100: ≈9.8 units/layer.
+ m=150: ≈22 units/layer.
+M1/M3 make m<<100 unlikely. This cannot explain the leaders unless a new deterministic chaos basis gives
+m≲40.
+[First falsifier] Project the stored old-source quadratic response onto the best m=32,64,96 deterministic
+chaos directions. If m=64 is not already below 2% query error, stop. No full chain run is needed.
+Q3 - Most likely explanation of the leaders
+[Conjecture] The most likely mechanism is a very-low separation-rank aggregate response state, probably
+k=1 or 2, or an algebraically equivalent finite-horizon response compression.
+Why this matches the evidence:
+ Deep-tier cost becomes independent of the number of old sources.
+ Dense G can generate a high-spatial-rank D21, so M1/M3 do not rule out small separation rank.
+ Linear transport of R(G,v) is exact.
+ k=1-2 costs only about 20-40 units over roughly ten deep layers, consistent with a 133-165-unit total if
+their young tier is also somewhat better optimized.
+ It naturally explains why the leaders pay approximately the young-tier bill rather than a cost growing
+with old-source count.
+[Measure-this] The distinguishing observable is cross-source / temporal response rank, not singular rank of
+U. At layers 10 and 14, stack the four normalized query outputs from every old source and compute the
+SVD across sources. If the first 1-2 response modes explain >99.96% of squared energy, the leaderboard
+mystery has a plausible mechanism. If more than four modes are required, the aggregate-response route is
+economically weak; given T1-T3 and M1-M4, there is then no currently credible O(n^2)-per-layer
+representation left.
+Single highest-value next experiment
+Fit k=1,2,4,8 aggregate response components to one stored age-4 source, validate the four query channels at
+the gate, then propagate teacher and approximation through one and three actual future B matrices
+without refitting. This experiment simultaneously tests separability, future stability, and the only
+remaining cost regime compatible with the leaderboard.

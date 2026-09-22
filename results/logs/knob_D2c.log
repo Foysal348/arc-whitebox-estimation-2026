@@ -1,0 +1,3 @@
+[D2c] call 0: util 0.2448 flops 538,350,185,967 wall 140.5s residual 1.94s peakWS 7.66GB peakCommit 7.89GB
+[D2c] call 1: util 0.2389 flops 525,316,137,455 wall 124.1s residual 1.07s peakWS 7.66GB peakCommit 7.89GB
+[D2c] final-layer drift vs ref: rms 7.793e-07  max 2.921e-06  (final mean rms 0.889); MSE(ref, tag) = 6.073e-13

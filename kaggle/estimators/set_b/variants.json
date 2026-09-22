@@ -1,0 +1,42 @@
+{
+ "ang": {
+  "file": "v31ang.py",
+  "env": {}
+ },
+ "ang_age2_5": {
+  "file": "v31ang.py",
+  "env": {
+   "V24_AGE_OLD2": 5
+  }
+ },
+ "ang_age2_6": {
+  "file": "v31ang.py",
+  "env": {
+   "V24_AGE_OLD2": 6
+  }
+ },
+ "ang_age2_8": {
+  "file": "v31ang.py",
+  "env": {
+   "V24_AGE_OLD2": 8
+  }
+ },
+ "ang_age2_9": {
+  "file": "v31ang.py",
+  "env": {
+   "V24_AGE_OLD2": 9
+  }
+ },
+ "ang_qpass2_1": {
+  "file": "v31ang.py",
+  "env": {
+   "V24_QPASS2": 1
+  }
+ },
+ "ang_qpass2_3": {
+  "file": "v31ang.py",
+  "env": {
+   "V24_QPASS2": 3
+  }
+ }
+}

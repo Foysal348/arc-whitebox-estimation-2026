@@ -1,0 +1,129 @@
+Round 2: Deep Third-Cumulant Representations under Hard
+FLOP Budget
+41
+(n=1024, L=16, B=2 FLOPs)
+Only proposals outside the closed list of §3. Claims labelled D=derived, C=conjecture, M=measure-this. Cost unit: 1
+unit = one dense 1024³ matmul = 2³¹ FLOPs; B = 1024 units.
+Q1. Concrete fitting procedure for the Aggregate Response State
+Mathematical object (after the age-4 gate). Carry k independent components, each a pair (G ∈ Sym , v ∈ ℝⁿ),
+a n a
+a=1…k. The aggregate third-cumulant contribution of all old sources is modelled as
+κ₃_old ≈ Σ k sym3( G ⊗ v ) ≡ Σ (G ⊗v + G ⊗v (perm.) + v ⊗G ),
+a=1 a a a a a a a a a
+so the needed slices are exact linear combinations of element-wise products of the components:
+D21_ic = Σ [ (G ) (v ) + 2 (G ) (v ) ], D3_i = 3 Σ (G ) (v ) .
+a a ii a c a ic a i a a ii a i
+Per-layer transport (exact under the linear map B = W diag(w₁))
+G ← B G Bᵀ, v ← B v . Each component costs two dense n×n multiplies (≈ 2 units). Total for the deep tier: 2k units
+a a a a
+per layer. After transport the new w₂ of the arriving layer is folded into the G’s by a diagonal scaling (still O(n²) and
+free inside the unit count).
+Fitting procedure at the age gate (objective = 2 % relative RMS on the four query families
+U)
+At the moment a source reaches age 4 its dense legs A, P are still available. The exact contribution of that source to
+the four contracted queries that determine D21/D3 is the set of matrices
+U₁ = (A∘P) diag(w₂) Aᵀ, U₂ = (A∘A) diag(w₂) Pᵀ, U₃ = (P∘P) Mᵀ, U₄ = (M∘P) Pᵀ (M the third residual leg).
+Concatenate them (or their action on a fixed set of 64 random probe vectors) into a single n×m matrix U_exact (m
+≈ 4·64 = 256). We seek rank-k factors that reproduce U_exact to 2 % relative Frobenius error while obeying the
+structural constraint that each factor is of the form G⊗v.
+Algorithm (alternating least-squares, D from standard CP-ALS adapted to the sym3 structure):
+1. Initialise v by the top-k left singular vectors of U_exact; set G ← 0.
+a a
+2. For each a, solve the linear least-squares problem for the free entries of the symmetric G given all other
+a
+components fixed (normal equations cost O(n² m) once per a).
+3. For each a, solve for v given the G’s (another O(n² m) system).
+a
+4. Repeat 2–3 until relative residual stagnates (typically 8–12 iterations). After all sources that cross the gate in a
+given layer have been fitted, sum the G’s and v’s of identical “modes” (or simply keep them as a larger pool and
+prune later by energy).
+Cost of the fit itself (once per source at the gate): ≈ 12 · k · (n² m / 2³¹) ≈ 0.4 k units per source. With ≤ 12 sources
+crossing the gate over the whole network the total fitting overhead is < 5k units — negligible compared with the
+subsequent transport cost.
+Expected k from M1–M3 (C)
+M3 states that the exact contracted object U is compressible to rank ≈ 230 for 2 % energy. Because each (G,v) pair
+contributes a rank-at-most-n factor of a very special form, the effective degrees of freedom per component are only
+n(n+1)/2 + n ≈ n²/2. Empirical CP rank of a generic sym3 tensor that matches a rank-r matrix query is typically
+1.5–2 r. Hence the conjecture k ≈ 300–450. At k = 350 the per-layer transport cost is 700 units — already larger
+than the entire budget B. Even an optimistic k = 80 (if the query rank of M3 overestimates the true structural rank)
+still costs 160 units per layer, i.e. > B after only a few layers. Thus the aggregate-response idea, while
+mathematically elegant, is almost certainly too expensive unless a dramatic further compression of the components
+themselves is discovered.
+First falsifier (one layer, one network, stored legs as .npz)
+Load the dense legs of all sources of age exactly 4 at layer 6 (or 7). Form the four exact U matrices. Run the ALS
+procedure above for k = 50, 100, 200, 300. Record relative Frobenius residual on U and the resulting relative RMS
+error on D21. If residual > 2 % already at k = 200 the method cannot meet the error law at affordable cost; if it
+succeeds only for k ≥ 250 the transport cost exceeds B. Runtime on a single CPU core with BLAS: < 20 min for the
+whole sweep.
+Q2. Formulations that are not a sum over sources
+Every proposal below is required to stay outside the closed list (no per-source dense legs after age 4, no mean-field
+replacement forbidden by T1/T2, no low-rank sketch of Hadamard products forbidden by M1/M3, no pure even
+statistics).
+(A) Quenched two-point statistics of κ₃ plus a small odd residual basis (C)
+Page 1
+Because κ₃ is odd under sign flips of W, its expectation vanishes, but its second moment E[κ₃ ⊗ κ₃] is even and, by
+rotational invariance and the known Gaussian measure on the weights, is a linear combination of products of the
+current covariance C. Concretely the only isotropic tensors of the correct symmetry are built from C⊗C⊗C with a
+handful of distinct index contractions. One can therefore carry, for free, the exact second-moment structure of the
+deep third cumulant. The realized (quenched) odd part that actually contributes to D21 is then represented by a
+single low-rank factorisation of size n × r_odd with r_odd ≪ n (the “realized odd residual”). Update: the
+second-moment tensors are functions of C alone and cost nothing extra; the residual factor is transported by the
+same B = W diag(w₁) at cost 2 n² r_odd ≈ 0.4 units for r_odd = 64. Slices are read off by contracting the residual
+against itself with the known second-moment kernel. Loss: any higher-order cumulants of κ₃ itself. Falsifier: at layer
+10 compute the exact deep κ₃ contribution to D21; form the residual after subtracting the best rank-64
+approximation consistent with the second-moment kernel; measure relative error. If > 3 % the residual rank is
+insufficient.
+(B) Tensor-network contraction that eliminates the birth index first (D/C)
+A single source’s contribution is κ₃_ijk = Σ_m A_im A_jm P_km w₂_m (plus permutations). The birth index m can be
+contracted before any later layer is applied, producing three n×n matrices already at birth: S_AA = A diag(w₂) Aᵀ,
+S_AP = A diag(w₂) Pᵀ, S_PP = P diag(w₂) Pᵀ. Thereafter only these three matrices need to be transported: S ← B S Bᵀ.
+Cost per source after birth: 6 units per layer (three independent covariance-style transports). For the whole old tier
+this is still 60+ units — better than 107 but not yet at the leaders’ 0. Aggregation across sources is free (just sum
+the S’s). The method is exact for every individual source; the only question is whether the summed S’s remain
+full-rank or can themselves be low-rank compressed. Falsifier: form the summed S_AA, S_AP, S_PP of all sources
+older than age 4 at layer 8; compute their singular spectra. If 99 % energy already requires > 400 directions the
+subsequent transport stays expensive.
+(C) Response-function / Jacobian statistics (C)
+The final mean E[h^(L)] is a functional of the initial activation and of every intermediate weight. Its variation with
+respect to a deep-layer pre-activation can be written as a product of Jacobians of the subsequent ReLU maps. The
+third-order response (the object that multiplies κ₃) is exactly the third derivative of that composition. Because the
+composition is a chain of element-wise nonlinearities interleaved with linear maps, the third response tensor admits
+a recursive update that only needs the current first- and second-order response tensors (size n and n×n) and the
+diagonal Hermite coefficients. Cost: a few dense n×n multiplies per layer (≈ 3–4 units total for the whole deep
+response). The method never materialises κ₃; it only ever multiplies the arriving D21/D3 slices by the
+already-computed response. Falsifier: implement the third-order response recursion on one network, inject the
+exact deep D21 at a single intermediate layer, and verify that the final-mean perturbation matches the
+finite-difference sensitivity map of M2 to relative 1 %. Any discrepancy kills the recursion.
+Characteristic-function / random-feature expansions of the full layer map were considered and rejected: a
+low-dimensional feature basis cannot capture the flat, noise-like spectrum of the Hadamard products (M1) while
+remaining cheaper than forming those products. Spin-glass TAP / cavity expansions that keep only diagonal or
+mean-field odd moments are forbidden by T1 (the conditional expectation vanishes). Feynman-diagram
+resummations that stay at O(n²) recover at best the covariance + κ₄ regeneration already present in V29 and
+cannot see the cross-neuron third cumulant.
+Q3. Most likely explanation of the leaders’ cost/accuracy
+Hypothesis (C, ranked first): the leaders keep the young-source tier exactly as V29 does (≈ 140–155 units) and
+replace the entire old-source tier by a single dense n×n “effective D21 accumulator” that is updated by the exact
+linear transport B D21 Bᵀ plus a cheap, parity-respecting closure for the off-slice remainder R. The closure uses only
+the even algebra generated by C (the three monomials already written in the previous round) together with one or
+two additional even tensors that can be maintained at O(n²) cost (e.g. the diagonal of C³ or a single learned scalar
+field of size n). Because the accumulator is only one matrix, its transport costs ≈ 1.4 units per layer; over the 11–12
+layers that contain old content the extra bill is ≈ 15–20 units, bringing the total into the observed 133–165 window.
+The accuracy gain relative to pure young-source truncation (raw MSE ≈ 1e-6) comes from the fact that every layer
+still receives a nonzero, correctly transported odd contribution, satisfying the sensitivity map M2.
+Confirming observable (local experiment, < 30 min): replace V29’s old tier by a single D21 matrix transported
+exactly and closed with the three-monomial formula for R; measure final MSE. If the result lands inside 1.6–2.5×10⁻⁸
+the hypothesis is confirmed. If the error is still > 5×10⁻⁸, add the next even tensor suggested by a residual analysis
+of R and repeat. The same experiment also falsifies any claim that a more exotic object (characteristic function, full
+TAP expansion, etc.) is required.
+Strongest argument that nothing cheaper remains: every scheme that retains a faithful representation of the deep
+odd third cumulant must either (i) transport objects whose size is Ω(n²) (the slices themselves or equivalent
+response tensors) or (ii) keep a factorisation whose rank is forced by M3 to be several hundred. Both routes cost at
+least a few units per layer. The leaders’ margin over the pure young tier is only 0–25 units for the whole network;
+that margin is precisely the cost of transporting one or two dense n×n matrices. Any proposal that claims zero
+marginal cost for the deep content contradicts either parity (T1), the measured spectra (M1), or the sensitivity map
+(M2).
+Page 2
+Summary: the aggregate-response state of Q1 is elegant but almost certainly too expensive (k ≳ 200). The cheapest credible route
+consistent with all closed measurements is a single dense D21 accumulator plus an even closure for the off-slice remainder (Q3). That is also
+the most likely explanation of the leaders.
+Page 3

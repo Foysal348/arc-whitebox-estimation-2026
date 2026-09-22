@@ -1,0 +1,162 @@
+Deep cumulants under a fixed FLOP budget
+A quantitative assessment of representations, leaderboard hypotheses, and the next experiment
+Assessment. I do not have a credible representation that preserves the required quenched third
+cumulant while eliminating the 107-unit old tier. The product spectra rule out one compression
+route, not every contraction-specific representation. The strongest remaining checks concern
+conditional variance and exact algebraic reuse.
+−9 −9
+Derived. V29 scores 5.41×10 ; the quoted leader ranges imply scores of 2.13–3.06×10 . Even
+−9
+free old-source transport leaves V29 at 3.18×10 at 153 units. Thus cost reduction alone does not
+−9
+explain the best result. A 2% D21 perturbation adds about 1.68×10 raw MSE under your
+measured law.
+Costs below use U = 2³¹ FLOPs, float32, classical matmul, and rounded leading terms; float64 doubles them. These are
+derivations and proposed falsifiers, not measurements on your network. No checkpoints or implementation were
+supplied.
+Q1(a). Moving the nonlinearity into the basis
+⊗3
+Derived. With T = Q K, the cubic Hermite correction to neuron i evaluates K(qᵢ,qᵢ,qᵢ). Moving
+coordinates does not remove mixed cubic coefficients. For G = W diag(w₁), exact retained-subspace
+transport is
+A generic symmetric K has r(r+1)(r+2)/6 coefficients. Straight dense core rotation costs 3r⁴/n³ units;
+quadratic-vector queries cost r³/n², followed by r/n to expand D21. At r=224 these are 7.03, 10.72,
+and 0.219 units per layer, before basis fitting and births; at r=384 the first two alone cost 114.75.
+Hermite truncation loses the mixed cubic information already implicated by your rank cliffs.
+First falsifier: your existing rank-cliff experiment already rejects using r≈100 merely because it
+retains 99% of leg energy. No rerun is needed (0 additional units). That energy criterion is not a 2%
+contraction-error guarantee. I am not proposing another Tucker trial.
+Q1(d). An exact streamed identity, with limited savings
+Let qᵢ be row i of Q, and w the birth coefficient vector. Compute one row or row tile at a time:
+This computes H=(A∘P∘w)Aᵀ exactly without allocating dense A or P. Including two elementwise
+products, its cost is [8n²r−n²−nr]/U: approximately 0.875 units at r=224 or 1.50 at r=384, per
+source. Transport still requires GQ and factor rotations RF ; the latter add 2(r/n)² per source, plus
+A,P
+shared basis work.
+Loss: none beyond the existing basis truncation. First falsifier: compare against one cached
+−5
+dense H, under 3 units; reject if the float32 relative difference exceeds 10 . This saves memory,
+not the old-tier asymptotics. I know no general O(nr²) identity here without extra core structure; this
+is not an arithmetic lower-bound claim.
+MECHANISTIC ESTIMATION • RESEARCH NOTE 1
+DEEP CUMULANTS / n = 1024, L = 16, B = 1024 UNITS
+Q1(b). What self-averaging actually removes
+Derived. Freeze a checkpoint and its gates. Absorb the gates and the fresh-row covariance square
+root into a symmetric tensor T, so two distinct new weight rows become independent g,h∼N(0,I ).
+r
+Write y=T(g,g,h), and τ =Σ T . Gaussian pairings give [1]:
+c a aac
+The first identity contracts E[g g ]=δ ; the two remaining fourth-moment pairings produce the
+a b ab
+variance. For symmetric T, ‖τ‖²≤(r+2)‖T‖²/3; the trace-adjoint norm attains equality at T=sym(I⊗v).
+Consequently the RMS error of this conditional-expectation replacement obeys
+The floor is 7.62% at r=1024, 16.08% at r=224, and 23.57% at r=100. Here r is the retained support
+dimension. It also applies to the sum of old tensors before the fresh layer. Averaging more matrix
+entries stabilizes the measured energy; it does not erase signed quenched error. If old content
+contributes fraction α of total D21 RMS, even the optimistic r=224 floor requires α≤0.124 to reach
+2% overall.
+This only rejects averaging away g. A predictor retaining both realized rows and extra tensor
+information can do better. Likewise, the theorem concerns one fresh linear layer with gates frozen;
+it does not assume independence after future gates have adapted.
+State/update/cost. The tempting state is τ, with a trace-only readout costing under 0.002
+units/layer. But it is not closed. The contraction map has components Σ T B . Exact transport
+ab abc ab
+requires
+not merely Gτ. Replacing GᵀG by its expectation loses precisely a quadratic-query component. A
+covariance/Gram-conditioned predictor must specify which realized information it retains. Gaussian
+scale mixtures and memoryless slice regeneration remain rejected by your measurements. First
+falsifier: the ≤30-unit conditional-resampling audit in Q3.
+Q1(c). Earlier slices are queries, not a closed state
+⊗3
+Derived. Exact old-content transport is T⁺=G T, hence D21⁺ =T(gᵢ,gᵢ,g ). Covariance and current
+ic c
+slices cannot determine it: a tensor supported on permutations of three distinct coordinates has
+zero D3/D21, yet acquires nonzero slices after generic mixing. Testing that witness costs under 0.01
+units; it disproves universal closure, not an empirical 2% guarantee.
+In an r-dimensional support, each earlier D21 bank supplies at most nr independent numbers.
+Generic exact recovery therefore needs at least ceil[(r+1)(r+2)/(6n)] banks: 2 at r=100, 9 at r=224,
+25 at r=384. These are necessary dimension counts, not sufficiency results. Reconstructing K
+returns to Q1(a)’s cost.
+For fixed future maps, the exact minimal linear state is the rank of the stacked future-query
+operator. Its useful 2% dimension depends on tensor energy in those observable directions; the
+supplied spectra do not determine it. Precomputing future slices merely pays their contractions
+earlier, and adaptive gates complicate even that construction.
+MECHANISTIC ESTIMATION • RESEARCH NOTE 2
+DEEP CUMULANTS / n = 1024, L = 16, B = 1024 UNITS
+Q1(d), continued. A conditional fusion worth checking
+Derived, conditional. Inspect whether the code has M=A diag(a)+P diag(b)+R₀, with R₀=UVᵀ of
+rank t≤16, and source D21=2H+T2+(T3+2T4)/3. If so, distributivity gives
+Vectors broadcast over columns. With dense legs already available, two dense products plus the
+thin residual cost under 2.07 units/source, versus four dense products before fusion. For old legs,
+reconstructing two legs, projecting X and Y, and expanding their sum costs about 5r/n units/source,
+plus thin work and transport: 1.875 at r=384, 1.094 at r=224. It still does not make old content free.
+Loss: none if the stated identities hold. This differs from dead item 11: it combines equal right
+factors in slice formulas; it never constructs a symmetric tensor. First falsifier: inspect the actual
+symbolic M formula and operation trace (0 units). If already fused, there is no saving. Otherwise
+verify one cached source against the original contraction, under 7 units. No claim is made that V29
+lacks this optimization.
+Q2. Three ranked, falsifiable explanations
+The 133–165-unit interval does not establish a free old tier: 153 is an implementation subtotal, not a
+lower bound. The first two hypotheses carry the old information unchanged.
+1. Precision accounts for much of the bill (conjecture). If fraction f of V29’s metered cost is
+float64 work that can safely become float32, cost becomes 260(1−f/2). Reaching 133–165 requires
+f=0.73–0.98; all-float64 conversion gives 130 units. First falsifier: a dtype census, 0 units. If this
+condition passes, one controlled rerun costs at most 260 units; require final-mean RMS drift below
+−6
+10 . Signature: near-uniform per-layer cost reduction, including old sources. Better raw MSE still
+requires a separate closure improvement.
+2. Exact contraction reuse (conjecture). Q1(d)’s fusion preserves the source state. A 50%
+reduction in eligible work alone requires 190–254 eligible units to save 95–127 units. First falsifier:
+audit that subtotal and existing fusion, 0 units. A smaller subtotal rejects fusion as the sole
+explanation. Signature: identical means up to rounding, but cost still grows with old-source count.
+3. Joint bias compensation (weak conjecture). A short-history chain might retune λ →aλ inside
+ℓ ℓ
+fourth-cumulant regeneration. Cost stays about 153 units; the old state is absent, with its effect only
+compensated in the mean. This escapes the window result only if regeneration was held fixed. If
+jointly retuned there, it is already dead; output-feature corrections alone do not test this internal
+−6 −8
+response. Nevertheless, reducing 10 to 1.9×10 requires explaining 98.1% of error energy.
+First falsifier: run a=0,1,2, costing 459 units. Using the existing ground truth only as an oracle
+diagnostic, project the baseline error onto the two output-response differences. If even that span
+misses the target, reject the local-response version. This is not a deployable ground-truth-trained
+correction. Signature: a narrow joint optimum and substantial D21 error despite low final-mean
+error. I rank this last; it is not evidence that the dead window method works.
+MECHANISTIC ESTIMATION • RESEARCH NOTE 3
+DEEP CUMULANTS / n = 1024, L = 16, B = 1024 UNITS
+Q3. The single measurement I would make next
+Measure the conditional variance of contracted old content, not another singular
+spectrum of its products. Start with one age≥7 source at layer 10. This directly tests whether the
+apparent product “noise” is negligible after contraction or is the missing quenched signal.
+Freeze that checkpoint’s gates and source legs. Apply the gates, and obtain τ and ‖T‖² for the
+resulting source tensor. They can be computed from the six pairwise leg Grams AᵀA, PᵀP, MᵀM, AᵀP,
+AᵀM, PᵀM, plus elementwise contractions. This avoids materializing n³ entries. The trace follows by
+contracting two legs of each symmetrized source term.
+Resample 32 independent blocks of fresh weight rows, using 64 rows for the repeated index i and a
+disjoint 64 for c. Compute each 64×64 exact source D21 block, and its conditional prediction
+E [D21|h]. Average predictions conditionally on h, or use the analytic trace prediction directly; do
+g
+not compare a nonzero fixed-network tensor against an unconditional ensemble mean of zero.
+On the actual next-layer weights, also record the prediction residual normalized by total D21 RMS.
+Record D3 separately. Report three numbers: the analytic ρ from Q1(b), its resampling estimate
+with block-level uncertainty, and the actual-network residual/total-D21 ratio. A ratio above 0.02
+immediately rejects this expectation-only replacement for that contribution; a smaller ratio does not
+establish that all old sources jointly pass.
+FLOP budget. Six dense Grams cost about 6 units. Transporting three legs through 32 blocks of
+128 rows costs 12 units. Four 64×64 slice contractions per block cost 0.5 units total. Allow about 7
+units for the actual next-layer transport and slice evaluation, plus elementwise/thin overhead:
+10
+under 30 additional units, or 6.45×10 FLOPs. Reuse your saved checkpoint; if unavailable, add
+the measured 260-unit V29 run. At a sustained 1 GFLOP/s, that is approximately 65 seconds extra,
+or 10.4 minutes including the baseline.
+Decision. If measured residual energy matches the derived variance and exceeds the total-slice
+tolerance, stop pursuing expectation-only self-averaging. The outstanding problem is preserving
+realized mixed cubic information. If it is unexpectedly small, first locate the conditioning or
+cancellation responsible; that is the specific new mechanism missing from the dead closures.
+Neither a flat product spectrum nor covariance alignment of a fourth-order core supplies it.
+No proposed representation here has a complete, credible path to the leaders’ cost and accuracy.
+The streamed identity and conditional fusion are implementation checks; the variance audit is the
+highest-information research experiment.
+[1] Gaussian pairing identity: Konstantinos Mamis, “New formulas for moments of the multivariate normal distribution
+extending Stein’s lemma and Isserlis theorem,” §2.2, arXiv:2202.00189. The conditional-variance application and bounds
+above are derived here; this reference is not a claimed solution to quenched network cumulant transport.
+MECHANISTIC ESTIMATION • RESEARCH NOTE 4

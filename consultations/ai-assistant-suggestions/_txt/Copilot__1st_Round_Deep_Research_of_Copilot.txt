@@ -1,0 +1,38 @@
+Deep Research of Copilot
+Mechanistic Estimation of Deep Third-Cumulant Content in
+Random ReLU Networks
+Executive Summary
+The analysis concludes that the new parity and sensitivity measurements strongly constrain
+possible explanations for leaderboard-leading methods. The expensive object is unlikely to be the
+old sources themselves. Instead, the burden appears to come from carrying a source-labeled
+representation of the odd third-order sector. Any successful formulation must preserve quenched,
+realization-specific odd structure while avoiding per-source dense Hadamard contractions.
+Q1(c) Slice Recursion
+Carry only D21 and D3. Approximate transport with D21' » (WnW) D21 W^T plus D3 corrections.
+Cost about 2 units per layer, 32 units total. First falsifier: measure residual energy in exact
+next-layer D21 unexplained by (D21, D3, C) as a function of source age.
+Q1(a) Hermite Field Representation
+Replace source-wise storage with one merged degree-3 chaos field. Carry a global matrix B
+representing the H2˜H1 sector. Cost roughly 3 units per layer. This preserves aggregate odd
+structure while discarding source genealogy. Falsifier: project the exact summed old-source
+contribution into the degree-3 Hermite basis and measure captured variance.
+Q1(d) Exact Low-Cost Identity
+No convincing exact O(n r^2) identity is apparent. The observed nearly full-rank Hadamard spectra
+indicate that Khatri-Rao rank inflation is real and numerically realized. This argues against further
+exact factor-space compression.
+Shared Propagator Hypothesis
+A single common propagator with per-source scalars is inconsistent with the nearly flat
+birth-ablation sensitivities. Falsifier: compute principal angles among old-source propagator
+subspaces.
+Q2: Leader Hypotheses
+1. Merged degree-3 field (most plausible). 2. Direct recursion on D21. 3. Effective even-order
+renormalization mimicking old-source effects. Distinguish using scaling with source count and
+predictability tests.
+Q3: Most Informative Measurement
+Measure predictability of next-layer D21 from current (C, D21, D3). If residual unexplained energy
+stays high, no low-order closure exists and leaders must carry another hidden odd field. If residual
+drops below about 2% for old sources, a cheap recursion becomes credible.
+Key Conclusions
+Derived: old-source mean-field averaging is ruled out by parity. Conjecture: leaders changed
+representation rather than arithmetic. Most likely they carry a merged odd third-order field whose
+state size scales like O(n^2), not O(number of sources × n^2).

@@ -1,0 +1,11 @@
+# Analysis and experiment tooling (the metered chain itself needs only flopscope + whestbench from the starter kit)
+numpy>=1.26
+scipy>=1.11
+torch>=2.2            # CUDA build for the Monte-Carlo cumulant teachers
+scikit-learn>=1.4     # cross-validated residual-structure study
+teneva>=0.14          # TT-cross rank probes
+pypdf>=4.0            # reading consultation reports
+reportlab>=4.0        # building the handbook PDF
+kaggle>=1.6           # Kaggle kernel push / output download
+psutil>=5.9           # peak-memory measurement in the knob sweeps
+datasets>=2.18        # public MLP split (HuggingFace)

@@ -1,0 +1,98 @@
+Mechanistic Estimation of Neural Networks:
+Second Round Analysis
+Q1: The Aggregate Response State (Gate-SVD Fitting)
+Your intuition for the vector-metric family T ≈
+(cid:80)k
+sym3(G ⊗ v ) is mathematically
+old a=1 a a
+profound. Itformsaperfectlyclosedstateunderthelinearrandom-matrixtransportB =
+Wdiag(w ),avoidingtheKhatri-Raorankexplosioncompletely. Themissinglinkishowto
+1
+fittheincomingsourceattheagegatewithoutmaterializingintractabletensors.
+[Derived] The Exact Frobenius Fitting Procedure
+Attheagegate,asourcetensorisT = (cid:80)n w sym3(A AT ⊗P ). Unfoldingthissym-
+j=1 2,j :,j :,j :,j
+metrictensorintoann2×nmatrixyieldsM = (A(cid:12)A)diag(w )PT,where(cid:12)isthecolumn-
+2
+wise Kronecker product. Finding the optimal {G ,v } to minimize the Frobenius error is
+a a
+exactlyequivalenttocomputingthetruncatedSVDofM = (cid:80) vec(G )vT.
+a a a
+Crucially,wecancomputethetopkcomponentsofM withouteverformingM byusing
+itsn×nGrammatrixS = MTM:
+1. FormG = ATA. (Cost: n3 FLOPs= 0.5units).
+A
+2. FormtheelementwisesquareK = G ◦G . (Cost: negligible).
+A A
+3. Formthen×nGrammatrixS = Pdiag(w )Kdiag(w )PT. (Cost: n3FLOPs= 0.5units).
+2 2
+4. Extractthetopk eigenvectorsv ,...,v ofS. (Cost: negligible).
+1 k
+5. ThecorrespondingleftsingularmatricesarealgebraicallyG = Adiag(w ◦(PTv ))AT.
+a 2 a
+(Cost: k×n3 FLOPs= k/2units).
+Cost and k Expectation
+• Gatecost: ≈ 1+k/2units(paidoncepersourcewhenitreachesage4).
+• Transport cost: G ← BG BT costs 2 units per component. v ← Bv is negligible.
+a a a a
+Totalold-tiercost: 2k unitsperlayer.
+• [Conjecture]Expectedk: WhileA◦P hasaflatspectrum,theGrammatrixS relies
+on ATA ◦ ATA, whose rank is strictly bounded by the structural rank of P (∼ 230
+directions). Because S isolates the optimal Frobenius projection, its spectrum will
+decaysharply. Iexpectk ∈ [3,8]issufficientforthe2%relativeD error,puttingthe
+21
+old-tierbillat6–16unitsperlayer.
+1
+[Measure-this] Falsifier
+Load a saved dense A,P, and w at layer 4. Run the 5-step algorithm above for k = 5.
+2
+ReconstructthesliceapproximationsDapprox = (cid:80)5 [(G ◦I)v 1T+2diag(v )G ]. Compare
+21 a=1 a a a a
+therelativeRMSerroragainsttheexact(A◦P)diag(w )AT. ThisexecutesonaCPUinunder
+2
+5seconds.
+Q2: Novel Formulations (Outside the Sum-of-Sources)
+Given that expectation-only replacements, Tucker bases, and column-subsampling caps
+areclosed,anyvalidformulationmusttransporttherealizedoddparitystatelinearly.
+Proposal: Quenched Tensor-Sketching on the Birth Index
+• The Mathematical Object: Instead of keeping sources separate or decomposing
+themviaSVD,wetrackasinglefixed-widthsyntheticsourceA˜∈ Rn×d,P˜ ∈ Rn×d.
+• [Derived] The Update Rule: When a source hits the age gate, project its n birth
+dimensionsdowntoddimensionsusingafixed,quenchedGaussianrandommatrix
+Ω ∈ Rn×d:
+A˜ = AΩ, P˜ = Pdiag(w )Ω
+new new 2
+Add this to the global synthetic source: A˜ ← [A˜ ,A˜ ] and P˜ ← [P˜ ,P˜ ].
+old old new old old new
+TransportisexactlyA˜← BA˜ andP˜ ← BP˜ .
+• Cost: Transporting an n×d matrix is d/n units. If we sketch the entire aggregated
+oldtierdowntod = 2048columns,thecostis6unitsperlayer.
+• Why it survives: This uses a fixed Johnson-Lindenstrauss projection Ω on the birth
+indexbeforeKhatri-Raoexpansion,preservingthebilineargeometry.
+• [Measure-this]Falsifier: LoadthesumoftheexactDold slicesforalloldsourcesat
+21
+layer14. GenerateasingleΩ ∈ Rn×2048. Computesketchedlegs,sumtheirrank-2048
+reconstructions,andcheckifrelativeerroris< 2%.
+Q3: Hypothesis for the Leaders’ Method
+[Conjecture] Hypothesis: The leaders are executing exactly the Gate-SVD Aggregate
+State(Vector-MetricFamily)derivedinQ1,withk ≈ 4.
+The Argument
+Theleaderboardmathleavesnootherphysicallypossiblewindow. V29’syoungtiercosts
+143 units. The leaders score higher accuracy at 133–165 units, meaning the deep third
+cumulantcosts0±15units.
+TheGate-SVDmethodstrictlysatisfieseveryconstraint:
+2
+1. Itismathematicallyexactunderrandommatrixtransport.
+2. It completely bypasses the A ◦ P Khatri-Rao flat spectrum by fitting the Frobenius
+normofthesourcetensorbeforeitisqueriedforD .
+21
+3. Atk = 4,itcostsexactly8unitsperlayer,droppingtheirtotalbillto≈ 151units—dead
+centerofthe133–165unitwindow.
+[Measure-this] The Observable Signature
+If the leaders are using this, their computational cost will be strictly flat from layer 5 on-
+ward. Furthermore, if you inject a localized rank-1 perturbation into w at layer 4 of a
+2
+localrun,theleaders’finalmeanvectorerrorwillbecompletelyspannedbythetopkleft-
+singularvectorsofthedroppedresidualM − (cid:80)k vec(G )vT atthatspecificagegate.
+a=1 a a
+3

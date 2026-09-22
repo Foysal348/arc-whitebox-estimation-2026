@@ -1,0 +1,20 @@
+{
+ "base_m8": {
+  "file": "v29m8.py",
+  "env": {}
+ },
+ "ang": {
+  "file": "v31ang.py",
+  "env": {
+   "V31_ANGULAR": 1,
+   "V31_A1": 1
+  }
+ },
+ "ang_noa1": {
+  "file": "v31ang.py",
+  "env": {
+   "V31_ANGULAR": 1,
+   "V31_A1": 0
+  }
+ }
+}

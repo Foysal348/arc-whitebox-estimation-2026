@@ -1,0 +1,121 @@
+# Where the deep third cumulant of a random ReLU MLP lives — and why a sum-of-sources chain cannot carry it below ~0.24 B
+
+**Phase 2 algorithmic-contribution write-up · submission #331787 (adjusted 5.137e-9, raw final-layer MSE 2.108e-8, 0.244 B, 0 failed MLPs) · participant foyshal_sk (Foysal Emon Shanto)**
+
+*Draft v2, 21 September 2026 — all sections filled with current numbers; items marked [OPEN] are experiments still running and will be updated before the 24 October deadline. Claims are labelled **derived**, **measured** or **conjecture**.*
+
+---
+
+## Abstract
+
+We start from the public factorized K=3 cumulant-propagation chain released under MIT by team 504aldo ("V29": raw 2.13e-8 at 0.254 B) and ask one question: **can the "old-source tier" — the 107 of 260 cost units spent re-forming and re-contracting third-cumulant sources older than four layers — be made cheap without losing accuracy?** The leaders' bills (133–165 units) equal V29 *without* that tier to three digits, so this is the question the leaderboard poses. We answer it negatively from six independent directions — one theorem and five measurements on real 1024×16 networks — and we state precisely what any formulation that beats it must satisfy. Along the way we ship a free 4.1% cost trim on the public chain (graded 5.418e-9 → 5.220e-9 → 5.195e-9) and show that its fitted constants are at their optimum.
+
+## 1. Setting (measured facts from the public material)
+
+The task: for a He-initialized ReLU MLP of width n = 1024 and depth 16 with N(0, I) inputs, return E[h^(l)] for every layer; the score is the final-layer MSE against a 1e9-sample Monte Carlo reference, multiplied by max(0.1, FLOPs/B) with B = 2^41 FLOPs metered analytically by flopscope. We use the cost unit **1 u = one dense 1024³ matmul = 2^31 FLOPs (B = 1024 u)**.
+
+V29 (Wu et al. arXiv:2605.05179 §4.3, "K3-simple" term selection, factorized; 504aldo's release) carries per layer the mean, the covariance C, and the third cumulant κ₃ as a **sum of sources**: each ReLU injects a source, stored as a propagator leg P_s (n×n; identity at birth; P ← Wᵀdiag(w1)P per layer), a birth leg A_s = P_s a_b, and thin n×16 legs. The next ReLU needs two slices, D3_i = κ_iii and D21_ic = κ_iic, obtained per source from contractions of Hadamard products: H = (A∘P∘w2)Aᵀ, T2 = (A∘A∘w2)Pᵀ, T3 = (P∘P)Mᵀ, T4 = (M∘P)Pᵀ, D3_i = 3Σ_j w2_j A_ij²P_ij + Σ_j M_ij P_ij². Sources older than four layers are confined to one shared rank-384 basis Q (A = Q F_A, P = Q F_P; rank-224 sub-basis after age 7) but must be **re-formed densely every layer** because A∘P has Khatri–Rao rank r² ≥ n. Cost anatomy (author's ledger, 260 u): young sources 116, old sources 107, thin/elementwise 25, covariance 7, closure 6. Empirical tolerance law: extra final MSE ≈ 4.2e-6·ε² with ε the relative RMS error of D21, so D21 must be right to ~2%.
+
+## 2. The question the leaderboard poses
+
+V29's bill without the old tier is 153 u; the leaders sit at 133–165 u with raw 1.64–1.9e-8 (V29: 2.13e-8). Whatever carries the deep (old-source) third-cumulant content in the leading methods costs ~nothing, while in V29 it costs 107 u for a 6× accuracy gain (no old tier: raw ~1.0e-6). We tested every way we and eight consulted models could think of to make that content cheap. All of them fail, each for a measured reason.
+
+## 3. Theorem — there is no mean-field part (derived)
+
+Let a source be born at layer b. For any later layer l its legs are P = Wᵀ^(l) D P′, A = P a_b, with P′, a_b and the birth coefficients w2 independent of W^(l). Every quantity linear in the source's κ₃ — H, T2, T3, T4, D3 — is therefore an **odd** function of W^(l), whereas C^(l), the leg Grams AᵀA, PᵀP and all per-neuron variances are **even**. The weight ensemble is sign-symmetric, hence
+
+  E[ H_s^(l) | C^(l), Gram(A_s, P_s), all state at layers < l ] = 0  exactly.
+
+Consequences. (i) Any closure that replaces old sources by a function of even statistics (mean-field, scale mixtures, "self-averaging", even monomials of C) discards the entire contribution; the measured failures of such closures — 9.1e-7 and 2.3e-6 in the author's tables — are structural, not tuning failures. (ii) Replacing a source by its expectation conditional on one fresh weight row has a relative-error floor √(6/(r+8)) in the retained support dimension r (Wick pairing: E[T(w,w,w′)] = σ²t·w′, Var ≥ 2σ⁶‖T‖²): 12% at r = 384, 16% at r = 224, an order of magnitude above tolerance. (iii) κ₄ terms built from two κ₃ contributions are even; by rotational invariance the only available even invariant is C⊗C, which explains V29's empirical regeneration law G_off = λ_l C_off (R² 0.66–0.97) as an isotropy consequence.
+
+(The argument was obtained in an LLM consultation and checked by hand; the floor bound was derived independently by two further models with the same constant. Pilot E below shows the parity zero directly in a regression.)
+
+## 4. Measurement A — legs versus their products (measured)
+
+Dense legs of every live source at layers 6, 10, 14 of one network; number of singular directions holding 90 / 99 % of the Frobenius energy (n = 1024):
+
+| layer | group | A, P: r99 | A∘P: r90 / r99 | A∘A, P∘P: r99 | top sv / ‖A∘P‖_F |
+|---|---|---|---|---|---|
+| 6 | old (age 5–6) | 213–261 | 482–487 / 765–770 | 718–737 | ~0.10 |
+| 10 | old, tier 2 (age ≥ 7) | 133–163 | 425–440 / 731–740 | 667–710 | ~0.15 |
+| 14 | old, tier 2 | 96–116 | 358–375 / 681–694 | 609–646 | ~0.20 |
+| 6–14 | young (dense) | 229–504 | 468–504 / 758–778 | 608–751 | ~0.09 |
+
+The legs get lower-rank with age (the shared-basis design is sound), but their elementwise products are near full rank with a flat, noise-like spectrum: the Khatri–Rao wall (rank min(n, r(r+1)/2) = n for r ≥ 45) is numerical. No low-rank sketch of the products exists; the Tucker route Σ_s (Q⊗Q)T_sQᵀ costs n r³ (56 u at r = 384, 10.7 u at r = 224) as the author priced.
+
+## 5. Measurement B — where the old content matters (measured)
+
+Instrumented chain: the confined sources' dense and thin legs are zeroed immediately before the slice contractions (thin legs restored afterwards); metric = final-layer MSE of the variant against the full chain's prediction on the same network (the chain's own error vs truth is 2.1e-8).
+
+| experiment | MSE vs full chain |
+|---|---|
+| keep old content only in the last 1 / 2 / 3 layers | 4.85e-7 / 4.17e-7 / 3.16e-7 |
+| zero old contributions at one layer only: L5 / L6 / L7 / L8 / L9 | 3.4e-9 / 1.1e-8 / 1.5e-8 / 2.6e-8 / 2.7e-8 |
+| L10 / L11 / L12 / L13 / L14 / L15 | 5.2e-8 / 5.2e-8 / 7.1e-8 / 6.7e-8 / 8.2e-8 / 6.4e-8 |
+| drop one birth entirely, slots 0…10 (oldest first) | 1.3, 2.7, 1.8, 1.9, 1.6, 2.1, 1.9, 1.7, 1.7, 1.8, 1.7 (×1e-7) |
+
+Every layer from 8 on matters at the scale of the whole error budget, effects are roughly additive (Σ_layers ≈ 5e-7 ≈ the keep-last numbers), and no birth is dispensable. "Late re-formation" — transport old sources as factors and re-form them densely only near the output — is dead.
+
+## 6. Measurement C — the contracted query cannot be surrogated (measured)
+
+The object that enters D21 is not A∘P but the contracted query U = (A∘P)·diag(w2)·F_Aᵀ (n×384). From the stored legs and basis at layers 10 and 14:
+
+| surrogate (never forms A∘P) | layer 14 (10 old sources) | layer 10 (6 old) |
+|---|---|---|
+| isotropic trace U_ic ≈ (‖q_i‖²/r)·tr S_c | 98.2% | 98.9% |
+| diagonal Hermite in Q coordinates (Q∘Q)D | 95.4% | 97.5% |
+| degree-2 TensorSketch, width d = 128 / 512 / 2048 | 3180% / 1590% / 790% | 3280% / 1620% / 810% |
+| *ceiling*: best rank-k of the exact U (r90 / r99 / r99.9) | 32 / 98 / 185; k = 128 → 6.6%, k = 256 → 1.2% | 48 / 132 / 227; k = 128 → 10%, k = 256 → 2.2% |
+
+The trace and diagonal surrogates capture nothing (parity); the sketch error scales as 1/√d (approximate matrix multiplication of two noise-like factors) and would need d ≈ 10⁸. The result of the contraction is moderately compressible (rank ≈ 230 for 2%), but nothing that avoids forming the dense legs gets near it.
+
+## 7. Measurement D — aggregate states (measured)
+
+Eight consulted models converged on one surviving family: replace the old sources by k components sym₃(G_a ⊗ v_a) (exact transport G ← BGBᵀ at 2 u per component-layer) or by a pooled TT/Tucker core in the shared basis. The leaders' window above the young tier is 0–22 u, so only k ≤ 1–2 could explain them. The optimal fit is the truncated SVD of the (ab)|c unfolding of the source tensor, computable through the n×n Gram P·diag(w2)·[(AᵀA)∘(AᵀA)]·diag(w2)·Pᵀ.
+
+| measurement (layer 14; layer 10 in parentheses) | result |
+|---|---|
+| cross-source response rank: energy of the first 1 / 2 / 4 modes of the normalized U_s (target 0.9996) | 0.16 / 0.26 / 0.46 (0.20 / 0.37 / 0.69) |
+| vector–metric fit of the pooled old tensor, query error of H at k = 1 / 8 / 32 / 128 | 89% / 80% / 60% / 20% (– / 83% / 64% / 25%) |
+| single youngest-old source, k = 64 / 128 | 18% / 4.2% |
+| TT/Tucker rank of the pooled core, (a)|(bc) unfolding: error at rank 32 / 128 / 256 | 35% / 7.8% / 1.6% |
+
+k ≈ 250–300 (rank ≈ 250) is needed for 2%: 500+ u per layer. The family is dead. (Three models predicted this range; three predicted k = 1–8 and were wrong.)
+
+## 8. Measurement E — the slices are not a state (measured)
+
+Regressing the old sources' H-contribution at layer l+1 on its exact slice transport (B∘B)·H·Bᵀ (B = Wᵀdiag(w1)) recovers the theoretical coefficient 1 (0.98 / 1.04) but only R² = 0.030 (layers 10→11) and 0.047 (13→14): about 95% of the next layer's old contribution comes from off-slice (a ≠ b) entries. The odd covariance feature W·C has R² = 0.0000 exactly, and B·H·Bᵀ, B·H add nothing. A recursion on (C, D21, D3) — proposed in three consultations — is hopeless.
+
+## 9. Engineering results on the public chain (measured)
+
+- **STRASSEN_MIN 32 → 8** (one constant): the rank-384 / rank-224 shared-basis families take two more Strassen levels (384/32 = 12 ≥ 8; 224/16 = 14 ≥ 8) while the 1024-side families are unchanged; util 0.2540 → 0.2442 locally, graded 5.418e-9 → **5.220e-9** at identical raw MSE (2.133e-8 vs 2.132e-8), peak commit 5.56 → 5.97 GB, prediction drift MSE 4.9e-13. **Spherical-input reparameterization (V31)**: the bias-free ReLU network is degree-1 homogeneous, so with X = (R/√n)Y (Y uniform on the sphere, R ~ χ_n independent) E[h(X)] = a₁E[h(Y)] exactly, a₁ = √(2/n)Γ((n+1)/2)/Γ(n/2) = 0.99975589; Y has C = I, κ₃ = 0 and κ₄ = c·Sym₃(I⊗I), c = −2/(n+2), which in the chain's harmonic core representation is a previous-layer core g = −6/(n+2) (the chain's own projection gives exactly this), so layer 0 runs the existing κ₄ terms with dG = g·var and (3,1) slice g·C_off, and the output is rescaled by a₁. Cost +0.02 %; the injection reproduces the identity's scale shift to 0.3 % (+2.450e-4 vs +2.442e-4); graded raw 2.132e-8 → **2.108e-8 (−1.1 %)**, score **5.137e-9** (#331787). The idea comes from a public Phase-2 repository (barnobarno666) via the fourth consultation; on that K3 chain it gave −7.9 %, on V29 most of it is already absorbed by the fitted κ₄ regeneration and mean correction. **STRASSEN_FIRST 4 → 5** (second constant): the first predict() of each grader worker runs at full depth instead of a capped level (the pool page-touch it pays is metered but small); graded **5.195e-9** (#331732), util 0.2436, peak commit 6.2 GB, raw unchanged.
+- **Level 6 (16×16 leaves)** saves 4.7% but peaks at 8.13 GB commit (grader cap 8 GB); on a 31 GB machine it grades identically (2.302e-8 vs 2.303e-8 on 10 baked-truth MLPs) but wall time rises 90 → 150 s per MLP on 4 cores. **Level 7** is self-cancelling: the 18 block additions per level cost 135 MFLOP against a 120 MFLOP matmul saving on a 1024-side family (77 vs 138 at level 6).
+- **Knob sweep** (Kaggle, 10 mini MLPs, baked 1e9 truth, paired vs base): AGE_OLD 4→5 raw −2.0% (better on 8/10) but cost +3.0% → adjusted +1.0%; R_OLD2 224→192 / 256, LAM_SCALE 0.90 / 1.00, BETA 0.8 / 1.2 all within ±0.6% raw. The author's constants are at the adjusted-score optimum.
+- The join machinery (basis re-fit, ≈50 u) is four dense products on the joiner's own legs plus projections; the author's "≤ 4% headroom" verdict stands.
+
+## 10. What the leaders' formulation must satisfy (derived from §3–§8)
+
+Any method reaching raw ≤ 2e-8 at ≤ 0.16 B carries a **realized, odd, full-rank** object whose slices are needed at every layer from every birth, at ≤ 2 dense matmuls per layer for all deep content. It is not a sum over sources; not a low-rank, diagonal, trace or sketched surrogate of the products or of their contractions; not an even closure; not a k ≤ 2 aggregate state; not a pooled core of rank < 250; not a recursion on the slices. What remains on paper: (a) a closure whose third-order transport errors are compensated inside the moment equations by its treatment of higher orders (testable by retuning the closure with the old tier removed — [OPEN], §11); (b) a source-agnostic formulation of κ₃ that never separates births (characteristic-functional or response-function type) for which no cost-complete update is known.
+
+## 11. Open experiments [OPEN]
+
+- **Compensating closure (done, negative).** With the old tier removed the raw MSE is 7.43e-7 (32×) and no closure knob moves it: κ₄-regeneration scale 0.5–2.0 → 7.45–7.56e-7, frozen table 7.42e-7, a one-time young amplitude γ = 0.9 / 1.1 / 1.2 / 1.4 → 8.7e-7 / 6.8e-7 / 7.0e-7 / 9.9e-7 (a shallow −8 % optimum, still 30× the base). Keeping one more / one fewer age gives 4.9e-7 / 1.1e-6: the omitted content decays geometrically, ×0.66 per age, so every age is needed. (10 mini MLPs, baked 1e9 truth.)
+- **Round-3 proposals (done, negative).** Two new approximations from the third consultation were falsified on the dumps: (a) *cubic source-index coding* — pooling the old sources with skew codes (Eζ = 0, Eζ³ = 1) is unbiased because the slice functional is cubic, but the cross-source interference variance is ~m× the signal: 250–530 % error with 1–3 channels, 83–130 % with 32; (b) *birth-operator compression* a_b ≈ diag(d) + UVᵀ — the birth operator is exactly the row-scaled off-diagonal post-ReLU covariance (A_s = P_s·diag(w1)C_off to 1e-5 at every layer), has zero diagonal and a flat spectrum (r99 = 310–809), and gives 57–73 % H error at k = 32, 16–22 % even at k = 384.
+- **Adjoint contraction of the slices (own idea, done, negative for cost; positive for understanding).** The final mean's sensitivity to a mid-chain covariance perturbation, J_{l→16}, has 99.96 %-energy rank 944 → 173 from l = 15 to 1, so the slice products could be contracted against it at n²ρ instead of n³ — but a validated first-order response model (random δC injected into the chain: R² 0.9999 at l = 14, 0.9957 at l = 10, all path coefficients 1.00) shows that only 14 % of the response travels through that low-rank final-variance path; the rest is carried by the variance → E[relu] → mean shifts at the next two or three layers, whose sensitivities are near-range and full rank. The same model explains only 9–50 % of the exact effect of removing the old sources' slices, and a per-layer split shows why: at layers 12–14 the old tier acts 65–85 % through its diagonal D3 (n² per source) and 15–35 % through D21 (n³); both parts individually exceed the error budget at every layer (D21 3.7 / 3.1 / 1.8 / 1.3e-8 and D3 3.2 / 5.8 / 6.0 / 7.8e-8 at layers 10 / 12 / 13 / 14).
+- **Learned per-neuron correction (done, negative).** On all 100 public mini networks (102,400 output neurons) the final-layer residual of the chain is unpredictable from cheap even per-neuron features: cross-validated ridge on 19 features recovers 0.3 %, a quadratic expansion 0.7 %, gradient boosting 0.5 %; per-network offsets explain 0.44 %; all single-feature correlations ≤ 0.04. This is the parity theorem seen from the data side, and it closes the observable-dictionary / Stein-state / quenched-RMT-feature families as well.
+- **One-step closure floors and the copula oracle (done).** Teacher-forced on a 1024×16 network (2e8 samples per layer): the Gaussian one-step closure of the post-activation errs by 4.5–5.2e-4 RMS at layers 4–15 — three times the chain's final error — and a Gaussian copula with *exact* marginals is worse still (7.5e-4–1.1e-3): richer marginals without the odd dependence lose to plain Gaussianity. The distribution-side counterpart of the parity theorem.
+- **Rank ladder (done, negative).** Lowering the shared-basis ranks loses at every step (drift vs the full chain: R_OLD2 160/128/96 → +1.2/+3.0/+7.0e-9 for −3/−4/−5 % cost; R_OLD 320/256 → +1.6/+6.3e-9 for −6/−12 %), which also rules out a pooled Tucker core (cost ∝ r³, break-even only at r ≤ 150).
+- **ARC's reference chains at 1024×16 (measured, partial).** The published factorized K=3 chain (mlp_cumulant_propagation, Kind.SIMPLE, factor=True), run on two Phase-2 mini MLPs with ARC's own FLOP counter, costs **1523 u = 1.49 B** and reaches raw 3.7e-8 / 4.5e-8 against the baked truth — 5.9× dearer and 1.7× less accurate than V29. The leaders (133–165 u, raw 1.64–1.9e-8) are therefore ~10× cheaper than the reference K=3 chain: their formulation is neither the reference hub-tensor chain nor the per-source factorization. Augmented and K=4 variants do not fit at width 1024 (n³ / n⁴ intermediates), so the accuracy ladder was measured at 256×16 (Phase-1 public MLPs, first 16 layers, 1e9-sample truth): ARC K3-simple 1.866e-6 (factored = dense, 24 u), K3-augment 1.346e-6 factored / 1.246e-6 dense (200 / 219 u), V29 on the same networks 1.99e-6 (with its shape guard removed; its base path gives 5.75e-6). At 256 V29 *is* K3-simple; augmentation buys 1.5× in MSE for 8× the cost. ARC's counter attributes the factored chain's cost exactly half to leg transport and half to slice formation, both n²R — the same wall as §4–§7. K=4 rung (synthetic 128×16, 2e9-sample GPU truth): K2 7.79e-5, K3-simple 1.23e-5, K3-augment-dense 9.97e-6, K4-simple 7.60e-6 at 516 u already at width 128 (n⁴-class). The leaders' 1.3× accuracy margin over V29 equals one rung of this ladder; ARC's implementations of that rung cost 5–170× K3-simple. K4-augment — [OPEN].
+- **Column screening of sources (done, negative).** Sources born deep in the network have their birth-column energy e_j = w2_j²‖a_j‖²‖p_j‖² concentrated (per-source error ≤ 1.2% at 70% of columns for births ≥ 10), and a source's transport/contraction cost is linear in its column count. End-to-end, with a mask fixed at birth, the drift against the full chain is 8.4e-10 / 3.0e-9 / 6.7e-9 for deep-birth fractions 0.9 / 0.8 / 0.7 (cost −1 / −2 / −5.6%): the error grows quadratically in the dropped fraction (tolerance law) while the saving is linear, so every schedule is net negative on the adjusted score; per-layer re-ranking does not help.
+
+## 12. Negative results and things rejected on paper
+
+Measured dead: late re-formation; every single-layer and single-birth omission; trace / diagonal / sketch surrogates; k ≤ 128 aggregate states; pooled cores of rank ≤ 128; slice recursion with or without odd covariance terms; Strassen levels 6–7; all five closure knobs. Rejected on paper: a Johnson–Lindenstrauss sketch of the birth index (a linear sketch cannot preserve a trilinear sum — the reason TensorSketch failed); "birth-index-first" bilinear Gram matrices S_AA, S_AP, S_PP (D21 needs A_ij² along the birth index); an even closure λ₁C∘C + λ₂diag(C)C + λ₃diag(C)² for the odd remainder (parity); adjoint sensitivity (author's item 12; the forward covariance still needs the slices); "young-tier shadowing" (contradicted by the flat per-birth map); precision arbitrage (V29 is float32; float16 is billed as float32).
+
+## 13. Reproducibility
+
+One locally generated network (build_mlp seed 7, 1024×16) for §4–§8; public leaderboard submissions #331681 / #331686 / #331732 / #331787 and 10 MLPs of the public mini split (baked 1e9 truth) on Kaggle for §9. Scripts (to be released with the write-up under MIT): probe_rank.py, sens_probe.py, probe_query.py, probe_query_analyze.py, probe_agg.py, probe_gem.py, probe_loopholes.py, probe_columns.py, knob_test.py, the Kaggle runner. Versions: whestbench 0.16.1, flopscope 0.12.1, dataset revision v2-phase2.
+
+## 14. Disclosure
+
+The estimator change is one constant on 504aldo's MIT-licensed V29, attribution retained. Experiments, derivations and this text were produced with LLM assistance (Claude Opus 5 directed by the participant, who ran every experiment and read every number). The parity argument came from a consultation with Fable 5 and was checked by hand; candidate ideas tested in §7, §8 and §12 came from consultations with GPT-5.6 Sol, GPT-5.6 Terra, Astra 6 Ultra / Extra High, Gemini 3.1 Pro, Grok, DeepSeek and Copilot. No leaderboard feedback entered any fit.

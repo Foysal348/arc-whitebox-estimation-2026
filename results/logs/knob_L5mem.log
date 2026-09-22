@@ -1,0 +1,3 @@
+[L5mem] call 0: util 0.2671 flops 587,262,754,287 wall 66.2s residual 1.08s peakWS 0.00GB peakCommit 0.00GB
+[L5mem] call 1: util 0.2540 flops 558,473,140,719 wall 80.0s residual 0.98s peakWS 0.00GB peakCommit 0.00GB
+[L5mem] final-layer drift vs ref: rms 0.000e+00  max 0.000e+00  (final mean rms 0.889); MSE(ref, tag) = 0.000e+00

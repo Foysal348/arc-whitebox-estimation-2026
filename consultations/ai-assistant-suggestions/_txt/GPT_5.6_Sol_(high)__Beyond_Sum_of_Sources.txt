@@ -1,0 +1,569 @@
+WHestBench Phase 2 | Beyond Sum-of-Sources Research
+Open-source / literature research synthesis - 22 September 2026
+- - -Sum of Sourcesএর বাইরের আর কী
+ আরে?
+ -    2026 -  2ARCWhite BoxEstimationChallenge Phase
+Alternative formulations for 1024 x 16 bias-free ReLU MLPs
+Target lens: raw final-layer MSE ~2e-8 with compute <= 0.16 B
+একী বারেকীর উত্তর:  না - - -  sum of sourcesএকীমাত্র  formulationনায়।   Publicevidence অরেনাকী নিনানিষ্ট -implementationকেকী 
+বার্থ কেনিরেয়রে, নিকীন্তু অন্তত 10+     mathematicallydistinctstaterepresentations এরেনা  logicallyopen। সবারে%রেয় 
+আকীর্ষণী
+য় %রটি হরে*: ()  / / , ( ) -  +  , ( )  / -  i quenchedTAP AMP cavity ii gate field amplitudemodel iii operator kernel mean
+, embedding এবা/ ( ) -  /  iv input functionTT PCEcompression।
+ Researchscope
+  :   / ,   ,  2/ 3/ 4 -Excludedonpurpose plainMonteCarlo QMC ordinarymultilevelMC standardK K K source bank  
+, -  1/  , -  / ,   -propagation finite width ndiagrammatics ensemble onlyDMFT replica directlearnedweights
+>  ,   -   4-  .meansmodels andthealready testedfullkappa memorychain
+WHestBench Phase 2 | Beyond Sum-of-Sources Research
+Open-source / literature research synthesis - 22 September 2026
+1. Executive summary
+  : “Strongconclusion সবা  alternativeমারের কে6রে” বা* -evidenceএর কে%রেয় কেবানি8 8ক্ত।    PublicWHestlogs মা:*ত 
+  specificimplementations কেমারেররে; -    family levelimpossibilitytheorem <বা কীমা।
+ -  - -  : / / -      Highest upsidenon source bankroute TAP AMP Expectation Propagationstylescalarmessageson
+   ,  /  . theactualweightmatrices withOnsager cavitycorrections এটি   ensembleDMFT নায়;   algorithmactual
+-Wকেত %রে*।
+    :    ( -  /  -Mostmechanisticallytargetedroute binarygatefield dichotomized Gaussian pairwisemax entropy  
+) + -  .  -surrogate positive amplitudemarks ReLUerror এর মা:* -   sign switchingstructureসরসনির  model
+কীরের।
+  “   ” :    - -     Most differentcoordinatesystem route approximatethewholeinput to outputfunctionina
+ /   ( -  /   ), compressedtensor spectralbasis TT PCE functionaltensortrain তরপর  -0 expectationdegree
+ coefficientকের্থরেকী পড়া।
+  - -  : -  / -  .    Mostexact but riskyroute activation region Gaussian polytopeintegration Exactinprinciple
+     ; 1024-      becauseReLUnetworkispiecewiseaffine Dregioncountisthebarrier ।
+   : /      Borderlinebutimportant saddlepoint CGFpropagationfinitecumulanttruncation নায়; এটি  many
+-cumulantsকেকী -non polynomialভারেবা  resumকীররেত পরের। নিকীন্তু   dependencemodel না র্থকীরে* এটি আবার বার্থ 
+হরেবা।
+         :  / , -  , -Nopublicchallengeimplementationfoundinthissearchfor forwardAMP TAP gate fieldDG TT
+/ - ,  -  , -  /  ,  PCE TT cross sparsecharacteristic functionstate kernel meanembedding Koopmanpropagation or
+- . “  ” saddlepoint CGF Notfound মারেনা “কেকীউ কীরেরনিনা” নায়;   publicevidence পওয় যায়নিনা।
+সবারে%রেয় গুরুত্বপ:ণী  :  evidencerule একীটি 1  -     -Dconditional mixturefailureadaptivefullGMM কেকী মারের না;  -inputactive
+ ^2 ~1 -3 -  - -subspaceR e TT PCErank structure কেকী মারের না;  -   -  -Steincontrol variatefailureStein kernelstate কেকী মারের না; -local
+ -   linearizedGaussian copulafailureসবা  -copulaclosure কেকী মারের না।
+2. Problem geometry and the budget filter
+ -2 : OfficialPhase geometry  =1024,  =16,  , -  , ~ (0, ),  widthn depthL zerobiases He Gaussianweights x N I and
+-   =2^41 .     -    (0.1, / ).per networkbudgetB FLOPs Theofficialmetricusesfinal layerMSEtimesmax C B
+এই -reportএর  : engineeringlens   /  <= 0.16. usertargetC B অর্থৎ এমানা  methodরকীর যা - -source bankএর 
+( _ _   ^3)  O number of sourcesxn growth এনিড়ারেয় ( ^2), - -  ( ^3), O n low single digitO n অর্থবা   stronglycompressed
+-  -function spaceworkএ র্থরেকী।
+ : Decisioncriterion   “ ” methodfamily interesting হরে*ই %*রেবা না। প্রনিতটি -branchএর জনা    cheappremisetest
+র্থকীরেত হরেবা, যারেত  1024 16  full x port কীরর আরে6ই   /   /   rankexplosion componentexplosion closurebias ধর 
+যায়।
+3. Public failures:   কী সত্যিই বন্ধ ,    আর কী বন্ধ নয়
+ Publicresult যা সনিতই বা* যায় যা বা* যায় না
+1     DconditionalGaussianmixtures
+;  failed scoreworsened
+ 1 /2   +  fixed D Dconditioning repeated
+    covariancepropagationhaspoor
+economics
+     alladaptivemixturepropagationis
+dead
+WHestBench Phase 2 | Beyond Sum-of-Sources Research
+Open-source / literature research synthesis - 22 September 2026
+ Publicresult যা সনিতই বা* যায় যা বা* যায় না
+ -  : Gaussianscale mixtureclosure
+~2.33 -6   504  e rawin aldoprobe
+ /     onescalar scalelatentdoesnotexplain  
+  -therelevantnon Gaussianity
+-    multi componentdirectionalGMM
+/   split mergeisdead
+ -   ^2 ~1 -3 inputactive subspacelinearR e
+  inbarnobarnoprobe
+       afewglobalinputdirectionsdonot
+    linearlyexplainthefinalresidual
+-    tensor trainseparabilityor
+/    local nonlinearsubspacesaredead
+      shallowSteincontrolsgaveonlysmall
+ variancereduction
+ - -    thoseexact zero meaninputcontrols
+    donotrepaysamplingnoise
+  / -   Steinkernel zero biasdistributional
+  closureisdead
+-     local linearizedcopulapaperis
+    structurallybadatzerobias
+  =0    -linearizationatx sitsoneveryfirst
+  layerReLUkink
+    allcopulamodelsaredead
+  /  / -sourcecompression Tucker per
+    sourcerankladdershitcliffs
+/ -  3   leg source basedK compressionhasa 
+  seriousrankwall
+     allrepresentationsofthedistribution
+   havethesamewall
+4. Formulation map: 14 alternatives beyond ordinary sum-of-sources
+# / family State Distinctness  Budgetplausibility  Researchpriority
+1 / /TAP AMP cavity /  scalar vector
+ +  messages Onsager
+terms
+Genuine    Verystrongif
+derivable
+A
+2 -  /  +Gate fieldDG Ising  
+marks
+ gate
+/probabilities correlati
+ +  ons positive
+amplitudes
+Genuine ( ^2)-  O n ishtarget A
+3 
+/ /Koopman KME Galer
+kin
+   finitedictionaryof
+ /  observables mean
+embedding
+Genuine   => Ksmall strong -A
+4 -  /  TT PCE inputchaos   compressedfunction
+   coefficientsininput
+coordinates
+  Genuineaxischange -rank dependent -A
+5   / -FunctionalTT TT
+ crossintegration
+-   black boxfunction
+ tensorcores
+Genuine -rank dependent +B
+6  /   EP polyhedralgate
+integration
+   Gaussianmassover
+ gateinequalities
+Genuine   /  fewsweeps selected
+gates
++B
+7 -Characteristic
+ functionstate
+ /  sparseFourier CF
+evaluations
+Genuine -  frequency rank
+dependent
+B
+8  +  Copula rich
+marginals
+  + marginalCDFs
+ dependencecopula
+Genuine ( ^2)- ( ^3)O n O n B
+9   Adaptivestructured
+GMM
+ /  fewsplit merge
+components
+Genuine    onlyifMsmall B
+WHestBench Phase 2 | Beyond Sum-of-Sources Research
+Open-source / literature research synthesis - 22 September 2026
+# / family State Distinctness  Budgetplausibility  Researchpriority
+10 -  Transport map
+closure
+  compressedmapfrom  
+   Gaussianbaseto
+activations
+Genuine /  rank orderdependent -B
+11  -Quenchedrandom
+ matrixDE
+/   resolvents locallaws
++ -  actual Wcorrections
+  Genuineifanisotropic  ^3  fewn opspossible -/ +A B
+12  / Saddlepoint CGF -  ;  log MGFvalues tail
+ viasaddlepoint
+: -Borderline all
+ cumulant
+resummation
+   cheapifdependence
+solved
+- A hybrid
+13 -  / -Stein kernel zero
+bias
+  / Steindiscrepancy
+ transformedlaw
+Borderline ( ^2) O n target B
+14   /Angularharmonic  
+-heat semigroup
+/  spectral semigroup
+representation
+  Borderlinewith
+/chaos PCE
+ compressionneeded +C
+1. Quenched TAP / AMP / cavity message passing
+কেSনিণী   -  GENUINELYDISTINCT HIGHUPSIDE
+মা:* representation -  (   ) :  / , ,    Per neuron orsmallvector messages cavitymean variance susceptibility andOnsagerreaction
+;  -  3  .terms noper birthK sourcebank
+কেকীনা - -sum of
+ sourcesনায়
+            ,    Forwarddistributionisrepresentedbylocalmessagesonthedenserandomlinearmaps notbya
+ -  . /       ,   -    globalthird ordertensor TAP AMPcanrunontheactualW unlikeanensemble onlyDMFTscalar
+.recursion
+-2 Phase fit  .. .        -      Denseiid GaussianmatricesareexactlytheregimewhereAMP stylestateevolutionandOnsager
+  .   -     ,     (  correctionsarestrongest Ifaforward marginalanaloguecanbederived eachiterationcanbeO L
+^2)   ( _ _  ^3).n ratherthanO number of sourcesn
+প্রধনা ঝুঁ<Uনিকী  - /        .   ExistingML VAMP GAMPtheoryismostlyinverseinferencewithobservations Withno
+,         -     -  observations anaiveadaptationmaycollapsetoordinaryGaussianmean fieldandlosethefinite n
+   .quenchedcorrectionweneed
+প্রর্থমা falsifier   -  /    = ^        -   Deriveaone layercavity EPupdateforz W Thwithhdistributedfromateacher forcedprevious
+.  20   -  -    2  3.   /  layer On MLPscompareone stepfinal meanerroragainstK andK KillifOnsager cavityterms  
+ <30%     >4-8   .give residualreductionorif sweepsareneeded
+ : Evidencenote -   -          ML VAMPandML BiGAMPshowthatmultilayerdenserandomnonlinearmodelsadmit
+/ -     -  ;  -     scalar state evolutionmessagepassinginlarge systemlimits noWHest specificforwardestimatorwas
+.found
+2. Gate-field model: dichotomized Gaussian / max-entropy gates + amplitude marks
+কেSনিণী   -  GENUINELYDISTINCT HIGHUPSIDE
+মা:* representation  _ = _ _    _=1[ _>0]    _.   ,  Separateh i g ia iwithbinarygateg i z i andpositiveamplitudea i Trackgaterates pair
+,    .correlations andmarkedconditionalamplitudes
+WHestBench Phase 2 | Beyond Sum-of-Sources Research
+Open-source / literature research synthesis - 22 September 2026
+কেকীনা - -sum of
+ sourcesনায়
+        ,       Thestateisabinaryswitchingfieldplusamplitudes directlymodelingReLUsignstructureinstead
+    .ofpolynomialcumulantsofh
+-2 Phase fit   1,      .       Atlayer gatesareexactlythresholdedjointlyGaussian ADGsurrogatenaturallymatchesbinary
+/ ;      [ _], [ _ _],  -   rates covariances amarkedversioncouldpreserveE h i E h ih j andgate amplitudecoupling
+ ( ^2) .withO n state
+প্রধনা ঝুঁ<Uনিকী      ;   / -     Pairwisegatestatisticsmaybeinsufficient partitionfunctions high ordergateclusterscanbecome  
+.   -      .hard Asimplisticmarked DGcancollapsetocovariancepropagation
+প্রর্থমা falsifier   / -    128-     4/8/12.     UseofflineMC high momentdiagnosticson neuronsubsetsatlayers FitDGfromgate
+/ ,       -  [ ( ^  )].   -  means pairs thentesttriplegateprobabilitiesandone stepE ReLU W Th Killifmarked DGfails  
+  /    >=20%  -  .tobeatGaussian covarianceclosureby onone stepresidual
+ : Evidencenote      -    .   DGmodelsareestablishedforhigh dimensionalcorrelatedbinaryfields PublicWHest
+   -  .searchesfoundnogate fieldimplementation
+3. Finite Koopman / transfer-operator or kernel-mean embedding (KME)
+কেSনিণী  GENUINELYDISTINCT
+মা:* representation            _1,..., _Representthedistributiononlythroughexpectationsofachosenobservabledictionarypsi psi K  
+(    );      .orRKHSmeanembedding propagateobservablesundereachdeterministiclayer
+কেকীনা - -sum of
+ sourcesনায়
+             /  Thispropagateslinearfunctionalsofthelawinfeaturespaceratherthanrawmoments cumulants
+ .     -   .orsamples Abasiscanincludegate sensitivenonlinearobservables
+-2 Phase fit        ,        (  ^2).   -IfKistenstoafewhundreds applyingWtobasissummariescanbeO Kn Asparseconditional
+/              mean Koopmanoperatorgivesanaturalplacetoretainexactlytheobservablesthatpredict
+[ ].E ReLU
+প্রধনা ঝুঁ<Uনিকী     :        .   Closureisthewholeproblem genericnonlinearmapsneedaninfiniteobservablespace Apoor
+   -   ;  -   .dictionarybecomesanotherlow ordermomentmethod anover richdictionaryexplodes
+প্রর্থমা falsifier   32-128   ( / , | |, _+, _+^2,   )  Startwith analyticobservables CDF gate z z z selectedpairgates and
+/         .  -    fit projectionusingonlypublictrainingMLPsoranalyticquadrature Onheld outnetworkstest
+  -        >90%  .       whetherthenext layermeanliesinthespanwith residualreduction KillifKmustgrowwith
+.n
+ : Evidencenote /           KME CMEuncertaintypropagationandKoopmanliftingareestablishedinnonlinear
+ ,   .dynamicalsystems includingsparseoperators
+4. Input-space polynomial chaos in TT/CP form (TT-PCE)
+কেSনিণী   GENUINELYDISTINCTAXIS
+মা:* representation        _( )       Approximateeachtargetneuronasafunctionf j x oftheoriginalGaussianinputusing
+/     -    -  .Hermite PCEcoefficientscompressedintensor trainorcanonicallow rankformat
+কেকীনা - -sum of
+ sourcesনায়
+3         / ; -  K sourcepropagationcompressesanoutputcumulanttensoracrossneurons sources TT PCE
+  -       .   compressestheinput coordinatedependenceofthedeterministicnetworkfunction Expectationis
+WHestBench Phase 2 | Beyond Sum-of-Sources Research
+Open-source / literature research synthesis - 22 September 2026
+  -0 .simplythedegree coefficient
+-2 Phase fit       ,       .    Thefirstlayerisaridgefunction whichisextremelystructuredininputspace TensorizedPCEcan
+         .beatthecombinatorialbasissizewhenTTranksstaysmall
+প্রধনা ঝুঁ<Uনিকী       .         DenserandomWmaydestroyseparabilityquickly ThechaosspectruminpublicWHestprobeshas
+  -  ,        ;     alonghigh ordertail solowpolynomialdegreealoneisnotenough successrequireslowtensor
+   .rankdespitehighdegree
+প্রর্থমা falsifier  =64/128,  16,  - / -   8-16  .       Onn depth runTT cross TT PCEfor chosenoutputs MeasureTTrankvsdepthand
+ .      >32-64   4       integralerror KillifmedianTTrank bylayer orprojectedmodelevaluationsexceedthe
+0.16  .Bbudget
+ : Evidencenote -    -      -Low rankPCEandtensor trainuncertaintyquantificationareestablishedhigh
+ ;        .dimensionaltools thisexactWHestcompressionaxisappearspubliclyuntested
+5. Functional tensor train / TT-cross direct Gaussian integration
+কেSনিণী  GENUINELYDISTINCT
+মা:* representation  _( )     -       ;  Treatf j x itselfasatensorizedblack boxfunctiononproductGaussianquadraturegrids recover
+-    ,    .low rankTTcoresadaptively thenintegratecoresexactly
+কেকীনা - -sum of
+ sourcesনায়
+      .        Nolayerwiselawispropagatedatall Thealgorithmapproximatesthefinaldeterministicfunction
+  .andintegratesit
+-2 Phase fit -    (   ^2)     ^      ;  TT crosscanrequireO dqr functionprobesratherthanq dwhenranksraresmall Gaussian
+  .measureisseparable
+প্রধনা ঝুঁ<Uনিকী       16-   .        ; Eachfunctionprobeisafull layerforwardpass DenserandommixingcanmakeTTrankshuge
+     .thenitdegeneratesintoexpensivecubature
+প্রর্থমা falsifier -  -   .  / -        Small widthrank growthprobefirst CompareQTT TT crossrankforfinalneuronsacrossdepth
+2,4,8,16.               Killimmediatelyifranksscaleroughlylinearlywithwidthorifcrossevaluationsexceed
+       .matchedMCcountwithnolargeaccuracygain
+ : Evidencenote -     -    - -Tensor trainintegrationandtensorneural networkquadraturehavepolynomial in
+    -  .dimensioncomplexityonlyunderlow rankstructure
+6. Activation-region / Gaussian-polytope integration
+কেSনিণী   -   GENUINELYDISTINCT EXACTINPRINCIPLE
+মা:* representation        .    ,    AReLUnetworkpartitionsinputspaceintopolyhedra Oneachactivationregion everyneuronis
+;      -     .affine expectationisasumoftruncated Gaussianaffinemomentsoverregions
+কেকীনা - -sum of
+ sourcesনায়
+   :       ,  .Thestateisgeometric activationpatternsandGaussianmassofpolytopes notcumulants
+-2 Phase fit  /        .  -    Forshallow smallPLnetworksthereareanalyticmomentformulas Aprobability massbeamcould
+         .inprinciplekeeponlyregionscarryingnearlyallGaussianmass
+WHestBench Phase 2 | Beyond Sum-of-Sources Research
+Open-source / literature research synthesis - 22 September 2026
+প্রধনা ঝুঁ<Uনিকী  1024 16        .       At x theregioncountistheobviouscombinatorialwall ZerobiasplacestheGaussiancenter
+  ,     .onmanyhyperplanes makingmassspreadespeciallydangerous
+প্রর্থমা falsifier  -      .   256/1024  Estimateactivation patternmassconcentrationfromofflinesamples Iftop patterns
+      ,  -  .        captureonlyatinyfractionofmass killfull regionbeam Amorelocalvariantcanconditiononlyon  
+  1-2        .thelast layersanduseEPfortheirgatepolyhedra
+ : Evidencenote /     -      Exact analyticGaussianmomentsofpiecewise linearnetworksexistforlimited
+;          .architectures generalReLUregiongeometryispolyhedralandcangrowrapidly
+7. Expectation Propagation over gate inequalities / polyhedral cavity
+কেSনিণী  GENUINELYDISTINCT
+মা:* representation  /      ;     Representactive inactiveReLUconstraintsastruncationfactors iterativelyreplacethemwith
+        .Gaussiansitefactorsusingcavitydistributionsandmomentmatching
+কেকীনা - -sum of
+ sourcesনায়
+    /        EPworkswithapproximatefactors partitionfunctionsandtruncatedGaussiangeometryrather
+  -   .thancarryingthird ordersourcetensors
+-2 Phase fit -      .  -        -Rank onesiteupdatescanbecheap Ablock EPrestrictedtoinfluentialgatescouldaddnon
+            .GaussiangateinformationontopofaGaussianbackbonewithoutexplicitregionenumeration
+প্রধনা ঝুঁ<Uনিকী        ; 1024         EPcanbearbitrarilywrongforgeneralpolyhedra gatesperlayercanrequiretoomanysite
+.       -      .updates ReLUisnotjustanindicator activeamplitudemustalsobehandled
+প্রর্থমা falsifier     -   ,  -  /    Atonelayerwithteacher forcedGaussianinput compareEP predictedfirst secondmomentsafter
+32,64,128      .            selectedgatefactorstoexactMC Killiferrordoesnotfallmonotonicallyoriffullsweep
+   >~5 / .countmakescost u layer
+ : Evidencenote - - -           Cunningham Hennig Lacoste JulienshowEPisaccurateformanyGaussianregionsbut
+      -     ,   .canfailbadlyonarbitrarypolyhedra soitneedsaggressivefalsification notblindtrust
+8. Characteristic-function / sparse Fourier propagation
+কেSনিণী  GENUINELYDISTINCT
+মা:* representation  ( )=  ( ^  )   ,  -  /  -Trackphi t Eexp it Th atselectedfrequencies orlow rankmarginal jointcharacteristic
+ .functionfeatures
+কেকীনা - -sum of
+ sourcesনায়
+             . Characteristicfunctionsdescribethelawinfrequencyspaceanddonotrequirefinitemoments
+     _{ }( )= _ ( ^  ).Lineartransformsareexactviaphi Wh t phi h W Tt
+-2 Phase fit     .               Thelinearstepisideal IfonlyasparsesetoffrequenciesarounddirectionsrelevanttothenextW
+  ,        -      rowsisneeded asmalladaptivefrequencybankcouldcapturenon GaussianshapeneartheReLU
+.threshold
+প্রধনা ঝুঁ<Uনিকী      -    .  CoordinatewiseReLUcouplesfrequenciesandhigh dimensionalinversionisexpensive Full
+     =1024;      .multivariateCFisimpossibleatn sparsefrequencyclosuremaylosedependence
+প্রর্থমা falsifier -      =16,32,64    .  [ _+] Teacher forceonelayerandretainq adaptivefrequenciespertarget ReconstructE z
+WHestBench Phase 2 | Beyond Sum-of-Sources Research
+Open-source / literature research synthesis - 22 September 2026
+      3.          -    fromtheCFandcomparewithK Killifqgrowsrapidlywithdepthorifjoint frequencyrankis
+.high
+ : Evidencenote   .        Pilipovskyetal explicitlypropagatedistributionsofReLUnetworksthrough
+    .characteristicfunctionsforprobabilisticverification
+9. Gaussian copula + rich nonparametric marginals
+কেSনিণী      GENUINELYDISTINCTIFMARGINALSARERICH
+মা:* representation      /         -  Trackeachneuronmarginalbyquantile PDFknotsanddependenceviaaGaussianorlow rank
+  .copulacorrelationmatrix
+কেকীনা - -sum of
+ sourcesনায়
+-     -  ;       Non Gaussianityisstoredinone dimensionalmarginals dependenceisseparatedintoacopula
+      .ratherthanencodedinjointcumulanttensors
+-2 Phase fit     ( /   ),  (  )    .  MarginalReLUisexact truncate atomatzero andO qn marginalstateischeap Pairdependence  
+   ( ^2)  .canreuseanO n correlationbackbone
+প্রধনা ঝুঁ<Uনিকী  -       -    =0    .  Alocal linearizedcopulamodelispoorforzero biasReLUbecausex liesonthekink Weighted
+        ;     /  sumsunderacopulastillneedanefficienttransform Gaussiancopulamaymisstail gate
+.dependence
+প্রর্থমা falsifier      -  .  -   ,   Donottestthepublishedlocal linearizationdirectly Insteadteacher forcetruemarginals fitonly
+ ,   -  -  .     +    thecopula andtestnext layerpositive partmean Ifevenoraclemarginals copulacannotbeat
+2/ 3,   .K K killthefamily
+ : Evidencenote 2026 -   /    -  Diamzon VenturiderivesPDF momentpropagationwithGaussian copula
+,  504           .surrogates but aldocorrectlynotedtheirlinearizationassumptionsareunfavorableforthischallenge  
+     -   .Thatdoesnotfalsifyanoracle marginalcopulatest
+10. Adaptive structured Gaussian mixture split/merge
+কেSনিণী  GENUINELYDISTINCT
+মা:* representation        ,    ApproximatetheactivationdistributionbyMGaussiancomponents splittingcomponentswhere
+         .ReLUnonlinearitycauseslargestWassersteindistortionandmergingredundantones
+কেকীনা - -sum of
+ sourcesনায়
+     ,     .Thestateisamultimodaldensity notapolynomialmomenthierarchy
+-2 Phase fit -   /       -  WGMprop styleadaptivesplit mergeisexplicitlydesignedfornonlinearneural network
+.    (  + - )       uncertainty Astructuredcovariance diag rank r couldkeepeachcomponentmuchcheaperthan  
+ .fullcovariance
+প্রধনা ঝুঁ<Uনিকী 1024      .     1   simultaneousgatescanforcecomponentexplosion PublicWHestfailuresshow Dconditional
+    -   ,        mixturesandaGaussianscale mixtureareinsufficient butnotthatadaptivedirectionalGMMis
+.impossible
+প্রর্থমা falsifier     128/256 .       -   Implementonlyonwidth first Tracknumberofcomponentsneededforone stepandrolled  
+ .   >16-32   4      .meanerror KillifM bylayer orifcomponentcountdoublesrepeatedly
+WHestBench Phase 2 | Beyond Sum-of-Sources Research
+Open-source / literature research synthesis - 22 September 2026
+ : Evidencenote   . (  2023)       /   Monchotetal ICML andearlierworkuseadaptiveGMMsplit mergethrough
+ ;        .neuralnetworks publicWHesttestscoveredmuchnarrowermixtureclasses
+11. Quenched random-matrix deterministic equivalents + anisotropic correction
+কেSনিণী    -GENUINELYDISTINCTIFSAMPLE SPECIFIC
+মা:* representation  -  / / -      -  ; Useactual WGram resolvent local lawobservablestoapproximatethefinite widthdistribution
+        - -  .retainasmallsetofanisotropicdiagonalorleave one outcorrections
+কেকীনা - -sum of
+ sourcesনায়
+  , / -        .  UnlikeensembleDMFT quenched local lawmethodscandependontherealizedmatrices Unlike
+3  ,       , , ,  .K sourcebanks thestatecanbeafewresolvents traces diagonals orsusceptibilities
+-2 Phase fit      -  . -   -RandomHematricesareexactlyrandom matrixobjects Deterministic equivalentandneural
+-       - ;      matrix lawliteraturesuggestsmanybulkquantitiesself average theunexplainedresidualmaylive
+    .inasmallanisotropiccorrection
+প্রধনা ঝুঁ<Uনিকী -  2 -8          .   Per neuron e accuracymaydependonfluctuationsnotcapturedbybulkspectra Apure
+      /      .deterministicequivalentwouldonlygiveatypical ensembleresultandfailthetask
+প্রর্থমা falsifier    /    -  :  ,   Buildaresidualregression falsifierusingonlyactual Wobservables rownorms diagonalpowersof  
+ ,  ,   , / . -Grammatrices tracemoments approximateresolventdiagonals leverage susceptibility Cross
+  .    <20-30%  29 ,     .validateacrossMLPs Iftheseexplain ofV residual scalarDErouteisunlikely
+ : Evidencenote      ;  -    TensorProgramsIIIprovesasymptoticfreeness deeprandom featureworkderives
+ .      , -  -  .deterministicequivalents Themissingpieceisaquenched per neuronfinite ncorrection
+12. Saddlepoint / cumulant-generating-function (CGF) propagation
+কেSনিণী :  -   BORDERLINE NOTFINITE ORDERCUMULANTTRUNCATION
+মা:* representation  ( )=  [ ^{ }]        ( . . -  / )  TrackK t logE e tZ atselectedtanduseasaddlepoint eg Lugannani Rice Daniels to
+    [ _+].recovertailprobabilitiesorE Z
+কেকীনা - -sum of
+ sourcesনায়
+    3        3/ 4;   Itdoesnotstorekappa sourcetensorsanddoesnottruncateafterkappa kappa asaddlepoint
+       ( ).caneffectivelyresumallcumulantsencodedbyK t
+-2 Phase fit      /   ,  .  /    Foraweightedsumofindependent weaklydependentterms CGFsadd IfTAP cavitycanproduce
+-   , +      .near independenteffectivechannels CGF saddlepointbecomesespeciallyattractiveandcheap
+প্রধনা ঝুঁ<Uনিকী     ;  -      3  .  Thelayeractivationsaredependent naiveproduct CGFignorestheexactthingK isfixing Without
+ /       -  .adependence clustercorrectionthismayreverttoGaussian qualityerror
+প্রর্থমা falsifier -   ,  “    + ”   ^  , Teacher forcehsamples compute oraclemarginalCGF independence predictionforW Th
+  /  .  -       1 -7 -  thenaddpair Bethecorrections Iforacle marginalindependenceisalreadyfarabove e one step
+,   .MSE donotport
+ : Evidencenote            ClassicalsaddlepointapproximationsaremuchmoreuniformintailsthanEdgeworth
+  ,         .expansionsforsums buttheindependenceassumptionisthekeyobstaclehere
+WHestBench Phase 2 | Beyond Sum-of-Sources Research
+Open-source / literature research synthesis - 22 September 2026
+13. Stein-kernel / zero-bias distributional closure
+কেSনিণী       BORDERLINEBUTDIFFERENTFROMSTEINCONTROLVARIATES
+মা:* representation    , -  ,        TrackaSteinkernel zero biastransform orsmalldiscrepancyfeaturesthatdirectlycorrect
+ - -     .Gaussianintegration by partsidentitiesforeachpreactivation
+কেকীনা - -sum of
+ sourcesনায়
+       ;  -         ASteincontrolvariateisasamplingtrick aStein kernelstateisadeterministicdescriptionofhow
+        [ ( )] .thelawdeviatesfromGaussianandcantargetE ReLU Z directly
+-2 Phase fit             SteintheoryalreadygivesquantitativeGaussianapproximationboundsfordeeprandomGaussian
+.  /             networks Ascalar pairwiseSteindiscrepancymightcapturetheReLUmeanerrorwithmuchless
+   3.statethanfullK
+প্রধনা ঝুঁ<Uনিকী     -      .     NoknownclosedrecurrentStein kernelupdatefordependentReLUlayers Itmaysecretlyrequire
+  -    .thesamehigh orderinformationascumulants
+প্রর্থমা falsifier  -  :    -      Offlineteacher forcedtest regresstheexactReLU meanresidualagainstcandidateStein
+ ( - -  , -  ,    ).  observables density at zeroproxy zero biasdisplacement pairwiseSteinmatrixsummaries Killif 
+- -  ^2         .out of sampleR isloworcorrectionisnotstableacrossdepth
+ : Evidencenote   -       -  . -  PublicWHestStein CVfailuresdonottestthisdeterministic stateidea Stein method
+   / ,     .literaturesuppliesapproximationidentities bounds notareadycompetitionestimator
+14. Angular harmonics / heat-semigroup / spectral smoothing
+কেSনিণী   BORDERLINESPECTRALFAMILY
+মা:* representation    ,         -   Afterexactradialseparation representtheangularfunctiononthespherevialow degreespherical
+/   ;       -harmonics Gegenbauerridgecomponents equivalentlyviewGaussianexpectationasaheat
+     .semigroupsmoothingoftheCPWLfunction
+কেকীনা - -sum of
+ sourcesনায়
+   /       .     -0 Thisworksinfunction spectralspaceratherthanneuroncumulantspace Themeanisthedegree
+   .modeafterangularpropagation
+-2 Phase fit     :   .     Positivehomogeneityisunusuallyfavorable radiusseparatesexactly ReLUridgefunctionshave
+   ,       .structuredsphericalharmonicexpansions soacompressedzonalrepresentationisconceivable
+প্রধনা ঝুঁ<Uনিকী      =1024   ;  -   Thenumberofharmonicsind explodeswithdegree publicchaos spectrummeasurements
+   -  .      ,   -  showaheavyhigh ordertail Withouttensorcompressionthisisdead andwithlow degree
+       .truncationitmaybecomeordinaryHermitemomentclosure
+প্রর্থমা falsifier            .   >6-8 Onsmallwidthsmeasureangularspectralenergyandtensorrankbydegree Killifdegree
+       .     /  carriesmaterialmeancorrectionorcoefficientrankexplodes KeeponlyifaGram zonal
+    .representationavoidsexplicitharmonicenumeration
+ : Evidencenote     -    /  ,      Usefulmainlyasabasis designideaforTT operatormethods notasastandaloneexplicit
+ .harmonicexpansion
+WHestBench Phase 2 | Beyond Sum-of-Sources Research
+Open-source / literature research synthesis - 22 September 2026
+5. The strongest new combinations (not individual methods)
+  - /  +    CombinationA TAP AMP saddlepointCGF  /          Usecavity Onsagertoturneachdenseweightedsumintoan
+   ,        /     approximatelydecoupledscalarchannel thenuseasaddlepointratherthanaGaussian Edgeworthtruncationforthe
+ . scalarchannel যানি কীজ কীরের,  -sourcebank এর   - -dependencecorrectionmessage passing এ যায়, আর -  non Gaussian
+  -marginalshapeCGF এ যায়।
+  -   +   +   CombinationB Gatefield markedamplitudes EP / -      ;  DG Ising stylegatecorrelationscapturesignstructure EP
+  -   ;     .     handlesselectedhigh influencegateconstraints conditionalpositiveamplitudescarrymagnitude ThisattackstheReLU
+       3 .kinkdirectlyratherthanreconstructingaglobalK tensor
+  -    + - / -   CombinationC Angularradialseparation TT PCE TT cross      (  Radiusisanalyticallyintegratedonce already
+).   / -      / .        known Theremainingsphere input directionfunctioniscompressedinTT PCE Thisavoidswastingtensorrankona
+          -  .nuisanceradialdimensionandismuchmoreinterestingthanplainlow degreePCE
+  -         CombinationD QuenchedRMTobservablesasanoperatordictionary  / / /  Useresolvent Gram leverage susceptibility
+      -  /  .        -featuresfromactualWasthelow dimensionalKoopman KMEdictionary Thisisaprincipledwaytoinjectnetwork
+ -     .specificfinite widthinformationwithoutsourcehistory
+6. What I would test first: a five-gate research ladder
+ 1 - /   (   )Gate TAP AMPfeasibility highestinformationvalue :   ,    Beforefullderivation testwhetheran
+/        -  -    Onsager cavitycorrectioncomputedfromactualWandteacher forcedprevious layerstatisticspredicts
+ -   .  20  ,  4/8/12/15. : >=30%   -theone stepresidualdirection Use publicMLPs layers Promotion reductioninone
+    -    ( ^2)  <=2    .stepmeanMSEonheld outMLPswithO n or uequivalentextrawork
+ 2 -  -  Gate Markedgate fieldoracle :      /      Givethemethodoraclegatemeans paircorrelationsfromMCandtest  
+  +     -  .   “  whetherDG conditionalamplitudereconstructsthenext layermean Thisseparates representation
+”  “   .” :    2/ 3 -  ;insufficient from parameterestimationinsufficient Promotion cleargainoverK K one stepclosure  
+        .rejectiforaclepairwisegatestateisstillweak
+ 3 -  -  Gate TTrank growthprobe :  =64/128,  8    - / -   Atn approximate finalneuronswithTT cross TT PCEand
+    . :   <=32-         recordTTrankbydepth Promotion ranksstay ishandintegralerrordecaysfasterthanmatched
+ .     .forwardevaluations Rejectonearlyrankexplosion
+ 4 - /  -  Gate CGF saddlepointoracle dependencetest :       Fromteachersamplescomputeexactunivariate
+ ,       /  .    marginalCGFs firstignoringdependenceandthenaddingpairwise Bethecorrections Ifevenoracle
+     -  -  ,     .marginalscannotproduceanaccurateweighted sumpositive partmean thesaddlepointbranchisclosed
+ 5 -   Gate sparseoperatordictionary :   32/64/128-      Builda featuredeterministicdictionarymixinggate
+,  , /  ,   . /   probabilities marginaltransforms Gram resolventdiagonals andangularfeatures Fit projectiononly
+  ;      .       ontrainMLPs evaluatefullrolloutonuntouchedMLPs Promotiononlyiferrorreductionsurvives
+    .withoutKgrowingwithn
+WHestBench Phase 2 | Beyond Sum-of-Sources Research
+Open-source / literature research synthesis - 22 September 2026
+7. Which routes could realistically hit <=0.16B?
+Route    Computeshapeif
+successful
+  Accuracyceilingrisk   Verdictbefore
+experiments
+/ /TAP AMP cavity (    ^2)   ^3O iterxLn tolown    -maycollapsetomean field   Besttheoreticalgamble
+-  +  Gate field marked
+amplitude
+(  ^2) ;  O Ln state pairupdates     pairwisegatesmaymiss
+clusters
+ -  Bestmechanism targeted
+gamble
+-  / -TT PCE TT cross (   ^2) /   O dqr probes opsif
+ ranklow
+ rankexplosion   Bestrepresentationgamble
+ /Sparseoperator KME (   ^2)   O KLn ifKsmall  dictionaryclosure  Verytestable
+-  Saddlepoint CGFhybrid   cheapafterdecoupling   dependenceishard  - ,  Goodadd on notstandalone
+ + Copula marginals ( ^2)-  ^3O n fewn  copulabias Medium
+ AdaptiveGMM    Mxcovariancecost  componentexplosion -Medium low
+ /Fullregion polytope combinatorial  regionexplosion  Lowstandalone
+8. Bottom line
+- -  “    ” Sum of sources theonlypossibleformulation নায়। এটি বাতমানা 3 -K architecture এর একীটি  veryeffective 
+, representation নিকীন্তু  ,  , ,  , -  , probabilitylaw gategeometry observables Fourierspace input functionspace
+ , messagespace অর্থবা  -   - quenchedrandom matrixstate এসবা সম্পূ:ণী আ*  -coordinatesystem এ একীই 
+   expectationproblemattack কীর যায়।
+তরেবা সবারে%রেয় বাড়া : lesson  -alternativefamily এর নামা পওয়  breakthroughনায়।  Breakthroughহরেবা এমানা একীটি 
+ representationপওয় যার   -statedimensiondepth এর সরের্থ  -sourcecount এর মারেত বারেড়া না এবা/ তবা< -  fixed W
+-   finite widthcorrectionধরের। এই -criterionএ / ,  - ,  / , TAP AMP markedgate field sparseoperator KMEএবা/ -TT
+  functioncompression সবারে%রেয় পনিরষ্কার নাত^না bets।
+বাতমানা  evidenceকের্থরেকী আমার  : researchorder 1) /  -  / ; 2)  -TAP AMPone stepderivation falsifier markedgate
+ ; 3)   ; 4)   ; 5)   . fieldoracle TTrankprobe CGFsaddlepointhybrid sparseoperatordictionary এগুরে*  failকীররে* 
+তরপর / /  -copula GMM polyhedralbranchesএ যাওয় কেযা_ক্তিক্তকী।
+WHestBench Phase 2 | Beyond Sum-of-Sources Research
+Open-source / literature research synthesis - 22 September 2026
+References and public evidence
+[ 1]     - -2 ,   . R AIcrowdWHeststarterkit Phase geometry scoreandbudget https://github.com/AIcrowd/whest-starterkit
+[ 2] 504  -2 3      - -    25   . R aldoPhase K researchreleaseandcommunitypost source bankwallsand measureddeadends
+https://github.com/504aldo/whest-p2-cumulant-k3
+[ 3] 666  -2  -  ,  , / 3/  . R barnobarno publicPhase research conditionalmixtures Steincontrols angular K Strassenexperiments
+https://github.com/barnobarno666/ARC-White-Box-Estimation-2026
+[ 4]       - -     . R AndreiBulzanpublicWHestresearcharchive response mixtureandextensivenegativeresults
+https://github.com/AndreiBulzan/arc-whitebox-submission-and-documentation
+[ 5]   -      /  . R SkyeNygaard staticsphericalcubaturelimitsandKerdock MUBestimator
+https://github.com/SkyeNygaard/ARC-Whitebox
+[ 6]   . (  2018),       -    . R Bibietal CVPR AnalyticExpressionsforProbabilisticMomentsofPL DNNwithGaussianInput
+https://openaccess.thecvf.com/content_cvpr_2018/html/Bibi_Analytic_Expressions_for_CVPR_2018_p
+aper.html
+[ 7] , , -  (2011),     . R Cunningham Hennig Lacoste Julien GaussianProbabilitiesandExpectationPropagation
+https://arxiv.org/abs/1111.6832
+[ 8]   . ( 4  2023),         . R Pilipovskyetal L DC ProbabilisticVerificationofReLUNeuralNetworksviaCharacteristicFunctions
+https://proceedings.mlr.press/v211/pilipovsky23a.html
+[ 9]    (   2026),    -    . R Diamzon&Venturi NeuralNetworks Uncertaintypropagationinfeed forwardneuralnetworkmodels
+https://doi.org/10.1016/j.neunet.2025.108178
+[ 10]   . (  2023),        / . R Monchotetal ICML Inputuncertaintypropagationthroughtrainedneuralnetworks WGMprop
+https://proceedings.mlr.press/v202/monchot23a.html
+[ 11]     (  2026) -  -  . R DeepPolynomialChaosExpansion AISTATS scalablehigh dimensionalPCE
+https://proceedings.mlr.press/
+[ 12]   ., -      / -  . R Dolgovetal Tensor trainmethodsforpolynomialchaos high dimensionalUQ
+https://arxiv.org/abs/1503.03210
+[ 13] , ,  -       . R Wang Jin Xie TensorNeuralNetworkandItsNumericalIntegration https://arxiv.org/abs/2207.02754
+[ 14]    (2017),        - - . R Fletcher&Rangan InferenceinDeepNetworksinHighDimensions ML VAMP
+https://arxiv.org/abs/1706.06549
+[ 15]   . (2020/2021), -      . R Zouetal Multi LayerBilinearGeneralizedApproximateMessagePassing
+https://arxiv.org/abs/2007.00436
+[ 16]  (2021),   :   . R Yang TensorProgramsIII NeuralMatrixLaws https://arxiv.org/abs/2009.10685
+[ 17]   . (  2023),          . R Schroderetal ICML Deterministicequivalentanderroruniversalityofdeeprandomfeatureslearning
+https://proceedings.mlr.press/v202/schroder23a.html
+[ 18]   . (   2024),       . R Houetal PhysicaD PropagatinguncertaintythroughsystemdynamicsinRKHS
+https://doi.org/10.1016/j.physd.2024.134168
+[ 19]   . (  2020),    /    . R Zhuetal IFAC Kernelprobabilisticprogramming meanembeddinguncertaintypropagation
+https://arxiv.org/abs/1911.11082
+[ 20]      . R DichotomizedGaussianbackgroundandCorBiniantoolbox https://github.com/mackelab/CorBinian
+[ 21]    (1980),       . R Lugannani&Rice saddlepointapproximationforsumsofrandomvariables
+https://doi.org/10.2307/1426607
+[ 22]   . (2024/2025),          . R Apollonioetal NormalapproximationofRandomGaussianNeuralNetworksviaSteinmethod
+https://arxiv.org/abs/2307.04486
+[ 23]    -    -  . R Goldstein&Reinert Steinmethodandzero biastransformation https://arxiv.org/abs/math/0510619
+[ 24]    (2019),       . R Hanin&Rolnick ComplexityofLinearRegionsinDeepNetworks
+https://proceedings.mlr.press/v97/hanin19a.html
+[ 25]       / -  . R Measuretransportviapolynomialdensitysurrogates transport mapUQ
+https://doi.org/10.3934/fods.2025001
+WHestBench Phase 2 | Beyond Sum-of-Sources Research
+Open-source / literature research synthesis - 22 September 2026
+ : Researchcaveat         . /  ThereportseparatespublishedfactsfromproposedWHestadaptations AMP TAP
+ ,  - , -   1024 16,       forwardpropagation markedgate field TT PCEat x andquenchedDEcorrectionsareresearch
+ ,    . “    ”     hypotheseshere notmeasuredcompetitionresults Nopublicimplementationfound isnotevidenceof
+.nonexistence

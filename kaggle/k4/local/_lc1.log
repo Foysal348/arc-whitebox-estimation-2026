@@ -1,0 +1,3 @@
+layer  1: var 1.9568  k4diag -3.233e-03  |K22off| rms 6.007e-03  |K31off| rms 7.107e-03  [4s]
+layer  4: var 0.7158  k4diag 2.125e-01  |K22off| rms 9.667e-02  |K31off| rms 7.845e-02  [5s]
+layer  8: var 0.4002  k4diag 1.429e-01  |K22off| rms 8.093e-02  |K31off| rms 8.746e-02  [6s]

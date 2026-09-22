@@ -1,0 +1,39 @@
+../query_dump_L14.npz: n=1024 r=384 old sources=10 (tier2 7)
+(1) cross-source SVD of normalized U_s: energy after 1/2/3/4 modes = 0.1614 / 0.2645 / 0.3632 / 0.4607  (target 0.9996 for 2%)  [0s]
+    same, unnormalized (energy-weighted): 0.3301 / 0.5546 / 0.7276 / 0.8467
+(2) youngest old source (slot 9): Gram built [1s]; unfolding singular energy ranks (of 1024): {0.9: 87, 0.99: 186, 0.999: 273, 0.9996: 301}
+    k=  1: tensor-Frobenius err 0.9674 | query err H 0.9685  T2 0.8485  D3 0.8658
+    k=  2: tensor-Frobenius err 0.9480 | query err H 0.9449  T2 0.8311  D3 0.8326
+    k=  4: tensor-Frobenius err 0.9116 | query err H 0.9083  T2 0.7916  D3 0.7895
+    k=  8: tensor-Frobenius err 0.8521 | query err H 0.8540  T2 0.7366  D3 0.7359
+    k= 16: tensor-Frobenius err 0.7538 | query err H 0.7606  T2 0.6438  D3 0.6564
+    k= 32: tensor-Frobenius err 0.6059 | query err H 0.6125  T2 0.5160  D3 0.4992
+    k= 64: tensor-Frobenius err 0.4114 | query err H 0.4168  T2 0.3472  D3 0.3364
+    k=128: tensor-Frobenius err 0.1973 | query err H 0.1968  T2 0.1662  D3 0.1604
+(2) oldest old source (slot 0): Gram built [1s]; unfolding singular energy ranks (of 1024): {0.9: 40, 0.99: 93, 0.999: 142, 0.9996: 158}
+    k=  1: tensor-Frobenius err 0.8744 | query err H 0.8559  T2 0.5042  D3 0.4588
+    k=  2: tensor-Frobenius err 0.8338 | query err H 0.8089  T2 0.4789  D3 0.4240
+    k=  4: tensor-Frobenius err 0.7799 | query err H 0.7539  T2 0.4474  D3 0.4092
+    k=  8: tensor-Frobenius err 0.6898 | query err H 0.6694  T2 0.3953  D3 0.3614
+    k= 16: tensor-Frobenius err 0.5557 | query err H 0.5370  T2 0.3196  D3 0.2950
+    k= 32: tensor-Frobenius err 0.3781 | query err H 0.3606  T2 0.2141  D3 0.1872
+    k= 64: tensor-Frobenius err 0.1863 | query err H 0.1778  T2 0.1060  D3 0.0965
+    k=128: tensor-Frobenius err 0.0442 | query err H 0.0421  T2 0.0250  D3 0.0222
+(2) POOLED 10 old sources: Gram built [18s]; unfolding singular energy ranks (of 1024): {0.9: 86, 0.99: 190, 0.999: 282, 0.9996: 312}
+    k=  1: tensor-Frobenius err 0.9335 | query err H 0.8946  T2 0.6764  D3 0.6510
+    k=  2: tensor-Frobenius err 0.9096 | query err H 0.8735  T2 0.6494  D3 0.6329
+    k=  4: tensor-Frobenius err 0.8709 | query err H 0.8446  T2 0.6210  D3 0.6205
+    k=  8: tensor-Frobenius err 0.8144 | query err H 0.7975  T2 0.5766  D3 0.5983
+    k= 16: tensor-Frobenius err 0.7241 | query err H 0.7239  T2 0.5128  D3 0.5468
+    k= 32: tensor-Frobenius err 0.5886 | query err H 0.5990  T2 0.4151  D3 0.4424
+    k= 64: tensor-Frobenius err 0.4031 | query err H 0.4096  T2 0.2824  D3 0.2924
+    k=128: tensor-Frobenius err 0.1992 | query err H 0.1961  T2 0.1394  D3 0.1394
+(3) pooled core in Qc basis built [48s]; ||T||=6.755e+00
+    unfolding (ab)|(c) energy ranks (of 384): {0.9: 86, 0.99: 190, 0.999: 282, 0.9996: 312}
+    unfolding (a)|(bc) energy ranks (of 384): {0.9: 37, 0.99: 109, 0.999: 202, 0.9996: 237}
+    TT rank  16: Frobenius err (ab)|c 0.7241   (a)|bc 0.5153
+    TT rank  32: Frobenius err (ab)|c 0.5886   (a)|bc 0.3456
+    TT rank  64: Frobenius err (ab)|c 0.4031   (a)|bc 0.1872
+    TT rank 128: Frobenius err (ab)|c 0.1992   (a)|bc 0.0778
+    TT rank 256: Frobenius err (ab)|c 0.0445   (a)|bc 0.0155
+done

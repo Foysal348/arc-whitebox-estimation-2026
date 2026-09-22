@@ -1,0 +1,32 @@
+[L7] call 0: util 0.2592 flops 569,962,031,855 wall 80.8s residual 1.38s
+Traceback (most recent call last):
+  File "D:\Machine Learning 1 Year Challenge\Kaggle\ARC White-Box Estimation Challenge 2026\knob_test.py", line 24, in <module>
+    pred = est.predict(mlp, B)
+  File "D:\Machine Learning 1 Year Challenge\Kaggle\ARC White-Box Estimation Challenge 2026\whest-starterkit\../submission_v29/estimator.py", line 745, in predict
+    return self._predict_core(mlp, budget)
+  File "D:\Machine Learning 1 Year Challenge\Kaggle\ARC White-Box Estimation Challenge 2026\whest-starterkit\../submission_v29/estimator.py", line 1009, in _predict_core
+    smm.mm(W[None, None], legs4["AP0"][2 * ka:2 * k + extra],
+  File "D:\Machine Learning 1 Year Challenge\Kaggle\ARC White-Box Estimation Challenge 2026\whest-starterkit\../submission_v29/estimator.py", line 540, in mm
+    self.mm(Xc, Yc, Mb4, lev - 1)
+  File "D:\Machine Learning 1 Year Challenge\Kaggle\ARC White-Box Estimation Challenge 2026\whest-starterkit\../submission_v29/estimator.py", line 540, in mm
+    self.mm(Xc, Yc, Mb4, lev - 1)
+  File "D:\Machine Learning 1 Year Challenge\Kaggle\ARC White-Box Estimation Challenge 2026\whest-starterkit\../submission_v29/estimator.py", line 540, in mm
+    self.mm(Xc, Yc, Mb4, lev - 1)
+  [Previous line repeated 2 more times]
+  File "D:\Machine Learning 1 Year Challenge\Kaggle\ARC White-Box Estimation Challenge 2026\whest-starterkit\../submission_v29/estimator.py", line 533, in mm
+    Yc = self._combos(Y, YQ, "R", ("R", P, q, v))
+  File "D:\Machine Learning 1 Year Challenge\Kaggle\ARC White-Box Estimation Challenge 2026\whest-starterkit\../submission_v29/estimator.py", line 490, in _combos
+    buf, buf4 = self._buf2(key, (b, 7, P, h, q))
+  File "D:\Machine Learning 1 Year Challenge\Kaggle\ARC White-Box Estimation Challenge 2026\whest-starterkit\../submission_v29/estimator.py", line 464, in _buf2
+    b5 = fnp.empty(shape5, dtype=self.dtype)
+  File "D:\Machine Learning 1 Year Challenge\Kaggle\ARC White-Box Estimation Challenge 2026\whest-starterkit\.venv\lib\site-packages\flopscope\_ndarray.py", line 1247, in wrapped
+    result = _orig(*args, **kwargs)
+  File "D:\Machine Learning 1 Year Challenge\Kaggle\ARC White-Box Estimation Challenge 2026\whest-starterkit\.venv\lib\site-packages\flopscope\_budget.py", line 1208, in wrapped
+    return inner_fn(*args, **kwargs)
+  File "D:\Machine Learning 1 Year Challenge\Kaggle\ARC White-Box Estimation Challenge 2026\whest-starterkit\.venv\lib\site-packages\flopscope\_array_ops.py", line 544, in empty
+    result = _call_numpy(_np.empty, shape, dtype=dtype, **kwargs)
+  File "D:\Machine Learning 1 Year Challenge\Kaggle\ARC White-Box Estimation Challenge 2026\whest-starterkit\.venv\lib\site-packages\flopscope\_budget.py", line 591, in _call_numpy
+    return _call_numpy_impl(fn, args, kwargs, track_python_callbacks=False)
+  File "D:\Machine Learning 1 Year Challenge\Kaggle\ARC White-Box Estimation Challenge 2026\whest-starterkit\.venv\lib\site-packages\flopscope\_budget.py", line 540, in _call_numpy_impl
+    return fn(*args, **kwargs)
+numpy._core._exceptions._ArrayMemoryError: Unable to allocate 1.12 GiB for an array with shape (10, 7, 16807, 16, 16) and data type float32

@@ -1,0 +1,224 @@
+ResearchGPT5.6Terra MechanisticEstimationofRandomReLUMLPs
+Research GPT 5.6 Terra
+Deep Third‐Cumulant Representation for Random ReLU MLPs
+ResearchresponsetoQ1‐Q3basedonthesuppliedbenchmarknote
+Executiveconclusion
+The supplied measurements rule out the obvious ways of making the deep third‐cumulant tier cheap:
+droppingoldsources,latereconstruction,memorylesssliceclosure,ordinarylow‐rankcompressionof
+Hadamard products, source averaging, scalar shared propagators, and tensor tricks that still require
+dense contractions. The remaining opportunity is therefore not to remove deep information, but to
+changethestatevariableusedtocarryit.
+Mymainconjectureistoaggregateallold‐sourcecontentintoasingleshared‐basisstateandcompress
+thatstateinarepresentationwhoserankisnottheCP/TuckerrankoftheindividualHadamardproducts.
+Atensor‐train(TT)orcloselyrelatedobservable‐staterepresentationisthefirstmechanismIwouldtest.
+A second route is to seek a low‐dimensional quenched state‐space realization of the mapping from
+deep third‐cumulant state to the future observables 𝐷 and 𝐷 . A third, weaker route is an implicit
+21 3
+matrix‐vectororaclefortherelevantcontractions,followedbyrandomizedlow‐rankrecovery.
+The key next measurement is an aggregate observability‐rank experiment: estimate the minimal di‐
+mension of the old‐source state needed to reproduce the future 𝐷 /𝐷 outputs to the required 2%
+21 3
+RMS.Thisisthemissingquantitythatthecurrentsource‐ablationexperimentsdonotmeasure.
+1 Problemconstraintsandwhatthemeasurementsalreadyestablish
+Thebenchmarkisawidth‐1024,depth‐16randomReLUMLPwithHeinitialization. Thecostunitisone
+dense1024×1024matmul,equalto231FLOPs;thebudgetis1024suchunits. Thepublicreferencepoints
+includecovariancepropagationat24unitswithrawMSE4.05×10−6andtheV29factorized𝐾 = 3chain
+at260unitswithrawMSEabout2.13×10−8. Leadingentriesarereportedatroughly133‐165unitsand
+rawMSEaround1.64×10−8 to1.9×10−8.
+Thesuppliedanalysisgivesadecisivestructuralobservation: theold‐sourcelegsarelow‐rank,buttheir
+elementwise products are near‐full‐rank and noise‐like. At layers 6, 10, and 14, the legs themselves
+may need only roughly 100‐260 effective directions, whereas products such as𝐴∘𝑃, 𝐴∘𝐴, and 𝑃 ∘𝑃
+needroughly680‐780of1024directionsfor99%energy.1
+Thelaterparityresultisalsoimportant. Foranoldsource,thesourcecontributionisoddinthenewest
+weightmatrixwhilecovarianceandGraminformationareeven. Thereforetheconditionalexpectation
+oftheold‐sourcethird‐cumulantcontributionisexactlyzerounderthesign‐symmetricweightensem‐
+ble. Thenoise‐likeHadamardspectrumisthusnotremovablebyanannealedaverage.
+The sensitivity map closes the most tempting escape routes: late re‐formation is inaccurate; every
+layer from approximately 8 onward materially matters; and no single birth is dispensable within the
+source‐sumrepresentation.
+2 Q1‐Candidateformulationsforthedeepthirdcumulant
+1Allbenchmarkmeasurementsinthisreportaretakenasgivenfromthesuppliednote.
+1/5
+ResearchGPT5.6Terra MechanisticEstimationofRandomReLUMLPs
+2.1 1. Aggregateshared‐basisTT/Hermitecore
+Status: Conjecture. Priority: highest.
+Donotpreservetenoldsourcesastenindependent(𝐴 ,𝑃 )pairs. Insteadformoneaggregateold‐state
+𝑠 𝑠
+inthecommonbasis𝑄 ∈ ℝ𝑛×𝑟,𝑟 = 384,andrepresentitscoefficienttensorasatensor‐train:
+𝑐
+𝜅 old ≈ (𝑄 ,𝑄 ,𝑄 )⋅𝑇, 𝑇 ∈ ℝ𝑟×𝑟×𝑟.
+3 𝑐 𝑐 𝑐
+ForTTrank𝜌,
+𝑇 = ∑𝐺 [𝑎,𝛼]𝐺 [𝛼,𝑏,𝛽]𝐺 [𝛽,𝑐].
+𝑎𝑏𝑐 1 2 3
+𝛼,𝛽
+The crucial distinction from the already‐dead CP/Tucker approach is that a TT core can have high CP
+rank while possessing moderate sequential unfolding ranks. The supplied measurements only show
+thatgenericHadamardproductshaveflatsingularspectra;theydonotmeasureTTranksoftheaggre‐
+gatecoefficienttensor.
+Apracticallayerupdateis:
+𝑄̃ = 𝑊(𝑙+1)𝐷 𝑄,
+𝑙+1 𝑤(𝑙) 𝑙
+1
+followedbyre‐orthogonalization,abasischangeontheTTfactors,additionofthenewbirthcontribu‐
+tion,andTTtruncation.
+Fortherequiredobservable,
+𝐷 = ∑ 𝑄 𝑄 𝑄 𝑇 .
+21,𝑖𝑐 𝑖𝑎 𝑖𝑏 𝑐𝑑 𝑎𝑏𝑑
+𝑎,𝑏,𝑑
+Thiscontractsthroughthesmallfactorsandneverformsdense𝐴or𝑃.
+Estimatedcost. With𝑛 = 1024,𝑟 = 384andacandidateTTrank𝜌 = 32:
+• propagating𝑄: about0.375units/layer,
+• orthogonalization/basismaintenance: about0.10−0.15units/layer,
+• TTcoretransforms: about0.15units/layer,
+• 𝐷 /𝐷 contractions: about0.4units/layer.
+21 3
+Thus the old tier would plausibly fall to roughly1.1units/layer. At 𝜌 = 64, a reasonable first estimate
+isroughly2.5‐2.8units/layer. Theseareanalyticalestimates,notmeasuredbenchmarkresults.
+Whatitloses. Only TT truncation error, and the relevant criterion is induced𝐷 RMS error, not core
+21
+Frobeniuserroralone. Thetargetis≲ 2%relativeRMSin𝐷 .
+21
+Firstfalsifyingexperiment. EstimateTTranksoftheaggregateoldcoefficientstateatonerealnetwork
+usingrandomizedunfoldingprobes;test𝜌 = 16,32,64,128. Rejectthemechanismif𝜌 ≤ 64cannotattain
+< 2%RMSerrorin𝐷 .
+21
+2.2 2. Observable‐state/Hankelrecursion
+Status: Conjecture. Priority: highiftheTTrankisnotsmall.
+Arecursionusingonly𝐷 ,𝐷 ,and𝐶 isnotenoughingeneralbecauseexacttransportofathird‐order
+21 3
+tensor mixes in off‐slice entries with unequal indices. The measured 18‐23% missing slice energy in
+thedeadmemorylessclosureisdirectevidencethatthisremainderissubstantial.
+Insteaddefineasmallquenchedhiddenstate𝑧 ∈ ℝ𝑘:
+𝑙
+𝑧 = 𝐴𝑧 +𝐵𝑢, (𝐷𝑙 ,𝐷𝑙) = 𝐶𝑧 +𝐷𝑢.
+𝑙+1 𝑙 𝑙 𝑙 𝑙 21 3 𝑙 𝑙 𝑙 𝑙
+2/5
+ResearchGPT5.6Terra MechanisticEstimationofRandomReLUMLPs
+Here𝑧 isaper‐networkstate,notanannealedexpectation. Itshouldretainpreciselytheinformation
+𝑙
+thatfuture𝐷 and𝐷 observablescansee.
+21 3
+The conceptual diagnostic is the numerical rank of a block‐Hankel operator built from future slice re‐
+sponses to old‐source perturbations. If that rank is small, a finite‐dimensional state‐space realization
+exists.
+Estimatedcost. Adenseoutputmapwithstatedimension𝑘 scalesroughlyas𝑂(𝑘𝑛2),correspondingto
+𝑘𝑛2
+= 0.015625𝑘 units/layer.
+231
+Thus𝑘 = 32isroughly0.5units/layerbeforesmallstate‐updateterms.
+Whatitloses. TheneglectedtailoftheobservableHankelsingularspectrum.
+First falsifying experiment. Build randomized block‐Hankel observations from old‐source perturba‐
+tions over layers 8‐16. Evaluate 𝑘 = 16,32,64,128. Reject the idea if even 𝑘 = 64 leaves more than 2%
+RMSerrorinthefuture𝐷 observable.
+21
+2.3 3. Exactimplicitmatrix‐vectororaclefor𝐻 = (𝐴∘𝑃)𝐴𝑇
+Status: Derivedidentity,butlikelyonlyasupportingmechanism.
+For𝐴 = 𝑄𝐹 and𝑃 = 𝑄𝐹 ,
+𝐴 𝑃
+𝐻𝑣 = (𝐴∘𝑃)𝐴𝑇𝑣.
+Let
+𝑢 = 𝐹𝑇𝑄𝑇𝑣, 𝑆 = 𝐹 diag(𝑢)𝐹𝑇.
+𝐴 𝐴 𝑃
+Thenexactly,
+(𝐻𝑣) = 𝑞𝑇𝑆𝑞.
+𝑖 𝑖 𝑖
+Thereforeamatrix‐vectorproductcanbeevaluatedwithoutmaterializingeitherdenseleg.
+Theasymptoticcostisapproximately𝑂(𝑛𝑟2)pervector. Numerically,with𝑛 = 1024,𝑟 = 384,oneoracle
+applicationisroughly0.28units/vector/source.
+For ten old sources and 𝑘 randomized probes, that is roughly 0.28 × 10 × 𝑘 units/layer, before related
+contractions. Consequently this becomes attractive only if the aggregate observable has very small
+effectiverankorifsourcesaremergedfirst.
+Whatitloses. Onlythenumericallow‐rankapproximationusedafterrepeatedmatrix‐vectorproducts.
+First falsifying experiment. Measure the singular‐value tail of aggregate old 𝐷 . If rank 32‐64 does
+21
+notgive< 2%RMSerror,abandonthisrouteasamainmechanism.
+2.4 4. Exactidentityforafullcheapmatrix?
+Derivedassessment: nogeneric𝑂(𝑛𝑟2)full‐matrixidentityisapparent.
+Onecanrewrite
+𝐻 = ∑(𝑞 ∘𝑞 )𝑐𝑇 𝑄𝑇,
+𝑎 𝑏 𝑎𝑏
+𝑎,𝑏
+where
+𝑐 = ∑𝐹 𝐹 𝐹 .
+𝑎𝑏,𝑐 𝐴,𝑎𝑗 𝑃,𝑏𝑗 𝐴,𝑐𝑗
+𝑗
+The coefficient object is cubic in 𝑟, so forming it generically costs 𝑂(𝑛𝑟3), reproducing the arithmetic
+wallalreadyobservedexperimentally. Hencetheusefulexactidentityisformatrix‐vectorproducts,not
+foracheapexplicitmatrix.
+3/5
+ResearchGPT5.6Terra MechanisticEstimationofRandomReLUMLPs
+2.5 5. Sharedpropagatorwithper‐sourcescalars
+Status: weakconjecture;lowpriority.
+Ascalarmodelwouldrequireapproximately
+𝑃 ≈ 𝛼 𝑃
+𝑠 𝑠 ⋆
+in the directions that control 𝐷 . The common downstream operator does not by itself imply scalar
+21
+sourcealignment.
+Cost. Potentiallybelow0.5units/layerifvalid.
+Firstfalsifier. Fittheoptimalscalar𝛼 afterprojectioninto𝑄 andmeasuretheinduced𝐷 residual. A
+𝑠 𝑐 21
+residualabove2%immediatelykillsthemechanism.
+3 Q2‐Threehypothesesforwhattheleaderscarry
+1. Merged deep state independent of source count. The cleanest explanation of the observed cost
+signatureisthatleaderskeepyoung‐sourcecomputationsbutcollapsedeepcontentintoashared
+stateratherthanpayingonceperoldsource‐layer. ATT/Hermitestateisoneconcreteimplemen‐
+tation. Observable: totalFLOPsversusnumberofoldsources;near‐flatscalingwouldsupportthis.
+2. Low‐dimensionalquenchedstate‐spacerecursion. Leaders may carry a small hidden state whose
+dimensionistiedtofutureobservablesratherthanthenumberofbirths. Observable: alownumer‐
+icalHankelrankintheold‐sourcechannel.
+3. Implicit operator evaluation plus small‐rank recovery. Leaders may never form the relevant 𝐷
+21
+operator explicitly, instead applying exact matrix‐vector products and recovering only what the
+finalcontractionneeds. Observable: verysmalleffectiverankofaggregateold𝐷 andcostscaling
+21
+withprobecountratherthansourcecount.
+Thesuppliedpublicmeasurementsdonotidentifywhichoftheseisactuallyused. Thefactthatleader
+cost is close to the V29 young‐tier bill is a strong cost signature, but not a proof of any particular
+implementation.
+4 Q3‐Singlemostinformativenextmeasurement
+Measureaggregateobservablestatedimension.
+For the combined old‐source state, stack future observables 𝐷 and 𝐷 across layers 8‐16 into an
+21 3
+(𝑘)
+observationoperator𝒪. Constructrank‐𝑘 approximations𝐾 usingrandomizedoperatorprobesand
+𝑜𝑙𝑑
+evaluate
+(𝑘)
+‖𝒪(𝐾 )−𝒪(𝐾 )‖
+𝑜𝑙𝑑 𝑜𝑙𝑑 𝐹
+𝜖 = , 𝑘 ∈ {16,32,64,128}.
+𝑘
+‖𝒪(𝐾 )‖
+𝑜𝑙𝑑 𝐹
+Interpretation:
+• 𝜖 < 2%: strongevidenceforacheaphidden‐stateorTT‐stylerepresentation.
+32
+• 𝜖 < 2%but𝜖 > 2%: stillhighlypromising;afewunits/layercouldplausiblyreplacetheoldtier.
+64 32
+• 𝜖 > 2%: low‐stateformulationsbecomesubstantiallylesscredible.
+128
+• Errorremainslargeuntilnearfulldimension: theleadersprobablyexploitadifferentexactalgebraic
+identityratherthancompression.
+Thismeasurementismoreinformativethananotherbirth‐ablationorlayer‐ablationmap. Thoseexper‐
+imentsalreadyestablishthatthedeepsignalisneeded;themissingvariableistheintrinsicdimension
+ofthedeepsignalasseenbythefutureobservables.
+4/5
+ResearchGPT5.6Terra MechanisticEstimationofRandomReLUMLPs
+Bottomline
+Derived: the recorded measurements rule out averaging, omission, late reconstruction, memoryless
+sliceclosure,genericlow‐rankcompressionoftheobservedHadamardproducts,andagenericcheap
+explicitfull‐matrixcontraction.
+Conjecture: themostpromisingunexploredmechanismisamergedshared‐basisrepresentationwhose
+complexityisgovernedbyTT/observable‐staterankratherthanbytherankof𝐴∘𝑃 orbythenumber
+ofoldsources.
+Measure next: determine the rank needed to reproduce the aggregate old‐source 𝐷 /𝐷 response
+21 3
+over the future layers. That single experiment should tell you whether the problem is fundamentally
+compressibleinanobservable‐statesense, anditdirectlytargetstheunexplainedgapbetweenV29’s
+260‐unitcostandtheleaders’133‐165‐unitcost.
+Source basis: the supplied research note describing the 1024‐wide, 16‐layer random ReLU MLP benchmark,
+V29 measurements, sensitivity maps, parity result, and the listed dead approaches. Quantitative estimates in
+thisresponseareanalyticalproposalsunlessexplicitlymarkedasmeasuredinthesourcenote.
+5/5

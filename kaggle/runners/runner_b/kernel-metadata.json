@@ -1,0 +1,15 @@
+{
+ "id": "foysalemonshanto/whest-runner-b",
+ "title": "whest-runner-b",
+ "code_file": "whest-runner.ipynb",
+ "language": "python",
+ "kernel_type": "notebook",
+ "is_private": true,
+ "enable_gpu": false,
+ "enable_internet": true,
+ "dataset_sources": [
+  "foysalemonshanto/whest-estimators-b"
+ ],
+ "competition_sources": [],
+ "kernel_sources": []
+}

@@ -1,0 +1,27 @@
+[ref] util 0.2592 (118s)
+[keeplast_1] util 0.2592 mse_vs_ref 4.852e-07
+[keeplast_2] util 0.2592 mse_vs_ref 4.172e-07
+[keeplast_3] util 0.2592 mse_vs_ref 3.156e-07
+[dropold_L5] util 0.2592 mse_vs_ref 3.429e-09
+[dropold_L6] util 0.2592 mse_vs_ref 1.138e-08
+[dropold_L7] util 0.2592 mse_vs_ref 1.450e-08
+[dropold_L8] util 0.2592 mse_vs_ref 2.572e-08
+[dropold_L9] util 0.2592 mse_vs_ref 2.712e-08
+[dropold_L10] util 0.2592 mse_vs_ref 5.177e-08
+[dropold_L11] util 0.2592 mse_vs_ref 5.192e-08
+[dropold_L12] util 0.2592 mse_vs_ref 7.124e-08
+[dropold_L13] util 0.2592 mse_vs_ref 6.687e-08
+[dropold_L14] util 0.2592 mse_vs_ref 8.189e-08
+[dropold_L15] util 0.2592 mse_vs_ref 6.417e-08
+[dropslot_0] util 0.2592 mse_vs_ref 1.303e-07
+[dropslot_1] util 0.2592 mse_vs_ref 2.677e-07
+[dropslot_2] util 0.2592 mse_vs_ref 1.822e-07
+[dropslot_3] util 0.2592 mse_vs_ref 1.919e-07
+[dropslot_4] util 0.2592 mse_vs_ref 1.579e-07
+[dropslot_5] util 0.2592 mse_vs_ref 2.095e-07
+[dropslot_6] util 0.2592 mse_vs_ref 1.922e-07
+[dropslot_7] util 0.2592 mse_vs_ref 1.679e-07
+[dropslot_8] util 0.2592 mse_vs_ref 1.734e-07
+[dropslot_9] util 0.2592 mse_vs_ref 1.813e-07
+[dropslot_10] util 0.2592 mse_vs_ref 1.691e-07
+done

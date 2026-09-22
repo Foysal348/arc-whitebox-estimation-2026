@@ -1,0 +1,30 @@
+{
+ "ang": {
+  "file": "v31ang.py",
+  "env": {}
+ },
+ "row0.25": {
+  "file": "v35row.py",
+  "env": {
+   "V35_ROWLAM": 0.25
+  }
+ },
+ "row0.5": {
+  "file": "v35row.py",
+  "env": {
+   "V35_ROWLAM": 0.5
+  }
+ },
+ "row1.0": {
+  "file": "v35row.py",
+  "env": {
+   "V35_ROWLAM": 1.0
+  }
+ },
+ "row1.5": {
+  "file": "v35row.py",
+  "env": {
+   "V35_ROWLAM": 1.5
+  }
+ }
+}

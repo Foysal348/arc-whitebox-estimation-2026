@@ -1,0 +1,309 @@
+GitHub research report - deep third-cumulant cost wall
+Page 1
+ GitHub Research Report: Deep Third-Cumulant
+ Cost Wall
+ ARC White-Box Estimation, Phase 2 geometry: width n=1024, depth L=16, budget B=2^41 FLOPs
+Search scope. I resumed from the GitHub API rate-limit point and continued with direct GitHub code/repository/commit
+search plus indexed GitHub web search. The search covered challenge-specific fingerprints (whest, K3_SIMPLE,
+FactoredTensor, D21, V29), Khatri-Rao/MTTKRP, Hadamard low-rank algorithms, TensorSketch, tensor
+hypercontraction/ISDF, tensor trains, dynamic low rank, polynomial/Wiener chaos, response/adjoint methods, and
+higher-cumulant implementations. I then opened the most relevant estimator files and experiment ledgers rather than
+relying on README titles.
+ Bottom line. I did not find a published exact representation that collapses V29's 107-u old-source tier to <=8
+u/layer while retaining the measured 2% D21 tolerance. I did find one strong, immediately testable accuracy
+lever that appears absent from public V29: radial/angular reparameterization of the Gaussian input. I also
+found a new, sharply falsifiable cost direction inspired by ISDF/tensor hypercontraction: compress the
+already-contracted old-source query in a shared row space, not the Hadamard product.
+1. The problem, identified precisely
+The hard part is no longer K3 accuracy in the abstract. It is a representation-cost mismatch: the deep K3 information is
+empirically indispensable, but its natural source representation forces dense Hadamard-product contractions. The
+leaders' bill says that the same information must either be represented without source identity, or contracted through a
+shared object that avoids per-source dense re-formation.
+ For an old source b: A_b = Q F_A,b, P_b = Q F_P,b D21_b contains (A_b o P_b) A_b^T and (A_b o A_b) P_b^T.
+Measured: A_b, P_b are low-rank; A_b o P_b and A_b o A_b are near full-rank.
+The public V29 solution therefore uses the only obvious compromise: store old legs in shared low-rank bases, re-form
+enough dense content to take the Hadamard products, and pay approximately 107 u for the old tier. Your measurements
+close the usual alternatives: lower shared rank, CP/Tucker caps, source dropping, slice recursion, even-statistic closures,
+TensorSketch, and backward sensitivity.
+What survived the GitHub audit
+Finding
+Status
+Estimated cost
+Why it matters
+Angular/radial state
+Strong - measured in a public
+Phase-2 K3 estimator
+~0 extra u recurrent; O(n^2)
+first-layer work
+Raw K3 MSE improved 7.9% at
+n=1024,L=16 in an independent public
+implementation.
+Shared query-space ISDF /
+row skeleton
+Conjecture - not yet measured
+on V29
+~4-6 u/layer for old tier if shared
+dimension s<=256
+Targets the rank~230 contracted query, not
+the full-rank Hadamard product.
+Penultimate exact K4
+residual contraction
+Small accuracy rider
+~1.02 u once with level-5
+Strassen, if residual slices
+already available
+Public code gives an exact two-matmul
+output correction; historical gain ~0.9%.
+Shared squared-propagator
+identity
+Derived negative
+Exact lift is O(n^2 r^2), too
+expensive
+Shows why T_b=T_c X does not by itself
+remove the Khatri-Rao wall.
+
+GitHub research report - deep third-cumulant cost wall
+Page 2
+2. Finding #1 - Angular/radial reparameterization
+Evidence source: public repository barnobarno666/ARC-White-Box-Estimation-2026, Phase 8 report and
+candidates/estimator_p8_final.py. The repo records an official Phase-8 submission (#330178) at 69.58%
+utilization. More importantly for us, its local n=1024,L=16 ablation isolates the angular representation itself.
+[Derived] Because the network has no biases and ReLU is positively homogeneous, every layer is degree-1
+homogeneous in the input. Write a Gaussian input as
+ X = (R / sqrt(n)) Y, R = ||X||_2 ~ chi_n, Y = sqrt(n) X / ||X||_2, Y uniform on the sphere of radius
+sqrt(n), R independent of Y.
+Then for every layer l, exactly:
+ h_l(X) = (R / sqrt(n)) h_l(Y).
+For any homogeneous degree-p raw moment, the radial factor is known analytically:
+ a_p = E[(R/sqrt(n))^p] = 2^(p/2) Gamma((n+p)/2) / (Gamma(n/2) n^(p/2)). At n=1024: a1=0.99975589, a2=1,
+a3~1.00073233, a4=1.00195312.
+The spherical input Y has Cov(Y)=I and zero third cumulant, but a nonzero fourth cumulant. If c4 denotes the diagonal
+fourth cumulant,
+ c4 = kappa4(Y_i,Y_i,Y_i,Y_i) = -6/(n+2) = -0.0058479532 at n=1024.
+For first-layer preactivation covariance M=W W^T, the fourth-cumulant slices needed by a K3-SIMPLE style closure are
+ s4_i = c4 * M_ii^2 s22_ij = (c4/3) * (M_ii M_jj + 2 M_ij^2), i != j.
+[Measured in the public Phase-8 code] On width 1024, depth 16: Gaussian K3 raw MSE 3.7859e-8 -> angular
+K3 3.4859e-8, a 7.92% reduction with 8/8 wins. On a locked 12-network confirmation panel the reduction was
+about 7.47% with 11/12 wins. K2 and K2+K4 variants improved 15.6-17.0%.
+Why this is outside the V29 dead list. I searched the public V29 repo (504aldo/whest-p2-cumulant-k3) for
+angular/spherical/chi-state initialization. Its "radial" terminology refers to the K4 radial core, not this input-distribution
+reparameterization. Public V29 initializes mu=0, C=I and starts K4 state later; it does not appear to run the spherical-input
+chain.
+Cost. The recurrent equations need not change. The added work is one first-layer O(n^2) construction for s22 plus O(n)
+output rescaling. In your unit D=n^2(2n-1), this is effectively <0.001 u/network beyond work V29 already performs.
+ Expected gain if it transfers. A naive multiplicative extrapolation gives 2.13e-8 x 0.9208 = 1.96e-8. Do not treat
+that as a prediction; V29 already has richer K4 regeneration and corrections, so overlap can reduce the gain.
+First falsifier (one network, CPU). Add only (i) c4=-6/(n+2) and the first-layer s4/s22 injection, (ii) the corresponding
+spherical-state raw-moment bookkeeping, and (iii) multiply reported means by a1. Run the same stored network with 1e9
+truth. Kill the idea if raw final MSE improves by <2%; promote to an 8-network ablation if it improves by >=4%.
+Second experiment with possible cost payoff. If angularization helps accuracy, repeat only the old-tier rank cliff
+around the current operating point: R_OLD 384 -> 352 -> 320 and nested 224 -> 208 -> 192. The hypothesis is not that
+propagator rank magically drops; it is that removing radial closure error may buy enough total error margin to tolerate a
+lower old-tier approximation.
+
+GitHub research report - deep third-cumulant cost wall
+Page 3
+3. Finding #2 - Contract first, then compress: a query-space ISDF test
+Inspiration from GitHub. Several numerical-linear-algebra repositories implement interpolative separable density fitting
+(ISDF), tensor hypercontraction (THC), or exact Khatri-Rao leverage sampling. The common idea is to avoid storing a
+rank-squared pair-product object and instead select/interpolate only the rows needed by the final contraction. Relevant
+public code includes OpenFermion ISDF/THC, Yasuaki-Ito/GANSU, and exact Khatri-Rao leverage samplers.
+ The key difference from the dead low-rank-Hadamard route: do not approximate A o P. Your M3 says A o P is
+near full rank, but the already contracted query U has a much smaller numerical rank: roughly 100 for 99%
+energy and about 230 for 2% error. That is the only low-dimensional object left in the pipeline.
+For an old source with A=Q F_A and P=Q F_P, one selected physical row i can be evaluated without forming dense A or
+P:
+ a_i = q_i^T F_A (length n) p_i = q_i^T F_P (length n) row_i(U) = (a_i o p_i o d)^T F_R^T
+[channel-dependent right factor].
+Thus s selected rows cost O(s r n) per source and channel instead of O(n^2 r) to form every row. If a shared left basis
+Q_U of dimension s reconstructs the aggregate query, only those rows are required.
+Production conjecture. Reuse a query left-subspace from the preceding layer (or an anchor old source),
+transport/refresh it cheaply, evaluate only interpolation rows of the new aggregate old query, and reconstruct the full n x r
+query. This is not guaranteed by M3: M3 proves each/aggregate U is compressible, not that its left subspace is
+predictable without computing U.
+FLOP estimate. A conservative four-channel row-evaluation model is approximately 12 s n r FLOPs per old source. In
+units D=n^2(2n-1):
+s
+r
+row evaluation / source
+one n x s by s x r reconstruction
+224
+224
+0.287 u
+0.048 u
+256
+224
+0.328 u
+0.055 u
+256
+384
+0.563 u
+0.094 u
+384
+384
+0.844 u
+0.141 u
+A mixed layer with roughly ten old sources, mostly in the r=224 tier and a few in r=384, would land around 4-6 u/layer if
+s<=256 and one shared query basis/reconstruction serves the aggregate. That is inside the requested 8-u/layer target. If
+s is 384 or the basis must be rebuilt from a full exact query, the advantage largely disappears.
+First falsifier (do this before coding ISDF). At layers 10 and 14, save the exact old-tier contracted query matrices for all
+four channels. Normalize channels, then test three bases of dimension s=128,192,224,256,320: (1) oracle left SVD of the
+current aggregate query, (2) basis learned from one anchor old source, (3) previous-layer basis transported by W and
+re-orthogonalized. Measure max and RMS error for each individual channel, not only the sum.
+ PASS gate: s <= 256 AND every required channel <= 2% relative RMS, with an anchor/previous-layer basis
+(not only oracle current-U SVD). KILL gate: oracle s > 256, or non-oracle reuse > 2% on any important
+channel.
+This experiment is cheap: it operates on stored n x r query matrices and randomized SVD/QR. It should finish
+on one 1024x16 network well under an hour on CPU. If it fails, the ISDF/THC analogy is irrelevant to this
+problem despite being excellent for chemistry pair densities.
+
+GitHub research report - deep third-cumulant cost wall
+Page 4
+4. Why the shared squared propagator does not give an exact cheap
+identity
+Your suggested algebra T_b = T_c X can be written exactly in a quadratic lift. Let S=T_c. For one birth-specific X,
+ [(S X) o (S X)]_ij = sum_{a,b} S_ia S_ib X_aj X_bj.
+Define Phi(S) to contain all symmetric quadratic row features S_ia S_ib, with q=r(r+1)/2 features when S has rank r. Then
+ (S X) o (S X) = Phi(S) Psi(X) [exact].
+[Derived negative] This shares the squared propagator across births, but it does not reduce arithmetic enough. For a
+generic Q in R^{n x r}, Phi(Q) has row rank min(n, r(r+1)/2). At r=224 or 384 this is generically n=1024, so there is no
+n-independent closure. A dense multiplication through the quadratic lift costs O(n^2 r^2).
+ At n=1024, r=224: n^2 r^2 / [n^2(2n-1)] ~= r^2/(2n) ~= 24.5 u before source-specific right contractions.
+Therefore the identity is useful only if Phi(Q) has an unusually small interpolative rank for the particular contracted
+queries. That collapses exactly to the query-space experiment in Section 3. This is why I would not implement a full
+quadratic lift.
+5. Hermite/Wiener chaos in the current W: exact decomposition, no
+hidden cheap order
+For fixed incoming K3 and current Gaussian linear map B=W diag(w1), a D21 term is cubic in B:
+ D21_ik = sum_{a,b,c} B_ia B_ib B_kc K_abc.
+For a Gaussian row, decompose
+ B_ia B_ib = Sigma_ab + H2_i,ab.
+So the current-weight dependence terminates exactly into a degree-1 chaos term plus a degree-3 chaos term. The
+degree-1 term is the partial-trace / mean component already represented by the thin V29 machinery. The required
+fluctuation is precisely the H2 x B degree-3 part.
+ [Derived + matched to your measurements] There is no omitted degree-2, degree-4, etc. Hermite ladder to
+truncate. T2's 12-16% expectation-only floor says the degree-3 residual is far too large to discard.
+Compressing its coefficient tensor brings us back to the same Khatri-Rao/full-rank wall. Therefore generic
+polynomial-chaos GitHub libraries do not create a new state here.
+6. Backward/adjoint route: an independent public negative result
+The Phase-8 public repo also implemented direct frozen-source contraction with backward suffix matrices. Terminal-only
+contraction was cheap (~10% utilization) but inaccurate (raw MSE around 3.2e-6 even with the angular variant). All-depth
+direct contraction cost ~64.5% utilization and still produced roughly 4.65e-7 due to open-loop nonlinear drift. This
+independently matches your own adjoint/sensitivity and late-reformation measurements.
+
+GitHub research report - deep third-cumulant cost wall
+Page 5
+7. A cheap higher-cumulant rider found in another public GitHub project
+Evidence source: paulrosu11/arc-cumulant-mlp-estimator, a repository containing hundreds of estimator
+experiments. Its geometry is older/smaller in several experiments, so the transfer is not assumed. The useful part is an
+exact contraction identity for penultimate K4 residual slices.
+If s31 and s22 are the (3,1) and (2,2) K4 slice residuals after subtracting the cheap rank-2/K4 model at the penultimate
+nonlinear layer, their exact contribution to the final preactivation K4 diagonal is
+ delta4_i = 4 sum_{a,b} W[a,i]^3 W[b,i] s31[a,b] + 3 sum_{a,b} W[a,i]^2 W[b,i]^2 s22[a,b].
+It can be evaluated with two matrix products:
+ G31 = s31 @ W term31_i = 4 sum_a W[a,i]^3 G31[a,i] G22 = s22 @ (W o W) term22_i = 3 sum_a W[a,i]^2
+G22[a,i].
+Cost at n=1024. Two dense matmuls are 2 u classically; with the allowed level-5 Strassen figure (~0.51 u/product),
+approximately 1.02 u once at the final layer, plus O(n^2) elementwise work. In that public repo the additive exact
+residual improved raw MSE by only ~0.88%, so this is an accuracy rider, not a replacement for deep K3.
+Important catch. V29 does not explicitly carry exact K4 residual slices; generating them naively would destroy the cost
+advantage. The experiment is therefore diagnostic first: obtain s31/s22 from an offline augmented teacher for one stored
+network, evaluate the final exact correction, and ask how much of V29's remaining mean error it explains.
+ PROMOTE if: final raw MSE improves >=5% on the one-network diagnostic. DEPRIORITIZE if: improvement <1-2%.
+The same repo also uses very-low-rank symmetric CP/TT-like K4 channels whose W-contracted (2,1,1) diagonal costs
+O(n^2 r):
+ A_q = (W o W)^T (U_q o U_q), B_q = W^T U_q, delta4_i = 12 sum_q lambda_q A_iq B_iq^2.
+At r=16-32 this is effectively free compared with an n^3 unit. It is worth testing only if a rank-32 fit captures a large fraction
+of the residual output correction; do not use it as an excuse to materialize K4 sources.
+8. Public participant archaeology: what it tells us about the leaders
+I found multiple Phase-2 participant repositories and recent commit histories. They are useful controls, but none exposes
+the present 1.64e-8 to 1.9e-8 at 133-165 u frontier.
+Repository / artifact
+What it demonstrates
+Relevance to V29 wall
+504aldo/whest-p2-cumulant-k3 (V29)
+Public factorized K3, shared old bases, fused two
+contractions, K4 regeneration, Strassen engineering.
+Our baseline; confirms wall and dead ends.
+barnobarno666/... Phase 8
+Angular state gave ~7.9% K3 MSE reduction; official
+score 2.3053e-8 at 69.58% utilization.
+Strong accuracy trick, but still not the
+133-165 u leader mechanism.
+saademad200/arc-whitebox
+K3_SIMPLE reached historical leader-class raw
+accuracy only when essentially uncapped; A=B
+symmetry cut generic factor cost.
+A=B symmetry is already inherent in V29's
+shared propagator structure.
+paulrosu11/arc-cumulant-mlp-estimator
+Large experiment archive; K4 Tucker/TT/exact residual
+output corrections.
+Useful for cheap K4 riders, not deep K3
+cost.
+Inference. The present leaders' deep representation is still probably private/unpublished. Exact score-string and
+compute-signature searches did not surface a matching public implementation. The public record supports the view that
+ordinary uncapped K3 can reach the right accuracy class but not the cost class; the missing innovation remains a
+deep-source contraction/state change.
+
+GitHub research report - deep third-cumulant cost wall
+Page 6
+9. Recommended experiment order
+1 - Angular V29 patch
+Cost: ~0 additional u. Why first: already measured positive at the exact n=1024,L=16 geometry in an independent K3
+chain. Kill: <2% raw-MSE gain on one 1e9-truth network.
+2 - Angular rank-cliff recheck
+Cost to test: a handful of one-network runs. Goal: see whether the accuracy margin permits R_OLD/R_OLD2 reduction.
+This is the only immediate path from the angular accuracy gain to the 133-165 u cost regime.
+3 - Shared query-space SVD/ISDF diagnostic
+Cost: offline CPU minutes. Pass: s<=256 and <=2% error using a non-oracle reusable basis. If it passes, implement
+interpolation-row contractions; projected old-tier cost ~4-6 u/layer.
+4 - Penultimate exact K4 residual oracle
+Cost: ~1.02 u at final layer once integrated, but first test offline. Pass: >=5% raw-MSE gain from teacher residual slices.
+Otherwise ignore.
+Decision rule after these four tests
+ If angularization gives its expected accuracy gain but the query-space reusable basis fails, then the GitHub
+search has not uncovered a credible <=8-u/layer deep-old representation. At that point I would stop
+searching generic tensor libraries: the remaining evidence says the leader mechanism is either
+unpublished, challenge-specific, or exploits a property not visible in per-source spectra. The next
+measurement should then be a production-grade temporal observability rank of the exact aggregate old
+query under the actual next-layer map.
+10. Source index
+G1 - 504aldo/whest-p2-cumulant-k3
+https://github.com/504aldo/whest-p2-cumulant-k3
+Public V29 implementation, findings log, generators and ablations.
+G2 - barnobarno666/ARC-White-Box-Estimation-2026
+https://github.com/barnobarno666/ARC-White-Box-Estimation-2026
+Phase-2 experiment history; Phase 8 angular-state estimator/report and official submission record.
+G3 - saademad200/arc-whitebox
+https://github.com/saademad200/arc-whitebox
+Independent K3_SIMPLE implementation, cost experiments, A=B invariant and rank-growth measurements.
+G4 - paulrosu11/arc-cumulant-mlp-estimator
+https://github.com/paulrosu11/arc-cumulant-mlp-estimator
+Large archive of cumulant estimator experiments; exact K4 output residual and TT/Tucker channels.
+G5 - quantumlib/OpenFermion ISDF/THC
+https://github.com/quantumlib/OpenFermion
+Interpolative separable density fitting and tensor hypercontraction implementations.
+G6 - Yasuaki-Ito/GANSU
+https://github.com/Yasuaki-Ito/GANSU
+Least-squares tensor hypercontraction; randomized SVD on Khatri-Rao pair-product matrices.
+G7 - vbharadwaj-bk/fast_tensor_leverage
+https://github.com/vbharadwaj-bk/fast_tensor_leverage
+Exact leverage-score sampling for large Khatri-Rao products without explicitly forming the full product.
+G8 - tensorly/tensorly
+https://github.com/tensorly/tensorly
+Implicit MTTKRP and randomized CP routines; useful arithmetic reference but not an asymptotic escape for the dense-random V29 products.
+G9 - tgcsaba/GPSig
+https://github.com/tgcsaba/GPSig
+Randomized low-rank Hadamard-product routines; rejected here by the measured flat Hadamard spectra.
+G10 - oseledets/ttpy
+https://github.com/oseledets/ttpy
+Tensor train, TT-cross, rounding, dynamical low-rank references; largely closed by your pooled TT/Tucker rank measurements.
+
+GitHub research report - deep third-cumulant cost wall
+Page 7
+Research conclusion. The best concrete thing found on GitHub is the angular/spherical-input reparameterization: it is
+cheap, mathematically exact at the representation level, independently measured at the correct Phase-2 shape, and
+apparently absent from public V29. The best new cost experiment is not another tensor rank cap; it is a direct test of
+whether the contracted old query has a reusable <=256-dimensional row space. If that fails, I do not currently see a
+credible public method that beats the old-tier cost bound without violating your measured 2% D21 requirement.

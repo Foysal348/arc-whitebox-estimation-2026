@@ -1,0 +1,164 @@
+Round 3: Deep Third-Cumulant Compression in a Random ReLU MLP
+GPT-5.6 Sol High
+21 September 2026
+Bottom line. I do not see a deterministic exact representation that beats the two-leg/two-slice-product structure
+down to≤ 1.2 u per source-layer. The shared-propagator and Hermite directions reduce to the same symmetric-
+square coefficient space that your measurements already show is large. However, there is one genuinely different
+route worth testing: random coding over the birth/source index , not over hubs or tensor coordinates. It
+replaces m old sources by q = 2–3 pooled matrix pairs and is exactly unbiased for the desired sum conditional on
+the fixed network. Three pooled channels cost 6 .12 u per layer, independent of m. Its only unknown is coding
+variance. A second, biased route—fitting each source to an effective diagonal third leg—costs 1.02 u per source-layer
+and directly exploits the repeated Tb legs, but I expect it to fail unless a surprisingly large part of the dense birth
+leg is query-null.
+1. New proposal: cubic source-index coding
+Define the cubic source functional
+Φ(T,A ) = (T◦T )A⊤ + 2(T◦A)T⊤, D 21 = 1
+3
+X
+b
+Φ(Tb,Ab).
+Here Ab denotes the transported third leg eAb.
+[Derived] Φ is homogeneous cubic. Let ζb be independent real codes satisfying
+Eζ = 0, Eζ 3 = 1.
+For one coding channel define
+T (q) =
+X
+b∈old
+ζqbTb, A (q) =
+X
+b∈old
+ζqbAb.
+Expanding Φ(T (q),A (q)) gives terms with code factor ζbζcζd. Independence and zero mean kill every index pattern
+except b =c =d. Therefore, conditional on the realized network,
+Eζ Φ(T (q),A (q)) =
+X
+b
+Φ(Tb,Ab).
+This is not an annealed/even closure: every pooled matrix is a linear combination of the actual quenched propagators,
+and the output remains odd under the relevant weight sign flip.
+A convenient two-point real code is
+ζ =φ with probability 0.276393, ζ =−φ−1 otherwise,
+where φ = (1 +
+√
+5)/2. It has Eζ = 0, Eζ 2 =Eζ 3 = 1, Eζ 6 = 5; among two-point real codes with the first and
+third moments fixed this minimizes the sixth-moment variance proxy.
+State and update. Per coding channel keep only two dense matrices ( T (q),A (q)), i.e. 2n2 floats. All old sources
+see the same next map M, so
+T (q)←MT (q), A (q)←MA (q).
+When a source crosses the age gate, add ζqbTb and ζqbAb to that channel. No source identity is needed afterward.
+Cost. One channel uses two level-5 Strassen products for transport and two for the slice:
+2(0.51) + 2(0.51) = 2 .04 u/layer.
+Thusq = 2 costs 4.08 u/layer andq = 3 costs 6.12 u/layer, below the requested 8 u old-tier ceiling. State size is 4 n2
+or 6n2 floats (16 or 24 MB in fp32). Applied to the whole K3 history rather than only the old tier, three channels
+1
+cost about 16× 6.12 = 97.9 u for all source transport/slicing, which is in the right ballpark for a 133–165 u total
+method after the covariance/closure bill.
+Variance control. Do not code the cheap partial-trace piece. For arbitrary X,Y , write
+X◦Y = 1m⊤
+XY +FXY, (mXY )j =n−1 X
+i
+XijYij.
+The rank-1 part of each coded Φ is cubic and can be subtracted exactly in O(n2), while the exact sum of the
+per-source thin parts is added back. The random estimator then acts only on the expensive centered fluctuation F ,
+avoiding variance from a much larger component you already know how to compute.
+A useful hybrid under the same budget is to keep p troublesome sources exactly and use q coded pools for the
+rest. Each exact source or coded pool costs about 2 .04 u/layer, so p +q = 3 costs 6 .12 u/layer. Examples:
+(p,q ) = (0, 3), (1, 2), (2, 1).
+[Measure-this] First falsifier (the experiment I would run first). At layers 10 and 14, use the stored dense
+old legs and compute the exact centered old-tier sum once. Generate 16–32 independent skew-code channels; each
+sample requires only two dense slice products because no transport is needed for this test. From those samples
+estimate the relative RMS error of averages of q = 1, 2, 3, and also test (p,q ) = (2, 1) after peeling the two sources
+with largest centered contribution norm. Kill the idea if the best configuration with p +q≤ 3 is above 2% at either
+layer. This is roughly 32–64 dense products and should fit comfortably within an hour in NumPy.
+Important limitation. Exact compression with q < mcoded channels is impossible for arbitrary sources.
+Moment matching would require a rank-q representation of the order-3 superdiagonal tensor Pm
+b=1e⊗3
+b , whose CP
+rank is m. Therefore this proposal lives or dies entirely on the actual contracted cross-source interference being
+small after the thin control variate. It is an approximation, but a new one: it sketches the source index ( m ≲ 10),
+not the hub index (n = 1024), so item 6 does not test it.
+2. Second proposal: fit an effective diagonal third leg
+[Derived] The two slice products are the Fr´ echet derivative of one cubic matrix map. Define
+F (T ) = (T◦T )T⊤.
+Then
+DFT [A] = (T◦T )A⊤ + 2(T◦A)T⊤ = Φ(T,A ).
+Because A =TAb, the expensive second leg is a tangent generated by the birth matrix. If the birth matrix were
+diagonal, A =T diag(d) and the two slice terms collapse exactly:
+1
+3Φ(T,T diagd) = (T◦T ) diag(d)T⊤.
+So a diagonal birth surrogate needs only one transported matrix and one slice product.
+State/update/cost. Keep (Tb,db): n2 +n numbers. Update Tb←MTb; db is fixed. Cost is
+0.51 u (transport) + 0.51 u (slice) = 1.02 u/source-layer.
+It preserves the odd full-rank fluctuation because T◦T is still formed from the realized propagator; it does not
+replace it by an expectation.
+The nontrivial version is not d = diagAb, but a query-optimal d. At the age gate let X = T◦T and let
+S = Φ(T,A )/3 be the exact source query already available from the young calculation. Fit
+min
+d
+∥S−X diag(d)T⊤∥2
+F.
+Its normal matrix is
+G = (X⊤X)◦ (T⊤T ),
+and the right-hand side is hr =x⊤
+rStr. A full fit costs about 1 .70 u once per source (two Gram products 1 .02, one
+ST product 0.51, Cholesky about 0.17). A diagonal-Gram approximation reduces the one-time fit to about 0 .51 u.
+[Conjecture] I give this a lower prior than source coding. Dense off-diagonal entries of Ab are individually
+O(n−1/2) but there are O(n2) of them, so their Frobenius energy is not asymptotically negligible. The only hope is
+that most of that energy is null in the specific future query family and can be absorbed into n effective hub weights.
+[Measure-this] Fit d for each source at age 4 using the exact current query, then evaluate the surrogate at the
+next 1, 2 and 4 stored layers without refitting. Kill it if the median error exceeds 2% after one step, or if any
+source needed by item 5 drifts above about 3% within two steps. This directly tests the off-slice failure mode that
+killed slice recursion.
+2
+3. Why the requested algebraic directions do not otherwise open a
+door
+(i) Sharing the squared propagator. [Derived] ForTb =TcXb, each row obeys
+(TcXb)⊙2
+i: = svec(tc,it⊤
+c,i)⊤Q(Xb),
+where Q(Xb) contains the symmetric Kronecker squares of the columns of Xb. Thus the exact shared object is the
+symmetric-square lift of Tc, with width
+N2 =n(n + 1)/2≃ 5.25× 105.
+The lifted matrix has size n×N2 = Θ(n3) and contracting it with an N2×n object costs Θ(n4) (about N2/n≈ 512
+dense-matmul units). Compressing this lift is precisely a Tucker/separation-rank approximation; your measured
+r≈ 250 requirement is the obstruction. So the identity exists, but it makes the wall explicit rather than removing
+it.
+(ii) Hermite/Wick in the current Gaussian weight row. [Derived] This expansion is already finite and
+exact. For a fixed incoming tensor, with gi a Gaussian row and Kc the symmetric matrix slice,
+qic =g⊤
+i Kcgi = tr(ΣKc) +⟨Kc, gig⊤
+i − Σ⟩.
+The first term is your cheap thin/trace piece; the entire hard part is exactly second Wiener chaos. There are
+no higher Hermite orders to truncate. The coefficient operator maps Sym2(Rn) (dimension N2) to Rn. A cheap
+chaos basis therefore requires low separation rank of that operator, which is the same rank phenomenon already
+measured by the pooled Tucker/vector-metric experiments. Low chaos order is not low coefficient rank.
+(iii) Backward linear response. [Derived] Pulling a quadratic query backward through a linear map preserves
+its rank-one quadratic form, but the target is a full n×n D21 family at every insertion layer (or, after composing
+with the final mean, n output coordinates with a dense quenched sensitivity). Without a low-rank final sensitivity,
+backward propagation merely exchanges the forward source triangle for a backward query triangle. The Fr´ echet
+identity above is the local manifestation: a generic tangent A still requires the second propagated matrix. A
+decisive check would be a randomized SVD of the Gaussian-chain Jacobian vec(D21l)7→δµ16; unless > 99.96% of
+its energy lies in roughly r≤ 8 modes, it cannot beat the coded-pool cost. I would not prioritize this over the
+coding test.
+(iv) Cavity/TAP/turbulence/tensor-network closures. [Conjecture] Standard moment closures are useful
+for ensemble statistics but discard precisely the quenched odd phase that parity says is essential. A temporal
+tensor-network reorder also has a three-index separator; compressing that separator returns to the measured pooled
+rank∼ 250. I see no distinct O(n2) state here after items 7–8.
+4. What I think the leaders could be doing
+[Conjecture] If the source-index coding experiment succeeds with two or three channels, it is the first mechanism
+in these three rounds that naturally explains both signatures: (1) cost nearly independent of the number of old
+births, and (2) preservation of the actual odd, full-rank fluctuation rather than its zero conditional mean. A
+practical leader implementation could keep the newest one or two sources exact and pool the rest into one or two
+skew-coded channels; four total channels cost about 8.16 u/layer for all K3 work and land naturally in the observed
+133–165 u range once the rest of the chain is added.
+The remaining 1.3x accuracy advantage over V29 does not require a full K4 tensor. After halving K3 cost, even a
+local/one-step augmented correction costing one extra Strassen product per layer is only 0 .51× 16≈ 8.2 u total.
+That is the scale I would allocate to the extra rung before considering any transported n4 state.
+If coding fails: then I cannot beat the practical two-product/tangent floor with the allowed operations. The
+strongest argument is that the hard query is the action of a high-rank symmetric-square coefficient operator on a
+realized second-chaos feature, while the repeated-leg structure only removes the second slice product when the
+third leg is effectively diagonal. Your measurements rule out every known low-rank replacement of that coefficient
+operator. In that case the only credible bill-halving approximation is exactly the query-optimal diagonal-third-leg
+test above; if that also drifts above 2%, I would regard the leader mechanism as requiring a qualitatively different
+approximation not represented in the current K3 source algebra.
+3

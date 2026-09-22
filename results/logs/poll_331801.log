@@ -1,0 +1,12 @@
+05:04:36 status=submitted score=None secondary=None msg=<p>Successfully enqueued 1 Job</p>
+
+06:14:57 status=failed score=None secondary=None msg=<p>Error : Evaluation could not complete; please retry</p>
+
+{
+ "id": 331801,
+ "created_at": "2026-09-21T23:04:26.934Z",
+ "grading_status_cd": "failed",
+ "grading_message": "<p>Error : Evaluation could not complete; please retry</p>\n",
+ "score": null,
+ "score_secondary": null
+}

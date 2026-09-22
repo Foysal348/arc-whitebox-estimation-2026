@@ -1,0 +1,177 @@
+Mechanistic Estimation of Neural Networks: Deep Third-Cumulant
+Content
+Round 1 Proposal
+Q1. A representation that avoids per-old-source dense Hadamard
+contractions
+Derived / proposal: reverse-mode adjoint through the analytic mean–covariance prop-
+agation.
+The key observation is that the ReLU closure at layer l only needs the slices
+D21 (l) = κ (z(l)) , D3 (l) = κ (z(l))
+ic 3 iic i 3 iii
+of the pre-activation third cumulant. The final mean µ(L) = E[h(L)] is a linear functional of these
+slices, because the third cumulant enters the covariance update linearly. Therefore, instead of
+forward-transporting every source, we can carry the adjoint sensitivities of the final loss with
+respect to these slices.
+Object carried
+Forward pass: only
+µ(l) = E[h(l)] ∈ Rn, C(l) = Cov(h(l)) ∈ Rn×n.
+No explicit κ sources are propagated.
+3
+Backward pass: for each layer l carry
+∂L ∂L
+S(l) = ∈ Rn×n, s(l) = ∈ Rn,
+∂D21(l) ∂D3(l)
+whereL = ∥µ(L)−target∥2. TheseareexactlytheadjointsoftheslicesneededbytheReLUclosure.
+Per-layer update
+Forward:
+z(l+1) = W(l+1)h(l), µ(l+1) = E[ReLU(z(l+1))], C(l+1) = Cov(ReLU(z(l+1))).
+The covariance update uses a Gaussian closure plus a correction linear in D21(l+1),D3(l+1).
+1
+Backward: the adjoint of the transport
+∑
+κ (z(l+1)) = W W W κ (h(l))
+3 iic i,a i,b c,c 3 abc
+a,b,c
+maps (S(l+1),s(l+1)) to a sensitivity with respect to κ (h(l)). Because the ReLU is elementwise, the
+3
+adjointof the ReLU closure then maps this to a sensitivity with respect to D21(l),D3(l). The whole
+backward step per layer is one dense contraction of an n×n matrix with W (cost n3 FLOPs) plus
+O(n2) elementwise work.
+Cost in units. n3 matmul = 1 unit. One backward pass per layer costs ≈ 1 unit (plus small
+elementwise). For L = 16, total ≈ 16 units. This is independent of the number of old sources. The
+leaders’ bill (133–165 units) is roughly V29’s young tier (153 units) plus such a 16-unit backward
+pass. Conjecture: this is what they do.
+What it loses
+It is exact to the same Hermite closure order as V29: it computes the linear effect of the true
+κ on the final mean without ever forming the full tensor. It does not approximate the slices; it
+3
+avoids transporting them forward. The only approximation is the same memoryless 4th-cumulant
+regeneration already used in V29. It loses the ability to output per-layer κ slices, but those are
+3
+not needed for the final mean.
+First falsifying experiment
+Implement the adjoint on a small network (n = 256, L = 8, one fixed seed). Compare the final 256
+means against the exact V29 sum-of-sources result. If the MSE difference is > 10
+−8
+(scaled), the
+adjoint is missing higher-order terms or the ReLU-closure adjoint is wrong. Runtime < 30 min on
+CPU. Measure.
+Q2. Three ranked hypotheses for the leaders’ “zero marginal cost”
+old sources
+1. Adjoint sensitivity method (most likely)
+What they carry: mean + covariance forward; sensitivity matrices S(l) backward.
+Cost signature: cost per layer ≈ 1 unit, independent of the number of old sources. Total cost
+should scale as O(Ln3), not O(Ln2r·#sources).
+Distinguishing observable: Onthepublicleaderboard, ifyouincreasedepthL, theircostshould
+grow linearly by ∼ 1 unit per layer. If you increase the number of old sources (e.g., by changing
+the birth schedule), their cost should not change.
+Local experiment: Implement the adjoint on one network and compare its FLOPs and MSE to
+V29. If it matches 2.1e−8 at ∼ 150 units, this is it. Measure.
+2. Adaptive Tucker decomposition of the full third cumulant
+What they carry: a single Tucker core T(l) of rank r per layer, with r decreasing from 384 at
+l l
+layer 4 to 100 at layer 14.
+2
+Cost signature: per-layer cost nr3 (with factor 2 for float64). At r = 100, nr3 ≈ 1 unit. Total
+l
+∼ 16 units.
+What it loses: section 3 says cliffs below r ∼ 150. But if the leaders use a different basis or a
+nonlinear closure that avoids cliffs, they could use r = 100.
+Distinguishing observable: Theirerrorshoulddegradesmoothlywithdepthiftheyuseadaptive
+rank. You can measure the rank of the true third cumulant tensor (not legs) at each layer. If the
+true tensor has effective rank ∼ 100 at layer 14, this is plausible. Measure the Tucker rank of
+the full κ tensor on one network.
+3
+3. Randomized sketch of the Hadamard contractions
+What they carry: for each source, a random projection of A◦P onto k ≪ n columns, with k
+chosen to reach 2% RMS error.
+Cost signature: O(knr) per source per layer. If k ≈ 100, cost ≈ 0.1 unit per source.
+Why less likely: section 3 shows the Hadamard spectrum is flat; to get 2% error you need k ∼ n.
+So no saving.
+Distinguishing observable: Their error should show stochastic variance across seeds. Public
+leaderboard MSE would fluctuate more than V29. Measure seed-to-seed variance.
+Q3. If nothing is credible, the next measurement
+If the adjoint and adaptive-Tucker hypotheses fail, the single most informative measurement is:
+Measure the exact sensitivity of the final mean to the third cumulant slices at each
+layer, for a single network.
+Concretely: takeonetrainednetwork. Foreachlayerl, perturbD21(l) andD3(l) byasmallrandom
+matrix/vector, run the exact V29 forward propagation, and measure the change in the final 1024
+means. This gives the empirical sensitivity tensor S(l). Then compute its rank (or its effective rank
+via singular values). If S(l) is low-rank (e.g., rank ≤ 50), then a factored backward pass is cheap
+and the adjoint method is viable. If S(l) is full-rank, then the leaders must be using a different
+trick.
+Cost: 16 layers × 10 perturbations × one forward pass (260 units) = 41,600 units = 41,600×231
+FLOPs ≈ 8.9e13 FLOPs. On a CPU at 1e11 FLOP/s, this is ∼ 15 minutes. Measure. This
+directly tests whether the deep third cumulant’s effect on the final mean is compressible in the
+adjoint representation, which is the only way to get it at near-zero marginal cost per old source-
+layer.
+3
+Round 2: Deep Third-Cumulant Content in Random ReLU MLPs
+Q1. Aggregate Response State: Fitting Procedure
+∑
+Object. Carry T = k sym3(G ⊗v ), G ∈ Rn×n symmetric, v ∈ Rn. Slices:
+a=1 a a a a
+∑( ) ∑
+D21 = (G ) (v ) +2(G ) (v ) , D3 = 3 (G ) (v ) .
+ic a ii a c a ic a i i a ii a i
+a a
+Transport under B = W diag(w1): G ← BG BT, v ← Bv . Cost per component per layer: two
+a a a a
+n3 matmuls = 2 units, plus n2 = 0.001 unit. Total 2k units/layer.
+Fitting at age gate. At the layer where a source becomes old (age 4), we have exact D21,D3
+from the source sum. Minimize relative error:
+min ∥D21−D21 ∥2/∥D21∥2 +∥D3−D3 ∥2/∥D3∥2.
+approx F F approx 2 2
+{Ga,va }
+Use alternating least squares. Initialize v from top singular vectors of D21. For fixed v , the
+a a
+problem is linear in G . Solve by gradient descent (500 iterations). Cost per iteration O(kn2) ≈ 10
+a
+MFLOP for k = 10; total fitting < 1 GFLOP. Measure-this.
+Expected k. FromM3,theexactcontractedqueryU hasrank∼ 230for2%error. Ourformisless
+expressive. Conjecture: k ≈ 20–50 needed for 2% on D21. Measure-this: fit k = 1,5,10,20,50
+and record relative error.
+Falsifier. Take one network, layer 6 (age gate for source born at 2). Extract exact D21,D3. Fit
+k components. If relative error > 2% for k ≤ 10, the idea fails. If < 2% for k ≤ 5, proceed to
+transport and check final MSE. Runtime < 1 hour.
+Q2. Non-source formulations
+(a) Reverse-mode adjoint. Derived/closed: adjoint sensitivity gives no cost drop because the
+forward covariance update still needs D21,D3 at every layer. Reject.
+(b) Characteristic function in random-feature basis. Carry ϕ(t) =
+E[eit·z]
+projected on a
+basis of size m. ReLU update requires a high-dimensional convolution; no known O(n2) update.
+Reject.
+(c) Quenched random tensor with known covariance. By T1, E[κ |even] = 0. The final
+3
+meanislinearintherealizedoddpart. Carryingonlycovariancelosesthesignandcannotcompute
+the mean. Reject.
+(d) Tensor-network contraction. Contract birth index j first: equivalent to forming dense legs.
+No saving. Reject.
+(e) TAP/cavity. Standard TAP gives κ = 0. Quenched odd structure requires higher-order
+3
+cavity equations, likely O(n3) per layer. Reject.
+New proposal: hierarchical Tucker of the full third cumulant. Carry κ as a hierarchical
+3
+Tucker tensor with ranks r per layer. Update under B: contract each core with B. Cost per layer
+l
+O(nr2 +r3). If r ∼ 100, cost ∼ 1 unit/layer. Loss: same as Tucker confinement (14–31x worse
+l l l
+in closed list), but here ranks are adaptive and not confined to a shared basis. Measure-this:
+compute hierarchical Tucker ranks of exact κ on one network.
+3
+4
+Q3. Leaders’ likely method
+Conjecture. Leaders use a hierarchical Tucker or tensor-train representation of the full third
+cumulant, updated in compressed form without source decomposition. Cost O(nr2) per layer with
+r ∼ 100, giving ∼ 1 unit/layer. Total ∼ 16 units for deep content. Combined with an optimized
+young tier, total 133–165 units.
+Observable. On the public leaderboard, their cost should scale as O(L) with a small constant
+independentofthenumberofsources. Theirerrorshoulddegradesmoothlywithrankr. Measure-
+this: implement a tensor-train propagation on one network and compare MSE and FLOPs.
+Strongest argument if nothing remains
+IfhierarchicalTuckerfails,thestrongestargumentis: M2showseverylayerandeverybirthmatters.
+Any method that carries deep content must store it (cost > 0) or compute it on the fly (cost > 0).
+The leaders’ cost equals the young tier alone, so they must have found a representation where deep
+content is computed as a byproduct of the young tier. No such representation is currently known.
+5

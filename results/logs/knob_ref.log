@@ -1,0 +1,2 @@
+[ref] call 0: util 0.2671 flops 587,262,754,287 wall 88.5s residual 1.70s
+[ref] call 1: util 0.2540 flops 558,473,140,719 wall 109.7s residual 1.86s

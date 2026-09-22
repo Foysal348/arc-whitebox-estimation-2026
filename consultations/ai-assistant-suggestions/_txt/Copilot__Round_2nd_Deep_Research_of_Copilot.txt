@@ -1,0 +1,36 @@
+Deep Research of Copilot - Round 2 Analysis
+Aggregate Response State and Deep Third-Cumulant Hypotheses
+Bottom Line
+Derived: Any successful replacement of old sources must preserve a realized odd field of
+approximately O(n^2) degrees of freedom. The cost comes from retaining the realized odd
+structure, not merely rank information. Aggregate old sources before transport rather than after
+transport.
+Q1: Aggregate Response Fit
+Represent old content as T = sum_a sym3(G_a tensor v_a). Fit directly against the
+contraction/query family used by the chain rather than tensor entries. Use randomized query
+operators and alternating least squares. Estimated useful range k » 128-256, but viability requires
+aggressive collapse after source aggregation. A practical target is k <= 32.
+Cost Model
+Per component transport: G <- BGB^T with approximately 2 units per layer. If merged content can
+be represented with k=16 components, total deep-tier cost becomes roughly 32 units per layer and
+may approach leaderboard territory.
+Primary Falsifier
+At one layer (e.g. L10), merge all sources with age >= 5, fit increasing k, and measure relative error
+epsilon_U. If achieving 2 percent error requires k > 32, reject the approach.
+Q2A: Propagated Covariance of Odd Fields
+Carry one realized odd field X in R^(n x n) together with a closed two-point covariance model.
+Update X using X'=(WnW)XW^T. Cost roughly 2 units per layer.
+Q2B: Birth-Index-First Contraction
+Aggregate birth-column statistics before neuron contractions using M=sum w2_j p_j p_j^T and
+N=sum w2_j a_j p_j^T. Propagate both as BMB^T and BNB^T. Test reconstruction error of D21
+from {M,N}.
+Q2C: Response-Function Formulation
+Propagate response vertices R^(m) and reconstruct cumulant effects through diagrammatic
+expansions. Cost O(n^2) state and roughly 2-10 units per layer. Low prior probability.
+Q3: Most Likely Leader Strategy
+Leaders probably do not carry old sources individually. Instead they may maintain a small number
+of aggregated O(n^2) odd fields, fitted once at the age gate and transported recursively thereafter.
+Strong Negative Argument
+If aggregate fitting requires k >= 64, then little credible room remains. Current measurements imply
+the signal is realized, odd, not recoverable from even statistics, not low-rank in Hadamard space,
+not closed on slices, and needed across all births and late layers.

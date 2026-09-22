@@ -1,0 +1,155 @@
+MECHANISTIC ESTIMATION  •  THIRD RESEARCH
+1
+Third Research of Astra 6 Max
+Round 3 | Deep third cumulants in random ReLU networks
+I cannot demonstrate a method meeting both the requested cost and 2% accuracy. The
+four suggested reformulations retain the expensive mixed-index information. One different,
+untested approximation does have a concrete sub-1.2-u implementation: approximate the birth
+matrix on the right by diagonal plus small rank. Its accuracy is the unresolved question.
+Derived = algebra or cost accounting; Conjecture = unverified interpretation; Measure-this = proposed experiment.
+Network measurements below are yours. I have not run the proposed test on your checkpoints. Costs use float32 and u
+= 2³¹ FLOPs; small rounding allowances are explicit.
+1. Sharing squared propagators
+Derived. Write Tb=CX. The exact identity is
+The second term contains the cross-column products. Squaring is not a matrix homomorphism. For
+example, rows (1,1) and (1,−1) have identical elementwise squares, but multiplication by x=(1,1)ᵀ
+followed by squaring gives 4 and 0. Thus C∘C and X alone cannot determine the result.
+An exact lifted state keeps all symmetric pairs, dimension d=n(n+1)/2. Its update is the
+symmetric-square representation of matrix multiplication. An n×d evaluation array alone occupies
+2.002 GiB; a d×n coefficient array is equally large per birth. Directly multiplying them costs
+At inner rank r=384, d=73,920 and that contraction still costs 72.19 u. This is n²r²-class work.
+Contracting the birth index first instead produces the pooled cubic core already measured in item 7.
+Keeping the cross terms preserves the realized fluctuation; discarding them supplies no controlled
+approximation. The 2×2 example falsifies an exact squares-only closure essentially for free. Your
+diagonal-chaos and pooled-core tests already address the obvious approximate versions; I would
+not repeat them.
+The tensor-power composition law is standard; see van Neerven, section 3. It establishes composition, not a cheaper
+contraction algorithm.
+
+MECHANISTIC ESTIMATION  •  THIRD RESEARCH
+2
+DEEP CUMULANTS / n = 1024, L = 16, B = 1024 UNITS
+2. Wick expansion: low degree, many coefficients
+Derived. Condition on earlier layers. Put V=D Tprevious, U=D Ãprevious, and Wi:=σgiᵀ, σ²=2/n. For
+columns vr, ur,
+Here F subtracts the conditional Gaussian row mean; other row-constant centerings differ by a thin
+term. This is exact quadratic chaos times a linear factor. The coefficients are precisely the cubic
+tensor we were trying to avoid. For i=k, further Wick decomposition separates cubic and linear
+terms; it does not eliminate the cubic coefficients. Averaging the expression destroys its realized
+odd value.
+The aggregate state updates as K⁺=M⊗3K+Kbirth. A symmetric rank-r core has r(r+1)(r+2)/6 scalars.
+Using even your favorable core costs at the measured r≈250:
+Those are slice, insertion and rotation costs, before other work. At r=256 the sum is 14 u. The state
+is only 2.64 million coefficients at r=250, but updating and querying it is expensive. Item 7 has
+already falsified the affordable rank reduction; another random-feature test is unwarranted.
+3. Backward response: the same tensor transport
+Derived. After fixing the Gaussian-chain linearization, one scalar projection of the final mean has
+adjoint recurrence
+Ql is supported on the queried slices. Backward mixing immediately creates off-slice entries. A
+factored adjoint source again has two dense legs: two transport products and two slice products
+when pairing with a birth, approximately 2.05 u per query-source/layer. This is an
+implementation count, not a universal lower bound.
+A forward/backward split replaces d transport steps by h+(d−h), and adds a joining contraction.
+Moreover, one scalar adjoint does not produce all 1024 means. A direct block of 1024 rank-250
+symmetric cores would exceed 10 GB. No cheaper complete update follows from reversing the
+arrows.
+A short backward horizon simply discards long response paths unless another state carries them.
+Your sensitivity measurements already reject the straightforward truncation. They do not prove that
+every possible response compression is impossible.
+
+MECHANISTIC ESTIMATION  •  THIRD RESEARCH
+3
+DEEP CUMULANTS / n = 1024, L = 16, B = 1024 UNITS
+4. Memory closures and contraction order
+Derived. Split the tensor into resolved slices q and hidden entries z. The exact linear stage has the
+block form
+Eliminating z gives a memory kernel plus a realized forcing term. Keeping that term retains the odd
+information; replacing it by its ensemble mean loses it. A generic kernel between n²-dimensional
+slices has n⁴ entries: 4 TiB in float32 and approximately 1024 u per lag application. A
+factorization must supply an actual cheaper realization, which the formal identity does not provide.
+This is the relevant lesson of Mori-Zwanzig, rather than a new closure to try. The memory-cost issue
+is explicit in Li and Stinis (2019). Tensor-network contraction of the birth index first returns the
+same cubic core. Your measured rank and slice-prediction failures reject the specified inexpensive
+versions, not every conceivable memory model.
+5. One conditional alternative: compress the birth operator
+Conjecture to test. Approximate each fixed birth matrix by
+This keeps all n hubs and every birth. It does not truncate the left propagator space or the
+Hadamard products. Full-rank Ab does not itself exclude this representation because its diagonal
+remains full rank. None of the listed spectra measures this particular approximation.
+Derived - state and update. Per birth retain T, d, U, V: n²+2nk+n floats, 4.254 MiB at k=32,
+plus reusable workspace. Update only T←MT. Define
+Substituting Ã=T diag(d)+E in the exact slice formula gives
+The diagonal birth contribution merges the two dense slice products. There is no separately
+transported dense A leg. Crucially, S is computed exactly and may remain full rank. Under the latest
+W→−W, T,R,E change sign while S does not; the entire readout changes sign. This preserves a
+realized odd fluctuation, rather than predicting its zero conditional mean.
+
+MECHANISTIC ESTIMATION  •  THIRD RESEARCH
+4
+DEEP CUMULANTS / n = 1024, L = 16, B = 1024 UNITS
+5, continued. Complete arithmetic and fitting
+Derived - per source-layer cost. There are two dense products: MT and the bracketed expression
+times Tᵀ. The other four are TU, RVᵀ, SV and (SV)Rᵀ. For k≥1, their exact total is 8n²k−2nk−2n²
+FLOPs. Including an allowance for elementwise operations,
+where s is the metered Strassen product cost. Conservatively taking s=2.05/4 gives 1.030, 1.093,
+1.155 and 1.186 u for k=0,16,32,40. Thus k≤40 meets the update target. This count includes
+transport and readout; fitting is priced next.
+At k=32, all 120 source-layers cost 138.6 u. With the fit below, the cumulant bill is at most 143.1
+u, or 1.193 u per source-layer amortized. Add Cother for the rest of the moment chain; its
+complete bill is not certified. Also, the two requested targets are not pointwise equivalent: ten
+dense old sources here cost 11.55 u per layer. This is a conditional route to the first target only.
+Measure-this - specified fit. Initialize d=diag(A). Compute one randomized rank-k SVD of
+A−diag(d), then reset d=diag(A−UVᵀ). Use oversampling 16 and one power iteration. The final reset
+preserves the exact birth diagonal.
+With q=k+16≤56, the fit uses four n×n by n×q-type products, about 4q/n≤0.219 u, plus QR and the
+small SVD. Allow 0.3 u per birth, 4.5 u for 15 births. The fitted d,U,V stay fixed during transport.
+This is a reproducible candidate fit, not the globally optimal fit for the later query norm. At k=40,
+fitting raises the amortized bill to 1.224 u; use k=32 for the strict target.
+Conjecture - likely outcome. I would expect failure if the off-diagonal birth matrix really behaves
+like isotropic noise. Entries of size n−1/2 across n² locations have O(√n) Frobenius norm, comparable
+to an O(1) diagonal. They are not collectively small. Nevertheless, their transported query norm,
+rather than their entrywise scale, decides this test.
+The approximation error is exactly the linear image of ΔA=A−diag(d)−UVᵀ under the given
+transport/readout. It can accumulate coherently across births. Neither parity nor the exact algebra
+supplies a 2% accuracy guarantee.
+
+MECHANISTIC ESTIMATION  •  THIRD RESEARCH
+5
+DEEP CUMULANTS / n = 1024, L = 16, B = 1024 UNITS
+6. First falsifier and what the leaders imply
+Measure-this. On one network, cache the birth matrices and V29 legs at layers 6, 10 and 14. Fit
+k=32. At each checkpoint substitute the fitted birth matrices, leaving the cached T fixed, and
+compare the sum over all old births with the exact sum. Report total D21, its diagonal, and
+separately the fluctuation contribution
+Use the same exact mb in both evaluations. Also inspect the mixed slice term separately. A large
+trace component must not conceal an inaccurate fluctuation. Require 2% relative Frobenius error
+for the stipulated fluctuation and D21 queries at every checkpoint. Inspect per-birth errors to
+diagnose cancellation; the aggregate is the primary acceptance test.
+From cached legs, allow under 100 u for fitting and these checks. Failure rejects this specified fit
+immediately, not every possible query-weighted diagonal-plus-rank fit. Only if it passes, rerun the
+whole chain with gates and new birth matrices recomputed; check every layer’s full D21, compare
+against your existing truth, and meter the complete bill.
+A baseline plus the checkpoint test and a conditional full rerun can be capped near 650 u:
+1.40×1012 metered FLOPs, about 23 minutes at sustained 1 GFLOP/s. The first cached-checkpoint
+falsifier needs about four minutes at that throughput; actual CPU time should be calibrated on one
+matrix product.
+Derived - accuracy budget. Your error law assigns ε=0.02 an extra MSE of 1.68×10−9, about 8%
+of V29’s error. Under that additive law, allowing 1.3× V29’s MSE corresponds to ε≈3.9%. Thus a
+successful right-operator compression could lose less than 1.3× without dropping births. The
+additive error law alone does not explain the leaders’ improved raw accuracy; that would require a
+demonstrated reduction in another error.
+Conjecture, with limited evidence. If the leaders use this kind of algebraic simplification, the
+discriminating observable is that their birth operators admit k≲32 query-accurate
+diagonal-plus-rank fits, and their bill scales like two dense products plus thin corrections. The
+current measurements neither establish that signature nor identify another leader mechanism. Your
+new item 10 specifically kills my previous coupled-closure retuning hypothesis.
+Derived - the extra accuracy rung is not identified. Similar MSE ratios at smaller widths do not
+prove that leaders propagate K4 or all augmented terms. A full symmetric fourth cumulant at
+n=1024 already contains 46,081,900,800 floats, 171.7 GiB, before workspace. I have no
+cost-complete cheap higher-order update to offer; attributing their gain to one would be
+speculation.
+I cannot justify a universal 2-u floor. 2.05 u is the cost of the known four-product formulation,
+not a proved arithmetic floor. The strongest obstruction is that all measured cheap states lose the
+realized mixed-index information, while the measured accurate pooled state costs over 12 u per
+insertion layer. If the right-operator test also fails, I cannot name an approximation that halves the
+bill within the stated accuracy loss, and I would not infer one from the leaderboard numbers alone.

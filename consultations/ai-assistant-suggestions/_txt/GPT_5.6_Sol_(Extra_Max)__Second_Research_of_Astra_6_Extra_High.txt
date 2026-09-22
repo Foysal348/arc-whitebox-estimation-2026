@@ -1,0 +1,153 @@
+Second Research of Astra 6 Extra High
+Mechanistic estimation of random neural networks | Second-round research response
+My assessment: the aggregate family deserves one inexpensive feasibility test, but I do
+not currently see a complete path to the leaders’ cost. The most informative new observable
+is the rank of its metric-side query, which imposes a constraint that M3’s spectrum of U does not
+test.
+All costs below are float32 units, with rounded leading terms. Proposed experiments use the supplied checkpoint; I have
+not run them on your network.
+Q1. Fit an aggregate cubic, with an early rejection test
+Derived - mathematical object. Use the existing admissible old-content subspace, without
+reducing its rank:
+Allow indefinite S . Components have no birth identity. This is a linear-times-quadratic
+a
+decomposition, associated with polynomial strength, rather than ordinary CP rank. Bik, Draisma and
+Eggermont.
+Its geometry is restrictive. Writing V=span(u₁,…,u ),
+k
+⊥
+Conversely, a cubic vanishing on V admits such a decomposition: every monomial contains at least
+one coordinate from V. Thus “a few metric-vector components” requires a large subspace on which
+the cubic vanishes approximately. Low rank of individual legs does not establish this property.
+Derived - a caveat concerning the closed CP experiment. A component with rank(S )≤r has
+a
+symmetric CP rank at most 2r+1, using
+Consequently, k=4, r=384 implies CP rank at most 3076<4n. This proposal survives the CP
+measurement only if that measurement concerned a particular column-capping procedure, not the
+globally best unrestricted CP approximation. If the latter was established, small-k aggregation is
+already excluded.
+Derived - transport and readout. Between insertions, compute
+m×r
+This transport is exact before basis truncation or recompression. For query rows Z∈ℝ , define
+Then the symmetric tensor’s quadratic-vector query is
+At Z=Q, D21=J(Q)Qᵀ, and D3=3Σ d ∘(Qu ). No dense leg products occur.
+a a a
+MECHANISTIC ESTIMATION • SECOND RESEARCH 1
+DEEP CUMULANTS / n = 1024, L = 16, B = 1024 UNITS
+Q1, continued. Cost and fitting procedure
+Derived - running cost. Including explicit thin QR, transport, readout and one final expansion, the
+leading cost between insertions is
+At r=384, this is approximately 1.00+0.25k units/layer, including a small elementwise allowance.
+But incoming sources generally lie outside the transported basis. Basis maintenance cannot be free.
+For example, a one-pass Gram range finder incorporating BQ, A , P , followed by projection and
+new new
+explicit QR, gives approximately 2.92+0.25k units per insertion layer, before fitting. Extra
+power iterations increase this.
+With 250−107=143 units retained elsewhere and approximately eleven old-content layers:
+• Even the optimistic k=4 calculation consumes about 165 units before fitting.
+• The specified basis-refresh implementation reaches approximately 186 units before fitting.
+• Storing full dense G instead costs approximately 2k units/layer; even k=1 leaves essentially no
+a
+fitting allowance at 165 units.
+These are implementation estimates, not impossibility bounds for every absorption algorithm.
+Measure-this - fitting procedure and first falsifier.
+1. Test the necessary rank condition first. To fit your four source-formula queries separately,
+use two component families corresponding to the AAP and MPP terms. These are term types, not
+source identities. For either family,
+Therefore its optimal rank-k tail must satisfy
+family
+Form the two exact metric-side siblings in n×384 coordinates and compute their singular spectra.
+Allow under 8 units from stored factors/legs. If their required ranks sum to more than four, reject
+the proposed small-k, four-query fit immediately. Crucially, H can have high rank even for one
+component; M3’s rank-230 U therefore does not directly imply k=230.
+2. If that screen passes, use alternating least squares. Minimize the sum of the four
+normalized squared query errors, requiring each final relative error to be at most 0.02.
+Train on the current 1024 query rows plus 256 rows from one specified later linear map. With u
+a
+fixed, solve jointly for symmetric S using matrix-free conjugate gradients. With S fixed, solve
+a a
+jointly for u . Normalize u , absorbing scale into S . Initialize u from the metric-side right singular
+a a a a
+vectors; also try a random initialization.
+A matrix-block normal-operator application costs approximately
+units, where q=1280/1024. Five alternating rounds, twenty matrix-CG iterations per round, k=2,4,
+and two starts require about 422 units for those applications. Budget 500 units including vector
+solves, targets and validation: about eighteen minutes at sustained 1 GFLOP/s.
+MECHANISTIC ESTIMATION • SECOND RESEARCH 2
+DEEP CUMULANTS / n = 1024, L = 16, B = 1024 UNITS
+Q1, continued. Validation and interpretation
+3. Validate without refitting on independent query rows and rows from the actual next transport.
+Failure there rejects the fitted state, even if current-layer error passes. A failed nonconvex
+optimization does not certify that every rank-k fit fails.
+Important qualification: separately matching four implementation-specific terms is stronger than
+matching their symmetric sum. A different representation can redistribute contributions between
+those terms. Thus the rank screen conclusively rejects the requested four-query fit, not every
+representation reproducing total D21. If allowing that redistribution, run the same fitting procedure
+on J, retaining transported holdouts.
+Conjecture - expected k. M1-M3 do not identify it. My working expectation under the strict
+four-query objective is O(10²) components per family if the metric-side spectra resemble the
+measured mixed-side spectrum, rather than two to four total. The proposed spectrum measurement
+replaces that conjecture cheaply.
+Derived - accumulated error. Linear transport introduces no new model error, but transports
+⊗3
+existing error through B . Insertion errors add after different transports; they need not cancel. A
+2% fit at one gate therefore does not guarantee 2% subsequently. Successful gate fits must
+eventually be evaluated cumulatively.
+Q2. Other formulations: distinct state or relocated tensor?
+Derived - characteristic or cumulant-generating functional. Under the linear stage,
+Retaining the cubic part exactly retains the same symmetric tensor. Cubic ridge features reproduce
+CP transport; linear-times-quadratic features reproduce Q1. An unrestricted cubic feature basis in
+r=384 dimensions contains
+coefficients. Ordinary dense core rotation plus query evaluation costs approximately 115
+units/layer, before births.
+A nonlinear functional representation could differ, but no specified feature family here has both
+cheap composition under Bᵀ and a closed ReLU update. I would not propose another random-feature
+experiment after M3.
+Derived - predictable tensor covariance plus a small realized odd state. Let t=vec (T). Its
+sym
+formal updates are
+⊗3
+where the operator represents B . Even statistics can describe uncertainty about t, but cannot
+select its realized odd value. A signed linear decoder with d coefficients needs its omitted
+query-covariance eigenvalues to contain at most 0.04% of query energy. One matrix U’s singular
+spectrum is not that covariance spectrum.
+Cheap isotropic statistics do not supply those coefficients. Their moving basis again needs a
+transport representation: CP, a full core, or something like Q1. A full unrestricted covariance would
+13
+contain roughly 9×10 entries at r=384. I see no distinct affordable update here.
+MECHANISTIC ESTIMATION • SECOND RESEARCH 3
+DEEP CUMULANTS / n = 1024, L = 16, B = 1024 UNITS
+Q2, continued. Responses and contraction order
+zᵀh
+Derived - response functions. Exponentially tilt the activation distribution by e . Then
+This is a useful interpretation, but the derivative obeys exactly third-order transport. Restricting its
+directional dependence to k vectors gives matrix-vector components again, costing approximately
+2k units/layer in full coordinates, or Q1’s projected costs. Calling them Jacobian statistics does not
+remove the insertion problem.
+Derived - birth-first contractions and diagram resummation. Contracting birth indices first
+produces the already-closed cubic core: approximately 54 units per r=384 core construction in
+the ordinary contraction order. A TAP or diagrammatic method would be genuinely new only if it
+supplied an explicit small family of quenched vertices closed under transport and source insertion.
+Covariance-only or trace-only vertices are already excluded. I cannot provide such a family with an
+O(n²) update.
+These are rejections, not recommendations to repeat the closed experiments.
+Q3. One hypothesis about the leaders
+Conjecture: they use a different coupled closure, whose errors in third-order transport are
+compensated by its treatment of higher-order terms, rather than accurately reproducing V29’s
+intermediate D21.
+This is not the rejected learned output correction: the compensation would occur inside the evolving
+moment equations. Nevertheless, I cannot name a cost-complete implementation, so this is an
+explanation to test, not a proposed solution.
+Measure-this: obtain one leader’s layerwise third-order corrections. If they differ substantially
+from V29, replace only those corrections with V29’s values while retaining the leader’s remaining
+closure equations. Worsening final MSE after that replacement would support coupled
+error compensation. Agreement within 2% instead would favor a genuinely efficient
+representation.
+With executable leader code and existing ground truth, one V29 run plus baseline/intervention
+leader runs costs at most approximately 580 units, around twenty-one minutes at 1 GFLOP/s.
+Nothing currently presented constitutes a plausible complete solution at 133-165 units.
+The strongest obstruction is the combination of pervasive old-content sensitivity, failure of existing
+compressions, and the tiny allowance left for both aggregate transport and source absorption. The
+new metric-side rank test can determine, for under eight units, whether the surviving strict
+aggregate fit merits further work.
+MECHANISTIC ESTIMATION • SECOND RESEARCH 4

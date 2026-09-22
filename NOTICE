@@ -1,0 +1,18 @@
+This repository contains original research work by Foysal Emon Shanto (AIcrowd: foyshal_sk), released under the MIT
+License (see LICENSE), together with derived work from the sources below.
+
+1. 504aldo — whest-p2-cumulant-k3  (https://github.com/504aldo/whest-p2-cumulant-k3)
+   Copyright (c) 2026 504aldo. Released under the MIT License.
+   The estimators in submissions/ are modifications of estimator_v29.py from that project. Each keeps the upstream
+   copyright header and ships the upstream licence text as LICENSE-504aldo. Modifications are documented in the file
+   header of each variant and in docs/ARC_WhestBench_2026_Complete_Notes.pdf (Part K).
+
+2. Alignment Research Center — mlp_cumulant_propagation
+   (https://github.com/alignment-research-center/mlp_cumulant_propagation)
+   Used unmodified as a reference implementation for accuracy-ladder measurements (kaggle/kprop/). Not vendored here.
+
+3. AIcrowd — whest-starterkit and flopscope (https://github.com/AIcrowd/whest-starterkit)
+   Used as the evaluation environment. Not vendored here.
+
+4. Consultation reports under consultations/ai-assistant-suggestions/ were produced by external language models at the
+   request of the repository author and are retained as research records. They are not covered by the MIT License above.

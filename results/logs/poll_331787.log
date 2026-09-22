@@ -1,0 +1,12 @@
+02:30:23 status=submitted score=None secondary=None msg=<p>Successfully enqueued 1 Job</p>
+
+03:03:44 status=graded score=5.1369933477122305e-09 secondary=2.1080922358862608e-08 msg=<p>Graded successfully</p>
+
+{
+ "id": 331787,
+ "created_at": "2026-09-21T20:30:12.544Z",
+ "grading_status_cd": "graded",
+ "grading_message": "<p>Graded successfully</p>\n",
+ "score": 5.1369933477122305e-09,
+ "score_secondary": 2.1080922358862608e-08
+}

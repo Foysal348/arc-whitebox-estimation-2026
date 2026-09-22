@@ -1,0 +1,127 @@
+Mechanistic Estimation of Random Neural Networks
+Second-round research report: aggregate response states and alternatives
+Executive Summary
+The strongest surviving direction is an aggregate response state, but the naive formulation
+T_old = sum_a sym3(G_a(x)v_a) is not economically viable if G_a is transported as a dense
+n x n matrix: its transport costs about 2 dense matrix multiplications per component per
+layer, so k=100 already costs roughly 200 units per layer. The measured M1-M3 evidence
+suggests that the required k is likely in the low hundreds, which would exceed the 1024-unit
+budget over 16 layers. Therefore the useful version must either (i) exploit additional structure
+in G, (ii) fit only the query-relevant state and refresh it selectively, or (iii) discover a
+different global quenched representation.
+The most informative immediate experiment is a one-layer age-gate fit of the aggregate
+response state against the complete D21/D3 query family. If k below about 16-32 cannot reach
+2% relative RMS, the dense-component route is effectively closed. If k around 16-32 succeeds,
+a selective-refresh or structured-transport variant becomes worth pursuing.
+1. Q1 — Concrete fitting procedure
+Let the age-gate source content be represented by
+W = (A n P) diag(w2), so that the relevant D21 query is U = W A^T.
+Use a query-weighted low-rank approximation rather than an unweighted approximation of W.
+Step 1 (derived): Build a validation matrix of all four sibling query operators used by the
+ReLU closure: the D21 contribution, its transpose/cross arrangement, and the corresponding
+D3/diagonal contractions. Normalize each by its measured RMS scale.
+Step 2 (derived): Solve
+min_{G_a,v_a} || Q({G_a,v_a}) - Q_exact ||_F^2 / ||Q_exact||_F^2
+subject to a fixed component count k,
+where Q concatenates the four query families. Initialize with the rank-k SVD of W A^T
+(or W when A is well conditioned), then alternate least-squares updates for v_a and G_a.
+The fit is performed once at the age gate, not independently for every later layer.
+Step 3 (conjecture): Do not fit the full tensor. Fit only the D21/D3 observables because
+those are the actual ReLU inputs. This avoids paying for unqueried all-distinct entries.
+A useful diagnostic sequence is k = 4, 8, 16, 32, 64, 128. Record the maximum relative
+RMS over all four query families, not only D21. The target is <=2%.
+Cost (derived): Forming W and the query matrices is O(n^2). A Lanczos/truncated-SVD-style
+fit is roughly O(n^2 k), about 0.001 k units at n=1024 before implementation constants.
+The expensive part is transport: if G is dense, G <- B G B^T costs about 2 units/component/layer,
+and v <- Bv is small by comparison. Thus approximately 2k units/layer, before fitting and
+closure overhead.
+Expected k (measure-this): M1 says the raw Hadamard products are nearly full rank, while M3
+says the exact contracted query has an effective rank around 230 at the 2% level. That makes
+k»100-300 the plausible range for a static dense representation, which is far too expensive
+to transport for 16 layers. The experiment is therefore primarily a falsifier: if k<=32 works,
+there is a new low-dimensional phenomenon worth exploiting; if not, the straightforward
+aggregate-state hypothesis should be abandoned.
+CPU falsifier (measure-this): On one stored .npz state at the age-4 gate, construct W, fit
+k=4..64, reconstruct all four query families, and compare against the exact source aggregate.
+A 1024x1024 SVD plus several matrix products is comfortably a sub-hour CPU experiment.
+2. A more economical variant: query-space response
+packets
+Conjecture: A better descendant of the aggregate-state idea is to store the action of the
+deep tensor on a fixed packet of probe vectors rather than G itself.
+Choose m probe vectors r_q (for example Gaussian or deterministic Hadamard probes) and store
+y_q = kappa3 contracted with r_q in each required mode. Transport the probes forward/backward
+with the same linear map and periodically reconstruct only the D21/D3 queries.
+The state size is O(nm), not O(kn^2). Its weakness is exactly the M3 result: naive random
+sketching had very poor variance. The new experiment should therefore use probes optimized
+against the measured query covariance, not iid TensorSketch features. Fit the probes by
+PCA/SVD of the empirical query-response covariance at the age gate.
+Cost (conjecture): O(m n^2) for probe transport, approximately m/1024 dense-matmul units
+per layer if implemented as an n x m matrix multiplication. For m=32, this is about 0.031
+unit/layer for one mode, plus reconstruction/closure. The risk is that the required m may
+again approach hundreds because of the flat odd signal spectrum.
+3. Q2 — Other non-source formulations
+Characteristic/cumulant-generating functional in a low-dimensional random-feature basis:
+conjecture: unlikely under the current evidence. Parity forces the relevant realized odd
+component to survive conditioning on even statistics, so a basis carrying only ensemble
+moments cannot recover it. A random-feature implementation would inherit the observed
+1/sqrt(d)-type sketching problem. First falsifier: 2, 4, 8, 16, 32, 64 feature dimensions
+at one age gate; require <=2% D21 RMS.
+Quenched random-tensor model with covariance plus a small realized odd basis:
+derived obstruction: covariance is even and cannot determine the realized odd tensor because
+of the exact parity result. The only potentially useful part is a compact realized residual.
+That reduces to the aggregate-response problem. Therefore it is not a distinct escape unless
+the residual is shown to have low intrinsic dimension.
+Response/Jacobian statistics:
+conjecture: plausible only if a response observable can be propagated without explicitly
+shipping the third-order tensor. A candidate is a matrix of directional derivatives of the
+ReLU expectation with respect to a small probe family. First falsifier: compare a 16- or
+32-probe response basis with exact D21/D3 at the age gate. Failure above 2% closes this route.
+Tensor-network contraction with birth index first:
+derived: reordering contractions does not change the arithmetic barrier for the Hadamard
+query. Contracting j first gives an n x n result whose entries each aggregate n birth
+columns. Unless the aggregate has a new algebraic structure, this is the same O(n^3)
+operation that M1-M3 expose. No credible cost reduction follows from ordering alone.
+TAP/cavity:
+conjecture: not currently credible at this operating point. The desired object is a
+quenched, realized odd response, whereas conventional cavity/mean-field closures primarily
+compress ensemble statistics. A useful TAP-like method would need an explicit finite-n ReLU
+response equation and an O(n^2) update. No such closed equation is established in the
+provided evidence. First falsifier: derive and implement a one-layer cavity update and
+compare all D21 entries; >2% error closes it.
+Feynman/diagrammatic resummation:
+conjecture: potentially interesting theoretically, but not yet a computational escape.
+The known cumulant hierarchy organizes the expansion, but the provided measurements give no
+evidence that the realized odd diagrams collapse to a small sufficient statistic. The first
+test should be whether the leading 2-3 diagram families reproduce the measured D21 residual
+with <=2% RMS at one layer. If not, stop.
+4. Q3 — What the leaders are most likely doing
+Measure-this / conjecture: the strongest evidence is not that leaders simply dropped all
+old sources. The closed sensitivity experiment explicitly says that removing old content
+produces large errors and that every layer from roughly 8 onward matters. Therefore a pure
+old-source truncation is inconsistent with the supplied measurements.
+A more plausible single hypothesis is selective aggregation/compression of the old odd
+response: the leaders preserve the realized deep signal but represent it in a cheaper
+global state, while retaining the young-source tier. The cost coincidence (roughly 250-107
+units) then reflects removal of the expensive source-by-source implementation, not removal
+of the underlying information.
+Confirming observable: take a leader-equivalent budget implementation and measure the
+conditional intrinsic dimension of the aggregate old D21 response after whitening by the
+even covariance/transport statistics. Compute q_90, q_95, q_98 and q_99 singular dimensions
+for layers 8-15. If q_98 is O(10-50), a global compressed old-response state is strongly
+supported. If q_98 is O(200-400), the leader must be exploiting a more specialized algebraic
+or selective computation. If q_98 is near n, then the cost gap likely comes from a mechanism
+not represented by the proposed aggregate state.
+5. Bottom line
+Derived from the closed measurements: there is no remaining justification for another
+ordinary low-rank factorization of individual old legs, a covariance-only closure, a parity
+mean-field approximation, or a tensor-sketch surrogate. Those mechanisms are directly
+constrained by the measured flat Hadamard spectra and exact parity.
+Conjecture: the remaining credible class is a global quenched response representation whose
+state is optimized for the ReLU query family rather than for the full third-order tensor.
+The most promising concrete implementation is a query-space response packet with
+data-dependent probes, combined with occasional exact refresh at selected layers.
+Measure-this: the single most valuable next CPU experiment is the age-gate intrinsic
+dimension test using the exact stored old-source aggregate. It directly answers whether the
+information itself is low-dimensional, independent of how the current V29 implementation
+stores it. That measurement can decisively separate 'representation problem' from
+'irreducible arithmetic problem' before another large implementation is attempted.

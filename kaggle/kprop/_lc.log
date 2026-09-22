@@ -1,0 +1,289 @@
+=== cell 0 ===
+skipped clone/pip
+2.14.0+cpu cuda: False 
+=== cell 1 ===
+synthetic-32-0: MC truth 1e+05 samples in 0s, mean 0.3661
+['synth32x16-0'] (16, 32, 32) float32 truth (32,)
+=== cell 2 ===
+smoke k3_simple_factored: ok, 0.050 u
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+smoke k4_simple_dense: ok, 3.215 u
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+synth32x16-0|k3_simple_factored|f32: raw MSE 1.815e-02  raw FLOPs 0 u (0.000 B)  factored 0 u (0.000 B)  5s on cpu
+           0.0 u  FactoredTensor3.get_dslice
+           0.0 u  FactoredTensor3.contract_W
+           0.0 u  nonlin_sum 111 factored
+           0.0 u  contract_W_basic
+           0.0 u  pK_to_K
+           0.0 u  nonlin_sum
+           0.0 u  eval_part
+           0.0 u  get_wick_coef
+           0.0 u  harmonic diagslice
+           0.0 u  FactoredTensor3.from_dstensor
+           0.0 u  DSTensor.to_tensor
+           0.0 u  DS_harmonic_proj
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+Snapping negative variance to zero
+synth32x16-0|k4_simple_dense|f32: raw MSE 1.803e-02  raw FLOPs 3 u (0.003 B)  factored 1 u (0.001 B)  22s on cpu
+           0.5 u  pK_to_K
+           0.3 u  contract_W_basic
+           0.1 u  eval_part
+           0.0 u  nonlin_sum
+           0.0 u  DSTensor.to_tensor
+           0.0 u  harmonic diagslice
+           0.0 u  DSTensor constructor
+           0.0 u  get_wick_coef
+           0.0 u  is_symmetric
+           0.0 u  symmetrize
+           0.0 u  coerce_input
+           0.0 u  harmonic contract_W
+local check done in 77s: 2 configs, 0 errors: []
