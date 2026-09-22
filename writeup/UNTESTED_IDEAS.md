@@ -48,6 +48,8 @@ Legend: **T** = testable now with existing dumps/tools · **K** = needs a Kaggle
 | R11 | Copula + rich marginals (GPT R5 family 9) | GPT R5 | one-step oracle at 1024: worse than Gaussian closure at every layer | done | **dead (measured)** |
 | R12 | AGE_OLD2 / QPASS2 knobs | own | Kaggle: all noise-level or worse | done | **dead** |
 
+| R13 | Better κ₄ regeneration law from a Monte-Carlo teacher (per-row weight, κ₃ terms) | own, 22–23 Sep | law confirmed on 2 networks (R² 0.57 → 0.78), but in-chain it is monotonically worse (2.2911 → 2.2988e-8) | done | **dead (measured): λ is a compensator** |
+
 ## C. Sampling / hybrid side (the budget above the floor is unused: V29 sits at 0.245 B, the floor is 0.1 B — but every unit above 0.1 multiplies the score)
 
 | # | Idea | Source | Test | Effort | Prior |

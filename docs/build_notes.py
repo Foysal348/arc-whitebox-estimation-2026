@@ -7,7 +7,9 @@ from reportlab.lib import colors
 from reportlab.platypus import (SimpleDocTemplate, Paragraph, Spacer, PageBreak, Table, TableStyle, Preformatted)
 from reportlab.platypus.tableofcontents import TableOfContents
 
-OUT = r"D:\Machine Learning 1 Year Challenge\Kaggle\ARC White-Box Estimation Challenge 2026\ARC_WhestBench_2026_Complete_Notes.pdf"
+import os as _os_path
+# Output next to this script (docs/), so the builder works from any checkout.
+OUT = _os_path.join(_os_path.dirname(_os_path.abspath(__file__)), "ARC_WhestBench_2026_Complete_Notes.pdf")
 
 styles = getSampleStyleSheet()
 H1 = ParagraphStyle('H1', parent=styles['Heading1'], keepWithNext=1, fontSize=17, spaceBefore=14, spaceAfter=8, textColor=colors.HexColor('#1a2b4c'))
@@ -1081,6 +1083,21 @@ table([
 ], widths=[3.0*cm, 3.6*cm, 3.6*cm, 4.6*cm, 3.4*cm], fs=7.2)
 bullets([
  "The fourth-cumulant rung is worth more as the width grows (1.15x at 96 -> 1.56x at 128). V29's restricted, memoryless kappa4 regeneration is worth 1.7x over K3-simple at 1024; the leaders are 2.25x over K3-simple. If the trend continues, the UNRESTRICTED kappa4 at 1024 is worth more than V29's regeneration - i.e. the leaders sit in the full-kappa4 accuracy class (the Astra correction of K3u made this a live question). What they cannot be doing is ARC's n^4 implementation of it; the open problem is therefore 'kappa4 accuracy at K3 cost', not the old tier.",
+])
+h1("K3x. The kappa4 teacher (22-23 Sep): V29's lambda is a fitted COMPENSATOR, not an approximation of the true law")
+p("A Monte-Carlo fourth-cumulant teacher (kaggle/k4, k4teacher1.py: single-pass raw moments -> central cumulant slices, validated against a two-pass implementation to 1e-5 on an identical sample stream) measured the TRUE pre-activation slices kappa4(i,i,j,j), kappa4(i,i,i,j) and kappa4(i^4) per layer at 1024 x 16, on one synthetic network (8 layers, 6e7 samples) and on public MLP #0 (all 16 layers, its baked 1e9-sample truth available).")
+table([
+ ["measurement", "result"],
+ ["V29's model of the (2,2) slice ((dG_i + dG_j) c/6)", "R^2 0.94-0.98 at every depth: already accurate"],
+ ["V29's model of the (3,1) slice (lambda_l C_off, one scalar per layer)", "R^2 0.35-0.60; adding the kappa4 diagonal terms -> 0.55-0.71; adding the chain's OWN third-cumulant slice (D21) -> 0.74-0.80. Same pattern and depth trend on both networks: a real law, not a per-network fit"],
+ ["what the true law weights the (3,1) slice by", "NOT a per-layer scalar but the per-ROW ratio kappa4(i)/var(i); the fitted coefficient falls smoothly 1.00 -> 0.63 with depth"],
+ ["504aldo's lambda_l versus that law", "lambda_l equals the MEAN of b_l x kappa4(i)/var(i) to within 2% (6.8e-3 vs 6.9e-3 at layer 15): the fitted constant has a derivation"],
+ ["per-row lambda in the chain (V35, Kaggle, 10 baked-truth MLPs)", "blend 0 / 0.25 / 0.5 / 1.0 / 1.5 -> raw 2.2911 / 2.2923 / 2.2933 / 2.2958 / 2.2988e-8: MONOTONICALLY WORSE"],
+], widths=[6.6*cm, 10.2*cm], fs=7.0)
+bullets([
+ "CONCLUSION: making the kappa4 channel more faithful to the true cumulant makes the FINAL MEAN worse, monotonically. V29's lambda table is not an estimate of a physical law - it is a compensator fitted so that the chain's total error is small, absorbing the biases of the K3 truncation around it. The same explains the oracle run (injecting the measured slices at face value degraded the prediction by 6-15x).",
+ "Consequence for anyone improving this chain: a channel-by-channel fidelity argument is invalid; only end-to-end measurements count. The kappa4-law line is CLOSED for the objective, and kept as a quantified negative result plus one positive derivation (the meaning of lambda).",
+ "Scripts: kaggle/k4/local/k4teacher1.py, experiments/chain/k4_law_fit{,2}.py, k4_law_coef.py, k4_oracle_run.py; variants in experiments/variants/estimator_v35row.py.",
 ])
 h1("K4. Next experiments queued")
 bullets([
