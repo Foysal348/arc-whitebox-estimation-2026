@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-23 (DeepSeek/Terra 7.1, Gemini R7 যোগ — সব মৃত বা Q8-এ যুক্ত)",
+ "updated": "2026-09-23 (GPT Sol High R7, DeepSeek 7.1 যোগ; Q1-এ 3+2 term পরীক্ষা)",
  "baseline": "Best graded: #331787 score 5.137e-9 (raw 2.108e-8, util 0.2437), public rank 28. Plain chain on public MLP #0: final MSE 2.290e-8.",
  "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে।",
  "items": [
@@ -10,7 +10,7 @@
    "source": "Astra R7 §3-4",
    "title": "Quartic kappa4 kernel (সস্তা version) — kappa4 diagonal-এর নতুন হিসাব",
    "what": "প্রতিটা ReLU-তে নতুন করে quartic response polynomial F0 হিসাব; তার non-pair অংশ + chain-এর pair অংশ দিয়ে পরের layer-এর kappa4 diagonal। Global rule: k4 = 0.3 x chain + 0.7 x (P_chain + 1.25 x kernel non-pair)।",
-   "evidence": "non-pair অংশের corr 0.63-0.78 (দুই network)। End-to-end (mean closure-এ): A=0.5,S=1.5 -> MLP #0 -6.4%, synthetic -2.6%; A=0.3,S=1.25 -> -5.0% / -1.5%। Pchain ছাড়া (শুধু chain kappa4 + kernel) কাজ করে না — double count।",
+   "evidence": "non-pair অংশের corr 0.63-0.78 (দুই network)। End-to-end (mean closure-এ): A=0.5,S=1.5 -> MLP #0 -6.4%, synthetic -2.6%; A=0.3,S=1.25 -> -5.0% / -1.5%। Pchain ছাড়া (শুধু chain kappa4 + kernel) কাজ করে না — double count। GPT Sol High R7-এর K3+C '3+2' term (সস্তা t_rep, chain-এর D21/D3 দিয়ে) যোগ করলে non-pair corr 0.73-0.83 (আগে 0.68-0.78), scale ঘাটতি 1.16-1.87 (আগে 1.34-2.16) — কিন্তু দরকারি neuron-এ corr মাত্র +0.01-0.04, G4-weighted error একই (x0.925)।",
    "cost": "3টা product/layer: শুধু দরকারি ~400 neuron-এ ~18 u (+7%), সবার জন্য ~26 u (+10%)",
    "gate": "এখনকার অবস্থায় net ≈ 0 (লাভ 2.6-6.4% বনাম খরচ 7-10%)। লাভজনক করতে: খরচ অর্ধেক, বা accuracy দ্বিগুণ (Q6/Q8)",
    "next": "(ক) Q6 (K4 x C term) দিয়ে depth-এ magnitude ঘাটতি পূরণ হয় কি না; (খ) শুধু decisive neuron + Strassen-এ খরচ কমানো; তারপর আবার end-to-end।",
@@ -121,6 +121,32 @@
    "files": "-"
   },
   {
+   "id": "Q12",
+   "priority": "P2",
+   "status": "open",
+   "source": "GPT 5.6 Sol High R7 Q2.3",
+   "title": "Kernel-এ nine cheap (2,1,1) hypertree class যোগ",
+   "what": "Birth-এর (2,1,1) অংশের ১২টা symmetry class-এর মধ্যে ৯টা hypertree — C, C.^2, D21, D21^T দিয়ে n x m message-এ হিসাব করা যায়; ৩টা non-hypertree (triangle ইত্যাদি) বাদ।",
+   "evidence": "Kernel + 3+2 এখনও depth-এ magnitude 1.2-1.9x কম ধরে; বাকি pattern (2,1,1)-এ থাকার কথা (K3ad)।",
+   "cost": "+5-15 u (late-layer version)",
+   "gate": "kappa4 residual RMS মোট >= 40% কমলে; নইলে বাদ",
+   "next": "ARC-এর factor_k4.py / TERM_TABLE_211 থেকে graph list নিয়ে weighted capped evaluator।",
+   "files": "-"
+  },
+  {
+   "id": "Q13",
+   "priority": "P3",
+   "status": "open",
+   "source": "GPT 5.6 Sol High R7 Q1",
+   "title": "Variance 'super-closure' (bivariate diagram table cost 4/5)",
+   "what": "V29-এর pair closure table-এ আরও diagram (degree <= 4 block) যোগ।",
+   "evidence": "Q5: সত্যিকারের input দিলে closure-এর বাকি error মাত্র ~9-13% (তার একটা অংশ teacher noise) — তাই এই পথের সর্বোচ্চ লাভ সীমিত।",
+   "cost": "~1-3 u",
+   "gate": "teacher-forced projected dvar >= 25% কমলে",
+   "next": "কম priority।",
+   "files": "-"
+  },
+  {
    "id": "Q10",
    "priority": "-",
    "status": "dead",
@@ -223,6 +249,19 @@
    "gate": "-",
    "next": "-",
    "files": "experiments/probes/q11_surrogate_cv.py (SURR=quad)"
+  },
+  {
+   "id": "D7",
+   "priority": "-",
+   "status": "dead",
+   "source": "DeepSeek R7.1 / GPT Terra (পুরোনো file)",
+   "title": "DeepSeek 7.1: 'missing (2,1) kappa3 x kappa3 covariance term', sparse pair-neighbour variance, rank-R kappa4 CP; 'Research GPT 5.6 Terra.pdf' = Round 2-এর হুবহু কপি",
+   "what": "-",
+   "evidence": "kappa3 x kappa3 term (d21T*d21T, d21*d21T) chain-এর (1,1) table-এ আগে থেকেই আছে, আর Q5-এ closure নিখুঁত; error পুরো matrix জুড়ে ছড়ানো (Q10) তাই sparse neighbour কাজ করবে না; rank-R kappa4 CP হলো মৃত aggregate/Tucker পরিবার (K3e, K3j)। Terra-র নতুন file-টা md5-এ Round 2-এর file-এর সাথে এক।",
+   "cost": "-",
+   "gate": "-",
+   "next": "-",
+   "files": "consultations/ai-assistant-suggestions/DeepSeek, GPT 5.6 Terra"
   }
  ]
 }

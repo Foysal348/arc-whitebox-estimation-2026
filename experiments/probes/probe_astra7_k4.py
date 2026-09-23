@@ -30,16 +30,18 @@ src = open(SRC, encoding="utf-8").read()
 a1 = "            # ---- wick matrix ----\n            sigma = fnp.sqrt(var)\n"
 a2 = "            K2v, K3v, K4v = K[(2,)], K[(3,)], K[(4,)]\n"
 for a in (a1, a2): assert src.count(a) == 1
-src = src.replace(a1, "            _CAPW(li, mu, var, None if trim else C_off, g4row, lam_prev)\n" + a1)
+src = src.replace(a1, "            _CAPW(li, mu, var, None if trim else C_off, g4row, lam_prev)\n            _CAP3(li, D3, None if trim else D21)\n" + a1)
 src = src.replace(a2, a2 + "            _CAPK(li, K22, K4v)\n")
 POSTL = (3, 7, 11, 14, 15); S = {}
 def _CAPW(li, mu, var, C_off, g4row, lam):
     d = S.setdefault(li, {}); d.update(mu=np.asarray(mu, np.float64).copy(), var=np.asarray(var, np.float64).copy(),
                                        g4=None if g4row is None else np.asarray(g4row, np.float64).copy(), lam=float(lam))
     if li + 1 in POSTL and C_off is not None: d["C_off"] = np.asarray(C_off, np.float64).copy()
+def _CAP3(li, D3, D21):
+    if li + 1 in POSTL and D21 is not None: S.setdefault(li, {}).update(D3=np.asarray(D3, np.float64).copy(), D21=np.asarray(D21, np.float64).copy())
 def _CAPK(li, K22, K4v):
     if li + 1 in POSTL: S.setdefault(li, {}).update(K22=np.asarray(K22, np.float64).copy(), K4v=np.asarray(K4v, np.float64).copy())
-mod = types.ModuleType("est_a7k"); mod.__dict__.update({"_CAPW": _CAPW, "_CAPK": _CAPK})
+mod = types.ModuleType("est_a7k"); mod.__dict__.update({"_CAPW": _CAPW, "_CAPK": _CAPK, "_CAP3": _CAP3})
 exec(compile(src, SRC, "exec"), mod.__dict__)
 truth = np.load(os.path.join(PRE, "truth.npz")); Wall = np.load(glob.glob(os.path.join(PRE, "weights_seed*.npz"))[0])["W"]
 class _Ctx: seed = 0; width = 1024; depth = 16; flop_budget = 2**41; submission_dir = None; scratch_dir = None; api_version = "x"
@@ -69,6 +71,11 @@ for l in POSTL:
     H = lam * Q + (g - lam * Cd)[:, None] * U
     F0 = METRIC * np.sum(U * U, 0) * np.sum(U * H, 0) + 4 * np.sum(Cm * Q ** 3, 0) + 12 * np.sum(T * R, 0)
     parts = {"f1": METRIC * np.sum(U * U, 0) * np.sum(U * H, 0), "f2": 4 * np.sum(Cm * Q ** 3, 0), "f3": 12 * np.sum(T * R, 0)}
+    # ---- GPT Sol R7: K3 + C "3+2" term, t_rep from the chain's kappa3 slice (D21[a,c] = K3[a,a,c], D3 = K3[a,a,a]) ----
+    X = U; Rr = c["C_off"] @ X; Ss = (d2[:, None] * W) * Rr
+    D21c = c["D21"].copy(); np.fill_diagonal(D21c, 0.0); D3c = c["D3"]
+    Trep = D21c.T @ (X * X) + 2 * X * (D21c @ X) - 2 * D3c[:, None] * (X * X)
+    K3C = 12 * np.sum(Ss * Trep, 0)
     # ---- F0's own pair polynomial P_H ----
     Co = c["C_off"]
     dH = METRIC * d1 ** 4 * g + 4 * d3 * Cd ** 3 * d1 ** 3 + 12 * Cd ** 3 * d2 ** 2 * d1 ** 2
@@ -97,7 +104,7 @@ for l in POSTL:
            "chain_regen": ev(n_["g4"]), "F_deploy(P_chain+F0-P_H)": ev(Pchain + pred), "F_oracle_pairs(P_true+F0-P_H)": ev(Ptrue + pred),
            "rms": {"t4": float(np.sqrt(np.mean(t4 ** 2))), "target": float(np.sqrt(np.mean(target ** 2))), "pred": float(np.sqrt(np.mean(pred ** 2))),
                    **{k: float(np.sqrt(np.mean(v_ ** 2))) for k, v_ in parts.items()}, "PH": float(np.sqrt(np.mean(PH ** 2))), "Ptrue": float(np.sqrt(np.mean(Ptrue ** 2)))}}
-    SAVE.update({f"L{l+1}_{k_}": v_ for k_, v_ in dict(t4=t4, Ptrue=Ptrue, Pchain=Pchain, pred=pred, g4=n_["g4"], w=w, a1=a1).items()})
+    SAVE.update({f"L{l+1}_{k_}": v_ for k_, v_ in dict(t4=t4, Ptrue=Ptrue, Pchain=Pchain, pred=pred, K3C=K3C, g4=n_["g4"], w=w, a1=a1).items()})
     out.append(rec)
     npv = rec["nonpair_pred_vs_target"]
     print(f"post L{l} -> kappa4 at L{l+1}: NON-PAIR kernel vs truth: corr {npv['corr']:+.3f} (decisive neurons {rec['nonpair_corr_decisive']:+.3f}) slope {npv['slope']:.2f} | "

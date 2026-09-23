@@ -1,0 +1,347 @@
+Round 7 (Astra) - variance and kappa_4 directional correction research
+Round 7 (Astra): The Whole Error Is Three Numbers per  
+Neuron
+How to compute variance and kappa_4 diagonal corrections more accurately, at low FLOP 
+cost
+Width 1024, depth 16, bias-free ReLU MLP | Baseline: public V29 factorized K=3 chain
+Research note prepared 23 September 2026
+Executive conclusion
+The new measurements change the optimization target. The dominant problem is no longer "represent the whole 
+distribution better." The mean closure is already essentially exact when fed the correct marginal variance, kappa_3 
+diagonal, and kappa_4 diagonal. Therefore the best next estimator should spend FLOPs only on producing those scalar 
+channels more accurately.
+My ranking is: (1) fix the variance channel with a deeper bivariate-only Edgeworth/Wick closure using the pairwise slices 
+V29 already has; (2) compute the missing kappa_4 diagonal through one-step directional ReLU-birth contractions, not 
+through a persistent fourth-order tensor; (3) use sampling only as a falsification tool unless a sample-level control variate 
+achieves R^2 above about 0.99 for squared observables. I do not see a credible 100x sampling variance reduction from the 
+current chain state.
+The highest-priority experiment is the variance "pair super-closure." It is almost free in n^3 units and directly tests 
+whether the fresh ~4.2e-5 covariance error is merely the next omitted connected bivariate diagrams. If that works, it can 
+recover a large fraction of the 47% variance-oracle gain without touching the expensive K3 source machinery.
+Channel / proposal Persistent state Incremental cost Oracle value Priority
+Variance: bivariate 
+super-closure
+No new tensor; existing 
+C, D21, K31, K22, 
+marginals
+~0.05-0.20 u/layer; likely 
+1-3 u/network
+Raw MSE 2.290e-8 -> 
+1.220e-8
+1
+kappa_4: directional 
+fresh-birth hypertrees
+Temporary n x m 
+message matrices only
+~1.2-1.6 u/layer for first 
+1111 test at m=300-400; 
+late-layer version ~7-10 
+u/network
+Raw MSE -> 1.600e-8 
+oracle
+2
+kappa_4: add 211 
+hypertree messages
+Same temporary 
+messages; uses C and 
+D21
+~additional 1-3 u/layer 
+depending message 
+reuse
+Potentially captures 
+missing pattern
+3
+Correction-only 
+sampling
+Sample batch + optional 
+affine Gaussian 
+surrogate
+0.016 u/sample before CV 
+overhead
+All channels in principle 4 / diagnostic only
+Cost convention
+One unit u is one dense n by n matrix product at n=1024, approximately 2 n^3 = 2^31 FLOPs. Therefore an n by n times n 
+by m product costs approximately (m/n) u. For m=300, 350, 400 this is 0.293, 0.342, 0.391 u. A single elementwise n^2 pass 
+costs about 1/(2n) = 0.000488 u.
+Q1 - Variance channel
+Key point: do not remove the full covariance state first. In V29 the covariance machinery is a small fraction of the bill, and 
+C_off is also consumed by K3 and kappa_4 births. The opportunity is to make the nonlinear C_post closure more accurate 
+using only O(n^2) work, then let the existing covariance sandwich propagate that correction automatically.
+Round 7 (Astra) - variance and kappa_4 directional correction research
+1. Proposed method: a bivariate-only "super-closure"
+For each pair (i,j), Cov(ReLU(z_i), ReLU(z_j)) depends only on the bivariate law of (z_i,z_j). This is crucial: once the state 
+already contains the pairwise cumulant slices C_ij, K3_iij / K3_ijj, K4_iiij / K4_ijjj, K4_iijj, and the marginals, every 
+connected diagram built only from those blocks is an elementwise pair calculation. It does not require a tensor 
+contraction or any n^3 operation.
+V29 evaluates a pruned finite diagram table. The next experiment should regenerate the bivariate table with a larger 
+diagram-cost budget, while forbidding any block of degree > 4. This adds products of cumulants V29 already knows; it 
+does not add a K5 or K6 state.
+C_post(i,j) = sum_{connected bivariate diagrams Gamma} c_Gamma * Product[known pair slices] * Product[ReLU 
+Wick coefficients].
+Keep only diagrams whose individual cumulant blocks have degree <= 4; increase the total diagram budget from 
+the current truncation to cost 4 and then cost 5.
+A direct enumeration of connected two-group vector partitions using only cumulant blocks of degree <=4 gives 26 
+symmetry classes through cost 4 and 55 through cost 5 (10 through cost 3). Even a few hundred n^2 elementwise 
+operations are cheap: 300 n^2 operations are only about 0.146 u per layer before fusion.
+Why this is the best explanation to test first
+ The fresh covariance error is approximately stationary across depth, which is the signature of a local nonlinearity 
+truncation rather than transport drift alone.
+ The output covariance is bivariate, so higher products of already-available pair cumulants can be evaluated without 
+the Khatri-Rao wall that hurts K3 transport.
+ A 2% per-entry residual in C_off is entirely compatible with one additional 1/sqrt(n)-suppressed diagram rung at 
+n=1024.
+ If the experiment fails with teacher-forced K<=4 pair slices, then the result is decisive: the missing variance 
+information lives in genuine K5/K6 bivariate cumulants or in errors of the supplied slices, not in a missing cheap 
+product diagram.
+2. Falsifier on the stored arrays
+1. For every layer, reconstruct the V29 post-ReLU covariance using the true pre-activation marginals and the true stored 
+D21, K31, K22, and K4 diagonal. Keep V29 coefficients unchanged. This isolates input-slice error from closure-
+truncation error.
+2. Regenerate the connected bivariate diagram table at cost 4, but permit only degree-2/3/4 cumulant blocks that exist in 
+the stored arrays. Evaluate all pairs.
+3. Repeat at cost 5.
+4. For each version compute: fresh C_post residual RMS; correlation with the true fresh residual; and, more 
+importantly, the projected next-layer variance residual diag(W dC W^T) on neurons with |mu/sigma| < 0.75.
+Kill rule: if teacher-forced cost-5 reduces the projected variance error by less than 25%, stop. If cost-4 or cost-5 removes at 
+least half of the projected error, this becomes the first production port.
+3. FLOPs and state
+Variant Extra state Extra per-layer work Network-scale estimate
+Cost-4 pair super-closure None beyond existing pair 
+slices
+roughly 50-150 n^2 
+elementwise ops
+~0.4-1.1 u over 15 nonlinear 
+layers
+Cost-5 pair super-closure None roughly 150-400 n^2 ops 
+depending fusion
+~1-3 u over 15 layers
+Target-row quadratic form only m outputs one n x n by n x m multiply m/n u per corrected layer = 
+0.29-0.39 u for m=300-400
+Because V29 already forms and propagates C, I would replace the existing C_post closure with the improved one rather 
+than maintain a separate shadow covariance. That automatically carries the inherited correction forward at no 
+additional n^3 cost.
+Round 7 (Astra) - variance and kappa_4 directional correction research
+4. Why pair screening is unlikely to work
+For a next-layer random row q, the variance correction is q^T dC q. With q_j approximately N(0,2/n), the weights q_j q_k 
+have no stable heavy tail. Unless the teacher residual dC itself has sparse pair support, selecting a small fraction of pairs 
+loses cancellation-sensitive content. The under-one-hour falsifier is simple: on the stored true dC, sort |q_j q_k dC_jk| and 
+measure how many pairs are required for 99% of the quadratic-form energy. If more than about 20% of pairs are needed, 
+pair screening cannot beat an n^2 pair closure.
+Q2 - kappa_4 diagonal
+The right representation is directional, one layer at a time. The measurements say the deep fourth cumulant is 
+regenerated at every ReLU and that a transported old "star" explains only about 10% of the deep diagonal. Therefore do 
+not carry a full K4 tensor. Compute the missing fresh ReLU birth, contract it immediately with the next weight row, and 
+add the resulting scalar directly to the next pre-activation kappa_4 diagonal.
+1. All-distinct 1111 birth: exact leading hypertree algebra
+ARC's public factor_k4 implementation explicitly groups the leading connected all-distinct diagrams into three topologies: 
+path, star, and a K3+C "3+2" hypertree. Its combinatorial coefficients are 12, 4, and 12. Contracting all four output legs 
+with the same next-layer row q collapses those tensors to messages.
+Let C be the pre-activation off-diagonal covariance, K3 the pre-activation third cumulant, and a_r = w(r,1) the ReLU Wick 
+coefficients. Define:
+x = q .* a1
+r = C x
+s = q .* a2 .* r
+t_j = sum_{k,l} K3[j,k,l] x_k x_l.
+Then the leading fresh all-distinct fourth-cumulant contraction is:
+Delta_k4_1111(q) ~= 4 * sum_j (q_j a3_j) r_j^3
+                     + 12 * s^T C s
+                     + 12 * sum_j s_j t_j.
+Terms:               star                 path             K3 + C (3+2)
+This is the same path/star/3+2 decomposition used in the reference factor-K4 code, but evaluated only in the one direction 
+q that the next layer actually needs. No n^4 object is created.
+2. Cheap approximation to the K3 directional contraction
+The expensive piece above is t = K3[:,x,x]. Before paying for all source factors, test whether its repeated-index part is 
+sufficient after a random dense directional contraction. Using D21[a,c] = K3[a,a,c] and D3[a] = K3[a,a,a], the exact 
+contribution from all terms with at least two equal K3 indices is:
+t_rep = D21^T (x .* x) + 2 x .* (D21 x) - 2 D3 .* (x .* x).
+The subtraction removes the triple-counting of K3[j,j,j]. For a batch X of m directions, t_rep needs only two n by n times n 
+by m products. Therefore the full star + path + slice-K3 1111 correction costs about 4(m/n) u per layer.
+m active next neurons 4(m/n) u / layer 15-layer worst case 6-layer late-only test
+300 1.17 u 17.6 u 7.0 u
+350 1.37 u 20.5 u 8.2 u
+400 1.56 u 23.4 u 9.4 u
+Falsifier: on 64-128 next-layer rows, compute t_exact from the chain's stored factorized K3 sources and compare t_rep. 
+The relevant metric is not ||t_rep-t|| alone; compare the final scalar 12 sum(s .* t). If the weighted scalar has <20% 
+relative RMS error, use the slice form. If it fails, decompose t_exact by K3 source age and test whether the newest one or 
+two sources dominate. A young-only exact t is still much cheaper than a full K4 state.
+Round 7 (Astra) - variance and kappa_4 directional correction research
+3. The 211 birth: weighted capped hypertree contraction
+For K4[a,a,b,c] with a,b,c distinct, write u_a=q_a^2 and v_b=q_b. The required next-layer contribution is 6 sum_{a,b,c 
+distinct} u_a v_b v_c K211[a,b,c]. The public augmented code already evaluates a related "capped" 211 object by summing 
+over a without materializing n^3. For our purpose, replace the unweighted cap by u and contract b,c with v immediately.
+Delta_k4_211(q) = 6 * sum_{a,b,c distinct} q_a^2 q_b q_c * K211_birth[a,b,c].
+At the leading lower-order birth rung (C^3 and K3*C), there are 12 symmetry classes for the (2,1,1) output grouping. Nine 
+are hypertrees and can be evaluated by leaf-message elimination in O(n^2) per direction. The three hard classes are: one 
+covariance triangle and two classes in which an all-distinct K3 hyperedge overlaps a covariance edge on two vertices. 
+Those are the non-hypertree remainder.
+The cheap nine classes use only matrices that are already present: C, C Hadamard-squared, D21, D21^T, and node-wise 
+Wick vectors w(k,2) on the repeated group and w(k,1) on the single groups. A representative tree contraction is:
+sum_{a,b,c} U_a V_b V_c E_ab F_ac  =  sum_a U_a * (E V)_a * (F V)_a,
+where E and F may be C, C.*C, D21, or D21^T after the appropriate Wick row/column scalings.
+This is the practical reason to split hypertree from non-hypertree content: the former reduces to reusable n by n times n 
+by m messages; the covariance triangle does not.
+4. Q2 falsifier ladder
+5. Construct the true missing next-layer K4-diagonal residual using the stored post-ReLU K4 slices: subtract V29's 
+current diagonal + 22 + 31 contribution from the exact row contraction. Restrict scoring to neurons with |mu/sigma| 
+< 1.5.
+6. Predict that residual using only the 1111 star term.
+7. Add the 1111 path term.
+8. Add 3+2 with t_rep. On a subset, compare against 3+2 with exact factorized-K3 t.
+9. Add the nine cheap 211 hypertree classes via weighted capped messages.
+10. Only if the previous step is strong, measure the three hard non-hypertree classes on a small neuron subset to 
+determine their residual share. Do not implement them end-to-end unless they explain a large fraction of what 
+remains.
+Kill rule: if star+path+3+2 does not reduce the relevant K4-diagonal residual RMS by at least 25% or achieve residual 
+correlation above about 0.6, stop before 211. If adding the nine 211 hypertrees does not take total RMS reduction above 
+40%, this route is unlikely to beat its score cost.
+5. End-to-end use
+At ReLU layer l, compute the fresh directional correction using rows of W_{l+1}. Add it directly to V29's pre-activation 
+kappa_4 diagonal at layer l+1. Do not create a persistent K4 source. This is a one-step birth correction. The hypothesis is 
+justified by the measured fact that deep K4 is regenerated at every ReLU and old transported K4 contributes only a small 
+fraction of the deep diagonal pattern.
+Start with the last 6 layers. With a typical mean-error gain below one per layer, late corrections have the largest final 
+influence. A 6-layer trial also keeps the first directional 1111 patch near 7-10 u for m=300-400, far below the score break-
+even cost for a substantial fraction of the 30% K4 oracle gain.
+Round 7 (Astra) - variance and kappa_4 directional correction research
+Q3 - Sampling the corrections
+My conclusion is negative unless a new sample-level control variate is extraordinarily strong. The relevant arithmetic is 
+unforgiving.
+Samples Forward cost at 0.016 u/sample Chain + samples (starting from 260 u)
+10,000 160 u 420 u
+20,000 320 u 580 u
+30,000 480 u 740 u
+40,000 640 u 900 u
+~47,000 ~752 u ~1012 u
+For a roughly Gaussian scalar, the relative standard error of a sample variance is about sqrt(2/N). At N=10,000 this is 
+about 1.4%, while the target variance accuracy is around 0.1%. A correction-only control variate therefore needs roughly 
+100-200x variance reduction to make 10k samples competitive.
+For an optimal linear control variate:  VRF = 1 / (1 - R^2).
+100x VRF requires R^2 = 0.990; 200x requires R^2 = 0.995; 30x still requires R^2 = 0.967.
+1. Rao-Blackwellisation over input radius
+Because the network is 1-homogeneous, h(Ru)=R h(u). With x~N(0,I), R and u are independent, so E[h^p]=E[R^p] 
+E[h(u)^p]. Sampling only u on the sphere and inserting the exact radial moment is a valid Rao-Blackwellisation. However 
+the radius is already highly concentrated at n=1024. The coefficient of variation of R^p is approximately 2.2%, 4.4%, 6.6%, 
+and 8.8% for p=1,2,3,4 respectively. Removing only this source of noise cannot plausibly deliver a 100x reduction unless 
+the angular observable is almost deterministic. It is still a free improvement for a sampling probe, but not a production 
+strategy by itself.
+2. The only sampling CV worth testing: an affine Gaussian surrogate
+Use the same Gaussian input x to run the real network and a linearized surrogate whose ReLU is replaced by its first 
+Hermite coefficient around the chain state. The surrogate remains affine in x, so its moments are exactly known. For each 
+neuron and layer, use the centered surrogate powers as control variates for the actual centered powers.
+h_tilde_l = m_l + D_l W_l (h_tilde_{l-1} - m_{l-1}),   D_l = diag(Phi_l).
+Controls: (z_tilde-mu)^2, (z_tilde-mu)^3, (z_tilde-mu)^4 with exact Gaussian expectations.
+This control is mathematically clean; the problem is correlation. The previous public P2 experiments obtained only 
+order-1.5x variance reduction from realizable MC controls for final outputs. Moment corrections could correlate better, so 
+measure rather than assume.
+Falsifier: run 8192 paired samples. Cross-fit the CV coefficient on half and evaluate on half. For the variance correction, 
+kill unless the squared-observable control has R^2 >= 0.99 on the neurons that matter. For kappa_4, kill unless the fourth-
+moment/cumulant residual has R^2 >= 0.90-0.95. If those thresholds are not met, no 10^4-10^5 sample budget will be 
+score-positive.
+3. Antithetic, Sobol, and sphere QMC
+Use them only on top of the paired-CV probe. Bias-free ReLU is homogeneous but not odd, so x and -x do not cancel the 
+dominant nonlinear fluctuation. Low-discrepancy designs on a 1023-dimensional sphere also face high effective 
+dimension after 16 random dense layers. Their job is to provide a modest extra factor, not the missing two orders of 
+magnitude.
+Q4 - Which experiment first?
+The score arithmetic strongly favors cheap analytic corrections. Starting from raw MSE 2.290e-8 and cost 260 u, a full 
+variance oracle would remain score-improving even if it cost roughly 228 extra units. A full K4 oracle breaks even at 
+roughly 112 extra units. Even recovering only half of each oracle gain permits about 79 extra units for variance or 46 
+extra units for K4 before the score becomes worse than baseline.
+Round 7 (Astra) - variance and kappa_4 directional correction research
+Rank Experiment Expected extra cost Why first / stop condition
+1 Teacher-forced bivariate 
+covariance super-closure, then 
+port cost-4/5
+Diagnostic: numpy n^2 only. Port: 
+about 1-3 u/network
+Highest oracle value; no new 
+state; stop if projected dvar RMS 
+improves <25%.
+2 1111 directional K4 birth: star + 
+path + 3+2(t_rep), last 6 layers
+~7-10 u for m=300-400 Uses exact reference topology; no 
+K4 memory; stop if K4 residual 
+RMS improves <25%.
+3 Add nine cheap 211 hypertree 
+classes
+~additional 5-15 u in a late-layer 
+implementation, depending 
+batching
+Targets the measured missing 
+pattern directly; stop if total K4 
+residual reduction <40%.
+4 8192-sample paired affine-
+surrogate CV probe
+~131 u for real samples, more if 
+surrogate not fused
+Run only to measure R^2. 
+Production requires ~0.99 R^2 for 
+variance.
+Recommended one-hour experiments
+11. Variance oracle ladder: on each stored layer evaluate V29 closure with true pair slices, then cost-4 and cost-5 pair 
+super-closures. Plot fresh C residual RMS and projected dvar RMS. This is the single most informative experiment.
+12. K4 1111 directional oracle: for 128 next-layer rows compute star and path exactly from C; add 3+2 first with t_rep, 
+then with exact factorized-K3 contraction. Compare against the true missing K4-diagonal residual.
+13. If the 1111 predictor works, implement the weighted 211 hypertree evaluator from the existing TERM_TABLE_211 
+graph list, but drop the three non-hypertree classes. Measure whether the cheap nine classes explain most of the 
+residual.
+14. Only after the analytic probes: run 8192 paired real/surrogate samples and measure CV R^2. Do not invest in a 
+10k-50k production sampler unless the required R^2 threshold is already met.
+What I expect
+My highest prior is that the variance channel can be improved cheaply because it is a strictly bivariate closure problem 
+and the measured fresh error is at the size expected from one omitted diagram rung. For kappa_4, I expect the pure 
+covariance star/path terms plus the repeated-slice approximation to the 3+2 term to explain a useful but not complete 
+fraction of the missing per-neuron pattern. The weighted 211 hypertree terms are the next logical addition. I have a low 
+prior that sampling can meet the required variance reduction at this width and depth.
+I do not claim that these steps guarantee the 1.64e-8 frontier. They do, however, give three sharp falsifiers that can tell 
+you within one network whether the remaining error is a cheap local-closure problem or whether genuinely new higher-
+order state is unavoidable.
+Implementation sketches
+A. Batched 1111 directional birth
+# Q has shape (n,m): columns are selected rows of the next W, transposed
+X = a1[:,None] * Q
+R = C_off @ X                              # m/n u
+STAR = 4 * colsum((a3[:,None]*Q) * R**3)
+S = (a2[:,None]*Q) * R
+PATH = 12 * colsum(S * (C_off @ S))        # m/n u
+Trep = D21.T @ (X*X) + 2*X*(D21 @ X) - 2*D3[:,None]*(X*X)   # 2m/n u
+K3C = 12 * colsum(S * Trep)
+delta1111 = STAR + PATH + K3C.
+The column sums produce one scalar per selected next-layer neuron. All temporary arrays are n by m. No fourth-order 
+state is stored.
+Round 7 (Astra) - variance and kappa_4 directional correction research
+B. Weighted 211 hypertree evaluator
+For each selected q: u=q*q, v=q.
+For each leading TERM_TABLE_211 graph whose support hypergraph is a hypertree:
+  attach u * w(k,2) to the repeated axis a;
+  attach v * w(k,1) to axes b,c;
+  use C / C^2 / D21 / D21^T as edge messages;
+  eliminate leaves by matrix-vector products and multiply the resulting root messages;
+  subtract a=b and a=c coincidences exactly (same logic as eval_capped).
+Multiply the final birth slice contraction by 6 and add to the next pre-activation K4 diagonal.
+C. Variance super-closure generator
+Reuse ARC's vector-partition combinatorics, but request only output partition (1,1), increase the diagram budget, and 
+reject any input block whose total degree exceeds four. Compile the surviving records into the same fused elementwise 
+program style used by V29. Because the output has only two axes, every factor is a vector or matrix and every term is 
+O(n^2).
+Evidence used and caveats
+ The path/star/3+2 coefficients 12/4/12 are not guessed: they are explicitly present in ARC's public factor_k4.py 
+implementation for the all-distinct fourth-cumulant birth.
+ The V29 code already includes a memoryless K4 regeneration and an explicit (3,1) use-side term wk431, so the 
+proposal above does not count that term as new. The target is the directional 211/1111 birth content that V29 does not 
+explicitly carry.
+ The public reference repository currently notes that factorized augmented algorithms omit non-hypertree top-slice 
+diagrams of the same asymptotic squared order as some retained augment terms. That is why the 211 proposal 
+separates the nine cheap hypertree classes from the three hard non-hypertree classes instead of assuming the cheap 
+subset is exact.
+ All score-gain calculations use the user-supplied Round-7 oracle MSEs and 260 u baseline cost. They are break-even 
+calculations, not predictions of achieved leaderboard performance.
+References
+Wilson Wu, Victor Lecomte, Michael Winer, George Robinson, Jacob Hilton, Paul Christiano. "Estimating the expected output of 
+wide random MLPs more efficiently than sampling." arXiv:2605.05179 (2026). https://arxiv.org/abs/2605.05179
+Alignment Research Center public implementation: alignment-research-center/mlp_cumulant_propagation, especially 
+src/mlp_kprop/factor_k3.py, factor_k4.py, and kprop_harmonic.py. Inspected 23 Sep 2026. https://github.com/alignment-
+research-center/mlp_cumulant_propagation
+504aldo public Phase-2 implementation and research log: 504aldo/whest-p2-cumulant-k3, especially estimators/estimator_v29.py, 
+lean/lean_k3_aug.py, docs/findings_log.md and docs/claims_evidence.md. Commit inspected: 
+1a4083f89184d6b1cc55d2e55a5a561d2ae50a8d. https://github.com/504aldo/whest-p2-cumulant-k3
