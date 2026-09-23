@@ -1,0 +1,430 @@
+ROUND 7 / VARIANCE AND FOURTH-CUMULANT RESPONSE
+1
+Round 7 | Three moment corrections
+Fixed-weight ReLU means: variance, fourth cumulants and sampling | 23 September 2026
+My first experiment is a noise-aware audit of the covariance closure, followed by a specific,
+almost-free term patch. My first new κ₄ representation is a quartic response polynomial, evaluated
+afresh at every ReLU and matched to the reliable diagonal/(2,2) slices. Neither proposal removes the old K3
+tier. Neither has demonstrated your target accuracy yet.
+Derived distinction. Three marginal numbers determine the local mean correction; they do not form a
+closed propagation state. Their future values still depend on joint cumulants. Your oracles establish where
+to intervene, not that off-diagonal information can be discarded.
+Candidate
+Additional network cost
+Decision gate
+Covariance terms absent from
+inspected V29
+<0.2 u; existing covariance
+transport reused
+Test at amplitude one; reject if projected
+variance error grows.
+Fresh κ₄ kernel, diagonal and
+(2,2) matched
+About 26 u for all outputs with
+existing Strassen
+Needs >9.1% raw-MSE reduction at that cost.
+Same kernel also supplies full
+next (3,1) slice
+About 42 u total, not 26+42
+Needs >13.9% raw-MSE reduction; can affect
+both channels.
+Add the full K3×C directional
+response
+About 54 u extra for 350
+queries/layer
+Only after the cheaper kernel passes; count
+actual ranks.
+10,000 ordinary forward
+samples
+156.25 u + moment statistics; CV
+costs extra
+Needs >37.5% raw-MSE reduction before CV
+overhead.
+Evidence labels. DERIVED means algebra or an explicit cost calculation. CODE-AUDITED refers to the
+inspected public V29. CONJECTURE means accuracy is unknown. MEASURE-THIS specifies a falsifier. I did
+not receive your teacher arrays; the tests run here check algebra, not leaderboard accuracy.
+Conventions and scope
+Let W have next-layer weight vectors as columns, so z′=Wᵀh. C is the current pre-ReLU covariance; X=z−μ;
+σ²=diag(C); α=μ/σ. Write K3 and K4 for ordinary symmetric cumulant tensors, without source-format
+normalization factors. Use the actual complete K3 implementation, including AAP, MPP and thin terms,
+when evaluating it.
+Accounting: 1 u=2³¹ FLOPs. A float32 (n×n)(n×m) product costs nm(2n−1)/2³¹≈m/n u. Dense products use 0.51 u only where
+the existing Strassen routine applies; rectangular estimates below are classical. Float64 doubles costs. Exactly
+260/1024=0.2539B, not 0.244B; substitute 250 if that is the actual measured baseline.
+
+ROUND 7 / VARIANCE AND FOURTH-CUMULANT RESPONSE
+2
+FIXED WEIGHTS / GAUSSIAN INPUT / n = 1024 / L = 16 / 1 u = 2^31 FLOPs
+1 / Separate teacher noise from closure error
+Derived. With N independent samples, the leading sampling variance of a centered covariance estimate is
+At N=6×10⁷ and typical post-ReLU variance 0.30, weakly correlated Gaussian-like entries have
+SE≈3.87×10⁻⁵. Thus 4.2×10⁻⁵ per entry could contain substantial teacher noise. Insert your actual C and
+K22 rather than assuming 0.30. This observation does not dismiss the variance oracle.
+For nearly Gaussian preactivations these numbers are 0.0183% for variance and 6.32×10⁻⁴ for
+standardized κ₄. The observed 0.15% variance error is much larger than this variance noise. But if excess
+kurtosis is 0.003, the κ₄ teacher itself has roughly 21% relative sampling error. Report noise-corrected
+pattern error before interpreting “20% κ₄ error.”
+State/cost/falsifier. Use the stored post C and K22: O(n²) state, <0.02 u/layer for an entrywise noise map.
+Compute the projected variance noise from the stored next-preactivation v and κ₄. If independent teacher
+blocks exist, with residuals R_A and R_B against the same deterministic chain, use ⟨R_A,R_B⟩ to estimate
+squared systematic error. For a fresh residual that subtracts inherited teacher error, pre/post noise is
+correlated: subtracting two independent noise variances is wrong.
+An exact fresh-residual noise audit requires paired block estimates or cross pre/post fourth moments, which
+your listed aggregate arrays do not include. Without them, report the entrywise noise scale and leave the
+fresh-error decomposition unresolved. No new 60-million-sample run is proposed.
+Why querying 350 variances does not close the state
+Once C_post is known, m quadratic forms cost one C_postW_m product plus column dot products:
+m/n≈0.342 u at m=350. V29 still needs C for births and other closures, so this is not automatically a saving.
+A correction matrix can instead be added before the existing transport, with no new dense product.
+For omitted off-diagonal covariance R, the trace term vanishes. With flat error energy, retaining a fraction p
+of pairs leaves relative projection RMS √(1−p). Even reducing 0.15% to 0.10% needs p≥0.556 in this model.
+“A few dominant pairs” needs a measured energy concentration; an adjoint does not create it.
+
+ROUND 7 / VARIANCE AND FOURTH-CUMULANT RESPONSE
+3
+FIXED WEIGHTS / GAUSSIAN INPUT / n = 1024 / L = 16 / 1 u = 2^31 FLOPs
+2 / A concrete covariance patch before a new state
+Code-audited [1]. The inspected V29 (1,1) table contains the Gaussian C and C² terms, and a standalone
+wk431 term. It omits the pure Gaussian C³/C⁴ terms and the C×κ31 term below. If your current branch
+already contains them, skip this proposal.
+Derived [2]. Gaussian covariance is ∑r≥1Cijrdr,idr,j/r!. First-order bivariate Edgeworth dressing of κ31 is
+(κiiij/6)∑r≥0Cijrdr+3,idr+1,j/r! plus transpose. Therefore a specific missing correction is
+Set its diagonal to zero. This extends the existing K3 closure; it is not a replacement by marginal Gaussian
+propagation. The earlier exact-Mehler-on-K2 result did not test this incremental correction after the
+cross-neuron K3 channel was retained. It could nevertheless be too small, already compensated elsewhere,
+or detrimental.
+State/update/cost. One n×n correction buffer (4 MiB), existing C, κ31 and Wick coefficients. Compute the
+displayed Hadamard terms, then C_post←C_post+ΔC before the existing transport. A conservative
+24n²+50n arithmetic count is <0.012 u/layer, <0.2 u/network. No source transport or new matrix product is
+needed in deployment.
+First falsifier on the stored arrays
+At layers 8, 12 and 15: (i) teacher-force the bivariate closure with all available true preactivation cumulants;
+(ii) separately replace only κ31, only K22 and only D21; (iii) test the three displayed terms at their derived
+coefficients, without fitting a multiplier. Project each covariance residual through the actual next W onto the
+selected neurons. A projection costs 0.342 u for 350 queries; closure work is O(n²). Cap this diagnostic at 10
+u total.
+Reject the patch if it fails to reduce the noise-adjusted, sensitivity-weighted projected error on held-out
+layers. If teacher-forcing κ31 removes the systematic variance error, the priority is better κ31, not a new
+covariance representation. If even fully teacher-forced closure fails, fourth-order bivariate data may be
+insufficient: fifth/sixth mixed cumulants and higher Edgeworth products remain possibilities, not identified
+causes.
+End-to-end. First inject only the resulting variance correction into the mean call, matching your oracle
+experiment. Then test the actual covariance-state patch with all downstream feedback enabled and bill it.
+Keep it only if final adjusted MSE improves on held-out networks. The single-network oracle percentages
+are ceilings for these interventions, not promised gains.
+
+ROUND 7 / VARIANCE AND FOURTH-CUMULANT RESPONSE
+4
+FIXED WEIGHTS / GAUSSIAN INPUT / n = 1024 / L = 16 / 1 u = 2^31 FLOPs
+3 / A quartic response regenerated at each ReLU
+Derived connected-diagram truncation [3]. Expand the centered activation in marginal Gaussian Wick
+polynomials: h_j−E_Gh_j≈d₁,jX_j+(d₂,j/2):X_j²:+(d₃,j/6):X_j³:. For a query w define
+The connected four-output trees contract to the following homogeneous quartic polynomial:
+The four terms are: one input fourth-cumulant edge; a third-cumulant edge joined to a covariance edge; a
+Gaussian three-edge star; and a Gaussian three-edge path. The coefficients follow from cumulant
+multilinearity and connected partitions. For example, 4 cum(L,L,L,Q)=12∑b_jq_jK3(j,u,u)+2∑b_jK5(j,j,u,u,u),
+with the latter omitted here.
+This is a fresh nonlinear response at every layer, not a star born once and transported linearly. It retains the
+signed weights and actual realized K3 queries. No averaging over later W is performed. Its all-distinct
+entries include the leading κ₃×C and κ₄ structures requested.
+A first version with no new source contractions
+Temporarily omit the K3 term and use the current harmonic fourth-cumulant approximation
+K4=Sym(G⊗ηI), G=λC+diag(g−λ diag C). Then
+Gu=λq+(g−λ diag C)∘u is elementwise after q is available. Thus all m raw diagonal queries need only CU
+and CT: 2m/n u/layer, plus O(nm). This cheap version tests the missing path and local regeneration; it
+does not claim to recover the full K3-driven pattern.
+What this approximation loses
+F is not the full fourth cumulant of even the truncated polynomial. It omits cycles, higher marginal Hermite
+orders, input K5/K6, and additional K4×C and K3² terms. For Gaussian L+Q alone, the exact additional ring
+is 3 tr[(C diag b)⁴]. A generic evaluation costs O(n³) per query, so it cannot be called free. Weak off-diagonal
+correlations justify a diagram ordering for distinct indices, not a uniform 2% guarantee, especially for
+repeated indices.
+The next page matches reliable repeated-index slices exactly within the surrogate. The appendix gives the
+leading repeated-index law and inexpensive harmonic K4×C contractions. All accuracy claims beyond the
+derived terms are conjectures.
+
+ROUND 7 / VARIANCE AND FOURTH-CUMULANT RESPONSE
+5
+FIXED WEIGHTS / GAUSSIAN INPUT / n = 1024 / L = 16 / 1 u = 2^31 FLOPs
+4 / Preserve the accurate pieces; test the missing pattern
+Derived. Let F₀ define a symmetric tensor H by F₀(w)=H[w,w,w,w]. Its diagonal and (2,2)/(3,1) slices are
+available using only C_ij, C_ii, G_ij and the local coefficients: O(n²), without forming H. Match the reliable
+post-ReLU diagonal d and off-diagonal K22 by
+where δd=d−diag(H), Δ22=K22−H22 and diag(Δ22)=0. This avoids adding a new estimate of the
+already-correct level on top of the old estimate. It replaces the next κ₄ diagonal prediction, rather than
+adding a full cumulant to λC regeneration.
+State/update/cost. Reuse C and the current harmonic G parameters; keep Δ22 (4 MiB) and O(nm) query
+buffers. Each layer recomputes this polynomial and reads out the actual next-layer queries. Three
+rectangular products CU, CT and Δ22(W∘W) cost 3m/n u/layer: 1.025 u for m=350. For all n outputs,
+3×0.51×15=22.95 u in products; allow about 26 u/network including the explicit O(n²) algebra. Count the
+realized mask size; the κ₄-relevant mask may be larger than 350.
+The same polynomial can supply the (3,1) slice
+For the Gaussian part, r=Ct and
+The harmonic gradient uses the existing q; matching adds 4δd∘w³+12w∘(Δ22w²). At all n queries, CU, CT,
+the displayed reverse C product, Δ22W² and the final gradientᵀW are five dense products/layer: 38.25 u
+over 15 layers with Strassen; allow about 42 u total. This is the total for diagonal plus κ31. It is not the
+previously dead adjoint scheme for saving old-source contractions.
+Falsifier and deployment test
+At one late layer, form the true pair-only quartic P_true(w)=∑d_jw_j⁴+4∑_{j≠k}K31_jk
+w_j³w_k+3∑_{j≠k}K22_jk w_j²w_k². Compare F₀−P_H with κ4_true,next−P_true; this isolates the
+(2,1,1)/(1,1,1,1) prediction. Full pair matching here is an oracle diagnostic; deployment above only uses
+the existing predicted d and K22. Also test its uncorrected κ31 prediction directly. One layer with 350
+queries costs <3 u in principal products plus O(n²) terms; use a 5-u cap.
+Reject if the sensitivity-weighted residual MSE does not improve, or if the end-to-end diagonal-only
+replacement fails the 9.1% raw-MSE gate for a 26-u bill. Enable κ31 feedback into covariance only after its
+own held-out slice test; the 42-u version needs >13.9% raw improvement. Do not inject teacher K31 into a
+submitted estimator.
+
+ROUND 7 / VARIANCE AND FOURTH-CUMULANT RESPONSE
+6
+FIXED WEIGHTS / GAUSSIAN INPUT / n = 1024 / L = 16 / 1 u = 2^31 FLOPs
+5 / Price the genuinely new K3×C response
+Derived. This uses existing K3, without changing its transport law. For the illustrative source
+K_s=Sym∑p_r⊗p_r⊗a_r, put z=Pᵀu and y=Aᵀu. Then
+The next-layer leg transport already computes Pᵀu and Aᵀu because u=diag(Φ)w. Reuse these arrays. The
+extra work is AᵀT and PᵀT for T=[t₁,…,t_m]. Apply the corresponding derivative of the complete source cubic
+for AAP and thin terms; do not silently replace V29 by an MPP-only model.
+For old sources, form QᵀT once and multiply by the stored source factors; no Hadamard product of
+reconstructed legs is needed. The extra query buffers are O(nm+r_cm), only a few MiB; preserve the
+current-layer factors until the query is finished. Thin-leg products and coefficients must also be metered.
+Using the supplied 120 source-layer schedule as a conservative ledger, ranks n through age 4, 384 through
+age 7, and 224 thereafter give ∑ρ=73.125. At m=350 the two projected legs cost 49.99 u/network, plus
+about 2 u shared-basis projections and thin work: plan roughly 54 u extra. If reuse of the u projections is
+unavailable, add their cost; it is not a 54-u implementation. At m=n, the two new projections alone cost
+146.25 u, beyond the κ₄-only oracle headroom.
+The query is new information: it depends on off-slice K3 and on the curvature direction t=(d₂∘w)∘C(d₁∘w),
+rather than on the 13 already-tested local features. It also differs from transporting a fourth-cumulant star
+across depth.
+First falsifier before paying the full bill
+Capture the pre-ReLU source factors and the reused next-layer legs at layer 12. Evaluate the added term
+for 32 sensitive output rows, then 350 only if it helps. Recompute the diagonal/(2,2) matching for the
+complete F. This costs only O(n²): restricting w to one or two coordinates restricts every K3 index in
+K3[t,u,u] to those coordinates, so D3 and D21 suffice for the matching terms. A blind additive update would
+double-count known pair content. Cap the initial query test at 2 u and the expanded layer at 10 u.
+End-to-end gate. A selected-query kernel with this extension will be about 70-80 u above the baseline,
+depending on thin legs and matching. A 75-u bill requires >22.4% raw-MSE reduction. That is roughly three
+quarters of the measured κ₄-only oracle benefit. I would not build it before the cheap kernel and the
+one-layer query have shown a substantial pattern gain.
+The 54-u figure prices the new directional queries; adding the selected-query, pair-matched base costs about another 18 u.
+This is a complete specified polynomial truncation, not a complete fourth-cumulant closure. Reject the implementation if
+thin-leg work or lost reuse pushes it past its declared bill.
+
+ROUND 7 / VARIANCE AND FOURTH-CUMULANT RESPONSE
+7
+FIXED WEIGHTS / GAUSSIAN INPUT / n = 1024 / L = 16 / 1 u = 2^31 FLOPs
+6 / Sampling corrections: subtracting a constant is not a CV
+Derived. For y=z−μ, the centered influence functions for the three cumulants are
+Estimating δv as a sample variance minus the chain value leaves the sampling variance unchanged. A
+usable estimator is an unbiased sample cumulant minus the chain estimate minus β times the sample
+mean of a zero-mean Gaussian Hermite control; fit β on an independent split. Its leading noise is governed
+by these influence functions. Near Gaussianity their variances are (2v², 6v³, 24v⁴). Raw moments up to
+eight, or paired samples, are needed to assess non-Gaussian fourth-cumulant estimator noise accurately.
+For a jointly Gaussian standardized target and surrogate with correlation ρ, Hermite orthogonality gives
+Corr(H_q(Z),H_q(G))=ρ^q. Optimal control reduces variance by 1−ρ2q. A 100× reduction needs
+|ρ|≥0.99749, 0.99833 and 0.99874 for q=2,3,4 respectively. Similar marginal distributions or accurate
+analytic moments do not establish such a samplewise coupling.
+Ordinary samples
+Full-network forward cost
+Near-Gaussian relative SE of variance
+10,000
+156.25 u
+1.414%
+100,000
+1,562.5 u
+0.447%
+2,000,000
+31,250 u
+0.100%
+Even a 100× reduction at 10,000 samples gives variance relative SE≈0.141%, slightly above 0.1%. A
+perfectly batched Strassen implementation can reduce the dense-forward bill toward 0.51 of these costs,
+with activation/statistics work additional; it does not change the statistical sample requirement. The chain
+plus 100,000 classical forwards exceeds B.
+One inexpensive falsifier, if a new coupling is claimed
+Use 2,048 paired inputs and a fixed Gaussian tangent surrogate G_l(x)=m_l+J_lx, J_l=W_lᵀ
+diag(Φ_{l−1})J_{l−1}. State: the running J and selected rows, O(n²), plus streaming moments. Building the
+16 maps costs ≤16 u classically, actual MLP forwards 32 u, and evaluating 350 surrogate rows at each of
+two selected layers costs about 1.37 u. Allow <51 u including elementwise statistics. A Gaussian
+surrogate’s cumulants and Hermite means are analytic; fit CV coefficients on one split and test residual
+variance on another.
+Compute the held-out residual variance of the actual ψ₂/ψ₃/ψ₄ and their mean-sensitivity-weighted
+combination. Reject unless the observed gain, including surrogate evaluation cost, crosses the
+sample-count gate. Aggregate teacher moments cannot provide this coupling test. The old 1.5× mean-CV
+measurement did not directly measure these influence functions; the Gaussian benchmark makes a 100×
+surprise unlikely.
+
+ROUND 7 / VARIANCE AND FOURTH-CUMULANT RESPONSE
+8
+FIXED WEIGHTS / GAUSSIAN INPUT / n = 1024 / L = 16 / 1 u = 2^31 FLOPs
+Sampling variants: what the new diagnosis does not rescue
+Derived. In the Gaussian benchmark, H₂ and H₄ are even, so antithetic sign pairs duplicate their noise; a
+pair does not reduce their variance at fixed evaluation cost. Averaging over a resampled last W changes the
+fixed-network problem. Radial Rao-Blackwellization is exact for raw moments:
+E[f(X)^k]=E[R^k]E[f(√nU)^k]/nk/2. But CV²(R^k)≈k²/(2n), only 0.20% for k=2 and 0.78% for k=4. It helps
+dramatically only if angular variation is already tiny. Your sphere/QMC negatives stand; no new 100×
+mechanism follows from homogeneity.
+7 / Which experiment first?
+Order
+Experiment and stop rule
+Diagnostic cost
+1. Variance
+Noise map, teacher-forced bivariate
+closure, then the fixed-coefficient
+covariance patch.
+<10 u for three selected layers; no new MC.
+2. κ₄ diagonal
+Compare the pair-subtracted
+quartic kernel with the true omitted
+(2,1,1)/(1,1,1,1) contribution.
+<5 u for one late layer.
+3. Coupled κ31 / variance
+Only if step 2 or κ31 teacher forcing
+is positive: test the quartic-gradient
+κ31 slice.
+<6 u for one full layer with existing Strassen.
+4. K3×C contribution
+Capture factors; test 32
+curvature-direction queries, then
+350.
+2-u then 10-u caps for one layer.
+5. Sampling
+Only for a genuinely new coupling:
+test influence-function residuals on
+paired inputs.
+<51 u; no promise of a viable estimator.
+Planning rank: variance first, κ₄ second, κ₃ third pending the other model’s transport work. The first two
+can interact through κ31; their oracle gains cannot simply be added. There is no defensible numerical
+“expected gain” before these local tests, so use the measured oracle headroom and break-even cost gates
+instead.
+For an intervention achieving exactly the supplied single-channel oracle error, the maximum break-even
+extra cost is about 228 u for variance, 112 u for κ₄, and 43 u for κ₃. These are optimistic ceilings, not
+recommended budgets. A 26-u kernel needs to recover about 30% of the κ₄ oracle’s MSE reduction; a 75-u
+extension needs about 74%.
+End-to-end protocol. Fix coefficients and masks before held-out evaluation. Start with the same isolated
+mean-input intervention as the oracles; then enable the intended state feedback. Compare paired final
+errors against the existing 10⁹-sample means over the available networks, report raw and adjusted MSE,
+and bill all extra preparation, contractions and statistics. Reject a one-network improvement that does not
+survive this test.
+Conclusion. The strongest new cheap test is the audited covariance term patch; the strongest new state
+candidate is the pair-matched quartic response. Its limitation is explicit omitted diagrams, not an assumed
+cancellation or a new rank claim. No result here establishes the leaders’ method or halves V29’s cost.
+
+ROUND 7 / VARIANCE AND FOURTH-CUMULANT RESPONSE
+9
+FIXED WEIGHTS / GAUSSIAN INPUT / n = 1024 / L = 16 / 1 u = 2^31 FLOPs
+Appendix A / Repeated indices and omitted κ₄ response
+Derived repeated-index law. Let m_r=E_G[h_r], η_r=2m_r(1−d₁,r), and β_r=2d₁,r−2m_rd₂,r−2d₁,r². For
+three distinct neurons r,k,m, the leading Gaussian tree and single cross-K3 terms are
+Proof: set B_r=(h_r−m_r)²−Var_G(h_r). Then
+κ(h_r,h_r,h_k,h_m)=κ(B_r,h_k,h_m)−2Cov(h_r,h_k)Cov(h_r,h_m). Its local derivative averages are
+E[B′_r]=η_r and E[B″_r]=2d₁,r−2m_rd₂,r. This explains the star coefficient and the additional chain/K3
+terms. Higher mixed cumulants and cross-products are omitted. Thus matching only diagonal/(2,2) does not
+fully resum repeated-index (2,1,1) terms.
+Next terms involving the input fourth cumulant
+At the next connected-polynomial order, in addition to the F terms, the pieces linear in K4 and C are
+For K4=Sym(G⊗ηI), put s=‖u‖², h=Gu and a=uᵀGu. The required slices are
+These require two extra query products, C(b∘u) and (C∘G)b, plus reductions; G(b∘u) reuses the first
+because G=λC+diagonal. Cost: 2m/n u/layer, plus O(n²+nm), rather than a fourth-order tensor. State: one
+extra n×n Hadamard matrix. This is a priced algebraic extension, not a validated accuracy improvement.
+K3² terms occur at the same polynomial order and are not thereby included.
+Falsifier/end-to-end. Add this extension to the one-layer pair-subtracted diagnostic only: <0.7 u in
+principal products for 350 queries, plus slice matching. Reject it if the target residual worsens. Deploy only
+if recomputing all matching terms and the full end-to-end score pays for the added cost; retaining selected
+K4×C terms has no general error guarantee.
+
+ROUND 7 / VARIANCE AND FOURTH-CUMULANT RESPONSE
+10
+FIXED WEIGHTS / GAUSSIAN INPUT / n = 1024 / L = 16 / 1 u = 2^31 FLOPs
+Appendix B / Explicit O(n²) pair matching
+Here a=d₁, b=d₂, c=d₃ and s=diag(C); these b,c are unweighted local coefficients. For i≠j the
+Gaussian-star/path part of the quartic has the following slices:
+Add the harmonic-input pieces ηg_i a_i⁴ on the diagonal, (η/2)G_ij a_i³a_j for (3,1), and (η/6)(g_i+g_j)a_i²a_j²
+for (2,2). All operations are entrywise outer scalings and Hadamard powers; the diagonal is handled
+separately. These explicit expressions are the O(n²) construction used in the product ledger.
+Matching the K3×C extension also stays O(n²)
+Write D_ij=K3(i,i,j), d_i=K3(i,i,i). On a two-coordinate query w=xe_i+ye_j, define
+The added polynomial restricted to this pair is
+Take the x⁴ coefficient for its diagonal, the x³y coefficient divided by four for (3,1), and the x²y² coefficient
+divided by six for (2,2). Expand these scalar polynomials entrywise across pairs; do not call a dense F
+evaluator n² times. Hence the expensive off-slice directional query adds no further dense products for pair
+matching.
+For the diagonal-only estimator, only H_iiii and H_iijj are required. The oracle diagnostic uses H_iiij as well to
+remove all known pair content. For deployment with κ31 feedback, use the full gradient construction on
+page 5; a current-coordinate pair slice alone is not the next-layer rotated slice.
+
+ROUND 7 / VARIANCE AND FOURTH-CUMULANT RESPONSE
+11
+FIXED WEIGHTS / GAUSSIAN INPUT / n = 1024 / L = 16 / 1 u = 2^31 FLOPs
+Appendix C / Minimal NumPy diagnostics
+All arrays below use ordinary cumulants, not the reference program’s rescaled Wick buffers. W has columns
+as output queries. The first routine costs O(n²); the second costs two n×n by n×m products. Matching the
+known slices is specified on page 5.
+import numpy as np
+def teacher_cov_noise(Cpost, K22post, N=60_000_000):
+    v = np.diag(Cpost)
+    # Leading variance, not a noise-corrected residual by itself.
+    return (K22post + v[:,None]*v[None,:] + Cpost*Cpost)/N
+def missing_cov_terms(C, d2, d3, d4, K31):
+    C = C.copy()
+    np.fill_diagonal(C, 0)
+    C2 = C*C
+    out = (C2*C)*(d3[:,None]*d3[None,:])/6
+    out += (C2*C2)*(d4[:,None]*d4[None,:])/24
+    B = d4[:,None]*K31*d2[None,:]
+    out += C*(B+B.T)/6
+    return out
+def project_variance(E, W):
+    return np.sum(W*(E@W), axis=0)
+def quartic_kernel(C, W, d1, d2, d3, g, lam, metric):
+    u = d1[:,None]*W
+    b = d2[:,None]*W
+    c = d3[:,None]*W
+    q = C@u
+    t = b*q
+    r = C@t
+    h = lam*q + (g-lam*np.diag(C))[:,None]*u
+    f = metric*np.sum(u*u,axis=0)*np.sum(u*h,axis=0)
+    f += 4*np.sum(c*q*q*q,axis=0)
+    f += 12*np.sum(t*r,axis=0)
+    return f
+Use the actual next W and the chain-chosen sensitivity mask. Compare projected errors with and without
+the correction, weighted by the squared local mean derivative. The leading derivatives are
+∂m/∂v=φ(α)/(2σ), ∂m/∂κ₃=−αφ(α)/(6σ²), and ∂m/∂κ₄=(α²−1)φ(α)/(24σ³). Prefer the exact derivatives of your
+implemented mean program when ranking neurons.
+Checks actually executed for this report
+Exact Gauss-Hermite integration of small polynomial examples verified the star, path and quadratic-ring
+coefficients to <3×10⁻¹⁶. Finite differences verified the quartic gradient to 1.8×10⁻¹¹ relative error. Explicit
+small tensors verified the pair-slice formulas and factored directional K3 query to <6×10⁻¹⁵. These are
+algebra checks, not tests on your network or Monte Carlo teacher.
+
+ROUND 7 / VARIANCE AND FOURTH-CUMULANT RESPONSE
+12
+FIXED WEIGHTS / GAUSSIAN INPUT / n = 1024 / L = 16 / 1 u = 2^31 FLOPs
+Sources and reproducibility
+The cited sources support the source-code audit and the general derivative/connected-cumulant tools. The
+network-specific contractions, error budgets, cost ledgers and falsifiers are derived here. No paper is cited
+as a validated solution of this benchmark.
+[1] 504aldo, public V29 implementation: TERM_SPECS[(1,1)], wk431 additions and covariance symmetrization. Local source
+inspection; audit your active branch before applying the patch.
+GitHub / estimator_v29.py / pinned source 18c17e2d
+[2] Felix Voigtlaender, A general version of Price’s theorem. Supports Gaussian expectation derivatives for nonsmooth
+functions through distributional derivatives; the particular correction formulas here are derived in this report.
+https://arxiv.org/abs/1710.03576
+[3] Jani Lukkarinen and Matteo Marcozzi, Wick polynomials and time-evolution of cumulants. Primary reference for connected
+cumulant expansions and removal of internal contractions; no claim that it solves this network benchmark.
+https://arxiv.org/abs/1503.05851
+Scope of verification
+The Gaussian covariance terms and wk431 extension were checked in the available public V29 source. A
+small independent NumPy program checked the quartic polynomial, its gradient, local pair slices and the
+factored K3 contraction. Its largest reported pair-matching discrepancy was 1.1×10⁻¹⁴. No teacher arrays,
+teacher sample blocks or raw input/output sample pairs were supplied for Round 7. Therefore every
+proposed network-accuracy improvement remains a falsifiable hypothesis.
+Practical implementation boundaries
+All persistent state proposed here is O(n²) in addition to the existing K3 source representation. O(nm) query
+work can be blocked to stay well below the memory cap. Dense-product estimates include the stated
+Strassen cost only for square products; shared source-basis and rectangular query products use explicit
+classical counts. Gaussian CDF/PDF and Wick coefficients are reused from the existing closure. Additional
+source thin legs, conversion conventions and any fallback factorizations must be counted by the shipping
+meter.
+A first falsifier is a local negative test, not a proof of final accuracy. A local pass must be followed by the
+prescribed end-to-end comparison; a failure closes that approximation without reviving previously failed
+rank, age-window or sampling proposals.
