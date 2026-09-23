@@ -1,0 +1,222 @@
+ROUND 9 / ARCHITECTURE ASSESSMENT
+1
+Round 9
+Architecture assessment
+Fixed-weight ReLU MLP · 1024 × 16 · Research response · 23 September 2026
+One useful redesign; no demonstrated solution to both targets
+Conclusion. I cannot derive an estimator that achieves both 133-165 u and raw MSE 1.6-1.9×10⁻⁸ from
+the supplied evidence. I can derive a different split of the cubic/quartic work: keep the third leg of the
+cubic readout in the previous coordinate system. It removes the two extra per-source projections for
+a K₃×C response. It does not halve the 260 u cubic chain, and a complete ledger does not yet support the
+requested ≤20 u quartic increment.
+Labels: Derived denotes algebra or arithmetic; Conjecture denotes unverified network benefit; Measure
+denotes a falsifier. Your Round 9 measurements are accepted as supplied. In particular, teacher-forcing
+now closes the bivariate-closure question; proposing another covariance-closure patch would ignore that
+result.
+1. Mixed-coordinate response architecture
+Derived. Use row-oriented weights B, so the next pre-activation is Bh and its i-th row is wᵢᵀ. At the current
+ReLU let D = diag(d₁), d₁ = Φ(μ/σ), and let K be the current pre-activation third cumulant. Separate its
+linearly transmitted part K̄ = D⊗³K from the newly born post-ReLU source. Carry the transient mixed slice
+For a normalized symmetric source Sym Σᵣ(pᵣ⊗pᵣ⊗aᵣ), denote its pre-B, gain-scaled legs by P̄,Ā and its
+transported legs by P′=BP̄, A′=BĀ. Then
+The source’s usual D21 is exactly RₛBᵀ. Sum Rₛ before applying this final Bᵀ. The actual V29 source includes
+AAP, MPP and thin terms: apply the same rule to every third right leg; do not replace its source by the
+illustrative PPA formula. The left Hadamard factors are unchanged.
+State. Keep the existing mean, covariance, K₃ sources and quartic-kernel inputs, plus R_old and R_total
+(two n² float32 arrays: 8 MiB). Retain pre-B right legs and the pre-B shared basis until readout finishes. With
+four young sources, copied pairs cost 32 MiB; basis and response scratch bring the incremental working set
+to roughly 50-70 MiB. Buffer reuse can reduce this; measure actual peak memory.
+Why the realized fluctuation survives. This is a change of contraction order, with the same legs and
+weights. It neither averages the odd contribution nor compresses the Hadamard products. Under B→−B, R
+is even and RBᵀ is odd. Every retained all-distinct cubic entry is preserved, including its existing
+approximation error.
+
+ROUND 9 / ARCHITECTURE ASSESSMENT
+2
+FIXED WEIGHTS / GAUSSIAN INPUT / n = 1024 / L = 16 / 1 u = 2^31 FLOPs
+2. Propagation and the quartic response readout
+Derived: shared old basis. If pre-B legs are Q₋F and post-B legs are BQ₋F, form the usual
+source-summed inner contraction S, but assemble R = SQ₋ᵀ instead of D21 = S(BQ₋)ᵀ. The n²r work is the
+same. Preserve Q₋ after the gain/refit and its nested sub-basis; otherwise this silently changes the retained
+tensor. No inverse of B is required.
+Derived: newborn cancellation. The newborn has P₋=I. Its mixed readout is L_A a_bᵀ + L_P, whereas its
+ordinary readout uses two dense right-factor products. Saving that one newborn product pays for the single
+aggregate R_total Bᵀ product. Thus, on layers already computing full D21, this change has no additional
+square-matmul bill. Thin terms must be remapped too.
+The public source forms a_b = D C_off [1]. Its already transported newborn A leg therefore supplies the
+covariance response, including an elementwise diagonal correction:
+Derived: K₃×C readout. Set uᵢ=Dwᵢ, d₂=φ(μ/σ)/σ, tᵢ=(d₂∘wᵢ)∘qᵢ. The leading connected contribution
+containing one quadratic response, one K₃ and one covariance is
+The factor 12 is 4 choices of the quadratic output × its Taylor factor 1/2 × 6 connected K₃-C partitions.
+Evaluate d₂/d₁ with a stable inverse-Mills ratio, not an underflowed Φ division. R_old must exclude the
+newborn: this response is driven by the input K₃. This single rowwise contraction replaces projecting two
+source legs along every new curvature direction.
+Derived: Gaussian pieces. With cᵢ=d₃∘wᵢ and d₃=−(μ/σ)φ(μ/σ)/σ², the leading star and path readouts are
+The star is elementwise; evaluating Ct for all queries costs one square product per transition. These
+formulas specify connected polynomial terms, not the entire quartic estimator. Preserve the input-K₄
+edge, pair-sector matching and conventions of your measured −8.8% kernel. Their costs and any
+subtractions cannot be declared free.
+Conjecture, narrowly stated. If this readout reproduces that same measured kernel on the same
+retained tensor, it inherits its κ₄ improvement. It does not improve K₃ all-distinct birth accuracy or solve the
+unexplained 55%. No reduction of fresh error in all three channels is established by this architecture.
+
+ROUND 9 / ARCHITECTURE ASSESSMENT
+3
+FIXED WEIGHTS / GAUSSIAN INPUT / n = 1024 / L = 16 / 1 u = 2^31 FLOPs
+3. Complete cost boundary: where “free” stops
+Derived. All costs below are incremental to 260 u. A square product is 0.51 u with the supplied Strassen
+implementation. A classical (n,n)×(n,r) product costs n r(2n−1)/2³¹ ≈ r/n u. Hadamard/reduction work is
+counted separately; no n×r²×n product is relabeled n²r.
+Operation
+Per applicable layer
+Whole-network contribution
+Aggregate remap RBᵀ
++0.51 u
+Canceled by next row in full-D21 layers
+Newborn identity right leg
+−0.51 u
+One fewer newborn dense contraction
+q reuse; full K₃ response
+O(n²)
+About 0.01-0.02 u/layer for basic readout
+algebra; meter tails/thin terms
+Gaussian path Ct
+0.51 u
+≤7.65 u for 15 transitions
+Literal all-distinct input-K₃
+projection, if required
+1.02 u
+≤15.30 u; two products unless demonstrably
+reused
+Restore final-layer mixed slice
+Terminal only
+Roughly 9-11 u, plus thin/alignment costs
+Input-K₄ edge; output pair
+matching
+Kernel dependent
+Retain and meter reference operations; not
+included as zero
+Derived: repeated indices. If “all-distinct” means retaining only distinct indices of the input K̄, write
+Jⱼₖ=K̄ⱼⱼₖ and jₖ=K̄ₖₖₖ. The exact subtraction is
+It costs two dense products. These input-index exclusions are different from matching repeated output
+indices of K₄. If your 140 u implementation uses the latter, audit its actual formula; the simple row dot
+above cannot inherit the −8.8% claim until it matches that formula.
+Derived: terminal tax. V29 calls the final readout with need_d21=False [1]; it computes D3 without
+dense slice contractions. R_old would restore them. An illustrative bill is 1.02s_dense + 2Σ_old(r_s/n) +
+r_common/n u, plus nested-basis lifts and thin terms. Four dense sources and the stated rank tiers give
+roughly 9-11 u. Count only eligible input sources and use the actual terminal inventory.
+With literal all-distinct subtraction, the visible increment is approximately 7.65+15.30+(9-11) = 32-34 u
+before remaining overhead. Omitting that subtraction yields roughly 17-19 u before overhead, but that
+is a different kernel unless equality is proved. I therefore do not certify ≤20 u.
+Score consequence. If raw MSE falls by 8.8%, the score ratio is 0.912(1+c/260), where c is added cost.
+Break-even is c=25.09 u. At c=20, score improves only 1.8%; at c=35, it worsens 3.5%. Raw MSE would be
+1.915×10⁻⁸. This does not approach the leaders’ cost.
+
+ROUND 9 / ARCHITECTURE ASSESSMENT
+4
+FIXED WEIGHTS / GAUSSIAN INPUT / n = 1024 / L = 16 / 1 u = 2^31 FLOPs
+4. A falsifier before any architecture claim
+Measure: one stored late layer. Capture layer 14’s source legs immediately before and after raw B,
+post-gain/refit bases, newborn a_b, left Hadamard factors, thin legs and the direct quartic-kernel output.
+The listed marginal/slice arrays alone do not identify the all-distinct tensor; source capture is required and
+is allowed by your setup.
+First compare R_total Bᵀ with the existing full D21, including its diagonal before any masking. Compare the
+rowwise K₃ response with the direct per-source curvature contractions, then compare the complete quartic
+prediction with the measured 140 u version, including exclusions and pair matching. A relative RMS
+discrepancy above 10⁻⁵ is a provisional failure; check float32 accumulation order against a small float64
+reference before diagnosing algebra.
+Second run the actual final-layer branch and the full metered operation graph. Reject the
+score-improvement claim if added cost exceeds 25.1 u for the same −8.8% raw gain. One-layer replays and
+one 16-layer run need no new Monte Carlo; they are an under-hour CPU falsifier on hardware capable of the
+stated baseline. Separately enforce the grader’s 120 s and 8 GB limits.
+End-to-end test. Keep all coefficients fixed. The rewritten estimator must reproduce the direct augmented
+estimator’s moment trajectories and final means to numerical tolerance before the deterministic paired
+100-network test. A match establishes a computational reorganization, not improved K₃ modeling. Any
+subsequent joint K₃/K₄ redesign must be scored independently; do not add channel-oracle percentages.
+Why I do not offer two more “new” architectures
+Derived: explicit all-distinct birth. A packed symmetric K₃ has 179,481,600 float32 entries, about 0.718
+GB. The direct three-mode transport algorithm costs ≈3n u = 3072 u per layer classically, or ≈1567 u using
+tiled 0.51 u square products, before nonlinear birth. Symmetry helps constants but does not make this
+implementation competitive. These are algorithm costs, not a lower bound on every possible
+representation.
+Derived: reverse cubic-functional evaluation. A birth polynomial g(q)=Σⱼβⱼqⱼ(aᵀq)ⱼ² can be retained as a
+circuit. Batched query transport, evaluation of aᵀq, its local gradient, and backward gradient transport each
+require a dense product. This straightforward exact architecture returns to approximately 4×0.51=2.04 u
+per source-layer. Renaming the work “automatic differentiation” does not eliminate it.
+Derived: young-source arithmetic. Even deleting all 116 u of young work would leave 144 u. Adding a
+20 u quartic correction leaves 164 u, with essentially no allowance to replace the young computation. To
+reach 150 u with that correction requires saving 130 u, more than the entire young tier. A modest
+young-only acceleration cannot solve the joint target.
+Assessment. The measured dead list is not a universal impossibility theorem. But it supplies no evidence
+for a new closed, cheap state carrying the missing cubic and quartic sectors. I cannot honestly claim that
+turbulence, kinetic or tensor-network terminology supplies one. The leaders’ estimator remains
+unidentified.
+
+ROUND 9 / ARCHITECTURE ASSESSMENT
+5
+FIXED WEIGHTS / GAUSSIAN INPUT / n = 1024 / L = 16 / 1 u = 2^31 FLOPs
+5. The coefficient paradox identifies a partner projection
+Derived under a testable linear-response approximation. Let t=0 be the shipped K×C coefficient and
+t=1 restore its missing half. Write the final error vector as e(t)≈e₀+t d, with d the change induced by
+restoration. Normalize by E₀=‖e₀‖²/n:
+Your reported E(1)/E₀≈1.034 and optimum t≈0.25 imply B≈0.068 and A≈−0.034. Hence
+The predicted improvement is 0.425%, consistent with your −0.4…−0.8%. Thus ordinary cancellation
+already explains the apparent paradox. After restoring the family, the remaining error has a +0.75d
+projection, compensating the missing-family error −d in the shipped estimator. This does not identify its
+physical channel or prove an omitted higher cumulant.
+The first experiment I would run
+Measure. Record pre-activation variance, κ₃ diagonal and κ₄ diagonal trajectories for the shipped, 1.25×
+and fully restored runs. First test whether the 1.25× final mean equals the shipped mean plus 0.25 times
+the restoration response to adequate accuracy. If it does not, the quadratic explanation is insufficient.
+Then replay the mean closure with each trajectory while replacing, in turn, variance, κ₃ diagonal, κ₄
+diagonal, and finally all three by their teacher values. Propagate the replay’s mean normally. For each
+intervention a compute d_a from the endpoint predictions and
+Check the predicted quadratic at t=0.25. If the κ₄ oracle shifts the optimum toward 1, it identifies κ₄ as a
+compensating partner in this mean-readout intervention; an analogous shift under the variance oracle
+identifies variance. Use joint interventions for cross-channel cancellation. Do not interpret unstable optima
+after all-three forcing leaves only teacher noise. Repeat by early/middle/late layer blocks if localization is
+needed.
+State and FLOPs. Three trajectories of three n-vectors over 16 layers occupy under 0.6 MiB in float32;
+teacher vectors are already stored. One replay uses 16 matrix-vector products: 16n(2n−1)/2³¹≈0.0156 u
+plus O(16n) closure work. Twelve to thirty-six replays cost roughly 0.2-0.6 u plus the scalar closure
+arithmetic, comfortably around 1 u. Capturing missing trajectories costs the corresponding full offline chain
+runs; it is not a free grader operation.
+End-to-end decision. Only if the κ₄ oracle exposes this cancellation would I prioritize testing restored K×C
+together with the mixed-coordinate quartic design. Their joint benefit is unknown. Otherwise, the local slice
+improvement is the wrong optimization target, and the identified partner channel should determine the
+next architecture. This diagnostic is more informative than another ungrounded tensor ansatz.
+
+ROUND 9 / ARCHITECTURE ASSESSMENT
+6
+FIXED WEIGHTS / GAUSSIAN INPUT / n = 1024 / L = 16 / 1 u = 2^31 FLOPs
+Sources and reproducibility
+The cited sources support the source-code audit and the general derivative/connected-cumulant tools. The
+network-specific contractions, error budgets, cost ledgers and falsifiers are derived here. No paper is cited
+as a validated solution of this benchmark.
+[1] 504aldo, whest-p2-cumulant-k3, estimator_v29.py. Audited the available local copy associated with revision
+18c17e2d7a9aeacd399cfc2c6b571e4e16dbfb45: pre-weight shared-basis refit, newborn a_b = diag(w1) C_off, fused right-leg
+contractions, and the final need_d21=False branch. The current web fetch of this pinned file failed; this report does not claim
+a fresh GitHub-wide audit.
+GitHub / estimator_v29.py / pinned source 18c17e2d
+[2] Jani Lukkarinen and Matteo Marcozzi, Wick polynomials and time-evolution of cumulants, arXiv:1503.05851. General
+background for connected Wick/cumulant bookkeeping; it does not establish a cheap closure or benchmark accuracy here.
+https://arxiv.org/abs/1503.05851
+Scope of verification
+A small independent NumPy check used a random n=12 tensor, not a neural-network teacher. It verified
+the mixed-coordinate slice identity, curvature-query identity, newborn identity cancellation,
+covariance-response reuse and the all-distinct subtraction. Maximum absolute discrepancies were
+1.1-2.2×10⁻¹⁶ in float64. This validates those algebraic identities only. It does not validate the complete
+quartic kernel, float32 behavior, network accuracy, runtime or memory.
+No Round 9 teacher arrays or complete 140 u response implementation were supplied. The terminal cost is
+therefore an explicit inventory estimate, and edge/pair-matching overhead remains an item to meter. The
+report does not assert that the 20 u target has been met.
+What is new in this response
+The proposed computational boundary is a mixed-coordinate response: two legs have crossed the next
+weight matrix and the third has not. It exposes a new-direction K₃ query after the per-source work has been
+summed, while a newborn identity leg cancels the additional aggregate transport in full-slice layers. This is
+a different split of the work, not a new statistical approximation to old sources.
+What remains unsolved
+The baseline source-transport cost, the unexplained cubic all-distinct fresh error, and a validated joint
+improvement of all three marginal inputs remain unsolved. The compensation experiment identifies where
+a joint redesign would have to act. Neither the exact identities nor the cited literature establish a 150 u
+estimator.
