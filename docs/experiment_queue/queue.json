@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-23 (Q1 end-to-end ফল যোগ)",
+ "updated": "2026-09-23 (Copilot, Grok, GPT Terra R7 যোগ; Q5 আংশিক ফল)",
  "baseline": "Best graded: #331787 score 5.137e-9 (raw 2.108e-8, util 0.2437), public rank 28. Plain chain on public MLP #0: final MSE 2.290e-8.",
  "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%.",
  "items": [
@@ -58,11 +58,11 @@
   {
    "id": "Q5",
    "priority": "P2",
-   "status": "open",
+   "status": "running",
    "source": "Astra R7 §1-2",
    "title": "Teacher-forced bivariate closure: কোন input covariance error বানায়",
    "what": "layer 8, 12, 15-এ closure-কে সত্যিকারের cumulant দিয়ে চালানো; আলাদা করে শুধু kappa31 / K22 / D21 বদলে দেখা, কোনটা fresh covariance error (4.2e-5) কমায়।",
-   "evidence": "variance channel সবচেয়ে বড় lever (-47%); কিন্তু Astra-র missing-term patch মৃত।",
+   "evidence": "Layer 7 (চলছে): সব input সত্যিকারের দিলে post-ReLU covariance error 7.04e-5 -> 2.61e-5 (= teacher noise), variance error -87% -> closure নিজে প্রায় নিখুঁত, দোষ input-এর। শুধু mu/var/C ঠিক করলে -62%। kappa3/kappa4 আলাদা ফল আসছে।",
    "cost": "<10 u offline",
    "gate": "কোনো একটা input বদলালে projected variance error অনেক কমলে -> সেই input ঠিক করাই লক্ষ্য",
    "next": "post-ReLU teacher data (layer 3,7,11,14,15) দিয়ে করা যায়।",
@@ -101,7 +101,7 @@
    "source": "Astra R7 §5",
    "title": "K3 x C directional query (kernel-এর পূর্ণ version)",
    "what": "Kernel-এ বাদ পড়া K3 x C term, source leg পুনর্ব্যবহার করে।",
-   "evidence": "শুধু theory; Q1-এর scale ঘাটতির বড় অংশ এটা হতে পারে।",
+   "evidence": "শুধু theory; Q1-এর scale ঘাটতির বড় অংশ এটা হতে পারে। GPT Terra R7 Q2.2 ('local-birth factorization' of K4(j,j,:,:)) একই ধারণা।",
    "cost": "~54-75 u",
    "gate": "raw MSE >22% কমতে হবে (kappa4 oracle-এর তিন-চতুর্থাংশ)",
    "next": "আগে layer 12-এ 32টা query দিয়ে সস্তা পরীক্ষা (<2 u)।",
@@ -118,6 +118,32 @@
    "cost": "Kaggle CPU",
    "gate": "100-MLP-এ paired gain",
    "next": "Q3-এর ফল আসার পর।",
+   "files": "-"
+  },
+  {
+   "id": "Q10",
+   "priority": "P2",
+   "status": "open",
+   "source": "GPT 5.6 Terra R7 Q1.2",
+   "title": "Covariance error E কি target neuron-এর দিক থেকে low-rank?",
+   "what": "E = C_true_post - C_chain_post; তার eigen-decomposition; top-k দিক দিয়ে দরকারি ~350 neuron-এর variance correction w_i^T E w_i কতটা ধরা যায় (k = 4, 8, 16, 32)। Top দিকগুলো কোনো জানা vector-এর (mean, C-এর eigenvector) সাথে মেলে কি না।",
+   "evidence": "নতুন; আমাদের কাছে E আছে (post-ReLU teacher)।",
+   "cost": "শুধু offline diagnostic (কয়েক মিনিট)",
+   "gate": "k <= 32-এ 0.1% relative accuracy, আর দিকগুলো chain-এর কোনো জানা quantity দিয়ে predict করা গেলে",
+   "next": "Q5 শেষ হলে।",
+   "files": "-"
+  },
+  {
+   "id": "Q11",
+   "priority": "P3",
+   "status": "open",
+   "source": "Astra R7 §6 / GPT Terra R7 Q1.4 / Grok R7 1c",
+   "title": "Coupled surrogate দিয়ে Monte Carlo — variance সত্যি কত গুণ কমে (kill-test)",
+   "what": "Linearized network G(x) = m + J x (একই x দিয়ে coupled) control variate; ~2000 sample-এ variance/kappa3/kappa4 correction-এর variance reduction factor মাপা।",
+   "evidence": "Theory (Astra): 100x কমাতে correlation >= 0.997 লাগবে — অসম্ভাব্য। Grok-এর দাবি (40x) ভুল: independent Gaussian draw-এ variance কমে না, আর খরচের হিসাবে 1000x ভুল।",
+   "cost": "CPU-তে কয়েক মিনিট (numpy)",
+   "gate": "reduction >= 100x হলে তবেই এগোনো",
+   "next": "সময় পেলে দ্রুত kill-test।",
    "files": "-"
   },
   {
@@ -171,6 +197,19 @@
    "gate": "-",
    "next": "-",
    "files": "docs/build_notes.py K3ab-K3ad"
+  },
+  {
+   "id": "D5",
+   "priority": "-",
+   "status": "dead",
+   "source": "Grok R7 1b, Q2 / Copilot R7",
+   "title": "Grok-এর D21-scaling covariance term, Grok-এর pairwise kappa4 (6 w2 K22 w2 + 4 w3 K31 w), Copilot-এর Hutchinson probe ও aggregate matrix",
+   "what": "একই ধরনের পুরোনো প্রস্তাব।",
+   "evidence": "D21-ধরনের term-এর scaling: closure-term regression R2 <= 0.08 (R27); pairwise kappa4 সত্যিকারের post slice দিয়েও corr 0.24-0.59 (K3ad); Hutchinson-এর জন্য অজানা error E লাগে; aggregate matrix family আগেই মৃত (K3e)।",
+   "cost": "-",
+   "gate": "-",
+   "next": "-",
+   "files": "consultations/ai-assistant-suggestions/{Grok,Copilot}/*Round*7*"
   }
  ]
 }

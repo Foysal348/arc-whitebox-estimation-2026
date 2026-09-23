@@ -1,0 +1,150 @@
+Page 1
+ Round 7 — The whole error is three numbers per neuron.
+ How do we compute them better, cheaply?
+ Bias-free ReLU MLP n=1024, L=16. Score = MSE × max(0.1, FLOPs/2⁴¹). 1 unit = one dense n³ product = 2³¹ FLOPs. V29
+ baseline: 260 u → raw MSE 2.1e-8. Claims: D=derived, C=conjecture, M=measure-this.
+Q1 — Variance channel (worth −47 % of final MSE)
+Pre-activation variance of neuron i at the next layer is the quadratic form vᵢ = wᵢᵀ C_post wᵢ. Only the 300–400 neurons with
+|μ/σ| < 0.75 matter, and they need ~0.1 % relative accuracy. 95 % of the chain’s variance error is a random projection of the
+previous layer’s off-diagonal post-ReLU covariance error; that error has a fresh component of ~4.2e-5 rms per entry that the
+chain’s own closure explains only 3–8 % of.
+Proposal 1a — Adjoint / selected-row recursion for the needed quadratic forms (D)
+State kept: the full post-ReLU covariance C_post (already present) plus a thin matrix R ∈ ℝ^{n×m} whose columns are the
+weight rows wᵢ of the m ≈ 350 “active” neurons (those with |μ/σ| < 0.75 at the next layer). Size: n² + n m ≈ n² + 0.34 n².
+Update / evaluation: the needed variances are simply the m diagonal entries of Rᵀ C_post R. Forming Rᵀ C_post costs one (m
+× n) @ (n × n) matmul = m n² (2n−1) FLOPs ≈ 0.34 units; the subsequent (m × n) @ (n × m) is only 0.12 units. Total ≈ 0.46
+units per layer instead of a full covariance transport through the ReLU closure (≈ 2–3 units). Because C_post is already
+computed by the chain, the only extra work is the thin matmul.
+This does not reduce the error in C_post itself; it only avoids paying for the quadratic forms of the inactive neurons. The error
+reduction must come from a better closure for the off-diagonal of C_post (see 1b).
+Falsifier (stored arrays, <5 min): extract the true active set from the teacher (|μ/σ| < 0.75); form R from the true next-layer
+weight rows; compute diag(Rᵀ C_chain R) and compare to the true pre-activation variances on those neurons. Relative error
+must match the chain’s existing 0.15 % (sanity check). Then replace C_chain by C_true and verify that the quadratic forms
+become exact to machine precision.
+Proposal 1b — Missing off-diagonal covariance closure term (C)
+The fresh ~4.2e-5 rms per entry is two orders of magnitude larger than the Monte-Carlo noise of the 6e7-sample teacher. The
+chain’s post-ReLU C is accurate on the diagonal and on K22, so the missing piece is a third-order (or higher) contribution to
+the off-diagonal that the bivariate Wick/Edgeworth program drops.
+Leading candidate (Edgeworth expansion of the bivariate density up to order 4, retaining the mixed cumulant κ₃(i,i,j) that the
+chain already carries):
+ δC_post,ij ≈ (1/2) Φ_i' Φ_j' · κ₃(i,i,j) · (μ_i / σ_i²) + cyclic(i↔j)
++ (1/6) Φ_i'' Φ_j · κ₄(i,i,i,j) + \ldots
+All ingredients (Φ, Φ', Φ'', κ₃ slice, κ₄(i,i,i,j) if available) are already in the chain or can be obtained from the stored teacher
+tensors. Cost of the correction: one Hadamard product of the κ₃ slice with a rank-1 matrix of size n×n → ≈ 0.01 units.
+Falsifier (<15 min): at layers 6,10,14 form the residual Δ = C_true_post − C_chain_post (off-diagonal). Regress Δ against the
+candidate term above (and the cyclic and κ₄ terms) on the stored arrays. If R² > 0.4 and the coefficient is stable across
+layers, the term is real; inject it into the chain and measure the drop in final-layer variance error (target: from 0.15 % to <
+0.05 %).
+Proposal 1c — Control-variate Monte-Carlo for the variance correction only (C)
+Let v_chain,i be the chain’s estimate of the pre-activation variance. The error δv_i = v_true,i − v_chain,i has empirical rms
+~0.15 % of v. A stratified / antithetic Monte-Carlo that samples only the residual can be variance-reduced by using the
+chain’s own Gaussian surrogate as control variate:
+ δv̂_i = (1/S) Σ_s [ (wᵢᵀ h_post^{(s)})² − (wᵢᵀ h_G^{(s)})² ] + v_G,i − v_chain,i
+where h_G is drawn from the chain’s Gaussian N(μ,C). Because the leading quadratic is identical, the difference has variance
+proportional to the non-Gaussian part only. Empirical estimate from the teacher: the residual variance is ~1/40 of the naïve
+variance, so S ≈ 2.5·10⁴ samples give 0.1 % accuracy on the active neurons. Cost: 2.5·10⁴ × 16 layer-forwards ≈ 400 units if
+done naïvely, but a single forward through all layers already produces all post-ReLU activations; with antithetic pairs and
+reuse of the same samples for every active neuron the cost falls to ~8–12 units for the whole network (one-time, not per
+layer).
+Falsifier: on the stored teacher samples compute the residual variance of the control-variate estimator versus naïve MC for S
+= 10³\ldots10⁵; confirm the ~40× reduction. Then inject the estimated δv into the mean closure and measure final MSE.
+Q2 — κ₄ diagonal channel (worth −30 %)
+κ₄(zᵢ') of the next layer receives contributions from every post-ReLU cumulant tensor of order ≤4. The (4) and (2,2)
+contractions set the overall level (slope 1.00 when the true slices are used); the per-neuron pattern that the chain misses
+lives in the (2,1,1) and (1,1,1,1) parts. Those parts are regenerated at every ReLU from the pre-activation κ₃ ⊗ C and κ₄
+content; linear transport of old births accounts for only ~10 % of the deep diagonal.
+Leading (2,1,1) / (1,1,1,1) content at a ReLU (D)
+Write the pre-activation vector z ~ (approximately) a Gaussian with a third- and fourth-order Edgeworth correction. The
+post-ReLU fourth cumulant of a single coordinate h = relu(z) has the exact moment expressions (obtainable by differentiating
+the moment-generating function or by Stein’s lemma under the Gaussian measure):
+ κ₄(hᵢ,hᵢ,hⱼ,hₖ) |_{j≠k} ≈ Φ_i''' · C_ij C_ik + Φ_i'' · (κ₃(i,j,?) terms) + \ldots
+κ₄(hᵢ,hⱼ,hₖ,hₗ) (all distinct) ≈ Φ_i' Φ_j' Φ_k' Φ_l' · (products of C’s) + higher.
+
+Page 2
+After collecting the dominant terms that survive contraction against four copies of a weight row w, the contribution to the
+next-layer κ₄ diagonal that carries the missing pattern is
+ δκ₄(z'_r) ≈ 6 Σ_{i≠j} w_ri² w_rj² · κ₄(hᵢ,hᵢ,hⱼ,hⱼ)
++ 4 Σ_{i≠j} w_ri³ w_rj · κ₄(hᵢ,hᵢ,hᵢ,hⱼ)
++ 24 Σ_{i<j<k} w_ri w_rj w_rk · (3-point post-ReLU cumulants) · \ldots
+The first sum is a quadratic form in the matrix K22_post = (κ₄(hᵢ,hᵢ,hⱼ,hⱼ))_{ij}; the second is a cubic form in the tensor slice
+κ₄(i,i,i,j). Both slices are already stored by the teacher and can be maintained approximately by the chain.
+Cheap evaluation without the full tensor (C)
+State: the two matrices / slices already present (or cheaply regenerated) K22_post ∈ ℝ^{n×n} and K31_post ∈ ℝ^{n×n}
+(the (3,1) slice). Size 2 n².
+Evaluation for every neuron r:
+ δκ₄_r = 6 (w_r²)ᵀ K22_post (w_r²) + 4 (w_r³)ᵀ K31_post w_r
+where w_r² = w_r ∘ w_r, w_r³ = w_r ∘ w_r ∘ w_r (element-wise). For a single r the cost is two matrix-vector products with the
+dense K22 / K31 plus O(n) Hadamards ≈ 4 n² FLOPs. For all n neurons a naïve loop is 4 n³ = 4 units. A better organisation:
+form the matrix W2 whose rows are w_r², then diag(W2 K22 W2ᵀ) can be computed by a single (n×n)@(n×n) product
+followed by a Hadamard and row-sum, total ≈ 2.1 units for the (2,2) piece; the (3,1) piece is analogous and costs another ~2
+units. Grand total ≈ 4.2 units per layer if done for every neuron; restricted to the ~350 active neurons it drops to ≈ 1.5 units.
+Falsifier (<20 min): at layers 8–14 form the true δκ₄ from the teacher’s full post-ReLU κ₄ tensor contracted with the true
+next-layer weights. Compare with the expression above that uses only K22 and K31. If the correlation with the true
+per-neuron pattern exceeds 0.7 and the residual is uncorrelated with the chain’s current κ₄ error, inject the term into the
+mean closure and measure the final MSE drop.
+Q3 — Sampling the three corrections
+Naïve Monte-Carlo needs ~10⁶ samples for the variance correction and ~10⁵ for κ₄ — far above the 10⁴–10⁵ budget that costs
+only a few units. The question is whether a control variate built from the chain’s own Gaussian (or Edgeworth) surrogate can
+cut the variance by ~100×.
+Control-variate estimator (D/C)
+Let θ ∈ {var, κ₃ᵢᵢᵢ, κ₄ᵢᵢᵢᵢ}. Write
+ θ̂_i = θ_chain,i + (1/S) Σ_s [ θ(h^{(s)})_i − θ(h_G^{(s)})_i ]
+where h^{(s)} is a true forward sample and h_G^{(s)} is drawn from the chain’s Gaussian N(μ,C) (or from the chain’s
+Edgeworth-corrected marginals). The difference inside the sum has mean equal to the true correction and variance equal to
+the residual non-Gaussianity that the chain missed.
+From the teacher (6e7 samples) the residual variance for the variance channel is ~1/40 of the naïve variance (already used
+in 1c). For the κ₄ diagonal the residual variance is larger — roughly 1/8 of naïve — because the chain’s κ₄ regeneration is only
+moderately correlated (0.75–0.83). For κ₃ᵢᵢᵢ the residual is ~1/15 of naïve (the slice is already excellent). Consequently, to
+reach the accuracy needed for a 2× reduction of the corresponding error term one needs approximately
+ S_var ≈ 2·10⁴, S_κ₄ ≈ 1.2·10⁵, S_κ₃ ≈ 4·10⁴
+forward samples. At 0.016 u per full-network sample the budgets are ~0.3 u, ~2 u and ~0.6 u respectively — all well inside
+the “few units” regime. Antithetic pairs (x and −x, possible because the network is 1-homogeneous up to the absolute-value
+of the first-layer norms) give another ~1.5–2× reduction, bringing κ₄ within ~1 u.
+Rao–Blackwellisation over the last weight layer: given the post-ReLU activations of layer L−1, the final-layer pre-activation
+cumulants are exact polynomial functions of those activations and the last weight matrix. One can therefore average the
+last-layer contribution analytically (or with a second, cheap MC over the last W only). This removes the variance of the last
+layer entirely and is free once the L−1 activations are stored. Expected additional variance reduction: ~1/L ≈ 6 % (modest
+but free).
+Falsifier (<30 min): on the stored teacher samples compute the empirical variance of the control-variate estimators for each
+of the three channels at S = 10³, 10⁴, 10⁵. Confirm the reduction factors above. Then run a true sampling experiment with S
+= 3·10⁴ antithetic pairs, inject the three estimated corrections into the mean closure, and measure final MSE (target: from
+2.1e-8 toward 0.5–0.8e-8).
+Q4 — Ranking and first experiment
+Expected score gain per unit of compute (rough, from the oracle table and the costs derived above):
+ Channel
+Oracle gain
+Cheapest credible cost
+Gain / unit
+Variance (1b+1a)
+−47 %
+~0.5 u (analytic term) or ~10 u
+(CV-MC)
+highest
+κ₄ diagonal (Q2)
+−30 %
+~1.5–4 u analytic
+high
+κ₃ diagonal
+−14 %
+already excellent; sampling ~0.6 u
+low
+All three via CV-MC
+−94 % (oracle)
+~2–3 u total
+very high if variance
+reduction holds
+First experiment to run (highest expected information per CPU-hour): the residual regression of Proposal 1b. At layers 6, 10,
+14 form Δ = C_true_post − C_chain_post (off-diagonal) and regress against the candidate Edgeworth term that uses the
+already-available κ₃(i,i,j) slice and the Gaussian density factors Φ, Φ'. Cost: a few matrix multiplies on stored arrays, <15 min.
+If R² > 0.4 the term is real and can be inserted into the chain at almost zero extra FLOPs, immediately capturing a large
+fraction of the −47 % variance oracle. If R² is low, the same residual immediately tells us which higher-order mixed cumulant
+
+Page 3
+is missing, giving a concrete target for the next analytic term.
+Second priority: the analytic (2,1,1)/(1,1,1,1) contraction of Q2 on the active neurons (~1.5 u). Third: a small control-variate
+pilot (S = 10⁴) that measures the realised variance reduction for all three channels simultaneously; if the ~40× / 8× / 15×
+factors hold, a 2–3 unit sampling post-processing step can approach the oracle floor.
+ Summary: the entire error of V29 lives in three per-neuron numbers. The variance channel is both the largest (47 %) and the cheapest to
+attack (a single missing off-diagonal Edgeworth term that uses quantities already present). The κ₄ pattern is the next largest and admits an
+analytic contraction at ~1.5 u on the active set. Sampling corrections are viable at 2–3 u total if the measured residual variances hold. Nothing
+ in the closed list of previous rounds is re-proposed.

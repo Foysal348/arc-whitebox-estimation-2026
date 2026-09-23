@@ -1,0 +1,40 @@
+Round 7 - Deep Research of Copilot
+Variance, Kappa4-Diagonal and Sampling Corrections
+Q1. Variance Channel (Derived + Conjecture)
+The measured error behaves as a fresh stochastic off-diagonal covariance field. Proposed state:
+residual covariance error E_l restricted to neurons with |mu/sigma|<0.75. Carry a low-cost
+row-query estimator for diag(W^T E W) rather than full E. Use Hutchinson-style bilinear probes
+conditioned on the chain covariance. Cost: about 0.5-2 units/layer for 32-128 probes. Falsifier:
+compare predicted delta-var with true teacher delta-var on stored layers; require R^2 > 0.8 and
+relative error <0.1%. End-to-end test: inject corrected variances only and evaluate final MSE
+reduction versus the 0.533 oracle ceiling.
+Alternative Variance Route
+Control-variate Monte Carlo on covariance corrections only. Sample deltaC rather than C. If chain
+explains 95% of variance, residual variance reduction requirement falls from about 10^6 samples to
+roughly 10^4-10^5. Cost 160-1600 units if run through full network; only plausible when restricted to
+final-layer correction queries. Falsifier: estimate residual variance of delta-var directly.
+Q2. Kappa4 Diagonal
+Conjecture: dominant missing pattern comes from repeated ReLU regeneration via kappa3 x C
+producing effective (2,1,1) and (1,1,1,1) structures. Carry two dense matrices: M211 = sum_r
+alpha_r a_r p_r^T and M1111 = sum_r beta_r p_r p_r^T. Transport: M <- B M B^T. Cost about 2
+units per matrix per layer, or 4 units/layer. Evaluate neuronwise contraction w_i^T M w_i instead of
+full tensor transport. Falsifier: regress true kappa4-diagonal residual against these transported
+contractions. Require correlation improvement from 0.24-0.59 up to >0.8.
+Q3. Sampling Corrections
+Most promising estimator is Rao-Blackwellized correction sampling. Condition on all weights except
+final-layer row w_i. Compute chain prediction analytically and sample only residual odd contribution.
+Expected variance reduction: 20x-100x if residual structure is low dimensional. State size O(n).
+Cost roughly 0.05-0.5 units for 10^4-10^5 targeted samples. Falsifier: directly measure
+variance-reduction ratio against naive Monte Carlo on stored networks.
+Q4. Ranking by Expected Gain per Compute
+1) Variance channel correction: largest value. Oracle removes about 47% of total error.
+Recommended first experiment. 2) Kappa4 diagonal regeneration matrices: oracle removes about
+30%. 3) Sampling corrections: only useful if variance reduction exceeds about 30x in practice.
+Recommended immediate experiment: regress fresh post-ReLU covariance residual onto
+transported low-dimensional error fields and test whether variance-only correction approaches the
+1.22e-8 oracle.
+Strongest Conclusion
+The new measurements imply that almost all remaining error resides in three scalar channels per
+neuron: variance, kappa3 diagonal and kappa4 diagonal. Since variance alone explains the largest
+oracle improvement and its residual appears as a fresh stochastic field rather than rank-truncation
+error, this channel offers the highest score gain per unit compute.

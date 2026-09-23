@@ -1,0 +1,222 @@
+Round 7 – Computing the Three Per-Neuron Corrections Cheaply
+Research analysis
+Executive conclusion
+The supplied measurements say the remaining error is concentrated in only three marginal quantities per
+neuron: variance, diagonalκ3, and diagonalκ4. The channel oracle gives final-MSE ratios0.533, 0.858,
+and 0.699 when each channel is made exact, so variance is the largest measured opportunity.
+The strongest cheap result is an exact identity for all requested target variances: ifW = [w1,...,w n] and
+C is the post-ReLU covariance, then
+v = diag(W⊤CW )
+can be evaluated exactly with one densen×n byn×n product, CW, followed byn dot products. At
+n = 1024 this is about1.001 uper layer. It is not cheaper than the existing full-covariance propagation
+by itself, but it is a clean oracle and a useful implementation baseline.
+For further savings, the most defensible experiment is not top-k weight truncation (cross terms make
+that approximation structurally unsafe), but atarget-neuron selective correction: preserve the chain’s
+variance and estimate only the residual on the 300–400 important neurons using stored exactC and a
+low-rank/diagonal decomposition of theerror covariance. Its feasibility can be decided directly from one
+stored layer.
+Forκ4, the previous deep-research draft contained a dangerous shortcut: the(2, 1, 1) fourth-cumulant
+term is a fourth-order object, not a quadratic form of the third-cumulant slice. The correct contraction
+requires aK4(j,j, :, :) family. The useful new route is therefore to approximate thebirth contributionto
+these K4(j,j, :, :) slices from the local ReLU closure, then contract the resulting structured terms with
+each target rowwi without storing the full four-tensor.
+Q1. Variance channel
+Q1.1 Exact target-only evaluation
+Derived. For target neuroni,
+vi =w⊤
+i Cpostwi.
+Let m be the number of neurons with|µi/σi|< 0.75 (roughly 300–400). Form only the selected column
+matrix WT∈ Rn×m. Then
+VT = diag(W⊤
+T CpostWT ).
+One multiplicationCpostWT costs
+nm(2n− 1)≈ 2n2m
+FLOPs, i.e. m
+n u in then3 cost unit.
+1
+Form = 350 this is 0.342 u, plus aboutm/n3≈ 3.3× 10−7 u for the final diagonal dot products.
+State. FullCpost (already present), plus the selectedWT. No new persistent tensor.
+Important distinction.This is an exact way to compute the 300–400 requested variances, and it is
+about one-third of a densen3 product, but it does not by itself remove the cost of generating the accurate
+Cpost. Thus its end-to-end value depends on whether the covariance update can also be made selective.
+Q1.2 Selective residual covariance correction
+Conjecture. Write
+Cpost =C0 +E,
+where C0 is the chain value andE is the off-diagonal error. The target correction is
+δvi =w⊤
+i Ewi.
+The measurements say about 95% of the variance error is this random projection of the previous layer’s
+off-diagonal covariance error, with a fresh component around4.2× 10−5 RMS per entry.
+A new test is to estimate whetherE is low-rankas seen through the target rows, even thoughCpost itself
+is not low-rank. Take the exact stored difference
+E =Ctrue−Cchain
+and compute its randomized SVD. If
+Ek =UkΣkV⊤
+k ,
+then
+δvi≈
+k∑
+a=1
+σa(w⊤
+i ua)(w⊤
+i va).
+For symmetricE, this simplifies to∑
+aλa(w⊤
+i ua)2.
+Cost. Once thek eigenvectors are available, evaluating allm target corrections costs aboutO(nmk)
+FLOPs, negligible here. The expensive part is obtaining Uk from stored E; a randomized rank-k
+decomposition usingq power/orthogonalization passes costs roughly(2q + 1)k u for fulln×n multiplies.
+Fork = 16, q = 1, this is about48 uas a one-time diagnostic, not an every-layer production cost.
+Falsifier. On one stored layer, measure the exact target correction vectorδv and compare it with the
+rank-k projection fork = 4, 8, 16, 32. Ifk = 32 still exceeds 0.1% relative RMS on the 300–400 target
+neurons, reject this route. This test is comfortably under one hour because it uses only1024× 1024
+NumPy matrix operations.
+Q1.3 Why top-k weights should be rejected
+Reject. The tempting approximation
+w⊤
+i Cw i≈
+∑
+j,k∈Ti
+wijwikCjk
+truncates both diagonal and cross terms. Because the measured residual is approximately random across
+off-diagonal entries, there is no reason for the covariance error to concentrate on the largest-magnitude
+entries ofwi. Therefore the apparentO(mk2) cost is misleading: the omitted cross terms can dominate
+the correction.
+2
+First falsifier. This is already testable from stored arrays: rank neurons by|wij|, evaluate the partial
+quadratic form fork = 8, 16, 32, 64, and compare with the exact quadratic form. Require the residual
+relative error to be below 0.1%. Failure atk≤ 64 kills the method immediately.
+Q1.4 Control-variate sampling of variance corrections
+Conjecture. If one samples the correction
+δvi = Var(z′
+i)MC−vchain
+i ,
+the chain prediction removes the dominant deterministic component. But the measured fresh covariance
+error is∼ 4.2× 10−5 per entry, so the remaining quadratic-form variance is not known to be small enough
+for 104–105 samples.
+A 16-layer sample is quoted at0.016 u. Thus S = 10 4 and 105 samples cost about 160 u and 1600 u,
+respectively. Only an observed variance reduction of roughly 100x or more could fit the leaderboard
+budget.
+Falsifier. With one network, runS = 2000 antithetic samples and directly measure the sample variance
+of δvi on the target neurons. Extrapolate the sample count required for 0.1% relative RMS. If it exceeds
+about 2× 104 samples, reject as a production method.
+Q1 end-to-end
+Replace the chain variance on the target neurons with either the exact selective quadratic form or
+the validated residual correction. Rerun the 16-layer mean propagation. The channel oracle says the
+theoretical ceiling is a final-MSE reduction from2.29× 10−8 toward 1.22× 10−8, before any interaction
+with the other two channels.
+Q2. Deepκ4 diagonal
+Q2.1 Correct tensor structure
+Derived. For target rowwi, the fourth cumulant is
+κ4(z′
+i) =
+∑
+a,b,c,d
+wiawibwicwidKpost
+4,abcd.
+The (2, 1, 1) sector is
+T 211
+i = 6
+∑
+j
+w2
+ij
+∑
+k̸=l
+wikwilKpost
+4,jjkl.
+Define the slice family
+Mj[k,l ] =Kpost
+4,jjkl.
+Then
+T 211
+i = 6
+∑
+j
+w2
+ijw⊤
+i Mjwi.
+This is the key structural reduction: the expensive object is a family ofn matrices, not a generic rank-4
+tensor.
+The (1, 1, 1, 1) sector can be written similarly as a residual four-index contraction after removing repeated-
+index sectors. Without an additional closure, it cannot be reduced to the storedK4(i,i,j,j ) slice
+alone.
+3
+Q2.2 New cheap route: local-birth factorization
+Conjecture. The measured fact that the deepK4 diagonal is regenerated at every ReLU suggests treating
+the new (2, 1, 1) content as a local birth term. Under a second-order multivariate Edgeworth/ReLU
+closure, the leading source is a sum of products of local derivatives with the pre-activationκ3 and
+covariance:
+Mj≈αj diag(aj)C diag(bj) +βj (C◦Aj) +γjRj,
+where Aj is a vector derived from the storedK3(j,j, :) slice, and the scalar coefficientsαj,β j,γ j are
+exactly the ReLU/Hermite coefficients already used by the chain. The important property is separability:
+each birth term is a sum of rank-1 or Hadamard-times-covariance pieces, so its contraction withwi
+reduces to dot products involving
+Cw i, (Aj◦C)wi,
+without materializing a four-tensor.
+Cost. For all target neurons, precomputeCWT at aboutm/n u≈ 0.34 u. Fork separable birth terms,
+the additional cost is approximatelykm/n u for the needed projected covariance vectors plusO(knm)
+elementwise work. Fork = 4, this remains below about2 uper layer.
+Falsifier. Use stored trueK4(i,i,j,j ) and K4(i,i,i,j ) plus the captured chain quantities to fit the
+coefficients α,β,γ at one layer. Then predict the target-vectorκ4 correction for the next layer. Reject if
+the relative RMS error on neurons with|µ/σ|< 1.5 remains above 10% or if the fit is unstable across
+layers 8–16.
+Q2.3 (1, 1, 1, 1) term
+Measure-this, not assume.The all-distinct sector is the least identifiable from the stored arrays. A
+useful diagnostic is a randomized contraction oracle. Drawq random target vectorsrs∈ Rn and estimate
+ys =
+∑
+a,b,c,d
+rsarsbrscrsdKpost
+4,abcd
+from the teacher arrays, then ask whether the residual after the local-birth211 model is low-dimensional.
+If the residual requires a large number of probes, a cheap1111 representation is implausible.
+A production tensor-network construction should therefore be attempted only if this diagnostic finds a
+numerical rank comfortably below about 32.
+Q3. Sampling the three corrections
+Derived budget constraint.At the supplied sample price,104 full-network samples cost roughly160 u
+and 105 cost roughly 1600 u. The current chain is 260u. Therefore raw sampling cannot be the main
+estimator unless the effective variance is reduced by about two orders of magnitude.
+Conjecture. Antithetic sampling is likely to help little for these particular corrections because the target
+network is positively homogeneous but ReLU destroys the odd/even cancellation that would be needed
+for very strong variance reduction. Quasi-random sphere designs may improve constants, but the supplied
+measurements already indicate that the problematic covariance andK4 patterns are high-dimensional
+and random.
+Best sampling test.Use the chain’s own Gaussian surrogate as the control variate and estimate only
+δs =Ys−Y chain
+s .
+4
+RunS = 2000 antithetic pairs. Estimate the variance reduction factor for each of the three per-neuron
+corrections. A 100x reduction is the threshold that would make105-sample-class estimators competitive
+with the current 260-unit analytic chain.
+Q4. What to run first
+The ranking below is based on the supplied measured channel oracles and the incremental cost of the
+proposed experiments, not on a claim about leaderboard methods.
+Channel Measured opportunity Diagnostic cost Priority
+Variance 47% MSE reduction 0.34 utarget quadratic form 1
+κ4 diag. 30% MSE reduction ∼ 1–2 ulocal-birth model 2
+κ3 diag. 14% MSE reduction tens of units if sampled 3
+The first experiment should therefore be the stored-array test of the variance correction subspace:
+E =Ctrue−Cchain, δv = diag(W⊤
+T EWT ).
+Measure how many eigen-directions ofE are needed to reproduceδv to 0.1% on the 300–400 relevant
+neurons. This directly answers whether the random4.2× 10−5 per-entry covariance error is nevertheless
+low-dimensional after projection onto the only quadratic forms that matter.
+If that test fails, move immediately to the Q2 local-birth factorization test. Only after both analytic
+routes fail should the sampling experiment be run.
+End-to-end acceptance criteria
+1. Variance: target-neuron relative error≤ 0.1% and a measurable final-MSE reduction toward the
+1.22× 10−8 oracle.
+2. κ4: relative error≤ 10% on the closure-relevant neurons, with a final-MSE reduction toward the
+1.60× 10−8 oracle.
+3. Production budget: any combined method should remain well below the 1024-unit hard budget, and
+preferably close to the leaders’ 133–165-unit range.
+Bottom line
+The strongest new fact is that the variance problem can be madeexact for the important 300–400 neurons
+at only about0.34 uof matrix-multiply work per layer onceCpost exists. The remaining research question
+is whether the covarianceerror itself has a low-dimensional image under these target quadratic forms.
+That is a falsifiable stored-array question.
+Forκ4, the correct target is not a third-cumulant quadratic form. The viable route is a local-birth
+factorization of the(2, 1, 1) and, if necessary, residual(1, 1, 1, 1) sectors. Its success or failure can be
+determined from the already-stored slice arrays before any expensive production implementation.
+5
