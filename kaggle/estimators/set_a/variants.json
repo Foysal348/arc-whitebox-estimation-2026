@@ -1,18 +1,3 @@
 {
- "base_ang": {
-  "file": "v31ang.py",
-  "env": {}
- },
- "beta1.2": {
-  "file": "v31ang.py",
-  "env": {
-   "V25_BETA": 1.2
-  }
- },
- "lam0.9": {
-  "file": "v31ang.py",
-  "env": {
-   "V17_LAM_SCALE": 0.855
-  }
- }
+ "fb1.25_beta1.2": {"file": "r7fb.py", "env": {"R7_FB_SCALE": 1.25, "V25_BETA": 1.2}}
 }

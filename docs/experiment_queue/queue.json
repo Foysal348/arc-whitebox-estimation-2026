@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-24 (runner-b ও runner-c-র পূর্ণ বিশ্লেষণ)",
+ "updated": "2026-09-24 (runner-a ফল; FB_SCALE batch Kaggle-এ)",
  "baseline": "Best graded: #331787 score 5.137e-9 (raw 2.108e-8, util 0.2437), public rank 28. Plain chain on public MLP #0: final MSE 2.290e-8.",
  "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে।",
  "items": [
@@ -19,27 +19,27 @@
   {
    "id": "Q2",
    "priority": "P1",
-   "status": "open",
+   "status": "running",
    "source": "Fable R7",
    "title": "R7_FB_SCALE = 1.25 (feedback constant একটু বাড়ানো)",
    "what": "Port-এর সময় Edgeworth-এর দুটো K x C term-এর অর্ধেক বাদ পড়েছিল; পুরোটা ফেরালে (2.0) খারাপ, 1.25 সামান্য ভালো।",
    "evidence": "MLP #0: -0.8%, synthetic: -0.35% (paired)।",
    "cost": "0 u (শুধু constant)",
    "gate": "100-MLP suite-এ paired gain > SE",
-   "next": "পরের Kaggle 100-MLP batch-এ যোগ করা (variant file-এ default 2.0 — অবশ্যই R7_FB_SCALE=1.25 সেট করতে হবে)।",
+   "next": "Kaggle-এ চলছে (24 Sep 18:30 UTC): runner-c = fb1.25; runner-a = fb1.25 + beta1.2; runner-b = base + fb1.25 + fb1.5। base deterministic বলে আগের base-এর সাথে paired তুলনা। প্রতিটা ~3 ঘণ্টা (runner-b ~10 ঘণ্টা)।",
    "files": "experiments/variants/r7_estimator_fbscale.py"
   },
   {
    "id": "Q3",
-   "priority": "P1",
-   "status": "running",
+   "priority": "-",
+   "status": "success",
    "source": "নিজের (K3z-B)",
    "title": "100-MLP knob eval (৬টা variant) — Kaggle-এ চলছে",
    "what": "beta1.2, lam0.9, row0.25, qpass2_3, age2_8, qpass_2 — বর্তমান best-এর সাথে একই 100 MLP-এ paired তুলনা।",
-   "evidence": "runner-b ও c শেষ (100 MLP, paired, bit-identical deterministic base): row0.25 score x1.0003; qpass2_3 x1.0006; age2_8 raw x0.9910 (79% network-এ ভালো) কিন্তু util x1.0097 -> score x1.0006; qpass_2 raw x0.9904 কিন্তু util x1.083 -> score x1.073। কোনোটাই submit-যোগ্য না — chain score-optimum-এ (accuracy 1% = খরচ 1%)। Harness-এর SE +-0.01-0.15%। LB অনুমান = 5.137e-9 x paired score ratio (LB raw = local x 0.956)। Kaggle wall median ~111 s, max ~134 s — বাড়তি হিসাবে সময়ের ঝুঁকি। runner-a চলছে।",
+   "evidence": "runner-b ও c শেষ (100 MLP, paired, bit-identical deterministic base): row0.25 score x1.0003; qpass2_3 x1.0006; age2_8 raw x0.9910 (79% network-এ ভালো) কিন্তু util x1.0097 -> score x1.0006; qpass_2 raw x0.9904 কিন্তু util x1.083 -> score x1.073। কোনোটাই submit-যোগ্য না — chain score-optimum-এ (accuracy 1% = খরচ 1%)। Harness-এর SE +-0.01-0.15%। LB অনুমান = 5.137e-9 x paired score ratio (LB raw = local x 0.956)। Kaggle wall median ~111 s, max ~134 s — বাড়তি হিসাবে সময়ের ঝুঁকি। runner-a চলছে। runner-a: beta1.2 score x0.9993 +- 0.0005 (বিনা খরচে সামান্য ভালো, Q2-এর সাথে মিলিয়ে পরীক্ষা হচ্ছে); lam0.9 x1.0026 (খারাপ)। base তিন runner-এ bit-identical -> base আর চালানোর দরকার নেই।",
    "cost": "Kaggle CPU (আমাদের সময় লাগে না)",
    "gate": "score (MSE x util) significant ভাবে কম হলে submit",
-   "next": "শেষ হলে (~16:45-17:15 UTC) watcher download করবে -> ratio +- SE -> সিদ্ধান্ত।",
+   "next": "শেষ। কোনো variant একা submit-যোগ্য না।",
    "files": "kaggle/runners/runner_{a,b,c}, kaggle/estimators/set_{a,b,c}"
   },
   {

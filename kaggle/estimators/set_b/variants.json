@@ -1,18 +1,5 @@
 {
- "base_ang": {
-  "file": "v31ang.py",
-  "env": {}
- },
- "row0.25": {
-  "file": "v35row.py",
-  "env": {
-   "V35_ROWLAM": 0.25
-  }
- },
- "qpass2_3": {
-  "file": "v31ang.py",
-  "env": {
-   "V24_QPASS2": 3
-  }
- }
+ "base_ang": {"file": "v31ang.py", "env": {}},
+ "fb1.25": {"file": "r7fb.py", "env": {"R7_FB_SCALE": 1.25}},
+ "fb1.5": {"file": "r7fb.py", "env": {"R7_FB_SCALE": 1.5}}
 }

@@ -1,18 +1,3 @@
 {
- "base_ang": {
-  "file": "v31ang.py",
-  "env": {}
- },
- "age2_8": {
-  "file": "v31ang.py",
-  "env": {
-   "V24_AGE_OLD2": 8
-  }
- },
- "qpass_2": {
-  "file": "v31ang.py",
-  "env": {
-   "V21_QPASS": 2
-  }
- }
+ "fb1.25": {"file": "r7fb.py", "env": {"R7_FB_SCALE": 1.25}}
 }
