@@ -1,0 +1,40 @@
+../submissions/v31ang/estimator.py:698: FlopscopeWarning: stats.norm.pdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
+  flops.stats.norm.pdf(v)
+../submissions/v31ang/estimator.py:699: FlopscopeWarning: stats.norm.cdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
+  flops.stats.norm.cdf(v)
+../submissions/v31ang/estimator.py:713: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("tij,ti,tj,tg->gij", t3, t3[:, :, 0], t3[:, 0, :], g3)
+../submissions/v31ang/estimator.py:714: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("ti,ti,tg->gi", t3[:, :, 0], t3[:, :, 1], g3)
+../submissions/v31ang/estimator.py:715: SymmetryLossWarning: Symmetry lost along dims (0, 1): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("iq,kqn->kin", m[:, :16], t3[:, :16, :])
+../submissions/v31ang/estimator.py:715: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("iq,kqn->kin", m[:, :16], t3[:, :16, :])
+../submissions/v31ang/estimator.py:716: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("ki,kc->ic", t3[:, :, 0], t3[:, :, 1])
+../submissions/v31ang/estimator.py:718: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("kij,kj->ki", t3, t3[:, 0, :])
+../submissions/v31ang/estimator.py:719: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("ki,ki->i", t3[:, :, 0], t3[:, :, 1])
+../submissions/v31ang/estimator.py:720: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("kij,kqj->iq", t3, t3[:, :16, :])
+../submissions/v31ang/estimator.py:1154: FlopscopeWarning: stats.norm.pdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
+  Phi = flops.stats.norm.cdf(alpha).astype(f32)
+../submissions/v31ang/estimator.py:1155: FlopscopeWarning: stats.norm.cdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
+  a2 = alpha * alpha
+mlp0: chain run 278s
+mlp0 L 2 | chain corr 0.705 errG4 0.123 | star corr 0.790 slope 1.03 errG4 0.102 | blend errG4 0.096 coef 0.18,0.84 | parts rms 4.3e-03 1.3e-03 1.3e-02 vs t4 1.8e-02
+mlp0 L 3 | chain corr 0.743 errG4 0.120 | star corr 0.792 slope 1.50 errG4 0.344 | blend errG4 0.095 coef 0.27,1.08 | parts rms 3.5e-03 7.7e-04 8.2e-03 vs t4 1.8e-02
+mlp0 L 4 | chain corr 0.762 errG4 0.124 | star corr 0.777 slope 1.90 errG4 0.479 | blend errG4 0.102 coef 0.35,1.22 | parts rms 2.7e-03 5.2e-04 4.8e-03 vs t4 1.4e-02
+mlp0 L 5 | chain corr 0.783 errG4 0.123 | star corr 0.757 slope 2.27 errG4 0.559 | blend errG4 0.105 coef 0.48,1.15 | parts rms 2.1e-03 3.6e-04 2.8e-03 vs t4 1.1e-02
+mlp0 L 6 | chain corr 0.789 errG4 0.137 | star corr 0.726 slope 2.66 errG4 0.616 | blend errG4 0.117 coef 0.50,1.25 | parts rms 1.6e-03 2.6e-04 1.7e-03 vs t4 9.0e-03
+mlp0 L 7 | chain corr 0.784 errG4 0.136 | star corr 0.584 slope 3.21 errG4 0.678 | blend errG4 0.124 coef 0.66,1.01 | parts rms 1.1e-03 2.2e-04 1.1e-03 vs t4 7.3e-03
+mlp0 L 8 | chain corr 0.752 errG4 0.142 | star corr 0.462 slope 3.75 errG4 0.722 | blend errG4 0.134 coef 0.74,0.88 | parts rms 8.3e-04 1.9e-04 7.5e-04 vs t4 6.0e-03
+mlp0 L 9 | chain corr 0.777 errG4 0.155 | star corr 0.480 slope 3.82 errG4 0.728 | blend errG4 0.143 coef 0.67,1.18 | parts rms 6.6e-04 1.2e-04 4.4e-04 vs t4 4.3e-03
+mlp0 L10 | chain corr 0.771 errG4 0.164 | star corr 0.331 slope 4.54 errG4 0.765 | blend errG4 0.158 coef 0.80,0.81 | parts rms 4.5e-04 9.8e-05 3.0e-04 vs t4 3.5e-03
+mlp0 L11 | chain corr 0.779 errG4 0.174 | star corr 0.099 slope 5.32 errG4 0.801 | blend errG4 0.165 coef 0.76,1.10 | parts rms 3.4e-04 9.6e-05 2.4e-04 vs t4 3.4e-03
+mlp0 L12 | chain corr 0.759 errG4 0.193 | star corr -0.158 slope 5.54 errG4 0.828 | blend errG4 0.184 coef 0.81,1.02 | parts rms 2.8e-04 8.8e-05 1.8e-04 vs t4 3.1e-03
+mlp0 L13 | chain corr 0.809 errG4 0.172 | star corr -0.357 slope 5.35 errG4 0.839 | blend errG4 0.168 coef 0.89,0.64 | parts rms 2.3e-04 7.6e-05 1.3e-04 vs t4 2.7e-03
+mlp0 L14 | chain corr 0.814 errG4 0.205 | star corr -0.513 slope 2.90 errG4 0.877 | blend errG4 0.197 coef 0.87,0.87 | parts rms 1.9e-04 7.3e-05 1.0e-04 vs t4 2.6e-03
+mlp0 L15 | chain corr 0.830 errG4 0.199 | star corr -0.620 slope -1.52 errG4 0.908 | blend errG4 0.190 coef 0.91,0.89 | parts rms 2.1e-04 7.3e-05 7.9e-05 vs t4 2.4e-03
+mlp0 L16 | chain corr 0.825 errG4 0.210 | star corr -0.694 slope -2.87 errG4 0.912 | blend errG4 0.202 coef 0.90,0.76 | parts rms 2.1e-04 6.2e-05 5.9e-05 vs t4 2.1e-03

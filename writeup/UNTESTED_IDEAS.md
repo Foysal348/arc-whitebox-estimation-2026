@@ -61,6 +61,11 @@ Legend: **T** = testable now with existing dumps/tools · **K** = needs a Kaggle
 | R20 | Restrict the contraction to the dominant subspace of the downstream query | Fable R6 | residual response 34 / 12 / 5 % at rank 128 / 256 / 384 — the response is carried by short near-isotropic paths | done | **dead (measured)** |
 | R21 | Asymmetric contraction rank (legs at 384, contraction at r_c) | Fable R6, implemented as V38 | end to end: util +0.8 % (overhead eats the tier-1-only saving), raw +2.9 % | done | **dead end to end** |
 
+| R22 | Error budget of the chain against the MC teacher | own, 23 Sep | closure exact (9e-11); fresh error per layer = variance 50 % + kappa3 25 % + kappa4 25 %; mean error carried with gain 0.65-0.96 | done | **map made (K3ab)** |
+| R23 | Depth multiplier on the kappa4 diagonal (V39) | own, 23 Sep | x1.16-1.26 worse on both teacher networks: the underestimate is in neurons the closure ignores | done | **dead** |
+| R24 | kappa4 oracle with the units fixed | own, 23 Sep | **exact kappa4 diagonal alone: 2.29e-8 -> 1.61e-8 (-30 %)**; slices add nothing | done | **LIVE target** |
+| R25 | kappa4 diagonal from cheap features / pairwise transport / star sources | own, 23 Sep | features 0.19 -> 0.18; pairwise corr 0.24-0.69; stars right at birth, 10 % at depth | done | dead as such; post-ReLU teacher next |
+
 ## C. Sampling / hybrid side (the budget above the floor is unused: V29 sits at 0.245 B, the floor is 0.1 B — but every unit above 0.1 multiplies the score)
 
 | # | Idea | Source | Test | Effort | Prior |

@@ -1,0 +1,40 @@
+../submissions/v31ang/estimator.py:698: FlopscopeWarning: stats.norm.pdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
+  flops.stats.norm.pdf(v)
+../submissions/v31ang/estimator.py:699: FlopscopeWarning: stats.norm.cdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
+  flops.stats.norm.cdf(v)
+../submissions/v31ang/estimator.py:713: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("tij,ti,tj,tg->gij", t3, t3[:, :, 0], t3[:, 0, :], g3)
+../submissions/v31ang/estimator.py:714: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("ti,ti,tg->gi", t3[:, :, 0], t3[:, :, 1], g3)
+../submissions/v31ang/estimator.py:715: SymmetryLossWarning: Symmetry lost along dims (0, 1): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("iq,kqn->kin", m[:, :16], t3[:, :16, :])
+../submissions/v31ang/estimator.py:715: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("iq,kqn->kin", m[:, :16], t3[:, :16, :])
+../submissions/v31ang/estimator.py:716: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("ki,kc->ic", t3[:, :, 0], t3[:, :, 1])
+../submissions/v31ang/estimator.py:718: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("kij,kj->ki", t3, t3[:, 0, :])
+../submissions/v31ang/estimator.py:719: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("ki,ki->i", t3[:, :, 0], t3[:, :, 1])
+../submissions/v31ang/estimator.py:720: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("kij,kqj->iq", t3, t3[:, :16, :])
+../submissions/v31ang/estimator.py:1154: FlopscopeWarning: stats.norm.pdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
+  Phi = flops.stats.norm.cdf(alpha).astype(f32)
+../submissions/v31ang/estimator.py:1155: FlopscopeWarning: stats.norm.cdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
+  a2 = alpha * alpha
+chain run 181s
+L 2 | chain: corr 0.705 slope 1.01 err 0.124 errG4 0.123 | exact_pairwise: corr 0.693 slope 1.00 err 0.114 errG4 0.112 | pair_only: corr 0.536 slope 3.68 err 0.739 errG4 0.738 | blend_ls: corr 0.717 slope 1.00 err 0.113 errG4 0.111 | blend 0.28,0.72
+L 3 | chain: corr 0.743 slope 1.00 err 0.118 errG4 0.120 | exact_pairwise: corr 0.619 slope 1.00 err 0.126 errG4 0.127 | pair_only: corr 0.597 slope 1.24 err 0.229 errG4 0.218 | blend_ls: corr 0.742 slope 1.00 err 0.117 errG4 0.119 | blend 0.77,0.23
+L 4 | chain: corr 0.762 slope 1.00 err 0.121 errG4 0.124 | exact_pairwise: corr 0.545 slope 1.00 err 0.147 errG4 0.155 | pair_only: corr 0.538 slope 1.09 err 0.169 errG4 0.168 | blend_ls: corr 0.759 slope 1.00 err 0.121 errG4 0.124 | blend 1.05,-0.05
+L 5 | chain: corr 0.783 slope 1.01 err 0.130 errG4 0.123 | exact_pairwise: corr 0.539 slope 1.01 err 0.165 errG4 0.163 | pair_only: corr 0.537 slope 1.06 err 0.175 errG4 0.159 | blend_ls: corr 0.775 slope 1.00 err 0.129 errG4 0.125 | blend 1.13,-0.12
+L 6 | chain: corr 0.789 slope 1.02 err 0.142 errG4 0.137 | exact_pairwise: corr 0.504 slope 1.01 err 0.189 errG4 0.190 | pair_only: corr 0.501 slope 1.04 err 0.193 errG4 0.184 | blend_ls: corr 0.781 slope 1.00 err 0.140 errG4 0.139 | blend 1.14,-0.12
+L 7 | chain: corr 0.784 slope 1.03 err 0.152 errG4 0.136 | exact_pairwise: corr 0.483 slope 1.02 err 0.203 errG4 0.195 | pair_only: corr 0.479 slope 1.04 err 0.207 errG4 0.190 | blend_ls: corr 0.779 slope 1.00 err 0.148 errG4 0.142 | blend 1.11,-0.07
+L 8 | chain: corr 0.752 slope 1.04 err 0.168 errG4 0.142 | exact_pairwise: corr 0.429 slope 1.03 err 0.223 errG4 0.196 | pair_only: corr 0.429 slope 1.05 err 0.226 errG4 0.190 | blend_ls: corr 0.751 slope 1.00 err 0.164 errG4 0.150 | blend 1.05,-0.01
+L 9 | chain: corr 0.777 slope 1.06 err 0.182 errG4 0.155 | exact_pairwise: corr 0.379 slope 1.05 err 0.254 errG4 0.224 | pair_only: corr 0.377 slope 1.08 err 0.259 errG4 0.216 | blend_ls: corr 0.771 slope 1.00 err 0.173 errG4 0.167 | blend 1.19,-0.13
+L10 | chain: corr 0.771 slope 1.06 err 0.196 errG4 0.164 | exact_pairwise: corr 0.384 slope 1.05 err 0.268 errG4 0.239 | pair_only: corr 0.381 slope 1.06 err 0.271 errG4 0.235 | blend_ls: corr 0.765 slope 1.00 err 0.185 errG4 0.176 | blend 1.23,-0.17
+L11 | chain: corr 0.779 slope 1.07 err 0.218 errG4 0.174 | exact_pairwise: corr 0.363 slope 1.06 err 0.302 errG4 0.271 | pair_only: corr 0.361 slope 1.07 err 0.304 errG4 0.267 | blend_ls: corr 0.772 slope 1.00 err 0.203 errG4 0.188 | blend 1.33,-0.27
+L12 | chain: corr 0.759 slope 1.09 err 0.247 errG4 0.193 | exact_pairwise: corr 0.266 slope 1.07 err 0.341 errG4 0.283 | pair_only: corr 0.267 slope 1.08 err 0.343 errG4 0.279 | blend_ls: corr 0.753 slope 1.00 err 0.229 errG4 0.215 | blend 1.34,-0.26
+L13 | chain: corr 0.809 slope 1.13 err 0.269 errG4 0.172 | exact_pairwise: corr 0.276 slope 1.11 err 0.380 errG4 0.291 | pair_only: corr 0.274 slope 1.12 err 0.382 errG4 0.286 | blend_ls: corr 0.800 slope 1.00 err 0.230 errG4 0.210 | blend 1.57,-0.46
+L14 | chain: corr 0.814 slope 1.17 err 0.317 errG4 0.205 | exact_pairwise: corr 0.248 slope 1.12 err 0.436 errG4 0.342 | pair_only: corr 0.247 slope 1.13 err 0.437 errG4 0.338 | blend_ls: corr 0.805 slope 1.00 err 0.260 errG4 0.269 | blend 1.76,-0.61
+L15 | chain: corr 0.830 slope 1.18 err 0.317 errG4 0.199 | exact_pairwise: corr 0.267 slope 1.14 err 0.446 errG4 0.347 | pair_only: corr 0.267 slope 1.14 err 0.447 errG4 0.343 | blend_ls: corr 0.822 slope 1.00 err 0.256 errG4 0.256 | blend 1.74,-0.59
+L16 | chain: corr 0.825 slope 1.21 err 0.344 errG4 0.210 | exact_pairwise: corr 0.238 slope 1.14 err 0.474 errG4 0.378 | pair_only: corr 0.238 slope 1.15 err 0.476 errG4 0.372 | blend_ls: corr 0.819 slope 1.00 err 0.273 errG4 0.303 | blend 1.84,-0.67
