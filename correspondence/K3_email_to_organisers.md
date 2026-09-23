@@ -1,11 +1,12 @@
 HOW TO SEND
 ===========
 To:      arc-whestbench@aicrowd.com
-Subject: Phase 2 community contribution: where the 7-22% cost trim on the public K=3 chain is (+ a forum posting-permission request)
+Subject: Phase 2, dated record + posting-permission request: where the 7-22% cost trim on the public K=3 chain is
 Body:    everything below the line. Attach nothing; all numbers are inline.
 
-Optional: send a copy of the same text as a Discourse private message to @504aldo
-(sidebar -> My messages -> New Message), since it answers his open question in topic 18218.
+Do NOT post this publicly yet. Public release is planned for after the submission deadline
+(17 October 2026, 23:59 UTC) - see correspondence/README.md for the reason and the schedule.
+A private message to @504aldo is also deferred for the same reason: he is a competitor.
 
 ---
 
@@ -13,12 +14,19 @@ Hello,
 
 Two things in one message: a community contribution for Phase 2, and a small account request.
 
-**The request first.** My forum account (foyshal_sk, trust level 2) has no reply control and no
-"New Topic" button in the ARC White-Box Estimation Challenge 2026 category, so I cannot post the
-text below where it belongs. Other users, including first-time posters, are replying in that
-category normally, so I assume a group-permission sync issue on my account rather than a category
-setting. If you can enable posting for it I will post this myself and you can ignore the rest of
-this email. I am sending the content now so that it is on record either way.
+**The request first.** My forum account (foyshal_sk, trust level 2) has neither a reply control nor
+a "New Topic" button in the ARC White-Box Estimation Challenge 2026 category, so I cannot post in it
+at all. Other users, including first-time posters, are posting there normally, so I assume a
+group-permission sync issue on my account rather than a category setting. If you can enable posting
+for that account I would be grateful.
+
+**On timing, so there is no misunderstanding.** I intend to publish the material below on the forum
+myself, but after the Phase 2 submission window closes on 17 October, because two of the items are
+directly applicable cost reductions on a public estimator and publishing them now would simply hand
+my current standing to the thirteen-odd accounts submitting that estimator verbatim. I am sending
+everything to you today so that it is on record with a date, and so that the answer to 504aldo's
+open question exists somewhere other than my own notes. Please treat this email as a dated record
+rather than as something to publish on my behalf.
 
 **The contribution.** In topic 18218, post #3, 504aldo asked what the 7-22% cost trim visible on
 the leaderboard was, since his own cost anatomy had not found it. That was my submissions. The

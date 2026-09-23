@@ -1,3 +1,11 @@
+EMBARGOED UNTIL 18 OCTOBER 2026
+===============================
+Do not post before the Phase 2 submission window closes (17 Oct 2026, 23:59 UTC).
+Reason: sections 1-2 are directly applicable cost reductions on a public estimator; publishing them
+during the window would hand our standing to the accounts submitting that estimator verbatim.
+The write-up deadline is 24 Oct, so posting on 18-20 Oct still counts for the contribution tracks.
+Sent to the organisers by email on 23 Sep 2026 as a dated record (K3_email_to_organisers.md).
+
 Reply to: https://discourse.aicrowd.com/t/18218 (504aldo, "Everything we tried: a factorized K=3 cumulant-propagation estimator at 0.25 x B...")
 
 Paste everything below the line into the reply box. It is Markdown; Discourse renders the table as-is.
