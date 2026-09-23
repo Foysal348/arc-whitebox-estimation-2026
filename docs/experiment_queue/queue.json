@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-23 (ডুপ্লিকেট file সরানো)",
+ "updated": "2026-09-23 (runner-b ফল)",
  "baseline": "Best graded: #331787 score 5.137e-9 (raw 2.108e-8, util 0.2437), public rank 28. Plain chain on public MLP #0: final MSE 2.290e-8.",
  "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে।",
  "items": [
@@ -36,7 +36,7 @@
    "source": "নিজের (K3z-B)",
    "title": "100-MLP knob eval (৬টা variant) — Kaggle-এ চলছে",
    "what": "beta1.2, lam0.9, row0.25, qpass2_3, age2_8, qpass_2 — বর্তমান best-এর সাথে একই 100 MLP-এ paired তুলনা।",
-   "evidence": "10-MLP-এ সবগুলো +-1%-এর মধ্যে ছিল।",
+   "evidence": "runner-b শেষ (100 MLP, paired): base_ang raw 2.2049e-8, util 0.2433, score 5.364e-9; row0.25 -> score x1.0003 +- 0.0001 (খারাপ); qpass2_3 -> raw x0.9990 +- 0.0005, util x1.0017, score x1.0007 (সমান/খারাপ)। Harness খুব সূক্ষ্ম: +-0.01-0.05% ধরতে পারে। runner-a ও runner-c চলছে।",
    "cost": "Kaggle CPU (আমাদের সময় লাগে না)",
    "gate": "score (MSE x util) significant ভাবে কম হলে submit",
    "next": "শেষ হলে (~16:45-17:15 UTC) watcher download করবে -> ratio +- SE -> সিদ্ধান্ত।",
