@@ -29,7 +29,7 @@ src = src.replace(anchor, "                _MASK(li, ka, k, A_st, P_st, w2b_list
 
 MODE = os.environ.get("MODE", "sample")
 ALPHA = float(os.environ.get("ALPHA", "0.5"))
-CFG = {"q": (1.0, 1.0, 1.0), "masks": {}, "birth": {}, "rng": np.random.default_rng(0)}
+CFG = {"q": (1.0, 1.0, 1.0), "masks": {}, "birth": {}, "scaled": set(), "rng": np.random.default_rng(0)}
 
 def _plan(e, q, n):
     """Return (keep mask, per-column scale) for one source."""
@@ -39,7 +39,8 @@ def _plan(e, q, n):
     w = np.power(np.maximum(e, 0.0), ALPHA)
     if w.sum() <= 0: w = np.ones(n)
     p = w / w.sum() * (q * n)                      # expected keep count = q n
-    p = np.clip(p, 0.0, 1.0)
+    PFLOOR = float(os.environ.get('PFLOOR', '0.05'))   # bound the HT variance: no column is rescaled by more than (1/PFLOOR)^(1/3)
+    p = np.clip(p, PFLOOR, 1.0)
     # renormalise so that the expected count is exactly q n even after clipping
     for _ in range(50):
         free = p < 1.0
@@ -61,12 +62,23 @@ def _MASK(li, ka, k, A_st, P_st, w2b_list):
                 CFG["masks"][s] = None; continue
             A = np.asarray(A_st[s], dtype=np.float64); P = np.asarray(P_st[s], dtype=np.float64)
             w2 = np.asarray(w2b_list[s], dtype=np.float64)
-            e = (w2 ** 2) * np.sum(A * A, axis=0) * np.sum(P * P, axis=0)
+            na2 = np.sum(A * A, axis=0); np2 = np.sum(P * P, axis=0)
+            e = (w2 ** 2) * na2 * np2
+            if os.environ.get("IMP", "energy") == "termnorm":
+                # variance-optimal importance for a sum of matrices: p_j proportional to ||X_j||_F.
+                # X_j = w2_j (a_j o p_j) a_j^T  =>  ||X_j||_F = |w2_j| * ||a_j o p_j|| * ||a_j||, computed exactly.
+                nap = np.sqrt(np.sum((A * P) ** 2, axis=0))
+                e = (np.abs(w2) * nap * np.sqrt(na2)) ** (1.0 / max(ALPHA, 1e-9)) if ALPHA > 0 else e
             CFG["masks"][s] = _plan(e, q, A.shape[1])
         m = CFG["masks"][s]
         if m is None: continue
         keep, scale = m
-        v = fnp.asarray((keep * scale).astype(np.float32))
+        # The rescaling is applied ONCE, at the source's birth: the transport is linear, so a column scaled at birth
+        # stays scaled through every later layer and every cubic term remains unbiased. Applying it again at each
+        # layer would compound it geometrically (s^14) - that is what blew the first version up.
+        first = s not in CFG["scaled"]
+        v = fnp.asarray(((keep * scale) if first else keep.astype(np.float64)).astype(np.float32))
+        CFG["scaled"].add(s)
         fnp.multiply(A_st[s], v[None, :], out=A_st[s])
         fnp.multiply(P_st[s], v[None, :], out=P_st[s])
 
@@ -76,7 +88,7 @@ class _Ctx: seed = 0; width = 1024; depth = 16; flop_budget = 2**41; submission_
 mlp = build_mlp(width=1024, depth=16, seed=7)
 
 def run(q, seed=0):
-    CFG["q"] = q; CFG["masks"] = {}; CFG["birth"] = {}; CFG["rng"] = np.random.default_rng(seed)
+    CFG["q"] = q; CFG["masks"] = {}; CFG["birth"] = {}; CFG["scaled"] = set(); CFG["rng"] = np.random.default_rng(seed)
     est = mod.Estimator(); est.setup(_Ctx()); t0 = time.time()
     with flops.BudgetContext(flop_budget=int(1e14), quiet=True) as ctx:
         pred = est.predict(mlp, 2**41)

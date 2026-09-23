@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "D:\Machine Learning 1 Year Challenge\Kaggle\ARC White-Box Estimation Challenge 2026\experiments\chain\knob_test.py", line 27, in <module>
+    pred = est.predict(mlp, B)
+  File "D:\Machine Learning 1 Year Challenge\Kaggle\ARC White-Box Estimation Challenge 2026\whest-starterkit\../experiments/variants/estimator_v38rc.py", line 750, in predict
+    return self._predict_core(mlp, budget)
+  File "D:\Machine Learning 1 Year Challenge\Kaggle\ARC White-Box Estimation Challenge 2026\whest-starterkit\../experiments/variants/estimator_v38rc.py", line 1103, in _predict_core
+    D3, D21 = self._dslices(A_st, P_st, Z_st, L_st, w2b_list, s_list, e_list,
+  File "D:\Machine Learning 1 Year Challenge\Kaggle\ARC White-Box Estimation Challenge 2026\whest-starterkit\../experiments/variants/estimator_v38rc.py", line 1680, in _dslices
+    sb1 = fnp.ascontiguousarray(sb1[:, :, :r1, :])
+  File "D:\Machine Learning 1 Year Challenge\Kaggle\ARC White-Box Estimation Challenge 2026\whest-starterkit\.venv\lib\site-packages\flopscope\numpy\__init__.py", line 886, in __getattr__
+    return _registry_getattr(name)
+  File "D:\Machine Learning 1 Year Challenge\Kaggle\ARC White-Box Estimation Challenge 2026\whest-starterkit\.venv\lib\site-packages\flopscope\_registry.py", line 3866, in __getattr__
+    raise AttributeError(
+AttributeError: flopscope.numpy does not provide 'ascontiguousarray'. See https://github.com/AIcrowd/flopscope for supported operations.

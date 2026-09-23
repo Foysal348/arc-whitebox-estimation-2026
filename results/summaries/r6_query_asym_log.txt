@@ -1,0 +1,14 @@
+[     0s] coefficients ready: d16 mean 0.489, c mean 0.286, G16 mean 0.149
+[    12s] ASYM li=10: legs exact, contraction at r_c=320 (old-tier cost x0.917): residual response 0.0004 -> per-layer drift 8.74e-12
+[    16s] ASYM li=10: legs exact, contraction at r_c=256 (old-tier cost x0.833): residual response 0.0019 -> per-layer drift 4.47e-11
+[    18s] ASYM li=10: legs exact, contraction at r_c=192 (old-tier cost x0.750): residual response 0.0076 -> per-layer drift 1.79e-10
+[    20s] ASYM li=10: legs exact, contraction at r_c=128 (old-tier cost x0.667): residual response 0.0316 -> per-layer drift 7.43e-10
+[    22s] ASYM li=10: legs exact, contraction at r_c=64 (old-tier cost x0.583): residual response 0.0910 -> per-layer drift 2.14e-09
+[    25s] ASYM li=10: Hadamard side only at 256 (H+T2): residual response 0.0060
+[    52s] ASYM li=14: legs exact, contraction at r_c=320 (old-tier cost x0.917): residual response 0.0003 -> per-layer drift 2.70e-12
+[    54s] ASYM li=14: legs exact, contraction at r_c=256 (old-tier cost x0.833): residual response 0.0016 -> per-layer drift 1.48e-11
+[    56s] ASYM li=14: legs exact, contraction at r_c=192 (old-tier cost x0.750): residual response 0.0068 -> per-layer drift 6.45e-11
+[    57s] ASYM li=14: legs exact, contraction at r_c=128 (old-tier cost x0.667): residual response 0.0288 -> per-layer drift 2.74e-10
+[    59s] ASYM li=14: legs exact, contraction at r_c=64 (old-tier cost x0.583): residual response 0.1041 -> per-layer drift 9.88e-10
+[    62s] ASYM li=14: Hadamard side only at 256 (H+T2): residual response 0.0030
+[    62s] done

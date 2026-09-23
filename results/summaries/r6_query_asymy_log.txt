@@ -1,0 +1,17 @@
+[     0s] coefficients ready: d16 mean 0.489, c mean 0.286, G16 mean 0.149
+[    27s] ASYMY li=6: young legs exact, contraction at r_c=768 (young-tier cost x1.250, contraction x1.50): residual response 0.0000 -> per-layer drift 3.25e-13  (|Q(D21_young)|^2 1.12e-08)
+[    28s] ASYMY li=6: young legs exact, contraction at r_c=640 (young-tier cost x1.125, contraction x1.25): residual response 0.0006 -> per-layer drift 6.28e-12  (|Q(D21_young)|^2 1.12e-08)
+[    30s] ASYMY li=6: young legs exact, contraction at r_c=512 (young-tier cost x1.000, contraction x1.00): residual response 0.0031 -> per-layer drift 3.46e-11  (|Q(D21_young)|^2 1.12e-08)
+[    31s] ASYMY li=6: young legs exact, contraction at r_c=384 (young-tier cost x0.875, contraction x0.75): residual response 0.0165 -> per-layer drift 1.84e-10  (|Q(D21_young)|^2 1.12e-08)
+[    32s] ASYMY li=6: young legs exact, contraction at r_c=256 (young-tier cost x0.750, contraction x0.50): residual response 0.0703 -> per-layer drift 7.84e-10  (|Q(D21_young)|^2 1.12e-08)
+[    58s] ASYMY li=10: young legs exact, contraction at r_c=768 (young-tier cost x1.250, contraction x1.50): residual response 0.0000 -> per-layer drift 3.50e-14  (|Q(D21_young)|^2 2.53e-08)
+[    59s] ASYMY li=10: young legs exact, contraction at r_c=640 (young-tier cost x1.125, contraction x1.25): residual response 0.0001 -> per-layer drift 3.45e-12  (|Q(D21_young)|^2 2.53e-08)
+[    60s] ASYMY li=10: young legs exact, contraction at r_c=512 (young-tier cost x1.000, contraction x1.00): residual response 0.0019 -> per-layer drift 4.84e-11  (|Q(D21_young)|^2 2.53e-08)
+[    61s] ASYMY li=10: young legs exact, contraction at r_c=384 (young-tier cost x0.875, contraction x0.75): residual response 0.0100 -> per-layer drift 2.53e-10  (|Q(D21_young)|^2 2.53e-08)
+[    62s] ASYMY li=10: young legs exact, contraction at r_c=256 (young-tier cost x0.750, contraction x0.50): residual response 0.0445 -> per-layer drift 1.13e-09  (|Q(D21_young)|^2 2.53e-08)
+[    85s] ASYMY li=14: young legs exact, contraction at r_c=768 (young-tier cost x1.250, contraction x1.50): residual response 0.0000 -> per-layer drift 1.72e-15  (|Q(D21_young)|^2 9.23e-09)
+[    86s] ASYMY li=14: young legs exact, contraction at r_c=640 (young-tier cost x1.125, contraction x1.25): residual response 0.0001 -> per-layer drift 4.63e-13  (|Q(D21_young)|^2 9.23e-09)
+[    87s] ASYMY li=14: young legs exact, contraction at r_c=512 (young-tier cost x1.000, contraction x1.00): residual response 0.0014 -> per-layer drift 1.25e-11  (|Q(D21_young)|^2 9.23e-09)
+[    88s] ASYMY li=14: young legs exact, contraction at r_c=384 (young-tier cost x0.875, contraction x0.75): residual response 0.0087 -> per-layer drift 8.05e-11  (|Q(D21_young)|^2 9.23e-09)
+[    90s] ASYMY li=14: young legs exact, contraction at r_c=256 (young-tier cost x0.750, contraction x0.50): residual response 0.0392 -> per-layer drift 3.62e-10  (|Q(D21_young)|^2 9.23e-09)
+[    90s] done

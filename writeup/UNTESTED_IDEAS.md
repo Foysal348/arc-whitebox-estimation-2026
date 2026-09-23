@@ -57,6 +57,10 @@ Legend: **T** = testable now with existing dumps/tools · **K** = needs a Kaggle
 | R17 | Per-family Strassen level (hub / C_pre / shared basis at level 6) | own, 23 Sep | hub and C_pre knobs are capped by `min(knob, s_lev)` → no effect; shared basis at L6 = 7.84 GB vs an 8 GB cap for −0.74 % | done | **dead (measured)** |
 | R18 | Layer-dependent age gate (confine early-born sources sooner) | own, 23 Sep | every schedule net worse (best: −0.89 % cost for +7.6 % raw); confinement is a permanent state change, not a per-layer perturbation | done | **dead (measured)** |
 
+| R19 | Unbiased Horvitz–Thompson column sampling of the sources (fixed at birth, and redrawn every layer) | own, 23 Sep | halves deterministic screening's error (2.57e-9 vs 5.11e-9 at q = 0.7) but per-layer redraw adds nothing (2.71e-9); column coherence 1.1–1.6 (Fable) | done | **dead: still +12 % raw for −5.6 % C** |
+| R20 | Restrict the contraction to the dominant subspace of the downstream query | Fable R6 | residual response 34 / 12 / 5 % at rank 128 / 256 / 384 — the response is carried by short near-isotropic paths | done | **dead (measured)** |
+| R21 | Asymmetric contraction rank (legs at 384, contraction at r_c) | Fable R6, implemented as V38 | end to end: util +0.8 % (overhead eats the tier-1-only saving), raw +2.9 % | done | **dead end to end** |
+
 ## C. Sampling / hybrid side (the budget above the floor is unused: V29 sits at 0.245 B, the floor is 0.1 B — but every unit above 0.1 multiplies the score)
 
 | # | Idea | Source | Test | Effort | Prior |
