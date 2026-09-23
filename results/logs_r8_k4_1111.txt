@@ -1,0 +1,116 @@
+
+L4 (6s, 2 sources; K3C_rep check 1.5e-05): non-pair target 2.10e-03, kernel residual 1.47e-03 | K3C: rep 4.81e-04, ALL-DISTINCT 7.20e-04, full 9.25e-04
+   K3C by source age (each with its own repeated part): age0 3.0e-04, age1 6.6e-04, age2 4.2e-04
+   kernel residual on K3C_dist: coef +0.97 R2 0.229 (G4-w coef +1.02 R2 0.243); fixed coef 1: R2 0.229 (G4-w 0.243); corr all 0.479, decisive 0.503
+   target on [kernel, K3C_rep]: R2 0.535 coef 1.25,1.15 -> + K3C_dist: R2 0.628 coef 1.07,1.01,0.94 | G4-w: R2 0.581 -> 0.662 (coef 1.16,0.85,0.94)
+   (non-pair - kernel) on per-age K3C: R2 0.338, coefs age0 +0.92, age1 +1.07, age2 +0.85
+   sum of per-source repeated parts vs chain t_rep: rel diff 8.8e-02
+   ALL-DISTINCT K3C rms by age: age0 2.4e-04, age1 5.1e-04, age2 3.6e-04
+   residual on all-distinct per age: R2 0.216 (G4-w 0.220); coefs age0 +0.84, age1 +1.08, age2 +0.83 | G4-w: +1.17, +1.01, +0.89
+   residual on dist old(ages>=1): rms 6.40e-04 coef +1.01 R2 0.194 (G4-w coef +1.02 R2 0.184; fixed-1 G4-w R2 0.184); corr decisive 0.450
+   residual on dist young(1-4)  : rms 6.40e-04 coef +1.01 R2 0.194 (G4-w coef +1.02 R2 0.184; fixed-1 G4-w R2 0.184); corr decisive 0.450
+   residual on dist young(1-2)  : rms 6.40e-04 coef +1.01 R2 0.194 (G4-w coef +1.02 R2 0.184; fixed-1 G4-w R2 0.184); corr decisive 0.450
+   chain_regen                 : errG4 0.124 corr 0.762 slope 1.003
+   deploy_S1.25+K3Crep         : errG4 0.101 corr 0.820 slope 0.998 | non-pair corr 0.732 (decisive 0.746) slope 0.99
+   deploy_S1+K3Cfull           : errG4 0.091 corr 0.859 slope 0.999 | non-pair corr 0.792 (decisive 0.807) slope 1.02
+   deploy_S1.25+K3Cfull        : errG4 0.094 corr 0.854 slope 0.995 | non-pair corr 0.792 (decisive 0.807) slope 0.82
+   deploy_fit3                 : errG4 0.091 corr 0.859 slope 0.999 | non-pair corr 0.792 (decisive 0.807) slope 1.00
+   oracle_pairs+S1+K3Cfull     : errG4 0.091 corr 0.859 slope 0.997 | non-pair corr 0.792 (decisive 0.807) slope 1.02
+   deploy_S1+K3Crep+dist_old   : errG4 0.095 corr 0.854 slope 0.999 | non-pair corr 0.788 (decisive 0.800) slope 1.15
+   deploy_S1+K3Crep+dist_y4    : errG4 0.095 corr 0.854 slope 0.999 | non-pair corr 0.788 (decisive 0.800) slope 1.15
+   deploy_S1+K3Crep+dist_y2    : errG4 0.095 corr 0.854 slope 0.999 | non-pair corr 0.788 (decisive 0.800) slope 1.15
+   deploy_S1.25+K3Crep+dist_y4 : errG4 0.092 corr 0.857 slope 0.997 | non-pair corr 0.790 (decisive 0.802) slope 0.96
+   deploy_S1.25+K3Crep+1.25dist_y4: errG4 0.093 corr 0.855 slope 0.996 | non-pair corr 0.788 (decisive 0.800) slope 0.92
+
+L8 (16s, 6 sources; K3C_rep check 6.7e-03): non-pair target 1.34e-03, kernel residual 8.98e-04 | K3C: rep 3.47e-04, ALL-DISTINCT 4.97e-04, full 6.53e-04
+   K3C by source age (each with its own repeated part): age0 2.9e-04, age1 3.0e-04, age2 2.5e-04, age3 1.9e-04, age4 1.5e-04, age5 1.2e-04, age6 6.9e-05
+   kernel residual on K3C_dist: coef +0.80 R2 0.195 (G4-w coef +0.73 R2 0.164); fixed coef 1: R2 0.182 (G4-w 0.141); corr all 0.445, decisive 0.429
+   target on [kernel, K3C_rep]: R2 0.560 coef 1.17,1.13 -> + K3C_dist: R2 0.637 coef 0.97,1.06,0.80 | G4-w: R2 0.553 -> 0.627 (coef 1.01,0.63,0.75)
+   (non-pair - kernel) on per-age K3C: R2 0.383, coefs age0 +0.21, age1 +1.07, age2 +0.92, age3 +1.23, age4 +1.22, age5 +1.03, age6 +1.35
+   sum of per-source repeated parts vs chain t_rep: rel diff 7.2e-02
+   ALL-DISTINCT K3C rms by age: age0 2.4e-04, age1 2.4e-04, age2 1.9e-04, age3 1.5e-04, age4 1.1e-04, age5 8.6e-05, age6 5.7e-05
+   residual on all-distinct per age: R2 0.245 (G4-w 0.230); coefs age0 +0.24, age1 +1.04, age2 +0.79, age3 +1.20, age4 +1.26, age5 +1.36, age6 +1.28 | G4-w: +0.12, +0.93, +0.76, +1.14, +1.57, +1.37, +0.38
+   residual on dist old(ages>=1): rms 4.10e-04 coef +1.06 R2 0.235 (G4-w coef +0.98 R2 0.216; fixed-1 G4-w R2 0.216); corr decisive 0.487
+   residual on dist young(1-4)  : rms 3.78e-04 coef +1.09 R2 0.208 (G4-w coef +1.00 R2 0.200; fixed-1 G4-w R2 0.200); corr decisive 0.465
+   residual on dist young(1-2)  : rms 3.12e-04 coef +1.02 R2 0.125 (G4-w coef +0.85 R2 0.107; fixed-1 G4-w R2 0.104); corr decisive 0.360
+   chain_regen                 : errG4 0.142 corr 0.752 slope 1.038
+   deploy_S1.25+K3Crep         : errG4 0.137 corr 0.805 slope 1.002 | non-pair corr 0.755 (decisive 0.738) slope 0.93
+   deploy_S1+K3Cfull           : errG4 0.122 corr 0.840 slope 1.007 | non-pair corr 0.801 (decisive 0.800) slope 0.94
+   deploy_S1.25+K3Cfull        : errG4 0.141 corr 0.832 slope 0.991 | non-pair corr 0.801 (decisive 0.800) slope 0.75
+   deploy_fit3                 : errG4 0.120 corr 0.843 slope 1.008 | non-pair corr 0.804 (decisive 0.799) slope 1.00
+   oracle_pairs+S1+K3Cfull     : errG4 0.131 corr 0.840 slope 0.980 | non-pair corr 0.801 (decisive 0.800) slope 0.94
+   deploy_S1+K3Crep+dist_old   : errG4 0.116 corr 0.855 slope 1.015 | non-pair corr 0.820 (decisive 0.808) slope 1.14
+   deploy_S1+K3Crep+dist_y4    : errG4 0.116 corr 0.850 slope 1.014 | non-pair corr 0.814 (decisive 0.802) slope 1.14
+   deploy_S1+K3Crep+dist_y2    : errG4 0.124 corr 0.832 slope 1.013 | non-pair corr 0.790 (decisive 0.776) slope 1.14
+   deploy_S1.25+K3Crep+dist_y4 : errG4 0.122 corr 0.850 slope 1.004 | non-pair corr 0.813 (decisive 0.801) slope 0.94
+   deploy_S1.25+K3Crep+1.25dist_y4: errG4 0.123 corr 0.850 slope 1.003 | non-pair corr 0.814 (decisive 0.802) slope 0.92
+
+L12 (27s, 10 sources; K3C_rep check 4.6e-03): non-pair target 1.03e-03, kernel residual 7.10e-04 | K3C: rep 2.27e-04, ALL-DISTINCT 3.35e-04, full 4.43e-04
+   K3C by source age (each with its own repeated part): age0 1.7e-04, age1 1.6e-04, age2 1.3e-04, age3 1.3e-04, age4 1.0e-04, age5 8.4e-05, age6 7.2e-05, age7 5.1e-05, age8 4.1e-05, age9 3.3e-05, age10 1.8e-05
+   kernel residual on K3C_dist: coef +0.90 R2 0.182 (G4-w coef +1.00 R2 0.227); fixed coef 1: R2 0.180 (G4-w 0.227); corr all 0.429, decisive 0.387
+   target on [kernel, K3C_rep]: R2 0.582 coef 1.45,1.41 -> + K3C_dist: R2 0.634 coef 1.29,1.27,0.75 | G4-w: R2 0.645 -> 0.703 (coef 1.29,0.08,0.83)
+   (non-pair - kernel) on per-age K3C: R2 0.391, coefs age0 +0.14, age1 +1.29, age2 +1.39, age3 +1.37, age4 +1.11, age5 +0.96, age6 +1.84, age7 +1.45, age8 +1.08, age9 +0.32, age10 +0.27
+   sum of per-source repeated parts vs chain t_rep: rel diff 5.8e-02
+   ALL-DISTINCT K3C rms by age: age0 1.3e-04, age1 1.2e-04, age2 1.0e-04, age3 9.7e-05, age4 7.8e-05, age5 6.7e-05, age6 5.2e-05, age7 4.0e-05, age8 3.0e-05, age9 2.4e-05, age10 1.4e-05
+   residual on all-distinct per age: R2 0.224 (G4-w 0.281); coefs age0 +0.12, age1 +1.34, age2 +1.39, age3 +1.14, age4 +1.25, age5 +0.77, age6 +1.54, age7 +1.13, age8 +0.62, age9 +0.79, age10 -0.04 | G4-w: +0.48, +1.33, +1.73, +1.71, +1.05, +1.37, +0.81, -0.44, -0.10, +2.20, +3.19
+   residual on dist old(ages>=1): rms 2.78e-04 coef +1.19 R2 0.219 (G4-w coef +1.40 R2 0.243; fixed-1 G4-w R2 0.223); corr decisive 0.426
+   residual on dist young(1-4)  : rms 2.16e-04 coef +1.42 R2 0.188 (G4-w coef +1.47 R2 0.220; fixed-1 G4-w R2 0.197); corr decisive 0.377
+   residual on dist young(1-2)  : rms 1.62e-04 coef +1.59 R2 0.132 (G4-w coef +1.40 R2 0.117; fixed-1 G4-w R2 0.108); corr decisive 0.293
+   chain_regen                 : errG4 0.193 corr 0.759 slope 1.091
+   deploy_S1.25+K3Crep         : errG4 0.186 corr 0.787 slope 1.043 | non-pair corr 0.770 (decisive 0.739) slope 1.15
+   deploy_S1+K3Cfull           : errG4 0.162 corr 0.807 slope 1.048 | non-pair corr 0.791 (decisive 0.787) slope 1.11
+   deploy_S1.25+K3Cfull        : errG4 0.181 corr 0.808 slope 1.022 | non-pair corr 0.791 (decisive 0.787) slope 0.89
+   deploy_fit3                 : errG4 0.174 corr 0.818 slope 1.033 | non-pair corr 0.802 (decisive 0.786) slope 1.00
+   oracle_pairs+S1+K3Cfull     : errG4 0.190 corr 0.805 slope 0.982 | non-pair corr 0.791 (decisive 0.787) slope 1.11
+   deploy_S1+K3Crep+dist_old   : errG4 0.157 corr 0.830 slope 1.056 | non-pair corr 0.821 (decisive 0.792) slope 1.30
+   deploy_S1+K3Crep+dist_y4    : errG4 0.161 corr 0.822 slope 1.059 | non-pair corr 0.815 (decisive 0.781) slope 1.36
+   deploy_S1+K3Crep+dist_y2    : errG4 0.172 corr 0.808 slope 1.060 | non-pair corr 0.802 (decisive 0.764) slope 1.40
+   deploy_S1.25+K3Crep+dist_y4 : errG4 0.165 corr 0.828 slope 1.043 | non-pair corr 0.815 (decisive 0.781) slope 1.12
+   deploy_S1.25+K3Crep+1.25dist_y4: errG4 0.164 corr 0.829 slope 1.042 | non-pair corr 0.815 (decisive 0.781) slope 1.09
+
+L15 (38s, 13 sources; K3C_rep check 8.6e-03): non-pair target 1.05e-03, kernel residual 7.09e-04 | K3C: rep 1.71e-04, ALL-DISTINCT 2.80e-04, full 3.58e-04
+   K3C by source age (each with its own repeated part): age0 1.2e-04, age1 1.0e-04, age2 1.0e-04, age3 8.1e-05, age4 7.2e-05, age5 6.5e-05, age6 6.1e-05, age7 5.2e-05, age8 4.5e-05, age9 3.2e-05, age10 2.5e-05, age11 2.1e-05, age12 1.8e-05, age13 8.6e-06
+   kernel residual on K3C_dist: coef +1.00 R2 0.155 (G4-w coef +0.77 R2 0.072); fixed coef 1: R2 0.155 (G4-w 0.066); corr all 0.399, decisive 0.268
+   target on [kernel, K3C_rep]: R2 0.677 coef 1.80,1.75 -> + K3C_dist: R2 0.703 coef 1.69,1.64,0.63 | G4-w: R2 0.726 -> 0.733 (coef 1.70,0.12,0.39)
+   (non-pair - kernel) on per-age K3C: R2 0.394, coefs age0 -0.07, age1 +1.43, age2 +0.96, age3 +1.28, age4 +1.46, age5 +2.28, age6 +1.84, age7 +2.34, age8 +2.45, age9 +0.41, age10 +1.00, age11 +2.10, age12 -0.35, age13 +3.85
+   sum of per-source repeated parts vs chain t_rep: rel diff 4.1e-02
+   ALL-DISTINCT K3C rms by age: age0 9.9e-05, age1 8.1e-05, age2 7.7e-05, age3 6.3e-05, age4 5.7e-05, age5 4.7e-05, age6 4.6e-05, age7 3.9e-05, age8 3.2e-05, age9 2.4e-05, age10 1.8e-05, age11 1.5e-05, age12 1.3e-05, age13 6.8e-06
+   residual on all-distinct per age: R2 0.204 (G4-w 0.112); coefs age0 -0.07, age1 +1.47, age2 +0.79, age3 +0.95, age4 +0.97, age5 +2.05, age6 +1.91, age7 +2.08, age8 +2.42, age9 -1.01, age10 +1.42, age11 +1.26, age12 +0.01, age13 +4.39 | G4-w: +0.42, +1.13, +0.75, +1.10, +0.77, +0.02, +0.89, +2.71, +2.30, +0.52, +0.51, -2.43, -0.18, +6.47
+   residual on dist old(ages>=1): rms 2.33e-04 coef +1.31 R2 0.187 (G4-w coef +1.00 R2 0.078; fixed-1 G4-w R2 0.078); corr decisive 0.322
+   residual on dist young(1-4)  : rms 1.53e-04 coef +1.56 R2 0.113 (G4-w coef +0.99 R2 0.052; fixed-1 G4-w R2 0.052); corr decisive 0.297
+   residual on dist young(1-2)  : rms 1.17e-04 coef +1.71 R2 0.079 (G4-w coef +0.93 R2 0.029; fixed-1 G4-w R2 0.029); corr decisive 0.291
+   chain_regen                 : errG4 0.199 corr 0.830 slope 1.183
+   deploy_S1.25+K3Crep         : errG4 0.204 corr 0.841 slope 1.125 | non-pair corr 0.831 (decisive 0.721) slope 1.43
+   deploy_S1+K3Cfull           : errG4 0.202 corr 0.832 slope 1.123 | non-pair corr 0.820 (decisive 0.729) slope 1.36
+   deploy_S1.25+K3Cfull        : errG4 0.220 corr 0.833 slope 1.090 | non-pair corr 0.820 (decisive 0.729) slope 1.09
+   deploy_fit3                 : errG4 0.252 corr 0.856 slope 1.069 | non-pair corr 0.846 (decisive 0.742) slope 1.00
+   oracle_pairs+S1+K3Cfull     : errG4 0.283 corr 0.829 slope 0.994 | non-pair corr 0.820 (decisive 0.729) slope 1.36
+   deploy_S1+K3Crep+dist_old   : errG4 0.193 corr 0.859 slope 1.135 | non-pair corr 0.852 (decisive 0.752) slope 1.55
+   deploy_S1+K3Crep+dist_y4    : errG4 0.197 corr 0.850 slope 1.141 | non-pair corr 0.845 (decisive 0.749) slope 1.67
+   deploy_S1+K3Crep+dist_y2    : errG4 0.198 corr 0.845 slope 1.142 | non-pair corr 0.841 (decisive 0.749) slope 1.72
+   deploy_S1.25+K3Crep+dist_y4 : errG4 0.199 corr 0.857 slope 1.122 | non-pair corr 0.848 (decisive 0.750) slope 1.37
+   deploy_S1.25+K3Crep+1.25dist_y4: errG4 0.201 corr 0.855 slope 1.119 | non-pair corr 0.845 (decisive 0.749) slope 1.33
+
+L16 (36s, 14 sources; K3C_rep check 7.5e-03): non-pair target 9.91e-04, kernel residual 6.90e-04 | K3C: rep 1.57e-04, ALL-DISTINCT 2.47e-04, full 3.16e-04
+   K3C by source age (each with its own repeated part): age0 1.1e-04, age1 8.5e-05, age2 8.2e-05, age3 7.5e-05, age4 6.6e-05, age5 5.5e-05, age6 5.6e-05, age7 5.4e-05, age8 4.1e-05, age9 3.8e-05, age10 2.9e-05, age11 2.1e-05, age12 1.9e-05, age13 1.6e-05, age14 7.5e-06
+   kernel residual on K3C_dist: coef +0.86 R2 0.094 (G4-w coef +0.83 R2 0.085); fixed coef 1: R2 0.092 (G4-w 0.081); corr all 0.306, decisive 0.403
+   target on [kernel, K3C_rep]: R2 0.658 coef 1.85,1.92 -> + K3C_dist: R2 0.683 coef 1.83,1.76,0.65 | G4-w: R2 0.724 -> 0.737 (coef 1.65,0.16,0.54)
+   (non-pair - kernel) on per-age K3C: R2 0.314, coefs age0 +0.12, age1 +1.35, age2 +0.97, age3 +1.04, age4 +1.78, age5 +1.76, age6 +0.57, age7 +1.44, age8 +2.06, age9 +3.40, age10 +0.13, age11 +1.06, age12 +2.07, age13 -3.10, age14 +10.14
+   sum of per-source repeated parts vs chain t_rep: rel diff 4.2e-02
+   ALL-DISTINCT K3C rms by age: age0 8.8e-05, age1 6.5e-05, age2 6.1e-05, age3 5.8e-05, age4 5.1e-05, age5 4.3e-05, age6 4.1e-05, age7 4.0e-05, age8 3.0e-05, age9 2.8e-05, age10 2.1e-05, age11 1.6e-05, age12 1.3e-05, age13 1.1e-05, age14 6.0e-06
+   residual on all-distinct per age: R2 0.130 (G4-w 0.130); coefs age0 +0.06, age1 +0.87, age2 +1.06, age3 +0.79, age4 +1.68, age5 +1.36, age6 +0.20, age7 +0.66, age8 +2.02, age9 +2.89, age10 -1.54, age11 -1.66, age12 +1.87, age13 -1.35, age14 +9.72 | G4-w: +0.65, +0.22, +1.45, +0.67, +1.41, +1.00, -0.26, +1.74, +1.91, -0.28, +1.79, -1.73, -5.28, +4.10, +7.96
+   residual on dist old(ages>=1): rms 2.17e-04 coef +1.04 R2 0.107 (G4-w coef +0.95 R2 0.077; fixed-1 G4-w R2 0.077); corr decisive 0.463
+   residual on dist young(1-4)  : rms 1.29e-04 coef +1.44 R2 0.073 (G4-w coef +1.00 R2 0.055; fixed-1 G4-w R2 0.055); corr decisive 0.411
+   residual on dist young(1-2)  : rms 9.28e-05 coef +1.45 R2 0.038 (G4-w coef +1.01 R2 0.031; fixed-1 G4-w R2 0.031); corr decisive 0.371
+   chain_regen                 : errG4 0.210 corr 0.825 slope 1.206
+   deploy_S1.25+K3Crep         : errG4 0.220 corr 0.826 slope 1.139 | non-pair corr 0.818 (decisive 0.692) slope 1.50
+   deploy_S1+K3Cfull           : errG4 0.203 corr 0.807 slope 1.148 | non-pair corr 0.796 (decisive 0.753) slope 1.49
+   deploy_S1.25+K3Cfull        : errG4 0.218 corr 0.809 slope 1.120 | non-pair corr 0.796 (decisive 0.753) slope 1.19
+   deploy_fit3                 : errG4 0.294 corr 0.842 slope 1.077 | non-pair corr 0.831 (decisive 0.735) slope 1.00
+   oracle_pairs+S1+K3Cfull     : errG4 0.315 corr 0.801 slope 1.007 | non-pair corr 0.796 (decisive 0.753) slope 1.49
+   deploy_S1+K3Crep+dist_old   : errG4 0.197 corr 0.830 slope 1.155 | non-pair corr 0.825 (decisive 0.767) slope 1.66
+   deploy_S1+K3Crep+dist_y4    : errG4 0.201 corr 0.836 slope 1.158 | non-pair corr 0.836 (decisive 0.751) slope 1.82
+   deploy_S1+K3Crep+dist_y2    : errG4 0.206 corr 0.828 slope 1.156 | non-pair corr 0.828 (decisive 0.737) slope 1.85
+   deploy_S1.25+K3Crep+dist_y4 : errG4 0.202 corr 0.845 slope 1.140 | non-pair corr 0.838 (decisive 0.746) slope 1.49
+   deploy_S1.25+K3Crep+1.25dist_y4: errG4 0.201 corr 0.843 slope 1.139 | non-pair corr 0.836 (decisive 0.751) slope 1.46
+done

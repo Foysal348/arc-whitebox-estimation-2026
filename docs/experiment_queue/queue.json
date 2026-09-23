@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-24 (runner-a ফল; FB_SCALE batch Kaggle-এ)",
+ "updated": "2026-09-24 (Fable R8 synthesis যোগ)",
  "baseline": "Best graded: #331787 score 5.137e-9 (raw 2.108e-8, util 0.2437), public rank 28. Plain chain on public MLP #0: final MSE 2.290e-8.",
  "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে।",
  "items": [
@@ -44,12 +44,12 @@
   },
   {
    "id": "Q4",
-   "priority": "P2",
+   "priority": "P3",
    "status": "open",
    "source": "Fable R7",
    "title": "Oracle: সত্যিকারের D21 শুধু feedback leg-এ",
    "what": "kappa3 slice error-এর 55-65% এখনও ব্যাখ্যা হয়নি; closure-এর cross-talk কিনা আলাদা করা।",
-   "evidence": "Fable: first-order theory 35-45% ব্যাখ্যা করে।",
+   "evidence": "Fable: first-order theory 35-45% ব্যাখ্যা করে। Fable R8: 'সব index আলাদা' kappa3 error-এর ~55% দ্বিতীয় ক্রম পর্যন্তও ব্যাখ্যা হয় না — এই formulation-এর মেঝে।",
    "cost": "একটা chain run (offline oracle)",
    "gate": "slice error বা final MSE উল্লেখযোগ্য কমলে -> সস্তা approximation খোঁজা",
    "next": "estimator-এ Xt/Yt-তে teacher Y21 inject করে run।",
@@ -83,12 +83,12 @@
   },
   {
    "id": "Q7",
-   "priority": "P3",
-   "status": "open",
+   "priority": "-",
+   "status": "dead",
    "source": "Astra R7 §4",
    "title": "Kernel থেকে (3,1) slice-ও নেওয়া",
    "what": "একই polynomial-এর gradient থেকে kappa31 slice; covariance channel-কেও প্রভাবিত করতে পারে।",
-   "evidence": "শুধু theory।",
+   "evidence": "Fable R8: (3,1) sector নগণ্য (1e-3-এর মধ্যে 3e-5)।",
    "cost": "~42 u মোট",
    "gate": "raw MSE >13.9% কমতে হবে",
    "next": "Q1 আর Q5 দুটোই ইতিবাচক হলে।",
@@ -96,16 +96,16 @@
   },
   {
    "id": "Q8",
-   "priority": "P3",
-   "status": "open",
-   "source": "Astra R7 §5",
+   "priority": "P1",
+   "status": "running",
+   "source": "Astra R7 §5 + Fable R8",
    "title": "K3 x C directional query (kernel-এর পূর্ণ version)",
    "what": "Kernel-এ বাদ পড়া K3 x C term, source leg পুনর্ব্যবহার করে।",
-   "evidence": "শুধু theory; Q1-এর scale ঘাটতির বড় অংশ এটা হতে পারে। GPT Terra R7 Q2.2 ('local-birth factorization' of K4(j,j,:,:)) একই ধারণা। Gemini R7 Q2 একই term প্রস্তাব করেছে, কিন্তু তার 0.01 u factorization ভুল — সঠিক রূপে t = d2 o w o (C u) Hadamard coupling থাকে (Astra: K3[t,u,u]), তাই খরচ Astra-র হিসাবই (~54 u)।",
-   "cost": "~54-75 u",
-   "gate": "raw MSE >22% কমতে হবে (kappa4 oracle-এর তিন-চতুর্থাংশ)",
-   "next": "আগে layer 12-এ 32টা query দিয়ে সস্তা পরীক্ষা (<2 u)।",
-   "files": "-"
+   "evidence": "Fable R8: kernel-এর depth-ঘাটতি হলো ঠিক এই (1,1,1,1) K3 x C term — chain-এর নিজের source থেকে 'সব index আলাদা' kappa3 দিয়ে (Sol-এর t_rep এই sector দেখতেই পারে না)। মাপা coefficient 1.0 +- 0.1 (theory 1); দরকারি neuron-এ corr 0.69-0.75 -> 0.75-0.81; G4-weighted kappa4 error 0.095/0.116/0.157/0.193/0.197 (L4/8/12/15/16; chain 0.124/0.142/0.193/0.199/0.210)। ageটা 1-4 source-এ ~90%, 1-2-এ ~65%। End-to-end (MLP #0, A=0.5,S=1.5 + term): -8.8% (2.0893e-8) — কিন্তু খরচ ~140 u (+55%), চলবে না।",
+   "cost": "পূর্ণ: ~140 u; সস্তা সংস্করণ (layer 8-16, |alpha|<1.5, ২টা নতুন source): ~26 u classical / ~13 u Strassen",
+   "gate": "সস্তা সংস্করণে raw MSE > 9% (classical) বা > 5% (Strassen) কমলে",
+   "next": "সস্তা সংস্করণ দুই network-এ চলছে (r8_k4_dist_e2e.py)।",
+   "files": "experiments/probes/r8_k4_1111.py, r8_k4_dist_e2e.py; consultations/fable/ROUND8_fable_synthesis.md"
   },
   {
    "id": "Q9",
@@ -122,12 +122,12 @@
   },
   {
    "id": "Q12",
-   "priority": "P2",
-   "status": "open",
+   "priority": "-",
+   "status": "dead",
    "source": "GPT 5.6 Sol High R7 Q2.3",
    "title": "Kernel-এ nine cheap (2,1,1) hypertree class যোগ",
    "what": "Birth-এর (2,1,1) অংশের ১২টা symmetry class-এর মধ্যে ৯টা hypertree — C, C.^2, D21, D21^T দিয়ে n x m message-এ হিসাব করা যায়; ৩টা non-hypertree (triangle ইত্যাদি) বাদ।",
-   "evidence": "Kernel + 3+2 এখনও depth-এ magnitude 1.2-1.9x কম ধরে; বাকি pattern (2,1,1)-এ থাকার কথা (K3ad)।",
+   "evidence": "Fable R8: exact (2,1,1) law + Sol-এর nine hypertree + triangle: fixed-coef R2 <= 0.07, দরকারি neuron-এ প্রতিটা layer-এ খারাপ।",
    "cost": "+5-15 u (late-layer version)",
    "gate": "kappa4 residual RMS মোট >= 40% কমলে; নইলে বাদ",
    "next": "ARC-এর factor_k4.py / TERM_TABLE_211 থেকে graph list নিয়ে weighted capped evaluator।",
@@ -275,6 +275,19 @@
    "gate": "-",
    "next": "-",
    "files": "-"
+  },
+  {
+   "id": "D9",
+   "priority": "-",
+   "status": "dead",
+   "source": "Fable R8 (নিজের পরীক্ষা)",
+   "title": "kappa3-এর দ্বিতীয় ক্রম (K x K), D21 error-এর coherent অংশ, kappa4 memory (পুরোনো star), non-Gaussian vertex weight",
+   "what": "variance/kappa4 channel-এর উৎস খোঁজা।",
+   "evidence": "K x K-এর ১২টা term: rms 3e-6-2e-5 বনাম error 2.2e-4 (নগণ্য; ফলে R7-এর 'S=2 কেন খারাপ' ব্যাখ্যাও বাদ, XY knob দরকার নেই); D21 error-এর rank-1 (mu-দিকের) অংশ দরকারি neuron দেখেই না; পুরোনো star birth residual-এর সাথে উল্টো সম্পর্কিত (coef -0.9); vertex weight ratio 1.00।",
+   "cost": "-",
+   "gate": "-",
+   "next": "-",
+   "files": "experiments/probes/r8_kk_terms.py, r8_k4_memory.py, r8_k4_ngvertex.py, r8_dist_check.py"
   }
  ]
 }

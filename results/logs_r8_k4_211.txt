@@ -1,0 +1,126 @@
+
+L4 [true state] (5s): target rms 2.10e-03, kernel residual rms 1.47e-03 | vertex check {'v1_vs_2m(1-Phi)': 0.06172592123178005, 'v2_vs_2Phi-2m_phi/s': 0.0038922719531814653}
+   class rms: G1 3.3e-04, H3 2.0e-05, K1 7.2e-05, K3 1.6e-05, G2 3.6e-04, G4 2.2e-04, G5 4.3e-06, K2 5.0e-04, K4 3.5e-05, K5 1.5e-05, K6 1.0e-05 | total 6.29e-04
+   single corr/slope on residual: G1 +0.08/+0.38, H3 +0.02/+1.73, K1 +0.12/+2.42, K3 -0.05/-4.45, G2 +0.01/+0.05, G4 -0.07/-0.49, G5 +0.01/+4.73, K2 +0.07/+0.19, K4 -0.07/-3.05, K5 -0.06/-5.48, K6 -0.02/-2.74
+   joint free: R2 0.031 (G4-w 0.044); coefs G1 +0.42, H3 +0.06, K1 +2.42, K3 -5.29, G2 -0.02, G4 +0.09, G5 +3.01, K2 +0.01, K4 -2.66, K5 -2.03, K6 -3.66
+   total (theory coef 1): one-coef fit +0.21 R2 0.008 (G4-w +0.26 R2 0.013); fixed-1 R2 -0.109 (G4-w -0.091); corr all 0.087 decisive 0.088
+   target on [kernel,K3C]: R2 0.535 coef 1.25,1.15 -> +211: R2 0.537 coef 1.31,1.31,-0.22 | G4-w R2 0.581 -> 0.584 (coef 1.45,1.26,-0.29)
+   chain_regen             : errG4 0.124 corr 0.762 slope 1.003
+   deploy_S1.25+K3C        : errG4 0.101 corr 0.820 slope 0.998 | non-pair corr decisive 0.746
+   deploy_S1+K3C+211       : errG4 0.109 corr 0.793 slope 0.997 | non-pair corr decisive 0.702
+   deploy_S1.25+K3C+211    : errG4 0.113 corr 0.791 slope 0.994 | non-pair corr decisive 0.712
+   deploy_fit3             : errG4 0.101 corr 0.821 slope 0.997 | non-pair corr decisive 0.749
+   triangle (subset 64): rms 4.6e-05, corr with residual -0.17 slope -5.69, with residual-minus-total -0.08
+
+L4 [chain state] (7s): target rms 2.10e-03, kernel residual rms 1.47e-03 | vertex check {'v1_vs_2m(1-Phi)': 0.0614841111887389, 'v2_vs_2Phi-2m_phi/s': 0.0038954796605349083}
+   class rms: G1 3.3e-04, H3 2.0e-05, K1 7.2e-05, K3 1.6e-05, G2 3.6e-04, G4 2.2e-04, G5 4.3e-06, K2 5.0e-04, K4 3.6e-05, K5 1.5e-05, K6 1.0e-05 | total 6.30e-04
+   single corr/slope on residual: G1 +0.08/+0.38, H3 +0.02/+1.73, K1 +0.12/+2.40, K3 -0.05/-4.47, G2 +0.01/+0.05, G4 -0.07/-0.49, G5 +0.01/+4.75, K2 +0.07/+0.19, K4 -0.07/-3.01, K5 -0.06/-5.65, K6 -0.02/-3.12
+   joint free: R2 0.031 (G4-w 0.044); coefs G1 +0.42, H3 +0.08, K1 +2.40, K3 -5.34, G2 -0.02, G4 +0.03, G5 +3.04, K2 +0.01, K4 -2.20, K5 -2.20, K6 -4.02
+   total (theory coef 1): one-coef fit +0.21 R2 0.008 (G4-w +0.26 R2 0.013); fixed-1 R2 -0.109 (G4-w -0.091); corr all 0.087 decisive 0.088
+   target on [kernel,K3C]: R2 0.535 coef 1.25,1.15 -> +211: R2 0.537 coef 1.31,1.31,-0.22 | G4-w R2 0.581 -> 0.584 (coef 1.44,1.26,-0.29)
+   chain_regen             : errG4 0.124 corr 0.762 slope 1.003
+   deploy_S1.25+K3C        : errG4 0.101 corr 0.820 slope 0.998 | non-pair corr decisive 0.746
+   deploy_S1+K3C+211       : errG4 0.109 corr 0.793 slope 0.997 | non-pair corr decisive 0.702
+   deploy_S1.25+K3C+211    : errG4 0.113 corr 0.791 slope 0.994 | non-pair corr decisive 0.712
+   deploy_fit3             : errG4 0.101 corr 0.821 slope 0.997 | non-pair corr decisive 0.749
+
+L8 [true state] (5s): target rms 1.34e-03, kernel residual rms 8.98e-04 | vertex check {'v1_vs_2m(1-Phi)': 0.1556242790509075, 'v2_vs_2Phi-2m_phi/s': 0.02725965388693357}
+   class rms: G1 1.6e-04, H3 1.5e-05, K1 9.5e-05, K3 8.7e-06, G2 1.2e-04, G4 1.9e-04, G5 2.2e-06, K2 3.0e-04, K4 2.2e-05, K5 1.0e-05, K6 3.4e-06 | total 2.75e-04
+   single corr/slope on residual: G1 -0.09/-0.48, H3 +0.19/+11.51, K1 +0.41/+3.76, K3 -0.23/-23.89, G2 +0.05/+0.33, G4 +0.02/+0.09, G5 -0.06/-25.39, K2 -0.02/-0.05, K4 +0.01/+0.52, K5 -0.21/-17.36, K6 +0.04/+11.85
+   joint free: R2 0.200 (G4-w 0.185); coefs G1 +0.37, H3 +2.86, K1 +3.70, K3 -14.17, G2 -0.03, G4 +0.84, G5 -10.13, K2 +0.02, K4 -3.44, K5 -1.54, K6 +0.85
+   total (theory coef 1): one-coef fit +0.33 R2 0.010 (G4-w +0.08 R2 0.001); fixed-1 R2 -0.031 (G4-w -0.102); corr all 0.101 decisive -0.010
+   target on [kernel,K3C]: R2 0.560 coef 1.17,1.13 -> +211: R2 0.560 coef 1.16,1.08,0.11 | G4-w R2 0.553 -> 0.557 (coef 1.09,0.47,0.35)
+   chain_regen             : errG4 0.142 corr 0.752 slope 1.038
+   deploy_S1.25+K3C        : errG4 0.137 corr 0.805 slope 1.002 | non-pair corr decisive 0.738
+   deploy_S1+K3C+211       : errG4 0.141 corr 0.792 slope 1.008 | non-pair corr decisive 0.718
+   deploy_S1.25+K3C+211    : errG4 0.154 corr 0.790 slope 0.996 | non-pair corr decisive 0.724
+   deploy_fit3             : errG4 0.133 corr 0.805 slope 1.007 | non-pair corr decisive 0.739
+   triangle (subset 64): rms 2.8e-05, corr with residual -0.02 slope -1.15, with residual-minus-total +0.01
+
+L8 [chain state] (8s): target rms 1.34e-03, kernel residual rms 8.98e-04 | vertex check {'v1_vs_2m(1-Phi)': 0.15806059222553945, 'v2_vs_2Phi-2m_phi/s': 0.027077182395530645}
+   class rms: G1 1.6e-04, H3 1.5e-05, K1 9.5e-05, K3 8.7e-06, G2 1.2e-04, G4 1.9e-04, G5 2.2e-06, K2 3.0e-04, K4 2.2e-05, K5 1.0e-05, K6 3.4e-06 | total 2.74e-04
+   single corr/slope on residual: G1 -0.09/-0.48, H3 +0.19/+11.51, K1 +0.40/+3.76, K3 -0.23/-23.93, G2 +0.05/+0.33, G4 +0.02/+0.08, G5 -0.06/-25.45, K2 -0.02/-0.04, K4 +0.01/+0.55, K5 -0.20/-17.22, K6 +0.04/+11.87
+   joint free: R2 0.199 (G4-w 0.184); coefs G1 +0.37, H3 +2.82, K1 +3.71, K3 -14.38, G2 -0.03, G4 +0.80, G5 -10.10, K2 +0.03, K4 -2.96, K5 -1.31, K6 +1.14
+   total (theory coef 1): one-coef fit +0.33 R2 0.010 (G4-w +0.08 R2 0.001); fixed-1 R2 -0.031 (G4-w -0.101); corr all 0.101 decisive -0.008
+   target on [kernel,K3C]: R2 0.560 coef 1.17,1.13 -> +211: R2 0.560 coef 1.16,1.08,0.11 | G4-w R2 0.553 -> 0.557 (coef 1.09,0.47,0.35)
+   chain_regen             : errG4 0.142 corr 0.752 slope 1.038
+   deploy_S1.25+K3C        : errG4 0.137 corr 0.805 slope 1.002 | non-pair corr decisive 0.738
+   deploy_S1+K3C+211       : errG4 0.141 corr 0.792 slope 1.008 | non-pair corr decisive 0.718
+   deploy_S1.25+K3C+211    : errG4 0.154 corr 0.790 slope 0.996 | non-pair corr decisive 0.724
+   deploy_fit3             : errG4 0.133 corr 0.805 slope 1.007 | non-pair corr decisive 0.739
+
+L12 [true state] (5s): target rms 1.03e-03, kernel residual rms 7.10e-04 | vertex check {'v1_vs_2m(1-Phi)': 0.1871430692087099, 'v2_vs_2Phi-2m_phi/s': 0.03752485430874898}
+   class rms: G1 8.2e-05, H3 7.8e-06, K1 8.9e-05, K3 4.7e-06, G2 4.4e-05, G4 1.2e-04, G5 9.0e-07, K2 1.7e-04, K4 9.2e-06, K5 6.0e-06, K6 1.2e-06 | total 1.37e-04
+   single corr/slope on residual: G1 -0.25/-2.16, H3 +0.17/+15.26, K1 +0.54/+4.23, K3 -0.22/-31.87, G2 +0.04/+0.63, G4 -0.02/-0.11, G5 -0.01/-6.49, K2 +0.04/+0.14, K4 -0.02/-1.37, K5 -0.24/-27.64, K6 +0.07/+39.58
+   joint free: R2 0.314 (G4-w 0.316); coefs G1 +0.21, H3 +1.29, K1 +4.21, K3 -22.33, G2 -0.40, G4 +0.53, G5 +17.08, K2 +0.41, K4 +5.04, K5 -2.70, K6 +26.39
+   total (theory coef 1): one-coef fit +1.15 R2 0.050 (G4-w +0.12 R2 0.001); fixed-1 R2 0.049 (G4-w -0.035); corr all 0.231 decisive -0.067
+   target on [kernel,K3C]: R2 0.582 coef 1.45,1.41 -> +211: R2 0.584 coef 1.43,1.26,0.44 | G4-w R2 0.645 -> 0.649 (coef 1.45,-0.16,0.49)
+   chain_regen             : errG4 0.193 corr 0.759 slope 1.091
+   deploy_S1.25+K3C        : errG4 0.186 corr 0.787 slope 1.043 | non-pair corr decisive 0.739
+   deploy_S1+K3C+211       : errG4 0.192 corr 0.778 slope 1.050 | non-pair corr decisive 0.712
+   deploy_S1.25+K3C+211    : errG4 0.199 corr 0.785 slope 1.033 | non-pair corr decisive 0.719
+   deploy_fit3             : errG4 0.196 corr 0.788 slope 1.034 | non-pair corr decisive 0.737
+   triangle (subset 64): rms 1.7e-05, corr with residual +0.00 slope +2.77, with residual-minus-total -0.02
+
+L12 [chain state] (7s): target rms 1.03e-03, kernel residual rms 7.10e-04 | vertex check {'v1_vs_2m(1-Phi)': 0.20771668634649806, 'v2_vs_2Phi-2m_phi/s': 0.03580792099751078}
+   class rms: G1 8.2e-05, H3 7.8e-06, K1 8.9e-05, K3 4.7e-06, G2 4.4e-05, G4 1.2e-04, G5 9.0e-07, K2 1.7e-04, K4 9.2e-06, K5 6.0e-06, K6 1.2e-06 | total 1.37e-04
+   single corr/slope on residual: G1 -0.25/-2.16, H3 +0.17/+15.25, K1 +0.54/+4.21, K3 -0.22/-32.23, G2 +0.04/+0.63, G4 -0.02/-0.11, G5 -0.01/-6.29, K2 +0.04/+0.15, K4 -0.02/-1.39, K5 -0.24/-27.63, K6 +0.07/+38.76
+   joint free: R2 0.313 (G4-w 0.313); coefs G1 +0.23, H3 +0.93, K1 +4.21, K3 -23.25, G2 -0.40, G4 +0.49, G5 +17.87, K2 +0.41, K4 +5.63, K5 -2.88, K6 +26.43
+   total (theory coef 1): one-coef fit +1.16 R2 0.050 (G4-w +0.12 R2 0.001); fixed-1 R2 0.049 (G4-w -0.035); corr all 0.231 decisive -0.065
+   target on [kernel,K3C]: R2 0.582 coef 1.45,1.41 -> +211: R2 0.584 coef 1.43,1.26,0.44 | G4-w R2 0.645 -> 0.648 (coef 1.45,-0.15,0.48)
+   chain_regen             : errG4 0.193 corr 0.759 slope 1.091
+   deploy_S1.25+K3C        : errG4 0.186 corr 0.787 slope 1.043 | non-pair corr decisive 0.739
+   deploy_S1+K3C+211       : errG4 0.192 corr 0.778 slope 1.050 | non-pair corr decisive 0.712
+   deploy_S1.25+K3C+211    : errG4 0.199 corr 0.785 slope 1.033 | non-pair corr decisive 0.719
+   deploy_fit3             : errG4 0.196 corr 0.788 slope 1.034 | non-pair corr decisive 0.737
+
+L15 [true state] (6s): target rms 1.05e-03, kernel residual rms 7.09e-04 | vertex check {'v1_vs_2m(1-Phi)': 0.18207880462245613, 'v2_vs_2Phi-2m_phi/s': 0.05469802529320838}
+   class rms: G1 6.2e-05, H3 5.5e-06, K1 9.3e-05, K3 4.0e-06, G2 2.3e-05, G4 8.7e-05, G5 4.1e-07, K2 1.2e-04, K4 5.1e-06, K5 3.5e-06, K6 5.7e-07 | total 9.59e-05
+   single corr/slope on residual: G1 -0.52/-5.98, H3 +0.23/+28.53, K1 +0.70/+5.31, K3 -0.24/-42.54, G2 -0.02/-0.51, G4 -0.12/-1.02, G5 -0.02/-34.55, K2 +0.11/+0.64, K4 -0.10/-13.13, K5 -0.09/-17.37, K6 +0.03/+39.83
+   joint free: R2 0.514 (G4-w 0.555); coefs G1 +0.05, H3 +8.27, K1 +5.24, K3 -20.66, G2 -0.98, G4 -1.04, G5 +16.56, K2 -0.10, K4 +12.03, K5 +16.30, K6 +5.30
+   total (theory coef 1): one-coef fit +2.56 R2 0.120 (G4-w +1.20 R2 0.041); fixed-1 R2 0.075 (G4-w 0.040); corr all 0.349 decisive -0.034
+   target on [kernel,K3C]: R2 0.678 coef 1.80,1.75 -> +211: R2 0.685 coef 1.79,1.32,1.20 | G4-w R2 0.726 -> 0.742 (coef 1.71,-0.46,1.45)
+   chain_regen             : errG4 0.199 corr 0.830 slope 1.183
+   deploy_S1.25+K3C        : errG4 0.204 corr 0.841 slope 1.125 | non-pair corr decisive 0.722
+   deploy_S1+K3C+211       : errG4 0.210 corr 0.836 slope 1.138 | non-pair corr decisive 0.700
+   deploy_S1.25+K3C+211    : errG4 0.217 corr 0.843 slope 1.118 | non-pair corr decisive 0.706
+   deploy_fit3             : errG4 0.272 corr 0.843 slope 1.081 | non-pair corr decisive 0.715
+   triangle (subset 64): rms 1.2e-05, corr with residual +0.18 slope +12.63, with residual-minus-total +0.16
+
+L15 [chain state] (23s): target rms 1.05e-03, kernel residual rms 7.09e-04 | vertex check {'v1_vs_2m(1-Phi)': 0.1974113034984784, 'v2_vs_2Phi-2m_phi/s': 0.054647090314624724}
+   class rms: G1 6.2e-05, H3 5.6e-06, K1 9.2e-05, K3 4.0e-06, G2 2.3e-05, G4 8.7e-05, G5 4.1e-07, K2 1.2e-04, K4 5.1e-06, K5 3.5e-06, K6 5.7e-07 | total 9.57e-05
+   single corr/slope on residual: G1 -0.53/-5.97, H3 +0.23/+28.48, K1 +0.69/+5.32, K3 -0.24/-42.38, G2 -0.02/-0.48, G4 -0.13/-1.02, G5 -0.02/-34.40, K2 +0.11/+0.65, K4 -0.09/-13.01, K5 -0.08/-17.16, K6 +0.03/+41.01
+   joint free: R2 0.511 (G4-w 0.553); coefs G1 +0.05, H3 +8.13, K1 +5.25, K3 -21.03, G2 -0.91, G4 -1.13, G5 +15.37, K2 -0.12, K4 +13.90, K5 +16.17, K6 +5.72
+   total (theory coef 1): one-coef fit +2.51 R2 0.115 (G4-w +1.15 R2 0.038); fixed-1 R2 0.073 (G4-w 0.037); corr all 0.341 decisive -0.038
+   target on [kernel,K3C]: R2 0.678 coef 1.80,1.75 -> +211: R2 0.684 coef 1.79,1.35,1.15 | G4-w R2 0.726 -> 0.740 (coef 1.71,-0.41,1.36)
+   chain_regen             : errG4 0.199 corr 0.830 slope 1.183
+   deploy_S1.25+K3C        : errG4 0.204 corr 0.841 slope 1.125 | non-pair corr decisive 0.722
+   deploy_S1+K3C+211       : errG4 0.210 corr 0.836 slope 1.139 | non-pair corr decisive 0.699
+   deploy_S1.25+K3C+211    : errG4 0.217 corr 0.842 slope 1.118 | non-pair corr decisive 0.705
+   deploy_fit3             : errG4 0.272 corr 0.843 slope 1.080 | non-pair corr decisive 0.715
+
+L16 [true state] (5s): target rms 9.91e-04, kernel residual rms 6.90e-04 | vertex check {'v1_vs_2m(1-Phi)': 0.3844730734362444, 'v2_vs_2Phi-2m_phi/s': 0.06941256351232286}
+   class rms: G1 5.7e-05, H3 4.8e-06, K1 7.9e-05, K3 3.0e-06, G2 2.2e-05, G4 8.4e-05, G5 4.0e-07, K2 1.1e-04, K4 3.7e-06, K5 3.6e-06, K6 5.3e-07 | total 9.22e-05
+   single corr/slope on residual: G1 -0.48/-5.88, H3 +0.11/+15.85, K1 +0.75/+6.53, K3 -0.13/-29.14, G2 +0.02/+0.74, G4 -0.07/-0.59, G5 -0.01/-16.60, K2 +0.05/+0.33, K4 -0.06/-10.91, K5 -0.14/-26.89, K6 -0.00/-4.61
+   joint free: R2 0.570 (G4-w 0.606); coefs G1 +0.36, H3 +1.40, K1 +6.90, K3 -18.72, G2 -0.72, G4 +0.68, G5 -27.90, K2 +0.45, K4 +6.62, K5 +11.31, K6 -34.60
+   total (theory coef 1): one-coef fit +2.54 R2 0.115 (G4-w +0.87 R2 0.025); fixed-1 R2 0.073 (G4-w 0.024); corr all 0.343 decisive 0.023
+   target on [kernel,K3C]: R2 0.658 coef 1.85,1.92 -> +211: R2 0.659 coef 1.83,1.71,0.60 | G4-w R2 0.724 -> 0.739 (coef 1.62,-0.68,1.46)
+   chain_regen             : errG4 0.210 corr 0.825 slope 1.206
+   deploy_S1.25+K3C        : errG4 0.220 corr 0.826 slope 1.139 | non-pair corr decisive 0.692
+   deploy_S1+K3C+211       : errG4 0.224 corr 0.819 slope 1.151 | non-pair corr decisive 0.685
+   deploy_S1.25+K3C+211    : errG4 0.237 corr 0.825 slope 1.130 | non-pair corr decisive 0.689
+   deploy_fit3             : errG4 0.313 corr 0.829 slope 1.077 | non-pair corr decisive 0.695
+   triangle (subset 64): rms 1.2e-05, corr with residual +0.10 slope +4.68, with residual-minus-total +0.13
+
+L16 [chain state] (7s): target rms 9.91e-04, kernel residual rms 6.90e-04 | vertex check {'v1_vs_2m(1-Phi)': 0.3598695989143203, 'v2_vs_2Phi-2m_phi/s': 0.06831964868147085}
+   class rms: G1 5.7e-05, H3 4.8e-06, K1 7.9e-05, K3 3.0e-06, G2 2.2e-05, G4 8.4e-05, G5 4.0e-07, K2 1.1e-04, K4 3.8e-06, K5 3.6e-06, K6 5.4e-07 | total 9.19e-05
+   single corr/slope on residual: G1 -0.48/-5.87, H3 +0.11/+15.73, K1 +0.75/+6.52, K3 -0.13/-29.78, G2 +0.02/+0.74, G4 -0.07/-0.59, G5 -0.01/-16.93, K2 +0.05/+0.33, K4 -0.06/-10.86, K5 -0.14/-26.64, K6 -0.00/-2.47
+   joint free: R2 0.570 (G4-w 0.603); coefs G1 +0.38, H3 +1.38, K1 +6.91, K3 -18.44, G2 -0.77, G4 +0.78, G5 -31.65, K2 +0.48, K4 +4.68, K5 +11.51, K6 -36.47
+   total (theory coef 1): one-coef fit +2.55 R2 0.115 (G4-w +0.87 R2 0.024); fixed-1 R2 0.073 (G4-w 0.024); corr all 0.342 decisive 0.019
+   target on [kernel,K3C]: R2 0.658 coef 1.85,1.92 -> +211: R2 0.659 coef 1.83,1.71,0.60 | G4-w R2 0.724 -> 0.737 (coef 1.62,-0.63,1.38)
+   chain_regen             : errG4 0.210 corr 0.825 slope 1.206
+   deploy_S1.25+K3C        : errG4 0.220 corr 0.826 slope 1.139 | non-pair corr decisive 0.692
+   deploy_S1+K3C+211       : errG4 0.224 corr 0.819 slope 1.151 | non-pair corr decisive 0.685
+   deploy_S1.25+K3C+211    : errG4 0.237 corr 0.825 slope 1.130 | non-pair corr decisive 0.689
+   deploy_fit3             : errG4 0.313 corr 0.829 slope 1.077 | non-pair corr decisive 0.695
+done

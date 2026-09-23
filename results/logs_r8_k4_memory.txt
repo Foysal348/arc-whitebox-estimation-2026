@@ -1,0 +1,86 @@
+  birth 0 transported (3s)
+  birth 1 transported (5s)
+  birth 2 transported (7s)
+  birth 3 transported (9s)
+  birth 4 transported (11s)
+  birth 5 transported (13s)
+  birth 6 transported (15s)
+  birth 7 transported (17s)
+  birth 8 transported (18s)
+  birth 9 transported (19s)
+  birth 10 transported (20s)
+  birth 11 transported (56s)
+  birth 12 transported (58s)
+  birth 13 transported (59s)
+  birth 14 transported (59s)
+
+L4: non-pair target rms 2.10e-03; kernel 1.08e-03, K3C 4.81e-04 | fresh stars: 211 1.2e-03, 31 3.7e-04, 1111 2.5e-04 | OLD stars (ages>=1): 211 1.6e-03, 31 3.7e-04, 1111 8.7e-05
+   star rms by age: 0: 1.3e-03, 1: 9.3e-04, 2: 7.6e-04
+   kernel residual on OLD stars (sum): coef +0.07 R2 0.007 (G4-weighted coef +0.02 R2 0.000); corr all 0.359, decisive 0.397
+   residual on 5 star regressors: R2 0.099 old_s1111 -1.06, old_s211 +0.21, old_s31 +1.19, fresh_s211 -0.29, fresh_s31 +0.11 | G4-weighted R2 0.133 old_s1111 -1.39, old_s211 +0.03, old_s31 +1.42, fresh_s211 -0.13, fresh_s31 +0.21
+   target on [kernel, K3C]: R2 0.535 coef 1.25,1.15 | + old stars: R2 0.537 coef 1.25,1.11,0.06 (G4-weighted R2 0.581 -> 0.581)
+   chain_regen                         : errG4 0.124 corr 0.762 slope 1.003
+   deploy_S1.25                        : errG4 0.107 corr 0.790 slope 1.006 | non-pair corr 0.684 (decisive 0.704) slope 1.07
+   deploy_S1.25+K3C                    : errG4 0.101 corr 0.820 slope 0.998 | non-pair corr 0.732 (decisive 0.746) slope 0.99
+   deploy_S1+oldstars                  : errG4 0.156 corr 0.817 slope 0.905 | non-pair corr 0.733 (decisive 0.758) slope 0.50
+   deploy_S1+K3C+oldstars              : errG4 0.153 corr 0.839 slope 0.900 | non-pair corr 0.762 (decisive 0.780) slope 0.50
+   deploy_S1+K3C+youngstars(age1-4)    : errG4 0.153 corr 0.839 slope 0.900 | non-pair corr 0.762 (decisive 0.780) slope 0.50
+   deploy_S1.25+K3C+oldstars           : errG4 0.151 corr 0.842 slope 0.898 | non-pair corr 0.762 (decisive 0.780) slope 0.49
+   oracle_pairs+kernel+K3C+oldstars    : errG4 0.154 corr 0.839 slope 0.899 | non-pair corr 0.762 (decisive 0.780) slope 0.50
+
+L8: non-pair target rms 1.34e-03; kernel 6.88e-04, K3C 3.47e-04 | fresh stars: 211 2.0e-04, 31 1.0e-04, 1111 2.4e-04 | OLD stars (ages>=1): 211 7.1e-04, 31 1.5e-04, 1111 2.4e-04
+   star rms by age: 0: 3.5e-04, 1: 2.8e-04, 2: 2.2e-04, 3: 1.9e-04, 4: 1.2e-04, 5: 9.3e-05, 6: 7.7e-05
+   kernel residual on OLD stars (sum): coef -0.09 R2 0.006 (G4-weighted coef -0.31 R2 0.105); corr all 0.089, decisive 0.278
+   residual on 5 star regressors: R2 0.024 old_s1111 +0.01, old_s211 -0.03, old_s31 +0.05, fresh_s211 -0.57, fresh_s31 -0.56 | G4-weighted R2 0.175 old_s1111 +0.31, old_s211 -0.41, old_s31 +0.33, fresh_s211 -0.38, fresh_s31 +0.01
+   target on [kernel, K3C]: R2 0.560 coef 1.17,1.13 | + old stars: R2 0.563 coef 1.15,1.19,-0.11 (G4-weighted R2 0.553 -> 0.598)
+   chain_regen                         : errG4 0.142 corr 0.752 slope 1.038
+   deploy_S1.25                        : errG4 0.134 corr 0.760 slope 1.028 | non-pair corr 0.695 (decisive 0.715) slope 1.08
+   deploy_S1.25+K3C                    : errG4 0.137 corr 0.805 slope 1.002 | non-pair corr 0.755 (decisive 0.738) slope 0.93
+   deploy_S1+oldstars                  : errG4 0.213 corr 0.716 slope 0.923 | non-pair corr 0.638 (decisive 0.725) slope 0.63
+   deploy_S1+K3C+oldstars              : errG4 0.208 corr 0.782 slope 0.909 | non-pair corr 0.724 (decisive 0.755) slope 0.62
+   deploy_S1+K3C+youngstars(age1-4)    : errG4 0.187 corr 0.778 slope 0.931 | non-pair corr 0.721 (decisive 0.753) slope 0.74
+   deploy_S1.25+K3C+oldstars           : errG4 0.206 corr 0.795 slope 0.902 | non-pair corr 0.739 (decisive 0.760) slope 0.59
+   oracle_pairs+kernel+K3C+oldstars    : errG4 0.234 corr 0.780 slope 0.886 | non-pair corr 0.724 (decisive 0.755) slope 0.62
+
+L12: non-pair target rms 1.03e-03; kernel 4.27e-04, K3C 2.27e-04 | fresh stars: 211 9.1e-05, 31 3.8e-05, 1111 1.5e-04 | OLD stars (ages>=1): 211 2.6e-04, 31 7.4e-05, 1111 2.3e-04
+   star rms by age: 0: 2.0e-04, 1: 1.6e-04, 2: 1.3e-04, 3: 1.2e-04, 4: 6.8e-05, 5: 5.0e-05, 6: 4.4e-05, 7: 3.5e-05, 8: 2.1e-05, 9: 1.9e-05, 10: 1.5e-05
+   kernel residual on OLD stars (sum): coef -0.47 R2 0.058 (G4-weighted coef -0.48 R2 0.100); corr all -0.221, decisive 0.360
+   residual on 5 star regressors: R2 0.105 old_s1111 -0.08, old_s211 -0.51, old_s31 -1.10, fresh_s211 -1.38, fresh_s31 -1.52 | G4-weighted R2 0.216 old_s1111 +0.29, old_s211 -0.96, old_s31 +0.03, fresh_s211 -0.13, fresh_s31 +0.11
+   target on [kernel, K3C]: R2 0.582 coef 1.45,1.41 | + old stars: R2 0.590 coef 1.35,1.43,-0.28 (G4-weighted R2 0.645 -> 0.654)
+   chain_regen                         : errG4 0.193 corr 0.759 slope 1.091
+   deploy_S1.25                        : errG4 0.175 corr 0.725 slope 1.091 | non-pair corr 0.705 (decisive 0.729) slope 1.36
+   deploy_S1.25+K3C                    : errG4 0.186 corr 0.787 slope 1.043 | non-pair corr 0.770 (decisive 0.739) slope 1.15
+   deploy_S1+oldstars                  : errG4 0.230 corr 0.489 slope 1.009 | non-pair corr 0.428 (decisive 0.747) slope 0.93
+   deploy_S1+K3C+oldstars              : errG4 0.233 corr 0.639 slope 0.985 | non-pair corr 0.613 (decisive 0.773) slope 1.02
+   deploy_S1+K3C+youngstars(age1-4)    : errG4 0.204 corr 0.669 slope 1.026 | non-pair corr 0.654 (decisive 0.771) slope 1.35
+   deploy_S1.25+K3C+oldstars           : errG4 0.220 corr 0.695 slope 0.978 | non-pair corr 0.670 (decisive 0.781) slope 0.95
+   oracle_pairs+kernel+K3C+oldstars    : errG4 0.294 corr 0.634 slope 0.925 | non-pair corr 0.613 (decisive 0.773) slope 1.02
+
+L15: non-pair target rms 1.05e-03; kernel 3.85e-04, K3C 1.71e-04 | fresh stars: 211 9.4e-05, 31 2.2e-05, 1111 1.1e-04 | OLD stars (ages>=1): 211 1.7e-04, 31 6.5e-05, 1111 2.7e-04
+   star rms by age: 0: 1.6e-04, 1: 1.4e-04, 2: 1.2e-04, 3: 9.7e-05, 4: 8.1e-05, 5: 6.5e-05, 6: 6.1e-05, 7: 4.4e-05, 8: 2.8e-05, 9: 2.0e-05, 10: 1.6e-05, 11: 9.2e-06, 12: 8.8e-06, 13: 7.4e-06
+   kernel residual on OLD stars (sum): coef -0.88 R2 0.256 (G4-weighted coef -0.75 R2 0.136); corr all -0.509, decisive 0.276
+   residual on 5 star regressors: R2 0.338 old_s1111 -0.20, old_s211 -1.78, old_s31 -1.50, fresh_s211 -0.57, fresh_s31 -1.44 | G4-weighted R2 0.337 old_s1111 -0.04, old_s211 -1.32, old_s31 +0.28, fresh_s211 +2.54, fresh_s31 -1.99
+   target on [kernel, K3C]: R2 0.678 coef 1.80,1.75 | + old stars: R2 0.691 coef 1.53,1.53,-0.43 (G4-weighted R2 0.726 -> 0.727)
+   chain_regen                         : errG4 0.199 corr 0.830 slope 1.183
+   deploy_S1.25                        : errG4 0.197 corr 0.795 slope 1.180 | non-pair corr 0.782 (decisive 0.707) slope 1.71
+   deploy_S1.25+K3C                    : errG4 0.204 corr 0.841 slope 1.125 | non-pair corr 0.831 (decisive 0.722) slope 1.43
+   deploy_S1+oldstars                  : errG4 0.253 corr 0.227 slope 1.124 | non-pair corr 0.095 (decisive 0.682) slope 0.32
+   deploy_S1+K3C+oldstars              : errG4 0.242 corr 0.446 slope 1.106 | non-pair corr 0.373 (decisive 0.731) slope 1.11
+   deploy_S1+K3C+youngstars(age1-4)    : errG4 0.212 corr 0.627 slope 1.162 | non-pair corr 0.601 (decisive 0.745) slope 1.88
+   deploy_S1.25+K3C+oldstars           : errG4 0.217 corr 0.583 slope 1.107 | non-pair corr 0.540 (decisive 0.753) slope 1.31
+   oracle_pairs+kernel+K3C+oldstars    : errG4 0.370 corr 0.446 slope 0.974 | non-pair corr 0.373 (decisive 0.731) slope 1.11
+
+L16: non-pair target rms 9.91e-04; kernel 3.48e-04, K3C 1.57e-04 | fresh stars: 211 6.3e-05, 31 2.1e-05, 1111 1.0e-04 | OLD stars (ages>=1): 211 1.7e-04, 31 5.5e-05, 1111 2.4e-04
+   star rms by age: 0: 1.3e-04, 1: 1.3e-04, 2: 9.5e-05, 3: 8.6e-05, 4: 7.4e-05, 5: 6.4e-05, 6: 5.5e-05, 7: 4.2e-05, 8: 3.1e-05, 9: 2.1e-05, 10: 1.6e-05, 11: 1.2e-05, 12: 6.6e-06, 13: 6.5e-06, 14: 5.7e-06
+   kernel residual on OLD stars (sum): coef -0.93 R2 0.270 (G4-weighted coef -0.73 R2 0.105); corr all -0.542, decisive 0.374
+   residual on 5 star regressors: R2 0.402 old_s1111 -0.14, old_s211 -1.79, old_s31 -1.13, fresh_s211 -2.12, fresh_s31 +0.02 | G4-weighted R2 0.224 old_s1111 -0.21, old_s211 -1.56, old_s31 -1.38, fresh_s211 -2.62, fresh_s31 -0.92
+   target on [kernel, K3C]: R2 0.658 coef 1.85,1.92 | + old stars: R2 0.675 coef 1.57,1.51,-0.49 (G4-weighted R2 0.724 -> 0.725)
+   chain_regen                         : errG4 0.210 corr 0.825 slope 1.206
+   deploy_S1.25                        : errG4 0.208 corr 0.770 slope 1.193 | non-pair corr 0.759 (decisive 0.676) slope 1.73
+   deploy_S1.25+K3C                    : errG4 0.220 corr 0.826 slope 1.139 | non-pair corr 0.817 (decisive 0.692) slope 1.50
+   deploy_S1+oldstars                  : errG4 0.264 corr 0.138 slope 1.155 | non-pair corr 0.010 (decisive 0.676) slope 0.05
+   deploy_S1+K3C+oldstars              : errG4 0.257 corr 0.360 slope 1.142 | non-pair corr 0.284 (decisive 0.722) slope 0.90
+   deploy_S1+K3C+youngstars(age1-4)    : errG4 0.227 corr 0.610 slope 1.194 | non-pair corr 0.592 (decisive 0.715) slope 1.87
+   deploy_S1.25+K3C+oldstars           : errG4 0.235 corr 0.511 slope 1.147 | non-pair corr 0.466 (decisive 0.738) slope 1.23
+   oracle_pairs+kernel+K3C+oldstars    : errG4 0.400 corr 0.363 slope 0.996 | non-pair corr 0.284 (decisive 0.722) slope 0.90
+done
