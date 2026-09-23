@@ -1,0 +1,3 @@
+[v36_e2s12] call 0: util 0.2433 flops 535,047,581,065 wall 84.6s residual 1.47s peakWS 3.56GB peakCommit 4.22GB
+[v36_e2s12] call 1: util 0.2350 flops 516,822,854,025 wall 64.2s residual 0.97s peakWS 5.08GB peakCommit 5.31GB
+[v36_e2s12] final-layer drift vs ref: rms 1.205e-04  max 5.338e-04  (final mean rms 0.889); MSE(ref, tag) = 1.451e-08

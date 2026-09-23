@@ -1,20 +1,18 @@
 {
- "base_m8": {
-  "file": "v29m8.py",
+ "base_ang": {
+  "file": "v31ang.py",
   "env": {}
  },
- "ang": {
+ "beta1.2": {
   "file": "v31ang.py",
   "env": {
-   "V31_ANGULAR": 1,
-   "V31_A1": 1
+   "V25_BETA": 1.2
   }
  },
- "ang_noa1": {
+ "lam0.9": {
   "file": "v31ang.py",
   "env": {
-   "V31_ANGULAR": 1,
-   "V31_A1": 0
+   "V17_LAM_SCALE": 0.855
   }
  }
 }

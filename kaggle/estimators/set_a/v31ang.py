@@ -1,4 +1,4 @@
-# Variant: STRASSEN_MIN 32 -> 8 and STRASSEN_FIRST 4 -> 5 (cost trims, same arithmetic). Based on estimator_v29.py from https://github.com/504aldo/whest-p2-cumulant-k3
+# Variant: STRASSEN_MIN 32 -> 8, STRASSEN_FIRST 4 -> 5 (cost trims) + V31 spherical-input reparameterization (foyshal_sk, 22 Sep 2026: exact identity E[h(X)] = a1 E[h(Y)], the sphere's kappa4 injected at layer 0 through the chain's own kappa4 terms). Based on estimator_v29.py from https://github.com/504aldo/whest-p2-cumulant-k3
 # Copyright (c) 2026 504aldo. Released under the MIT License (see LICENSE-504aldo).
 # Factorized K=3 cumulant propagation + memoryless kappa4 regeneration (Wu et al., arXiv:2605.05179).
 """K3-simple factored cumulant propagation + MEMORYLESS KAPPA4 REGENERATION (V17)

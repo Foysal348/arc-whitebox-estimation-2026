@@ -53,6 +53,10 @@ Legend: **T** = testable now with existing dumps/tools · **K** = needs a Kaggle
 | R14 | Exact κ₄ core instead of the λ law (the whole κ₄ accuracy line) | public record, 504aldo F105 / forum 18218 | end to end in the author's lean chain: λ·C_off 2.23e-8, dense exact core 2.04e-8, no channel 4.20e-8 → ceiling ≈ 9 % raw at +3 dense units per source-layer | done (public) | **dead (cost)** |
 | R15 | Learned estimator from a published supervised corpus (HF `keenanpepper/*`: joint features, residual targets, 500k means, cumulant sketches) | HF sweep 23 Sep | their own numbers are Phase-1 scale (5.2e-6 → 1.9e-6); our 100-network residual study (R9) found the per-neuron residual unlearnable | done | **dead (measured)** |
 
+| R16 | Richardson extrapolation in rank (two cheap runs cancel the leading truncation term) | own, 23 Sep | offline on stored predictions: exponent unstable (1.46 vs 2.07), every extrapolation worse than the better single run | done | **dead (measured)** |
+| R17 | Per-family Strassen level (hub / C_pre / shared basis at level 6) | own, 23 Sep | hub and C_pre knobs are capped by `min(knob, s_lev)` → no effect; shared basis at L6 = 7.84 GB vs an 8 GB cap for −0.74 % | done | **dead (measured)** |
+| R18 | Layer-dependent age gate (confine early-born sources sooner) | own, 23 Sep | every schedule net worse (best: −0.89 % cost for +7.6 % raw); confinement is a permanent state change, not a per-layer perturbation | done | **dead (measured)** |
+
 ## C. Sampling / hybrid side (the budget above the floor is unused: V29 sits at 0.245 B, the floor is 0.1 B — but every unit above 0.1 multiplies the score)
 
 | # | Idea | Source | Test | Effort | Prior |
