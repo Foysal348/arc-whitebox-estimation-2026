@@ -1,5 +1,8 @@
 # Untested ideas from the 8-model consultations (rounds 1–2) — status board, 21 Sep 2026
 
+> **From round 7 on (23 Sep), every idea is tracked with priority and status in `docs/experiment_queue/queue.json` → `Experiment_Queue.pdf` (Bengali/English). This board is kept for R1–R31.**
+
+
 Legend: **T** = testable now with existing dumps/tools · **K** = needs a Kaggle run · **R** = needs new code · prior = my estimate that it moves the score.
 
 ## A. Closure-side (does not touch the old tier's representation)
