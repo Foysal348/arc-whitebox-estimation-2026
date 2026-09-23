@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-23 (Copilot, Grok, GPT Terra R7 যোগ; Q5 আংশিক ফল)",
+ "updated": "2026-09-23 (Q5 সফল-diagnostic, Q10 ও Q11 মৃত)",
  "baseline": "Best graded: #331787 score 5.137e-9 (raw 2.108e-8, util 0.2437), public rank 28. Plain chain on public MLP #0: final MSE 2.290e-8.",
  "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে।",
  "items": [
@@ -122,29 +122,29 @@
   },
   {
    "id": "Q10",
-   "priority": "P2",
-   "status": "open",
+   "priority": "-",
+   "status": "dead",
    "source": "GPT 5.6 Terra R7 Q1.2",
    "title": "Covariance error E কি target neuron-এর দিক থেকে low-rank?",
    "what": "E = C_true_post - C_chain_post; তার eigen-decomposition; top-k দিক দিয়ে দরকারি ~350 neuron-এর variance correction w_i^T E w_i কতটা ধরা যায় (k = 4, 8, 16, 32)। Top দিকগুলো কোনো জানা vector-এর (mean, C-এর eigenvector) সাথে মেলে কি না।",
-   "evidence": "নতুন; আমাদের কাছে E আছে (post-ReLU teacher)।",
+   "evidence": "E-র top-8 দিকে 26-49% energy, আর সেগুলো post-ReLU mean vector (overlap 0.75-0.79) ও C-র top eigenvector-এর (0.68-0.82) দিকে — coherent ভুল। কিন্তু দরকারি neuron-এর (|alpha|<0.75) variance correction আসে এলোমেলো full-rank অংশ থেকে: k=32-এ error 0.81-1.04, k=256 লাগে। low-rank correction অচল।",
    "cost": "শুধু offline diagnostic (কয়েক মিনিট)",
    "gate": "k <= 32-এ 0.1% relative accuracy, আর দিকগুলো chain-এর কোনো জানা quantity দিয়ে predict করা গেলে",
    "next": "Q5 শেষ হলে।",
-   "files": "-"
+   "files": "experiments/probes/q10_error_rank.py"
   },
   {
    "id": "Q11",
-   "priority": "P3",
-   "status": "open",
+   "priority": "-",
+   "status": "dead",
    "source": "Astra R7 §6 / GPT Terra R7 Q1.4 / Grok R7 1c",
    "title": "Coupled surrogate দিয়ে Monte Carlo — variance সত্যি কত গুণ কমে (kill-test)",
    "what": "Linearized network G(x) = m + J x (একই x দিয়ে coupled) control variate; ~2000 sample-এ variance/kappa3/kappa4 correction-এর variance reduction factor মাপা।",
-   "evidence": "Theory (Astra): 100x কমাতে correlation >= 0.997 লাগবে — অসম্ভাব্য। Grok-এর দাবি (40x) ভুল: independent Gaussian draw-এ variance কমে না, আর খরচের হিসাবে 1000x ভুল।",
+   "evidence": "Coupled linear surrogate-এর সাথে correlation (variance statistic): layer 2 -> 0.73, 4 -> 0.50, 8 -> 0.32, 16 -> 0.19; variance কমে মাত্র x1.0-2.2 (লাগত x100)। Sampling পথ বন্ধ; Grok-এর 40x দাবি ভুল প্রমাণিত।",
    "cost": "CPU-তে কয়েক মিনিট (numpy)",
    "gate": "reduction >= 100x হলে তবেই এগোনো",
    "next": "সময় পেলে দ্রুত kill-test।",
-   "files": "-"
+   "files": "experiments/probes/q11_surrogate_cv.py"
   },
   {
    "id": "D1",
