@@ -44,7 +44,7 @@ def _K4_ORACLE(li, n, var, C_off, g4row, wk4m, wk431, trim):
     if m in ("k31", "k22k31", "all", "allfit") and wk431 is not None: wk431 = fnp.asarray(K31)
     return g4row, wk4m, wk431
 
-SRC = "../experiments/variants/estimator_k4oracle.py"
+SRC = os.environ.get("ORACLE_EST", "../experiments/variants/estimator_k4oracle.py")
 mod = types.ModuleType("est_k4o2"); mod.__dict__["_K4_ORACLE"] = _K4_ORACLE
 os.environ["V34_K4_ORACLE"] = DIR
 exec(compile(open(SRC, encoding="utf-8").read(), SRC, "exec"), mod.__dict__)
@@ -64,4 +64,4 @@ for m in sys.argv[1:]:
 b = res.get("none", {}).get("final")
 if b:
     for m in res: print(f"  {m:8s} ratio to none {res[m]['final']/b:.4f}")
-json.dump(res, open("../results/summaries/k4oracle2.json", "w"), indent=1)
+json.dump(res, open(f"../results/summaries/k4oracle2{os.environ.get('TAG', '')}.json", "w"), indent=1)

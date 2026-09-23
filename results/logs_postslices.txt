@@ -1,0 +1,40 @@
+../submissions/v31ang/estimator.py:698: FlopscopeWarning: stats.norm.pdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
+  flops.stats.norm.pdf(v)
+../submissions/v31ang/estimator.py:699: FlopscopeWarning: stats.norm.cdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
+  flops.stats.norm.cdf(v)
+../submissions/v31ang/estimator.py:713: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("tij,ti,tj,tg->gij", t3, t3[:, :, 0], t3[:, 0, :], g3)
+../submissions/v31ang/estimator.py:714: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("ti,ti,tg->gi", t3[:, :, 0], t3[:, :, 1], g3)
+../submissions/v31ang/estimator.py:715: SymmetryLossWarning: Symmetry lost along dims (0, 1): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("iq,kqn->kin", m[:, :16], t3[:, :16, :])
+../submissions/v31ang/estimator.py:715: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("iq,kqn->kin", m[:, :16], t3[:, :16, :])
+../submissions/v31ang/estimator.py:716: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("ki,kc->ic", t3[:, :, 0], t3[:, :, 1])
+../submissions/v31ang/estimator.py:718: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("kij,kj->ki", t3, t3[:, 0, :])
+../submissions/v31ang/estimator.py:719: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("ki,ki->i", t3[:, :, 0], t3[:, :, 1])
+../submissions/v31ang/estimator.py:720: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("kij,kqj->iq", t3, t3[:, :16, :])
+../submissions/v31ang/estimator.py:1154: FlopscopeWarning: stats.norm.pdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
+  Phi = flops.stats.norm.cdf(alpha).astype(f32)
+../submissions/v31ang/estimator.py:1155: FlopscopeWarning: stats.norm.cdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
+  a2 = alpha * alpha
+chain run 103s
+post L3: K22 slope 1.012 R2 0.999 | K4 slope 1.000 R2 1.000 | C_off R2 1.0000 dC_off rms 6.45e-05 (noise 5.2e-05) | next dvar from diag 1.04e-05 off 1.82e-04
+   k4 next: chain_regen: corr 0.762 slope 1.00 errG4 0.124 | pair_true(d4+22): corr 0.546 slope 1.00 errG4 0.155 | pair_true(d4+22+31): corr 0.588 slope 1.00 errG4 0.149 | pair_chainslices: corr 0.545 slope 1.00 errG4 0.155 | rms {'t4': 0.014344602185158291, 'd4': 0.0012073231118729126, 'p22': 0.013048802994173955, 'p31': 0.0003798768698046638}
+   dC_off on the closure terms: R2 0.030 | g4row*wk4m -9.017, d21T*d21T -4.560, d21T*wk4m -3.515, d3row*wk4m -2.686, d21*d3row -1.486, d21T*d3row -1.244
+post L7: K22 slope 1.026 R2 0.992 | K4 slope 0.998 R2 1.000 | C_off R2 1.0000 dC_off rms 7.04e-05 (noise 2.5e-05) | next dvar from diag 2.35e-05 off 2.04e-04
+   k4 next: chain_regen: corr 0.752 slope 1.04 errG4 0.142 | pair_true(d4+22): corr 0.429 slope 1.00 errG4 0.209 | pair_true(d4+22+31): corr 0.443 slope 1.00 errG4 0.210 | pair_chainslices: corr 0.429 slope 1.03 errG4 0.196 | rms {'t4': 0.006041088087124134, 'd4': 0.00011003705880274443, 'p22': 0.005793918112323573, 'p31': 0.00011034168657291124}
+   dC_off on the closure terms: R2 0.039 | d21*d21T -5.682, g4row*wk4m -4.838, d21T*wk4m -4.062, d21*g4row +2.962, d21T*d21T -2.548, d3row*wk4m -2.368
+post L11: K22 slope 1.064 R2 0.967 | K4 slope 1.000 R2 0.997 | C_off R2 0.9999 dC_off rms 7.90e-05 (noise 1.5e-05) | next dvar from diag 5.43e-05 off 2.29e-04
+   k4 next: chain_regen: corr 0.759 slope 1.09 errG4 0.193 | pair_true(d4+22): corr 0.269 slope 1.00 errG4 0.326 | pair_true(d4+22+31): corr 0.298 slope 1.00 errG4 0.322 | pair_chainslices: corr 0.266 slope 1.07 errG4 0.283 | rms {'t4': 0.00308616506091431, 'd4': 2.77931839832899e-05, 'p22': 0.002880964632065102, 'p31': 4.269322644541807e-05}
+   dC_off on the closure terms: R2 0.051 | g4row*wk4m -8.363, d21*d21T -7.088, d21T*wk4m -3.737, d3row*wk4m -3.219, d21*g4row +3.155, d21T*d21T -2.488
+post L14: K22 slope 1.138 R2 0.912 | K4 slope 1.016 R2 0.982 | C_off R2 0.9999 dC_off rms 8.84e-05 (noise 1.2e-05) | next dvar from diag 5.56e-05 off 2.63e-04
+   k4 next: chain_regen: corr 0.830 slope 1.18 errG4 0.199 | pair_true(d4+22): corr 0.265 slope 1.00 errG4 0.466 | pair_true(d4+22+31): corr 0.310 slope 1.00 errG4 0.463 | pair_chainslices: corr 0.267 slope 1.14 errG4 0.347 | rms {'t4': 0.002432277055226133, 'd4': 1.3235529562662521e-05, 'p22': 0.0021914732833640906, 'p31': 2.9647180323470846e-05}
+   dC_off on the closure terms: R2 0.072 | g4row*wk4m -10.503, d21*d21T -9.145, d3row*wk4m -4.508, d21T*wk4m -4.261, d21T*d21T -2.757, d21*g4row +2.743
+post L15: K22 slope 1.143 R2 0.905 | K4 slope 1.017 R2 0.981 | C_off R2 0.9999 dC_off rms 8.95e-05 (noise 1.1e-05) | next dvar from diag 5.78e-05 off 2.38e-04
+   k4 next: chain_regen: corr 0.825 slope 1.21 errG4 0.210 | pair_true(d4+22): corr 0.238 slope 0.99 errG4 0.519 | pair_true(d4+22+31): corr 0.277 slope 0.99 errG4 0.515 | pair_chainslices: corr 0.238 slope 1.14 errG4 0.378 | rms {'t4': 0.0021475020462931502, 'd4': 1.4388605523822546e-05, 'p22': 0.001908591068174077, 'p31': 2.5774914593367384e-05}
+   dC_off on the closure terms: R2 0.084 | d21*d21T -7.348, d21*g4row +5.197, g4row*wk4m -4.636, d21T*wk4m -3.452, d3row*wk4m -2.706, d21T*d21T -2.593

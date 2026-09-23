@@ -66,6 +66,11 @@ Legend: **T** = testable now with existing dumps/tools · **K** = needs a Kaggle
 | R24 | kappa4 oracle with the units fixed | own, 23 Sep | **exact kappa4 diagonal alone: 2.29e-8 -> 1.61e-8 (-30 %)**; slices add nothing | done | **LIVE target** |
 | R25 | kappa4 diagonal from cheap features / pairwise transport / star sources | own, 23 Sep | features 0.19 -> 0.18; pairwise corr 0.24-0.69; stars right at birth, 10 % at depth | done | dead as such; post-ReLU teacher next |
 
+| R26 | Channel oracles in the mean closure (variance / kappa3 / kappa4) | own, 23 Sep | **variance -47 %, kappa4 -30 %, kappa3 -14 %, all three -94 %** | done | **map complete** |
+| R27 | Post-ReLU teacher: are the chain's post slices wrong? | own, 23 Sep | no: K22/kappa4/C_post accurate; the variance error is inherited + a fresh 4.2e-5 per entry, not a mis-scaled term | done | **measured** |
+| R28 | Exact old tier (no confinement) | own, 23 Sep | kappa3 slice error unchanged (6.6 %), MSE -3.9 % for +19 % cost | done | **dead; truncation is not the cause** |
+| R29 | Second-order (curvature) transport of the kappa3 slice through the ReLU | own, 23 Sep | the slice error (4-7 %, random) is intrinsic to linear transport | open | **next** |
+
 ## C. Sampling / hybrid side (the budget above the floor is unused: V29 sits at 0.245 B, the floor is 0.1 B — but every unit above 0.1 multiplies the score)
 
 | # | Idea | Source | Test | Effort | Prior |

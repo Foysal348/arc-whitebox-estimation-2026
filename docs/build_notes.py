@@ -1175,6 +1175,37 @@ bullets([
  "What does NOT deliver it (all measured, 23 Sep): (a) V39, a depth multiplier (K3ab: the underestimate sits in the |mu/sigma| > 1.5 neurons the closure ignores); (b) the literal pairwise transport 3 diag((W^2)^T K22_post W^2) + (W^4)^T K4_post of the chain's OWN post-ReLU slices (probe_k4diag.py: corr 0.24-0.69 with the truth against 0.70-0.83 for the chain's mean-field regeneration, although its magnitude is right, slope 1.0-1.15); (c) a G4^2-weighted regression on 13 cheap chain features, trained on one teacher network and tested on the other (probe_k4feat.py: weighted error 0.19 -> 0.18 only); (d) STAR SOURCES (probe_k4star.py): the Mehler expansion of relu of a Gaussian gives the born fourth cumulant k(h_r,h_r,h_k,h_m) = beta_r a_kr a_mr with beta_r = 2 Phi_r (1 - Phi_r) - 2 m_r phi_r / s_r and a = diag(Phi) C_off - the SAME leg as the kappa3 source, so its transported diagonal 6 sum_r beta_r T_ir^2 At_ir^2 (+ the (3,1) and marginal stars) is O(n^2) on legs the chain already forms. It beats the chain at layer 2 (corr 0.79 vs 0.705, weighted error 0.102 vs 0.123) - the birth law is right - but linear transport shrinks it to ~10% of the true diagonal at depth: the deep kappa4 is REGENERATED at every ReLU, not carried from its births.",
  "Where that points: at depth the kappa4 diagonal has the magnitude of the one-step transport of the post-ReLU (2,2) slice, but the chain's own K22_post has the wrong per-neuron structure. Next: a GPU teacher of the POST-ReLU slices (K22, K31, kappa4 diagonal of h) to measure (i) the chain's K22_post error entry by entry and which closure term makes it, and (ii) how much of the true diagonal the pairwise transport of the TRUE K22_post explains.",
 ])
+h1("K3ad. The complete error map (23 Sep): three numbers per neuron, and the variance is the biggest lever")
+p("New data: a POST-ReLU Monte-Carlo teacher (kaggle/k4/run_post, kernel whest-k4teacher-post, T4, 45 min; public MLP #0, the same 6e7 input samples as the pre-activation teacher; layers 3, 7, 11, 14, 15; validated locally against a two-pass computation to 2e-6 before the push). New probes: probe_postslices.py, probe_inherit.py, probe_d21.py; oracles meanfix_oracle.py and the split kappa4 oracle (estimator_k4oracle_split.py).")
+h2("1. Channel oracles: the true value of ONE input of the mean closure E[relu(z_i)] at every layer")
+table([
+ ["exact in the mean closure", "final MSE", "ratio"],
+ ["nothing (plain chain)", "2.290e-8", "1.000"],
+ ["pre-activation VARIANCE", "1.220e-8", "0.533"],
+ ["kappa4 diagonal", "1.600e-8", "0.699 (the split oracle: true kappa4 everywhere EXCEPT the mean closure = 2.311e-8, i.e. nothing)"],
+ ["kappa3 diagonal", "1.965e-8", "0.858"],
+ ["variance + kappa3", "0.817e-8", "0.357"],
+ ["variance + kappa3 + kappa4", "0.130e-8", "0.057 = the truth's own noise floor"],
+], widths=[5.2*cm, 2.4*cm, 9.2*cm], fs=7.2)
+bullets([
+ "The chain's ENTIRE error sits in three numbers per neuron and layer - the pre-activation variance, kappa3_iii and kappa4_iiii as they enter the mean closure. With all three exact the final MSE is the truth noise. The first-order budget of K3ab (50/25/25) is confirmed and ranked by what each is worth end to end: variance -47%, kappa4 -30%, kappa3 -14%.",
+ "The variance error is only 0.15% relative (2.4e-4 on 0.17), but the mean of the |mu/sigma| < 0.75 neurons is steep in it.",
+])
+h2("2. Where the variance error comes from")
+bullets([
+ "The chain's post-ReLU slices are accurate: K22_post slope 1.01-1.14, R^2 0.999 -> 0.905; kappa4_post diagonal R^2 0.98-1.00; C_post R^2 0.9999 (error 6.5e-5 -> 9e-5 rms per entry, teacher noise 1-5e-5).",
+ "~95% of the next layer's variance error comes from the OFF-diagonal post-ReLU covariance error (a random projection through fresh weights: dvar_i = w_i^T dC w_i).",
+ "That error is part inherited - Phi_i dC_pre_ij Phi_j, slope 1.01, R^2 0.52 (layer 3) -> 0.79 (layer 14) - and part FRESH: ~4.2e-5 rms per entry, constant from layer to layer. The chain's own (1,1) closure terms explain only 3-8% of it (it is not a mis-scaled term).",
+ "The kappa3 (2,1) slice k3(z_i, z_i, z_j), which drives the off-diagonal covariance closure, is accurate but not exact: slope 1.00, R^2 0.996-0.998, RANDOM relative error 4.1% (layer 3) -> 6.7% (layer 15) - of the same order as needed to produce the fresh covariance error.",
+ "It is NOT the old-tier truncation: with no confinement at all (V21_AGE_OLD = 20, every source dense and exact) the slice error is unchanged (6.7% -> 6.6%) and the final MSE falls only 3.9% (2.290 -> 2.202e-8) for +19% cost (util 0.248 -> 0.294): a net loss. The slice error is INTRINSIC to the K3 formulation (linear transport of the kappa3 sources through the ReLU, Gaussian-closure births).",
+])
+h2("3. Where the kappa4 diagonal comes from")
+bullets([
+ "The pairwise transport of the TRUE post-ReLU slices, (W^4)^T K4_post + 3 diag((W^2)^T K22_post W^2) (+ the (3,1) term), sets the LEVEL of the next diagonal exactly (slope 1.00) but not its per-neuron pattern (corr 0.24-0.59; the chain's mean-field regeneration: 0.75-0.83). The pattern comes from the (2,1,1) and (1,1,1,1) parts of the post-ReLU kappa4 tensor.",
+ "The residual (true minus pairwise) correlates with |kappa3_iii| at 0.27 (layer 4) -> 0.88 (layer 16) - but only through the |mu/sigma| > 1.5 neurons the mean closure ignores; on the |mu/sigma| < 1.5 neurons every cheap combination (chain diagonal, true pairwise, |D3|, t_v) lowers the G4-weighted error by 5-8% at most, in sample.",
+])
+h2("4. Reading")
+p("The leaders' 1.3x in accuracy is available inside this formulation's own three inputs - above all the variance (-47%) - and those inputs are limited by the intrinsic ~5-7% random error of the kappa3 slice and by the (2,1,1)/(1,1,1,1) structure of kappa4, not by any rank or knob. What a cheaper or better method must supply is a more exact transport of the kappa3 slice (and of kappa4's multi-index part) through the ReLU. Next: derive and test the second-order (curvature) terms of the kappa3 transport - the part a linear transport T = W^T diag(Phi) ... drops - against the per-entry slice error measured here.")
 h1("K4. Next experiments queued")
 bullets([
  "DONE: Kaggle knob sweep (K3f), aggregate-state pilots (K3e), slice-transport (K3g), column screening (K3h), loopholes B1/A4/B4, reference K3-simple (K3i).",
