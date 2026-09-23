@@ -43,7 +43,7 @@ def edge(mu, var, k3, k4):
     s = np.sqrt(var)
     return dG(0, mu, s) + k3 / 6 * dG(3, mu, s) + k4 / 24 * dG(4, mu, s) + k3 ** 2 / 72 * dG(6, mu, s) + k3 * k4 / 144 * dG(7, mu, s)
 METRIC = 2.0
-CFG = {"A": 1.0, "S": 0.0, "W": None}
+CFG = {"A": 1.0, "S": 0.0, "W": None, "LMIN": 1, "DEC": 0.0, "M": []}
 S = {}; NEXT = {}
 def pairpoly(diag, coef22, W):
     W2 = W * W
@@ -72,7 +72,13 @@ def _KERNEL(li, K22, K4v):
 def _MEANFIX(li, pk1v, mu, var, D3, g4row):
     if li not in NEXT or D3 is None or g4row is None: return pk1v
     m, v, k3, k4 = (np.asarray(x, np.float64) for x in (mu, var, D3, g4row))
-    k4n = CFG["A"] * k4 + (1 - CFG["A"]) * NEXT.pop(li)
+    kern = NEXT.pop(li)
+    if li + 1 < CFG["LMIN"]: return pk1v                        # 1-based layer of this pre-activation below the window
+    k4n = CFG["A"] * k4 + (1 - CFG["A"]) * kern
+    if CFG["DEC"] > 0:                                          # only the neurons the mean closure's kappa4 term looks at
+        sel = np.abs(m / np.sqrt(v)) < CFG["DEC"]; k4n = np.where(sel, k4n, k4); CFG["M"].append(int(sel.sum()))
+    else:
+        CFG["M"].append(len(m))
     return pk1v + fnp.asarray((edge(m, v, k3, k4n) - edge(m, v, k3, k4)).astype(np.float32))
 mod = types.ModuleType("est_a7e"); mod.__dict__.update({"_CAPW": _CAPW, "_KERNEL": _KERNEL, "_MEANFIX": _MEANFIX})
 exec(compile(src, SRC, "exec"), mod.__dict__)
@@ -87,12 +93,14 @@ for nk, DIR in NETS.items():
     if os.path.exists(tf): lf, truth = 16, np.asarray(np.load(tf)["all_layer_means"][15], np.float64)
     else: lf, truth = 15, np.asarray(np.load(os.path.join(DIR, "layer15_seed0.npz"))["relu_mean"], np.float64)
     for cfg in sys.argv[1:]:
-        kv = dict(x.split("=") for x in cfg.split(",")); CFG["A"] = float(kv["A"]); CFG["S"] = float(kv["S"]); S.clear(); NEXT.clear()
+        kv = dict(x.split("=") for x in cfg.split(",")); CFG["A"] = float(kv["A"]); CFG["S"] = float(kv["S"])
+        CFG["LMIN"] = int(kv.get("LMIN", 1)); CFG["DEC"] = float(kv.get("DEC", 0)); CFG["M"] = []; S.clear(); NEXT.clear()
         est = mod.Estimator(); est.setup(_Ctx()); t0 = time.time()
         with flops.BudgetContext(flop_budget=int(1e14), quiet=True) as ctx:
             p = np.asarray(est.predict(mlp, 2**41), dtype=np.float64)
         mse = float(np.mean((p[lf - 1] - truth) ** 2))
         res.setdefault(nk, {})[cfg] = mse
         base = res[nk][sys.argv[1]]
-        print(f"[{nk} {cfg}] layer-{lf} MSE {mse:.4e}  ratio {mse / base:.4f}  ({time.time()-t0:.0f}s)", flush=True)
+        mm = CFG["M"]; cost = 3 * sum(mm) / 1024.0                # three n x n x m products per corrected layer, classical
+        print(f"[{nk} {cfg}] layer-{lf} MSE {mse:.4e}  ratio {mse / base:.4f}  | corrected layers {len(mm)}, neurons {mm}, extra cost ~{cost:.1f} u  ({time.time()-t0:.0f}s)", flush=True)
 json.dump(res, open("../results/summaries/a7_kernel_e2e.json", "w"), indent=1)

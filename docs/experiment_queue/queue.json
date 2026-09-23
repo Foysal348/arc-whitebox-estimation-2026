@@ -1,19 +1,19 @@
 {
- "updated": "2026-09-23 (runner-b ফল)",
+ "updated": "2026-09-23 (Q1 kernel late-layer test: net লাভ নেই)",
  "baseline": "Best graded: #331787 score 5.137e-9 (raw 2.108e-8, util 0.2437), public rank 28. Plain chain on public MLP #0: final MSE 2.290e-8.",
  "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে।",
  "items": [
   {
    "id": "Q1",
-   "priority": "P1",
-   "status": "open",
+   "priority": "-",
+   "status": "dead",
    "source": "Astra R7 §3-4",
    "title": "Quartic kappa4 kernel (সস্তা version) — kappa4 diagonal-এর নতুন হিসাব",
    "what": "প্রতিটা ReLU-তে নতুন করে quartic response polynomial F0 হিসাব; তার non-pair অংশ + chain-এর pair অংশ দিয়ে পরের layer-এর kappa4 diagonal। Global rule: k4 = 0.3 x chain + 0.7 x (P_chain + 1.25 x kernel non-pair)।",
-   "evidence": "non-pair অংশের corr 0.63-0.78 (দুই network)। End-to-end (mean closure-এ): A=0.5,S=1.5 -> MLP #0 -6.4%, synthetic -2.6%; A=0.3,S=1.25 -> -5.0% / -1.5%। Pchain ছাড়া (শুধু chain kappa4 + kernel) কাজ করে না — double count। GPT Sol High R7-এর K3+C '3+2' term (সস্তা t_rep, chain-এর D21/D3 দিয়ে) যোগ করলে non-pair corr 0.73-0.83 (আগে 0.68-0.78), scale ঘাটতি 1.16-1.87 (আগে 1.34-2.16) — কিন্তু দরকারি neuron-এ corr মাত্র +0.01-0.04, G4-weighted error একই (x0.925)।",
+   "evidence": "non-pair অংশের corr 0.63-0.78 (দুই network)। End-to-end (mean closure-এ): A=0.5,S=1.5 -> MLP #0 -6.4%, synthetic -2.6%; A=0.3,S=1.25 -> -5.0% / -1.5%। Pchain ছাড়া (শুধু chain kappa4 + kernel) কাজ করে না — double count। GPT Sol High R7-এর K3+C '3+2' term (সস্তা t_rep, chain-এর D21/D3 দিয়ে) যোগ করলে non-pair corr 0.73-0.83 (আগে 0.68-0.78), scale ঘাটতি 1.16-1.87 (আগে 1.34-2.16) — কিন্তু দরকারি neuron-এ corr মাত্র +0.01-0.04, G4-weighted error একই (x0.925)। শেষ layer/দরকারি neuron পরীক্ষা (A=0.5,S=1.5): সব layer সব neuron -6.4% / -2.6% @ ~42 u; সব layer দরকারি neuron -5.2% / +0.3% @ ~22 u; layer 8-16 -3.5% / -1.1% @ ~11.5 u; layer 11-16 -2.8% / -0.2% @ ~7 u। কোনো setting-এ score-এ net লাভ নেই — বর্তমান রূপে মৃত।",
    "cost": "3টা product/layer: শুধু দরকারি ~400 neuron-এ ~18 u (+7%), সবার জন্য ~26 u (+10%)",
    "gate": "এখনকার অবস্থায় net ≈ 0 (লাভ 2.6-6.4% বনাম খরচ 7-10%)। লাভজনক করতে: খরচ অর্ধেক, বা accuracy দ্বিগুণ (Q6/Q8)",
-   "next": "(ক) Q6 (K4 x C term) দিয়ে depth-এ magnitude ঘাটতি পূরণ হয় কি না; (খ) শুধু decisive neuron + Strassen-এ খরচ কমানো; তারপর আবার end-to-end।",
+   "next": "শুধু যদি Q12 (211 hypertree) kernel-কে অনেক বেশি নিখুঁত করে তবেই আবার।",
    "files": "experiments/probes/probe_astra7_k4.py, experiments/chain/a7_kernel_e2e.py"
   },
   {
