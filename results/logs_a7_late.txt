@@ -1,0 +1,34 @@
+../submissions/v31ang/estimator.py:698: FlopscopeWarning: stats.norm.pdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
+  flops.stats.norm.pdf(v)
+../submissions/v31ang/estimator.py:699: FlopscopeWarning: stats.norm.cdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
+  flops.stats.norm.cdf(v)
+../submissions/v31ang/estimator.py:713: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("tij,ti,tj,tg->gij", t3, t3[:, :, 0], t3[:, 0, :], g3)
+../submissions/v31ang/estimator.py:714: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("ti,ti,tg->gi", t3[:, :, 0], t3[:, :, 1], g3)
+../submissions/v31ang/estimator.py:715: SymmetryLossWarning: Symmetry lost along dims (0, 1): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("iq,kqn->kin", m[:, :16], t3[:, :16, :])
+../submissions/v31ang/estimator.py:715: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("iq,kqn->kin", m[:, :16], t3[:, :16, :])
+../submissions/v31ang/estimator.py:716: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("ki,kc->ic", t3[:, :, 0], t3[:, :, 1])
+../submissions/v31ang/estimator.py:718: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("kij,kj->ki", t3, t3[:, 0, :])
+../submissions/v31ang/estimator.py:719: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("ki,ki->i", t3[:, :, 0], t3[:, :, 1])
+../submissions/v31ang/estimator.py:720: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("kij,kqj->iq", t3, t3[:, :16, :])
+../submissions/v31ang/estimator.py:1154: FlopscopeWarning: stats.norm.pdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
+  Phi = flops.stats.norm.cdf(alpha).astype(f32)
+../submissions/v31ang/estimator.py:1155: FlopscopeWarning: stats.norm.cdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
+  a2 = alpha * alpha
+[mlp0 A=1,S=0] layer-16 MSE 2.2903e-08  ratio 1.0000  | corrected layers 0, neurons [], extra cost ~0.0 u  (123s)
+[mlp0 A=0.5,S=1.5] layer-16 MSE 2.1447e-08  ratio 0.9364  | corrected layers 14, neurons [1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024], extra cost ~42.0 u  (171s)
+[mlp0 A=0.5,S=1.5,LMIN=11,DEC=1.5] layer-16 MSE 2.2262e-08  ratio 0.9720  | corrected layers 6, neurons [503, 442, 406, 356, 375, 322], extra cost ~7.0 u  (276s)
+[mlp0 A=0.5,S=1.5,LMIN=8,DEC=1.5] layer-16 MSE 2.2102e-08  ratio 0.9650  | corrected layers 9, neurons [595, 507, 490, 503, 442, 406, 356, 375, 322], extra cost ~11.7 u  (238s)
+[mlp0 A=0.5,S=1.5,LMIN=1,DEC=1.5] layer-16 MSE 2.1710e-08  ratio 0.9479  | corrected layers 14, neurons [906, 813, 709, 660, 630, 595, 507, 490, 503, 442, 406, 356, 375, 322], extra cost ~22.6 u  (160s)
+[synth A=1,S=0] layer-15 MSE 1.9262e-08  ratio 1.0000  | corrected layers 0, neurons [], extra cost ~0.0 u  (162s)
+[synth A=0.5,S=1.5] layer-15 MSE 1.8766e-08  ratio 0.9742  | corrected layers 14, neurons [1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024], extra cost ~42.0 u  (144s)
+[synth A=0.5,S=1.5,LMIN=11,DEC=1.5] layer-15 MSE 1.9219e-08  ratio 0.9978  | corrected layers 6, neurons [450, 390, 383, 337, 371, 335], extra cost ~6.6 u  (172s)
+[synth A=0.5,S=1.5,LMIN=8,DEC=1.5] layer-15 MSE 1.9043e-08  ratio 0.9886  | corrected layers 9, neurons [580, 535, 474, 450, 390, 383, 337, 371, 335], extra cost ~11.3 u  (162s)
+[synth A=0.5,S=1.5,LMIN=1,DEC=1.5] layer-15 MSE 1.9313e-08  ratio 1.0026  | corrected layers 14, neurons [903, 809, 720, 671, 616, 580, 535, 474, 450, 390, 383, 337, 371, 335], extra cost ~22.2 u  (204s)

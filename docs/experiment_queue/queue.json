@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-24 (Fable R8 synthesis যোগ)",
+ "updated": "2026-09-24 (Q8 সস্তা সংস্করণ: net লাভ নেই)",
  "baseline": "Best graded: #331787 score 5.137e-9 (raw 2.108e-8, util 0.2437), public rank 28. Plain chain on public MLP #0: final MSE 2.290e-8.",
  "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে।",
  "items": [
@@ -96,15 +96,15 @@
   },
   {
    "id": "Q8",
-   "priority": "P1",
-   "status": "running",
+   "priority": "-",
+   "status": "dead",
    "source": "Astra R7 §5 + Fable R8",
    "title": "K3 x C directional query (kernel-এর পূর্ণ version)",
    "what": "Kernel-এ বাদ পড়া K3 x C term, source leg পুনর্ব্যবহার করে।",
-   "evidence": "Fable R8: kernel-এর depth-ঘাটতি হলো ঠিক এই (1,1,1,1) K3 x C term — chain-এর নিজের source থেকে 'সব index আলাদা' kappa3 দিয়ে (Sol-এর t_rep এই sector দেখতেই পারে না)। মাপা coefficient 1.0 +- 0.1 (theory 1); দরকারি neuron-এ corr 0.69-0.75 -> 0.75-0.81; G4-weighted kappa4 error 0.095/0.116/0.157/0.193/0.197 (L4/8/12/15/16; chain 0.124/0.142/0.193/0.199/0.210)। ageটা 1-4 source-এ ~90%, 1-2-এ ~65%। End-to-end (MLP #0, A=0.5,S=1.5 + term): -8.8% (2.0893e-8) — কিন্তু খরচ ~140 u (+55%), চলবে না।",
+   "evidence": "Fable R8: kernel-এর depth-ঘাটতি হলো ঠিক এই (1,1,1,1) K3 x C term — chain-এর নিজের source থেকে 'সব index আলাদা' kappa3 দিয়ে (Sol-এর t_rep এই sector দেখতেই পারে না)। মাপা coefficient 1.0 +- 0.1 (theory 1); দরকারি neuron-এ corr 0.69-0.75 -> 0.75-0.81; G4-weighted kappa4 error 0.095/0.116/0.157/0.193/0.197 (L4/8/12/15/16; chain 0.124/0.142/0.193/0.199/0.210)। ageটা 1-4 source-এ ~90%, 1-2-এ ~65%। End-to-end (MLP #0, A=0.5,S=1.5 + term): -8.8% (2.0893e-8) — কিন্তু খরচ ~140 u (+55%), চলবে না। সস্তা সংস্করণ (MLP #0; synthetic run session restart-এ থেমে গেছে): layer 8-16 + দরকারি neuron + ২ source -> -4.2% @ ~35 u classical (+13%); সব layer + দরকারি neuron + ২ source -> -6.25% @ ~52 u; term ছাড়া layer 8-16 -> -3.5%। কোনোটাতেই score-এ net লাভ নেই — বর্তমান কাঠামোয় মৃত।",
    "cost": "পূর্ণ: ~140 u; সস্তা সংস্করণ (layer 8-16, |alpha|<1.5, ২টা নতুন source): ~26 u classical / ~13 u Strassen",
    "gate": "সস্তা সংস্করণে raw MSE > 9% (classical) বা > 5% (Strassen) কমলে",
-   "next": "সস্তা সংস্করণ দুই network-এ চলছে (r8_k4_dist_e2e.py)।",
+   "next": "শুধু নতুন architecture-এ (term-কে transport product-এর ভিতরে ঢুকিয়ে) আবার বিবেচনা।",
    "files": "experiments/probes/r8_k4_1111.py, r8_k4_dist_e2e.py; consultations/fable/ROUND8_fable_synthesis.md"
   },
   {

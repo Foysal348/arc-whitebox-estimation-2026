@@ -22,3 +22,6 @@
   a2 = alpha * alpha
 ../submissions/v31ang/estimator.py:1156: FlopscopeWarning: stats.norm.cdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
   a3 = a2 * alpha
+[mlp0 A=0.5,S=1.5,KC=0,DIST=1,AGE=2,LMIN=8,DEC=1.5] layer-16 MSE 2.1949e-08  ratio to plain 0.9583  | corrected layers 9 (neurons/layer [595, 507]..), sources used/layer [1, 2, 2, 2, 2, 2].. | est. cost: kernel ~12 u, dist ~23 u (classical, m = corrected neurons)  (266s)
+[mlp0 A=0.5,S=1.5,KC=0,DIST=1,AGE=2,LMIN=1,DEC=1.5] layer-16 MSE 2.1472e-08  ratio to plain 0.9375  | corrected layers 14 (neurons/layer [906, 813]..), sources used/layer [1, 2, 2, 2, 2, 2].. | est. cost: kernel ~23 u, dist ~29 u (classical, m = corrected neurons)  (277s)
+[mlp0 A=0.5,S=1.5,KC=0,DIST=0,AGE=2,LMIN=8,DEC=1.5] layer-16 MSE 2.2102e-08  ratio to plain 0.9650  | corrected layers 9 (neurons/layer [595, 507]..), sources used/layer [].. | est. cost: kernel ~12 u, dist ~0 u (classical, m = corrected neurons)  (212s)

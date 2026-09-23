@@ -1,0 +1,35 @@
+../submissions/v31ang/estimator.py:698: FlopscopeWarning: stats.norm.pdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
+  flops.stats.norm.pdf(v)
+../submissions/v31ang/estimator.py:699: FlopscopeWarning: stats.norm.cdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
+  flops.stats.norm.cdf(v)
+../submissions/v31ang/estimator.py:713: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("tij,ti,tj,tg->gij", t3, t3[:, :, 0], t3[:, 0, :], g3)
+../submissions/v31ang/estimator.py:714: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("ti,ti,tg->gi", t3[:, :, 0], t3[:, :, 1], g3)
+../submissions/v31ang/estimator.py:715: SymmetryLossWarning: Symmetry lost along dims (0, 1): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("iq,kqn->kin", m[:, :16], t3[:, :16, :])
+../submissions/v31ang/estimator.py:715: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("iq,kqn->kin", m[:, :16], t3[:, :16, :])
+../submissions/v31ang/estimator.py:716: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("ki,kc->ic", t3[:, :, 0], t3[:, :, 1])
+../submissions/v31ang/estimator.py:718: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("kij,kj->ki", t3, t3[:, 0, :])
+../submissions/v31ang/estimator.py:719: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("ki,ki->i", t3[:, :, 0], t3[:, :, 1])
+../submissions/v31ang/estimator.py:720: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("kij,kqj->iq", t3, t3[:, :16, :])
+../submissions/v31ang/estimator.py:1155: FlopscopeWarning: stats.norm.pdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
+  a2 = alpha * alpha
+../submissions/v31ang/estimator.py:1156: FlopscopeWarning: stats.norm.cdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
+  a3 = a2 * alpha
+chain run 118s
+post L3 -> kappa4 at L4: NON-PAIR kernel vs truth: corr +0.684 (decisive neurons +0.704) slope 1.34 | errG4: chain 0.124, F deploy 0.112, F w/ true pairs 0.112 | corr: chain 0.762, F deploy 0.782
+    rms: t4 1.4e-02, target 2.1e-03, pred 1.1e-03, f1 7.9e-03, f2 3.9e-03, f3 7.9e-03, PH 1.2e-02, Ptrue 1.4e-02
+post L7 -> kappa4 at L8: NON-PAIR kernel vs truth: corr +0.695 (decisive neurons +0.715) slope 1.35 | errG4: chain 0.142, F deploy 0.135, F w/ true pairs 0.146 | corr: chain 0.752, F deploy 0.754
+    rms: t4 6.0e-03, target 1.3e-03, pred 6.9e-04, f1 4.4e-03, f2 1.6e-03, f3 2.0e-03, PH 4.8e-03, Ptrue 5.9e-03
+post L11 -> kappa4 at L12: NON-PAIR kernel vs truth: corr +0.705 (decisive neurons +0.729) slope 1.70 | errG4: chain 0.193, F deploy 0.181, F w/ true pairs 0.212 | corr: chain 0.759, F deploy 0.711
+    rms: t4 3.1e-03, target 1.0e-03, pred 4.3e-04, f1 2.3e-03, f2 6.8e-04, f3 6.8e-04, PH 2.3e-03, Ptrue 2.9e-03
+post L14 -> kappa4 at L15: NON-PAIR kernel vs truth: corr +0.782 (decisive neurons +0.707) slope 2.13 | errG4: chain 0.199, F deploy 0.206, F w/ true pairs 0.298 | corr: chain 0.830, F deploy 0.784
+    rms: t4 2.4e-03, target 1.1e-03, pred 3.8e-04, f1 1.8e-03, f2 4.4e-04, f3 3.5e-04, PH 1.7e-03, Ptrue 2.2e-03
+post L15 -> kappa4 at L16: NON-PAIR kernel vs truth: corr +0.759 (decisive neurons +0.676) slope 2.16 | errG4: chain 0.210, F deploy 0.214, F w/ true pairs 0.327 | corr: chain 0.825, F deploy 0.758
+    rms: t4 2.1e-03, target 9.9e-04, pred 3.5e-04, f1 1.5e-03, f2 3.4e-04, f3 3.1e-04, PH 1.4e-03, Ptrue 1.9e-03

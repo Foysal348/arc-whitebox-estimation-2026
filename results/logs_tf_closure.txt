@@ -1,0 +1,34 @@
+../submissions/v31ang/estimator.py:698: FlopscopeWarning: stats.norm.pdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
+  flops.stats.norm.pdf(v)
+../submissions/v31ang/estimator.py:699: FlopscopeWarning: stats.norm.cdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
+  flops.stats.norm.cdf(v)
+../submissions/v31ang/estimator.py:713: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("tij,ti,tj,tg->gij", t3, t3[:, :, 0], t3[:, 0, :], g3)
+../submissions/v31ang/estimator.py:714: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("ti,ti,tg->gi", t3[:, :, 0], t3[:, :, 1], g3)
+../submissions/v31ang/estimator.py:715: SymmetryLossWarning: Symmetry lost along dims (0, 1): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("iq,kqn->kin", m[:, :16], t3[:, :16, :])
+../submissions/v31ang/estimator.py:715: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("iq,kqn->kin", m[:, :16], t3[:, :16, :])
+../submissions/v31ang/estimator.py:716: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("ki,kc->ic", t3[:, :, 0], t3[:, :, 1])
+../submissions/v31ang/estimator.py:718: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("kij,kj->ki", t3, t3[:, 0, :])
+../submissions/v31ang/estimator.py:719: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("ki,ki->i", t3[:, :, 0], t3[:, :, 1])
+../submissions/v31ang/estimator.py:720: SymmetryLossWarning: Symmetry lost along dims (1, 2): slicing removed all symmetric dim groups. Use as_symmetric() to re-tag if you know the result is symmetric. Suppress with flops.configure(symmetry_warnings=False).
+  fnp.einsum("kij,kqj->iq", t3, t3[:, :16, :])
+../submissions/v31ang/estimator.py:1156: FlopscopeWarning: stats.norm.pdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
+  a3 = a2 * alpha
+../submissions/v31ang/estimator.py:1157: FlopscopeWarning: stats.norm.cdf promoted its float32 input to float64 to match scipy.stats. If float64 output was not intended, cast the result back with result.astype(np.float32) before downstream operations; float64 operations are billed at twice the float32 dtype rate.
+  a4 = a3 * alpha
+L7 TF[none ]: C_post off rms 7.04e-05 (x1.000; noise 2.5e-05) | diag rms 1.28e-04 | weighted next-var error from off 1.000, from diag 1.000  (119s)
+L7 TF[all  ]: C_post off rms 2.61e-05 (x0.371; noise 2.5e-05) | diag rms 1.02e-05 | weighted next-var error from off 0.127, from diag 0.002  (96s)
+L7 TF[gauss]: C_post off rms 4.46e-05 (x0.633; noise 2.5e-05) | diag rms 7.42e-05 | weighted next-var error from off 0.376, from diag 0.172  (98s)
+L7 TF[k3   ]: C_post off rms 6.00e-05 (x0.852; noise 2.5e-05) | diag rms 1.08e-04 | weighted next-var error from off 0.715, from diag 0.988  (119s)
+L7 TF[k4   ]: C_post off rms 6.99e-05 (x0.993; noise 2.5e-05) | diag rms 1.24e-04 | weighted next-var error from off 0.960, from diag 0.524  (101s)
+L14 TF[none ]: C_post off rms 8.84e-05 (x1.000; noise 1.2e-05) | diag rms 1.73e-04 | weighted next-var error from off 1.000, from diag 1.000  (103s)
+L14 TF[all  ]: C_post off rms 2.76e-05 (x0.312; noise 1.2e-05) | diag rms 9.51e-06 | weighted next-var error from off 0.092, from diag 0.003  (114s)
+L14 TF[gauss]: C_post off rms 4.08e-05 (x0.461; noise 1.2e-05) | diag rms 6.32e-05 | weighted next-var error from off 0.185, from diag 0.013  (111s)
+L14 TF[k3   ]: C_post off rms 8.17e-05 (x0.924; noise 1.2e-05) | diag rms 1.64e-04 | weighted next-var error from off 0.853, from diag 1.134  (98s)
+L14 TF[k4   ]: C_post off rms 8.88e-05 (x1.004; noise 1.2e-05) | diag rms 1.68e-04 | weighted next-var error from off 0.998, from diag 0.792  (97s)
