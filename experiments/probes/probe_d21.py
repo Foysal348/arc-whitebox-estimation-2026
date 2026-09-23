@@ -32,9 +32,11 @@ truth = np.load(os.path.join(PRE, "truth.npz")); Wall = np.load(glob.glob(os.pat
 class _Ctx: seed = 0; width = 1024; depth = 16; flop_budget = 2**41; submission_dir = None; scratch_dir = None; api_version = "x"
 mlp = MLP(width=Wall.shape[1], depth=Wall.shape[0], weights=[fnp.array(Wall[l]) for l in range(Wall.shape[0])], seed=int(truth["mlp_seed"]), name=str(truth["mlp_name"]))
 est = mod.Estimator(); est.setup(_Ctx()); t0 = time.time()
+if os.environ.get("RFB"): est.R_FB = int(os.environ["RFB"])
 with flops.BudgetContext(flop_budget=int(1e14), quiet=True) as ctx:
-    est.predict(mlp, 2**41)
-print(f"chain run {time.time()-t0:.0f}s", flush=True)
+    pred = np.asarray(est.predict(mlp, 2**41), dtype=np.float64)
+ALM = np.asarray(truth["all_layer_means"], np.float64)
+print(f"chain run {time.time()-t0:.0f}s  R_FB {est.R_FB}  util {ctx.flops_used/2**41:.4f}  final MSE {np.mean((pred[-1]-ALM[-1])**2):.4e}", flush=True)
 off = ~np.eye(1024, dtype=bool)
 out = []
 for li in sorted(S):

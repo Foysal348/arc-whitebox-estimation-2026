@@ -69,7 +69,9 @@ Legend: **T** = testable now with existing dumps/tools · **K** = needs a Kaggle
 | R26 | Channel oracles in the mean closure (variance / kappa3 / kappa4) | own, 23 Sep | **variance -47 %, kappa4 -30 %, kappa3 -14 %, all three -94 %** | done | **map complete** |
 | R27 | Post-ReLU teacher: are the chain's post slices wrong? | own, 23 Sep | no: K22/kappa4/C_post accurate; the variance error is inherited + a fresh 4.2e-5 per entry, not a mis-scaled term | done | **measured** |
 | R28 | Exact old tier (no confinement) | own, 23 Sep | kappa3 slice error unchanged (6.6 %), MSE -3.9 % for +19 % cost | done | **dead; truncation is not the cause** |
-| R29 | Second-order (curvature) transport of the kappa3 slice through the ReLU | own, 23 Sep | the slice error (4-7 %, random) is intrinsic to linear transport | open | **next** |
+| R29 | Second-order (curvature) transport of the kappa3 slice through the ReLU | own + Fable R7, 23 Sep | 91-96 % of the slice error is in the all-distinct post tensor; the port carries half of two K x C families; curvature has no coherent part | done | **dead (transport); births: see R30** |
+| R30 | Feedback constants x S (R7_FB_SCALE), restoring the full Edgeworth K x C families | Fable R7 | S = 1.25: -0.8 % / -0.35 % (two nets); S = 2: +3.4 % / +3.1 % | done | **tiny (~0.5 %), queue for the 100-MLP suite** |
+| R31 | Oracle: TRUE D21 injected into the feedback legs only | Fable R7 | isolates closure cross-talk (55-65 % of the slice error unexplained) | open | queued |
 
 ## C. Sampling / hybrid side (the budget above the floor is unused: V29 sits at 0.245 B, the floor is 0.1 B — but every unit above 0.1 multiplies the score)
 
