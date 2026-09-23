@@ -1,4 +1,4 @@
-"""Queue Q11 (Astra R7 §6, GPT Terra R7 Q1.4, Grok R7 1c): can a COUPLED linear surrogate make Monte-Carlo estimates of
+"""Queue Q11 (+ Gemini R7 Q3: QUADRATIC surrogate with SURR=quad) (Astra R7 §6, GPT Terra R7 Q1.4, Grok R7 1c): can a COUPLED linear surrogate make Monte-Carlo estimates of
 the per-neuron corrections cheap?
 
 Surrogate: G_l(x) = m_l + J_l x with J_l = W_l^T diag(Phi_(l-1)) J_(l-1) (the tangent / mean-field linearisation), fed the
@@ -21,6 +21,8 @@ mu, var = [], []
 for l in range(1, L + 1):
     T = np.load(os.path.join(DIR, f"layer{l}_seed0.npz")); mu.append(np.asarray(T["mean"], np.float64)); var.append(np.diag(np.asarray(T["C"], np.float64)).copy())
 rng = np.random.default_rng(11); N = int(os.environ.get("N", "20000")); B = 2000
+SURR = os.environ.get("SURR", "lin")
+phi_ = lambda a: np.exp(-a * a / 2) / np.sqrt(2 * np.pi)
 LAY = [2, 4, 8, 12, 16]
 acc = {l: {q: [] for q in (2, 3, 4)} for l in LAY}
 t0 = time.time()
@@ -30,14 +32,20 @@ for b0 in range(0, N, B):
     Jx = x                                                        # J_0 x = x
     for l in range(1, L + 1):
         z = h @ W[l - 1]                                          # true pre-activation
-        Gz = mu[l - 1] + (Jx @ W[l - 1]) if l > 1 else z.copy()  # surrogate: linear in x (exact at layer 1)
+        Gz = (mu[l - 1] + (Jx @ W[l - 1]) if l > 1 else z.copy())  # surrogate (exact at layer 1)
         if l in LAY:
             zc, gc = z - mu[l - 1], Gz - mu[l - 1]
             for q in (2, 3, 4):
                 acc[l][q].append((zc ** q, gc ** q))
-        ph = Phi(mu[l - 1] / np.sqrt(var[l - 1]))
+        s_ = np.sqrt(var[l - 1]); ph = Phi(mu[l - 1] / s_)
         h = np.maximum(z, 0.0)
-        Jx = (Jx @ W[l - 1]) * ph[None, :] if l > 1 else z * ph[None, :]   # d h ~ Phi d z  (row form: J_l x = (J_(l-1) x) W D)
+        if SURR == "quad":
+            # Gemini's surrogate: h_CV = Phi o dz + (1/2) (phi/s) o (dz^2 - var), dz = z_CV - mu, propagated with the SAME x
+            dz = Gz - mu[l - 1]; d2 = phi_(mu[l - 1] / s_) / s_
+            Jx = dz * ph[None, :] + 0.5 * d2[None, :] * (dz * dz - var[l - 1][None, :])
+            Gz_next_input = Jx
+        else:
+            Jx = (Jx @ W[l - 1]) * ph[None, :] if l > 1 else z * ph[None, :]   # d h ~ Phi d z  (row form: J_l x = (J_(l-1) x) W D)
     print(f"  samples {b0 + B}  ({time.time()-t0:.0f}s)", flush=True)
 out = {}
 for l in LAY:
@@ -50,4 +58,4 @@ for l in LAY:
         row[q] = {"rho_median": float(np.median(rho)), "rho_p90": float(np.percentile(rho, 90)), "reduction_median": float(np.median(red))}
     out[l] = row
     print(f"layer {l:2d}: " + " | ".join(f"q={q}: corr median {row[q]['rho_median']:.3f} (p90 {row[q]['rho_p90']:.3f}) -> variance reduction x{row[q]['reduction_median']:.1f}" for q in (2, 3, 4)), flush=True)
-json.dump(out, open("results/summaries/q11_surrogate_cv.json", "w"), indent=1)
+json.dump(out, open(f"results/summaries/q11_surrogate_cv_{SURR}.json", "w"), indent=1)

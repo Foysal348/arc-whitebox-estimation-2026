@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-23 (Q5 সফল-diagnostic, Q10 ও Q11 মৃত)",
+ "updated": "2026-09-23 (DeepSeek/Terra 7.1, Gemini R7 যোগ — সব মৃত বা Q8-এ যুক্ত)",
  "baseline": "Best graded: #331787 score 5.137e-9 (raw 2.108e-8, util 0.2437), public rank 28. Plain chain on public MLP #0: final MSE 2.290e-8.",
  "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে।",
  "items": [
@@ -101,7 +101,7 @@
    "source": "Astra R7 §5",
    "title": "K3 x C directional query (kernel-এর পূর্ণ version)",
    "what": "Kernel-এ বাদ পড়া K3 x C term, source leg পুনর্ব্যবহার করে।",
-   "evidence": "শুধু theory; Q1-এর scale ঘাটতির বড় অংশ এটা হতে পারে। GPT Terra R7 Q2.2 ('local-birth factorization' of K4(j,j,:,:)) একই ধারণা।",
+   "evidence": "শুধু theory; Q1-এর scale ঘাটতির বড় অংশ এটা হতে পারে। GPT Terra R7 Q2.2 ('local-birth factorization' of K4(j,j,:,:)) একই ধারণা। Gemini R7 Q2 একই term প্রস্তাব করেছে, কিন্তু তার 0.01 u factorization ভুল — সঠিক রূপে t = d2 o w o (C u) Hadamard coupling থাকে (Astra: K3[t,u,u]), তাই খরচ Astra-র হিসাবই (~54 u)।",
    "cost": "~54-75 u",
    "gate": "raw MSE >22% কমতে হবে (kappa4 oracle-এর তিন-চতুর্থাংশ)",
    "next": "আগে layer 12-এ 32টা query দিয়ে সস্তা পরীক্ষা (<2 u)।",
@@ -210,6 +210,19 @@
    "gate": "-",
    "next": "-",
    "files": "consultations/ai-assistant-suggestions/{Grok,Copilot}/*Round*7*"
+  },
+  {
+   "id": "D6",
+   "priority": "-",
+   "status": "dead",
+   "source": "DeepSeek R7 = GPT Terra R7.1 (একই file) / Gemini R7 Q1, Q3",
+   "title": "Random-weight mixture memo; Gemini-র kappa3 x kappa3 covariance term; quadratic surrogate MC",
+   "what": "(ক) 'weight random ধরে' Gaussian mixture: kappa3_iii = 0, 300 sample যথেষ্ট; (খ) Cov-এ sum_ab k3(j,a,b) k3(k,a,b) term; (গ) 2nd-order surrogate control variate।",
+   "evidence": "(ক) আমাদের weight fixed; teacher-এ kappa3_iii rms ~1e-2 আর chain তার সাথে slope 1.00-তে মেলে — দাবি ভুল। (খ) Cov(relu z_j, relu z_k) শুধু (z_j, z_k)-এর যৌথ distribution-এর উপর নির্ভর করে — অন্য index ঢুকতে পারে না; Q5-এ সত্যিকারের input দিলে closure নিখুঁত। (গ) মাপা: correlation layer 2 -> 0.967 (x15), 4 -> 0.889, 8 -> 0.733, 12 -> 0.454, 16 -> 0.00 — গভীরে ভেঙে পড়ে।",
+   "cost": "-",
+   "gate": "-",
+   "next": "-",
+   "files": "experiments/probes/q11_surrogate_cv.py (SURR=quad)"
   }
  ]
 }
