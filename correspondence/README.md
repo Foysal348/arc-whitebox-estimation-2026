@@ -22,6 +22,12 @@ The forum drafts carry an EMBARGO header stating this. Do not post them early.
 
 ## Files
 
+**Channel note.** `arc-whestbench@aicrowd.com` has not answered the security report sent on
+21 Sep 2026, so treat it as a one-way record channel, not as support. Account problems go to
+Discourse staff (@mohanty) or `devops@aicrowd.com` instead.
+
+* `K4_permission_request.md` - **send today**: asks AIcrowd staff to enable forum posting for the
+  account. Contains no research content, so it is safe to send while the material is embargoed.
 * `K2_security_report_email.md` - private report to the organisers: the submissions API returned
   other participants' grading status and messages to an authenticated participant token. Sent 21 Sep 2026.
 * `K3_email_to_organisers.md` - **send today**: the full K3 contribution as a dated record, plus a
