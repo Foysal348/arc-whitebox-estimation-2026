@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-23 (GPT Sol High R7, DeepSeek 7.1 যোগ; Q1-এ 3+2 term পরীক্ষা)",
+ "updated": "2026-09-23 (আরেকটা AI-এর উত্তর — সব মৃত)",
  "baseline": "Best graded: #331787 score 5.137e-9 (raw 2.108e-8, util 0.2437), public rank 28. Plain chain on public MLP #0: final MSE 2.290e-8.",
  "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে।",
  "items": [
@@ -262,6 +262,19 @@
    "gate": "-",
    "next": "-",
    "files": "consultations/ai-assistant-suggestions/DeepSeek, GPT 5.6 Terra"
+  },
+  {
+   "id": "D8",
+   "priority": "-",
+   "status": "dead",
+   "source": "অজ্ঞাত AI (chat-এ paste করা, 23 Sep)",
+   "title": "Variance adjoint recursion, top-5% stratified MC, 'closed-form' (2,1,1)/(1,1,1,1) kappa4, Rao-Blackwell MC",
+   "what": "চারটা প্রস্তাব।",
+   "evidence": "(১) chain-এর নিজের C থেকে variance হিসাব — accuracy বাড়ে না, আর একটা adjoint vector-এ বহু quadratic form হয় না; (২) অজানা error ΔC sample করা অসম্ভব, আর error full-rank (Q10); (৩) সূত্র ভুল — (1,1,1,1)-কে sum w^4 kappa4_jjjj লিখেছে (এটা diagonal term, chain-এ আছে), (2,1,1)-এ একটাই index; (৪) weight random ধরেছে (আমাদের fixed), '30x' ভিত্তিহীন (Q11: x1-2), খরচে 1000x ভুল।",
+   "cost": "-",
+   "gate": "-",
+   "next": "-",
+   "files": "-"
   }
  ]
 }
