@@ -1,7 +1,7 @@
 {
  "updated": "2026-09-23 (Copilot, Grok, GPT Terra R7 যোগ; Q5 আংশিক ফল)",
  "baseline": "Best graded: #331787 score 5.137e-9 (raw 2.108e-8, util 0.2437), public rank 28. Plain chain on public MLP #0: final MSE 2.290e-8.",
- "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%.",
+ "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে।",
  "items": [
   {
    "id": "Q1",
@@ -57,15 +57,15 @@
   },
   {
    "id": "Q5",
-   "priority": "P2",
-   "status": "running",
+   "priority": "-",
+   "status": "success",
    "source": "Astra R7 §1-2",
    "title": "Teacher-forced bivariate closure: কোন input covariance error বানায়",
    "what": "layer 8, 12, 15-এ closure-কে সত্যিকারের cumulant দিয়ে চালানো; আলাদা করে শুধু kappa31 / K22 / D21 বদলে দেখা, কোনটা fresh covariance error (4.2e-5) কমায়।",
-   "evidence": "Layer 7 (চলছে): সব input সত্যিকারের দিলে post-ReLU covariance error 7.04e-5 -> 2.61e-5 (= teacher noise), variance error -87% -> closure নিজে প্রায় নিখুঁত, দোষ input-এর। শুধু mu/var/C ঠিক করলে -62%। kappa3/kappa4 আলাদা ফল আসছে।",
+   "evidence": "ফল (weighted next-layer variance error, layer 7 / 14): সব input সত্যিকারের -> 0.127 / 0.092; শুধু mu, var, C -> 0.376 / 0.185; শুধু kappa3 -> 0.715 / 0.853; শুধু kappa4 -> 0.960 / 0.998। সিদ্ধান্ত: closure প্রায় নিখুঁত; covariance error-এর বেশিরভাগ (depth-এ 81%) আগের layer থেকে জমে আসা mu/C error; নতুন error আসে kappa3 (15-28%) ও closure অবশিষ্ট থেকে। variance-এর জন্য আলাদা কোনো term সারানোর নেই — প্রতিটা layer-এর নতুন kappa3/kappa4 error কমাতে হবে।",
    "cost": "<10 u offline",
    "gate": "কোনো একটা input বদলালে projected variance error অনেক কমলে -> সেই input ঠিক করাই লক্ষ্য",
-   "next": "post-ReLU teacher data (layer 3,7,11,14,15) দিয়ে করা যায়।",
+   "next": "Q10 (E-এর structure) এখনও অর্থবহ; মূল lever এখন kappa3 slice ও kappa4 diagonal-এর fresh error।",
    "files": "data/kaggle_out/kaggle_out_k4post"
   },
   {
