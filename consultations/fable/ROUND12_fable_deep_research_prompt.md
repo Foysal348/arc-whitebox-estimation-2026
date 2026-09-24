@@ -92,7 +92,10 @@ the next slice). Candidate threads:
 Gate for B1/B2: one-step, teacher-forced where possible, and free-running from layer 1 if the state is not
 reconstructible from teacher arrays; every channel within the chain's own error (numbers above) at L11/14/15/16.
 Gate for B3: κ4 diagonal error at L14–16 reduced from ~33% to ≤ 20% with an O(n²) rule, validated on the layers it was
-not fitted on.
+not fitted on. Known (24 Sep, r11_verify.py V5): the next κ4 diagonal is ~90% the (2,2) pair term from the post K22
+off-diagonal; the exact post (4)+(3,1)+(2,2) terms still leave 14/22/33/43/46% (L4/8/12/15/16) — the (2,1,1) +
+(1,1,1,1) remainder — and the chain's (2,2) model wk4m is 15–28% off (pattern corr 0.65–0.73). So B3 must model the
+(2,1,1)/(1,1,1,1) post-ReLU structure or improve the (2,2) pattern; a per-neuron scalar rule cannot work.
 
 ## Report format
 
