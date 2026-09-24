@@ -9,7 +9,7 @@ or projected results as measured.** Put scripts in `experiments/probes/fable12_*
 `results/summaries/fable12_*.json`. Do not edit anything else, and do not commit, push or start Kaggle runs. Final report:
 `consultations/fable/ROUND12_fable_report.md`, at most ~4 pages.
 
-Budget discipline: at most three falsifier scripts per thread (B1, B2, B3), B1 first. If a track dies at its first gate, say so and stop that track.
+Budget discipline: at most three falsifier scripts per thread; order B3 (κ4 / accuracy) first, then B1, then B2. If a track dies at its first gate, say so and stop that track.
 
 ## Read first (in this order, skim what you already know)
 
@@ -56,6 +56,20 @@ Budget discipline: at most three falsifier scripts per thread (B1, B2, B3), B1 f
   moment-matched particles (2048 points: variance 3%, D21 74% at L15 — no better than random); sampling / control variates; adjoint low-rank paths; learned corrections; join rebuilds; A = P·a_b tricks,
   P_old = P_new·M, batching (same FLOPs); any contraction-order change of the young tier (193 products is the floor);
   lower-precision arithmetic (float16 billed like float32).
+
+## LEADERBOARD FACT THAT RE-ORDERS THIS ROUND (public LB, 24 Sep 2026)
+
+The frontier's edge over us is ACCURACY as much as cost. Our #332110: raw final MSE 2.11e-8 at utilisation 0.244.
+At least 12 teams are at 1.56–1.86e-8 raw MSE (15–26% better), most at utilisation 0.13–0.20:
+J2W 1.61e-8 @ 0.127; suliman_tadros 1.63e-8 @ 0.138; marius_binner 1.56e-8 @ 0.147; Luna 1.67e-8 @ 0.155 (only 7
+entries); reds 1.73e-8 @ 0.162; ben3 1.68e-8 @ 0.184; MeatProxy 1.79e-8 @ 0.182; thegamers 1.79e-8 @ 0.202 (already by
+10 Sep); emanuel_ruzak 1.82e-8 @ 0.198 (5 entries); AndreasHad04 1.86e-8 @ 0.233. The ~20 teams at 2.1–2.2e-8 @ 0.23–0.25
+are the public 504aldo chain (= us). So a 15–25% ACCURACY mechanism exists that many independent teams found, at no
+extra cost. Our own oracles say where it can be: the chain's closures are exact given true inputs; the κ4-diagonal
+oracle alone is −30% final MSE, and the chain's κ4 diagonal is its weakest channel (32–34% wrong at depth, slope ~0.78).
+**Therefore B3 (κ4) is now the FIRST thread**, with the question widened: what cheap (O(n²) or a few n³ per layer) change
+to the κ4 / variance channels removes ≥ 15% of the final MSE? Gate it end-to-end if the channel gate passes (the chain
+harness `experiments/chain/run_variant_teacher.py` measures final MSE against the teacher on MLP #0).
 
 ## Track A (Round 10) is CLOSED — do not spend budget on it
 
