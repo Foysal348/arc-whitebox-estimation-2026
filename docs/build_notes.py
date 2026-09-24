@@ -1246,6 +1246,19 @@ bullets([
  "GATE (experiments/probes/r9_dhmp_gate.py, teacher-forced with the true post-ReLU E, T, d3 of MLP #0 and the true next slice): relative D21 error 40.4 / 38.4 / 36.4 / 36.7 / 36.3% at next layers 4 / 8 / 12 / 15 / 16 against a 2.5% gate (the chain: 4-7%). The all-distinct part is 40-48% of the slice; the fresh tree has the right scale (slope 0.88-1.16) but correlates only 0.43-0.54 with it: about half of the all-distinct content is MEMORY carried from earlier layers - the same fact as 'no old tier: x35'. Dressed versus bare edges changes the error by 0.4-1%, so it does not explain the feedback-scale paradox either.",
  "Also proposed: FHQR-2 (two global query-response matrices K3[:, Q, Q] for the next one and two layers, tree tail) and a quadratic-chaos Galerkin state; queued (Q18) with low prior because the measured memory decays only x0.66 per age.",
 ])
+h1("K3aj. The horizon oracle (24 Sep): the kappa3 memory is long, flat and nearly orthogonal across ages")
+p("Suggested by GPT 5.6 Sol after the DHMP gate. From Fable's dense source captures (every live source kept dense; the sum of the sources' own (2,1) slices equals the chain's D21 to 1.5e-7), the relative D21 error of keeping only the sources of age <= h (experiments/probes/r9_horizon_oracle.py):")
+table([
+ ["layer (sources)", "h = 2", "h = 4", "h = 6", "h = 8", "h = 10", "age shares of ||D21|| (age 1, 2, 3, ...)"],
+ ["7 (6)", "0.561", "0.234", "0 (all)", "-", "-", "0.45 0.36 0.29 0.21 0.17 0.10"],
+ ["11 (10)", "0.723", "0.476", "0.253", "0.102", "0 (all)", "0.30 0.29 0.26 0.21 0.19 0.15 0.11 0.09 0.07 0.04"],
+ ["14 (13)", "0.807", "0.602", "0.410", "0.243", "0.123", "0.22 0.21 0.19 0.17 0.17 0.15 0.12 0.11 0.09 0.06 ..."],
+ ["15 (14)", "0.840", "0.654", "0.460", "0.305", "0.164", "0.20 0.20 0.19 0.17 0.15 0.15 0.13 0.11 0.10 0.08 ..."],
+], widths=[2.4*cm, 1.4*cm, 1.4*cm, 1.4*cm, 1.4*cm, 1.5*cm, 6.8*cm], fs=7.0)
+bullets([
+ "Every age contributes a similar share and the shares decay slowly; their squares sum to ~1, so the contributions are nearly orthogonal - no pooling of old ages into a small common object, and no short horizon (FHQR-2, h = 2, leaves 72-84%). The same holds on the rows of the decisive neurons.",
+ "This sharpens the architectural question to one sentence: how can ~14 nearly independent, equally important realized kappa3 components of the same network be carried without a dense pair of legs per component? By Sol's own gate (h = 8 still far above 2%), a method at leader cost must keep the long memory in a radically cheaper coordinate system.",
+])
 h1("K4. Next experiments queued")
 bullets([
  "DONE: Kaggle knob sweep (K3f), aggregate-state pilots (K3e), slice-transport (K3g), column screening (K3h), loopholes B1/A4/B4, reference K3-simple (K3i).",

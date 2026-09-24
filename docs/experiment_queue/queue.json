@@ -1,7 +1,7 @@
 {
  "updated": "2026-09-24 (GPT Sol R9: DHMP মৃত, FHQR-2 P3)",
  "baseline": "Best graded: #332110 score 5.1284e-9 (raw 2.1046e-8) — v40fb (FB 1.25 + beta 1.2). আগের: #331787 5.137e-9. Plain chain on public MLP #0: final MSE 2.290e-8.",
- "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে।",
+ "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে। Horizon oracle: kappa3 স্মৃতি খুব লম্বা — ১০ বয়স রাখলেও layer 15-এ 16% error; বয়সের অবদান প্রায় সমান ও লম্ব।",
  "items": [
   {
    "id": "Q14",
@@ -57,16 +57,16 @@
   },
   {
    "id": "Q18",
-   "priority": "P3",
-   "status": "open",
+   "priority": "-",
+   "status": "dead",
    "source": "GPT 5.6 Sol R9 (FHQR-2)",
    "title": "Finite-Horizon Query Response (h = 2): ২ layer-এর kappa3 স্মৃতি query-space-এ, বাকিটা tree দিয়ে",
    "what": "Source bank-এর বদলে দুটো global n x n response matrix H = K3[:, Q, Q] (Q = পরের ১ ও ২ layer-এর query) বয়ে নেওয়া; পুরোনো অংশ dressed tree দিয়ে পূরণ।",
-   "evidence": "DHMP gate-এ tree নিজে মাত্র ~অর্ধেক 'নতুন' অংশ ধরে (corr 0.43-0.54); স্মৃতি প্রতি বয়সে x0.66 হারে কমে (৪ বয়স পরেও ~20%) — h = 2-এ কাটলে ঝুঁকি বেশি।",
+   "evidence": "Horizon oracle (Fable-এর dense source capture, source-যোগফল chain D21-এর সাথে 1.5e-7 পর্যন্ত মেলে): শেষ h বয়স রেখে বাকি বাদ দিলে D21 error — layer 15: h2 84%, h4 65%, h6 46%, h8 31%, h10 16%; layer 11: h2 72%, h8 10%। প্রতিটা বয়স প্রায় সমান ভাগ দেয় (~0.15-0.20), আর অবদানগুলো প্রায় পরস্পর-লম্ব। FHQR-2 মৃত; Sol-এর নিয়মে: leader-রা লম্বা স্মৃতি রাখে কিন্তু একেবারে ভিন্ন সস্তা coordinate-এ।",
    "cost": "~82-90 u (Strassen) দাবি",
    "gate": "teacher-forced D21 error <= 2.5%",
    "next": "Source capture দিয়ে h = 1/2 oracle (Sol-এর falsifier 10-12)।",
-   "files": "Architecture Analysis/Round 9 New Estimator Architectures from GPT 5.6 Sol.pdf"
+   "files": "experiments/probes/r9_horizon_oracle.py"
   },
   {
    "id": "Q1",
