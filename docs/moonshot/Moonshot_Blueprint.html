@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="bn"><head><meta charset="utf-8"><title>Moonshot Blueprint</title>
+<style>
+body { font-family: 'Nirmala UI', 'Segoe UI', sans-serif; font-size: 10.5pt; color: #222; line-height: 1.5; }
+h1 { font-size: 19pt; margin: 0 0 4px 0; color: #1a2b4c; }
+h2 { font-size: 13.5pt; border-left: 6px solid #8b1a1a; padding-left: 8px; margin-top: 20px; color: #1a2b4c; page-break-after: avoid; }
+h3 { font-size: 11.5pt; margin: 12px 0 4px 0; color: #24467a; page-break-after: avoid; }
+.meta { color: #555; font-size: 9.5pt; margin-bottom: 10px; }
+table { border-collapse: collapse; width: 100%; margin: 6px 0 10px 0; page-break-inside: avoid; }
+th, td { border: 1px solid #bbb; padding: 3px 6px; vertical-align: top; font-size: 9.5pt; text-align: left; }
+th { background: #dde6f2; }
+tr:nth-child(even) td { background: #f7f9fc; }
+.box { background: #fff7e0; border: 1px solid #e6c65c; padding: 8px 10px; margin: 8px 0; border-radius: 4px; }
+.key { background: #e8f5e9; border: 1px solid #81c784; padding: 8px 10px; margin: 8px 0; border-radius: 4px; }
+.dead { background: #fde8e8; border: 1px solid #e57373; padding: 8px 10px; margin: 8px 0; border-radius: 4px; }
+code { font-family: Consolas, monospace; font-size: 9pt; background: #f1f1f1; padding: 0 3px; }
+ul { margin: 4px 0 6px 0; } li { margin-bottom: 3px; }
+.c { font-weight: 700; color: #8b1a1a; }
+</style></head><body>
+
+<h1>Moonshot Blueprint: নতুন architecture বানাতে যা যা জানা দরকার</h1>
+<div class="meta">ARC White-Box Estimation Challenge 2026, Phase 2 · foyshal_sk · শেষ হালনাগাদ: ২৪ সেপ্টেম্বর ২০২৬, সন্ধ্যা (বাংলাদেশ সময়) · জমা দেওয়ার শেষ সময়: ১৮ অক্টোবর ভোর ৫:৫৯ (বাংলাদেশ সময়)।<br>
+এই দলিল মুনশটের "নকশার শর্ত": আমাদের সব পরীক্ষা থেকে যা নিশ্চিতভাবে জানা গেছে, কোন পথ বন্ধ, আর নতুন architecture-কে কোন কোন শর্ত পূরণ করতেই হবে। বিস্তারিত প্রমাণ আছে Complete Notes PDF-এর K3 অংশে (অংশের নম্বর বন্ধনীতে দেওয়া), আর ধারণাগুলোর তালিকা Experiment Queue PDF-এ।</div>
+
+<h2>১. লক্ষ্য আর দূরত্ব</h2>
+<p>Score = শেষ layer-এর MSE × max(0.1, FLOPs / 2<sup>41</sup>)। খরচ মাপার একক: 1u = 2<sup>31</sup> FLOPs, তাই util 0.1 = ~102u।</p>
+<table>
+<tr><th>স্থান (২৪ সেপ্টেম্বর)</th><th>দল</th><th>Adjusted</th><th>Raw MSE</th><th>Util</th><th>খরচ (u)</th></tr>
+<tr><td>১</td><td>J2W</td><td>2.1e-9</td><td>1.64e-8</td><td>0.131</td><td>~134</td></tr>
+<tr><td>২</td><td>suliman_tadros</td><td>2.2e-9</td><td>1.63e-8</td><td>0.138</td><td>~141</td></tr>
+<tr><td>৩</td><td>marius_binner</td><td>2.3e-9</td><td>1.56e-8</td><td>0.147</td><td>~151</td></tr>
+<tr><td>৪</td><td>a_s6</td><td>2.5e-9</td><td>2.00e-8</td><td>0.126</td><td>~129</td></tr>
+<tr><td><b>৩৩</b></td><td><b>আমরা (#332110)</b></td><td><b>5.1e-9</b></td><td><b>2.11e-8</b></td><td><b>0.244</b></td><td><b>~249</b></td></tr>
+</table>
+<p>Top-3-এ যেতে (adjusted ≈ 2.25e-9) কোন খরচে কত raw MSE লাগবে:</p>
+<table>
+<tr><th>খরচ (u)</th><th>250 (এখন)</th><th>205</th><th>154</th><th>133</th><th>123</th><th>110</th><th>≤102 (floor)</th></tr>
+<tr><td>দরকারি raw MSE</td><td>9.2e-9</td><td>1.12e-8</td><td>1.50e-8</td><td>1.73e-8</td><td>1.87e-8</td><td>2.10e-8</td><td>2.25e-8</td></tr>
+</table>
+<div class="key"><b>মূল কথা:</b> শুধু accuracy বাড়িয়ে top-3 সম্ভব না (raw 9e-9 লাগবে, কেউ এর কাছেও নেই)। কিন্তু <b>বর্তমান accuracy রেখেই খরচ ~110u-তে (এখনকার ৪৪%) নামাতে পারলে top-3, আর ≤102u-তে নামালে #1-এর সমান।</b> a_s6 দেখিয়েছে যে প্রায় আমাদের accuracy (2.0e-8) ~129u-তে সম্ভব। তাই মুনশটের সংজ্ঞা: <b>একই accuracy, খরচ ≤ ~115u</b>। খরচ যত কমবে, accuracy তত ছাড় পাবে (টেবিল দেখুন)।</div>
+
+<h2>২. আমরা কতদূর: সৎ মূল্যায়ন</h2>
+<table>
+<tr><th>ধাপ</th><th>অবস্থা</th></tr>
+<tr><td>১. Error কোথা থেকে আসে (error map)</td><td>✅ সম্পূর্ণ। কোন channel কতটা error দেয় আর কেন, মাপা আছে (অংশ ৪)।</td></tr>
+<tr><td>২. খরচ কোথায় যায় (cost ledger)</td><td>✅ সম্পূর্ণ। প্রতিটা matmul কোন line থেকে আসে, মাপা আছে (অংশ ৫)।</td></tr>
+<tr><td>৩. কোন পথ বন্ধ</td><td>✅ অনেকটা। Linear compression-এর পুরো পরিবার গাণিতিকভাবে বন্ধ, সময়-অক্ষের কৌশলও বন্ধ (অংশ ৬-৭)।</td></tr>
+<tr><td>৪. নতুন mechanism খুঁজে পাওয়া</td><td>⏳ <b>এখনও পাওয়া যায়নি।</b> Round 10 (young tier) আর Round 11 (কী represent করা হচ্ছে সেটা বদলানো) চলছে।</td></tr>
+<tr><td>৫. এক layer-এর falsifier পাস</td><td>⬜ বাকি</td></tr>
+<tr><td>৬. একটা MLP-এ prototype, score &lt; chain × 0.8</td><td>⬜ বাকি</td></tr>
+<tr><td>৭. Kaggle 100-MLP paired যাচাই → submit</td><td>⬜ বাকি</td></tr>
+</table>
+<p>অর্থাৎ আমরা <b>ধাপ ৪-এ</b> আছি। খোঁজার জায়গা অনেক ছোট হয়ে গেছে, এখন বাকি সম্ভাবনা মাত্র কয়েকটা (অংশ ৮)। হাতে আছে ~২৩ দিন। একটা mechanism পাওয়া গেলে ধাপ ৫-৭-এর যন্ত্রপাতি (captures, teacher, paired harness, Kaggle runner) তৈরি আছে। তাই পরের ধাপগুলো দ্রুত হবে: falsifier কয়েক মিনিটে, prototype ১-২ দিনে, 100-MLP যাচাই ~৫ ঘণ্টায়।</p>
+
+<h2>৩. বর্তমান পদ্ধতি এক নজরে (যেটা ভাঙতে হবে)</h2>
+<p>V29/V31 factorised K3 chain (504aldo, MIT): প্রতি layer-এ mean, covariance C আর κ3-কে <b>source-এর যোগফল</b> হিসেবে বহন করে। প্রতিটা ReLU একটা নতুন source জন্ম দেয়। Source-এর legs P, A = P·a<sub>b</sub> (a<sub>b</sub> = diag(Φ)C<sub>off</sub>)।</p>
+<ul>
+<li>Young tier (বয়স ≤ ৪) dense legs রাখে। পুরোনো source-গুলো shared basis-এ থাকে (rank 384 / 224)। κ4 memoryless (λ law)।</li>
+<li>Mean আর covariance বের হয় bivariate Wick/Edgeworth closure দিয়ে।</li>
+</ul>
+
+<h2>৪. Error map: accuracy কোথায় হারায় (K3ab–K3ad)</h2>
+<ul>
+<li><span class="c">C1.</span> দুটো closure-ই সঠিক। সত্যিকারের input দিলে mean closure-এর error 9e-11। তাই সব error আসে closure-এর <b>input</b> থেকে।</li>
+<li><span class="c">C2.</span> Channel oracle (প্রতি layer-এ সত্যিকারের মান বসালে final MSE কত কমে): <b>variance −47%</b>, <b>κ4 diagonal −30%</b> (শুধু mean closure দিয়ে কাজ করে), <b>κ3 diagonal −14%</b>, <b>তিনটা একসাথে −94%</b>।</li>
+<li><span class="c">C3.</span> Error-এর উৎস প্রতি layer-এ নতুন করে জন্মানো κ3-এর <b>all-distinct</b> অংশ, মানে post-ReLU κ3(h<sub>i</sub>,h<sub>j</sub>,h<sub>k</sub>)।
+  <ul>
+  <li>এই অংশ নিজের তুলনায় ৯–১৬% ভুল, আর D21 slice-এর error-এর ৯১–৯৬% এখান থেকেই আসে।</li>
+  <li>Slice error depth-এর সাথে ৪% থেকে ৭% পর্যন্ত বাড়ে, আর এটা এলোমেলো: slope 1.00, R² 0.996।</li>
+  <li>এর সাথে κ4-এর multi-index input-এর ভুলও আছে।</li>
+  </ul></li>
+<li><span class="c">C4.</span> ভুল জমে দুই পথে: mean দিয়ে (প্রতি layer-এ gain 0.65–0.96) আর covariance দিয়ে। Variance-এর ভুল আসলে off-diagonal post-ReLU covariance-এর ভুল, প্রতি entry-তে নতুন ~4.2e-5।</li>
+</ul>
+
+<h2>৫. Cost ledger: খরচ কোথায় যায় (K3ah)</h2>
+<table>
+<tr><th>অংশ</th><th>খরচ (u)</th><th>মন্তব্য</th></tr>
+<tr><td>Young source transport</td><td>~54</td><td>বয়স ১–৪, dense n×n legs</td></tr>
+<tr><td>Young source D21 contraction</td><td>~50</td><td>(X∘P)Yᵀ ধরনের product</td></tr>
+<tr><td>Join (source-কে shared basis-এ ঢোকানো)</td><td>~41–46</td><td>range finder / eigen</td></tr>
+<tr><td>Old tier (shared basis)</td><td>~41</td><td>rank 384 / 224</td></tr>
+<tr><td>Thin feedback legs</td><td>~15</td><td></td></tr>
+<tr><td>Strassen additions</td><td>~12</td><td></td></tr>
+<tr><td>Covariance + closure</td><td>~8</td><td>সস্তা!</td></tr>
+<tr><td><b>মোট</b></td><td><b>~249</b></td><td>৮৮% matmul</td></tr>
+</table>
+<div class="box"><span class="c">C5. এক-এর-বদলে-এক নিয়ম:</span> chain-এর ভেতরের যেকোনো knob (age gate, rank, pass, screening, join rebuild, exact old tier, R_FB) ~১% খরচ কমালে ~১% accuracy হারায়, আর উল্টোটাও সত্য। উদাহরণ:
+<ul>
+<li>exact old tier: MSE −৩.৯%, খরচ +১৯%</li>
+<li>R_FB 128: MSE −৩.১%, খরচ +৪৩%</li>
+<li>join transport: খরচ −৬.৬%, MSE +১–৬%</li>
+</ul>
+তাই chain নিজের সেরা বিন্দুতেই বসে আছে। <b>খরচ অর্ধেক করা এই পরিবারের ভেতরে সম্ভব না।</b></div>
+<p><span class="c">C6.</span> লক্ষ্য করুন: covariance আর closure মাত্র ~৮u। সব খরচ κ3 বহন করায়। একটা Gaussian (শুধু κ2) chain খুব সস্তা, কিন্তু তার error ~১০ গুণ বেশি (no old tier: ×৩৫)।</p>
+
+<h2>৬. κ3 স্মৃতির গঠন (K3aj, আজকের পরীক্ষা)</h2>
+<table>
+<tr><th>পরীক্ষা</th><th>ফল</th><th>অর্থ</th></tr>
+<tr><td>Horizon oracle: শুধু বয়স ≤ h-এর source রাখা</td><td>L15: h2 84%, h4 65%, h6 46%, h8 31%, h10 <b>16%</b> error</td><td>স্মৃতি <b>দীর্ঘ</b>: ১০ layer পুরোনো source-ও দরকার</td></tr>
+<tr><td>Age-Gram (বয়সগুলোর পারস্পরিক মিল)</td><td>গড় cosine 0.29–0.39; প্রথম mode মোটের ~৮৮%; r=6 mode রাখলেও 8.5% error</td><td>সুসংগত (coherent), কিন্তু বয়সের অক্ষে low-rank না</td></tr>
+<tr><td>Shift-stable carrier (L14→L15)</td><td>eps 2.9%, rho 0.944; carrier + birth দিয়ে মোট D21 13.9%</td><td>পাস না। তাছাড়া সমান ওজনের carrier, মানে মোট κ3 নিজেই, <b>হুবহু</b> transport হয়</td></tr>
+<tr><td>Source-free dressed tree (DHMP)</td><td>পরের D21-এ 36–40% error (শর্ত 2.5%); tree আর সত্যিকারের all-distinct অংশের corr 0.43–0.54</td><td>All-distinct অংশের প্রায় অর্ধেক <b>স্মৃতি</b>, pair state থেকে আবার বানানো যায় না</td></tr>
+</table>
+<div class="key"><span class="c">C7.</span> সময়ের সমস্যা নেই। মোট κ3 একটা linear map দিয়ে হুবহু এক object হিসেবে এগোয়। <b>সমস্যা পুরোপুরি spatial</b>: একটা ঘন n³ tensor-কে সস্তায় ধরা।</div>
+<div class="dead"><span class="c">C8. গাণিতিক দেয়াল (Sol):</span> মোট κ3-এর এমন কোনো linear রূপ হয় না যা ছোট এবং সব dense M-এর transport-এ বন্ধ। Sym³ হলো GL(n)-এর irreducible representation, তাই এমন রূপে ≥ C(n+2,3) ≈ 1.8×10⁸ সংখ্যা লাগে। Tucker, TT, CP, vector-metric, age mode আর shared basis সবই এই দেয়ালে ঠেকে।
+<ul>
+<li>আমাদের সংশোধন: M স্থির আর জানা। তাই আসল সীমা হলো ভবিষ্যৎ readout যতটুকু দেখে, প্রতি বাকি layer-এ ≤ n²। Mid depth-এ এটা chain-এর ~3kn²-এর কাছাকাছি।</li>
+<li>Lazy cubic circuit-এ (শুধু birth matrix + M রেখে reverse-mode) খরচ ≈ ২৪৫u, chain-এর সমান। দুটো একই tensor network-এর দুই contraction order।</li>
+</ul>
+<b>উপসংহার: tensor-টা কীভাবে factorise করা হয় সেটা বদলে লাভ নেই। বদলাতে হবে কী represent করা হচ্ছে।</b></div>
+
+<h2>৭. পুরোনো source কীভাবে শেষ mean-কে প্রভাবিত করে (K3m)</h2>
+<ul>
+<li><span class="c">C9.</span> পুরোনো source-এর slice-এর প্রভাবের <b>~৮৬%</b> যায় পরের ১–২ layer-এর <b>mean shift</b> দিয়ে (variance → E[relu])। এই পথ কাছের layer-এ সীমিত আর full-rank। শুধু ~১৪% যায় low-rank final-variance পথে। তাই adjoint দিয়ে "শুধু দরকারি দিক" রাখা মৃত।</li>
+<li><span class="c">C10.</span> শেষের দিকের layer-এ পুরোনো D21 (n³) বা পুরোনো d3 (diagonal, n²), যেকোনোটা বাদ দিলে error budget ছাড়িয়ে যায়। Output-এর দিকে diagonal-এর গুরুত্ব বাড়ে।</li>
+<li><span class="c">C11.</span> Khatri–Rao দেয়াল: factored legs-এর Hadamard product-এর rank r(r+1)/2, যা r ≥ ৪৫ হলেই n। বাস্তবে spectrum সমতল আর noise-এর মতো, তাই sketch করতে d ≈ 10⁸ লাগবে।</li>
+</ul>
+
+<h2>৮. বাকি পথগুলো (অগ্রাধিকার অনুযায়ী)</h2>
+<table>
+<tr><th>#</th><th>পথ</th><th>কেন সম্ভব</th><th>Falsifier / শর্ত</th><th>অবস্থা</th></tr>
+<tr><td>M1</td><td><b>Channel-direct</b>: κ3 tensor না রেখে পরের mean-এর দরকারি channel (variance, d3, κ4 diag, যে covariance এগুলোকে খাওয়ায়) সরাসরি হিসাব</td><td>C8 বলে tensor বহন করলে খরচ কমবে না। Final score নির্ভর করে শুধু কয়েকটা per-neuron channel-এর উপর (C2)।</td><td>≤125u; teacher data-তে এক layer-এ channel error ≤ chain-এর error</td><td>Round 11 prompt পাঠানো হচ্ছে</td></tr>
+<tr><td>M2</td><td><b>Young tier অর্ধেক খরচে</b> (~104u → ≤55u)</td><td>বীজগণিতে কিছু বাকি থাকতে পারে: A = P·a<sub>b</sub>, পরপর source-এর shared propagator, age-1/2 closed form</td><td>D21 relative error ≤ 2% রেখে ≤55u</td><td>Round 10 prompt পাঠানো হচ্ছে; আমার নিজের দেখা বীজগণিতে এখনও কিছু পাইনি</td></tr>
+<tr><td>M3</td><td><b>Nonlinear, trajectory-specific statistic</b> (নির্দিষ্ট MLP-এর জন্য, linear representation না)</td><td>C8-এর দেয়াল শুধু linear আর সব-M-এর জন্য বন্ধ state-এ প্রযোজ্য</td><td>নির্দিষ্ট প্রস্তাব আসলে ঠিক হবে</td><td>খোলা</td></tr>
+<tr><td>M4</td><td>Accuracy দিক: fresh all-distinct κ3 আর κ4 pattern ঠিক করা</td><td>Oracle: κ4 −30%, variance −47%</td><td>খরচ না বাড়িয়ে MSE −১০%+ (তবে C5 মনে রাখতে হবে)</td><td>আংশিক (FB_SCALE 1.25 পাঠানো হয়েছে)</td></tr>
+<tr><td>M5</td><td>ছোট লাভ: join aug64 (Q16), FB × beta grid</td><td>teacher-এ score −০.৫%</td><td>100-MLP paired &lt; 1 − 2 SE</td><td>Kaggle-এ চলছে</td></tr>
+</table>
+
+<h2>৯. যেকোনো নতুন প্রস্তাবের জন্য চেকলিস্ট</h2>
+<ol>
+<li>এটা কি C8-এর দেয়ালে পড়ে, মানে একই κ3 tensor-এর অন্য factorisation? পড়লে বাদ।</li>
+<li>পুরোনো source-এর তথ্য (C9: ১০+ layer পুরোনো, মোটের ~৮৮% coherent) কোথায় যায়? এটা বাদ দিলে ৩৬–৪০% error (DHMP)।</li>
+<li>খরচ n³ product-এ গুনে দেখা: ≤ ~১১৫u? (1 dense 1024² product ≈ 0.5u Strassen L5-এ; ~২৩০টা product = ১১৫u)</li>
+<li>সংরক্ষিত data-তে এক layer-এর falsifier আছে কি? (teacher: layer 3/7/11/14/15/16-এর pre/post mean, C, Y21, κ4 diag; captures: L7/11/14/15-এর প্রতিটা source)</li>
+<li>Grader-এর শর্ত: ৮ GB RAM, float32, residual time &lt; 0.4 s, শুধু flopscope + whestbench + stdlib, কোনো print নয়।</li>
+</ol>
+
+<h2>১০. যে পথগুলো মৃত (আবার চেষ্টা করা যাবে না)</h2>
+<table>
+<tr><th>পরিবার</th><th>যা মাপা হয়েছে</th></tr>
+<tr><td>Tucker / TT / CP / ISDF / vector-metric compression</td><td>2% পেতে rank ≈ 250–300 লাগে, মানে প্রতি layer-এ 500u+ (C8 এর কারণ ব্যাখ্যা করে)</td></tr>
+<tr><td>Short horizon (FHQR), age pooling, age mode</td><td>h=10-এও 16%; r=6-এও 8.5%</td></tr>
+<tr><td>Shift-stable carrier</td><td>2.9%, আর মোট κ3 তো আগে থেকেই হুবহু বহন হয়</td></tr>
+<tr><td>Source-free tree (DHMP)</td><td>36–40%</td></tr>
+<tr><td>Sampling / control variate</td><td>10⁴ sample-এর খরচ 156u, তাতে variance 1.4% ভুল (লাগবে 0.1%); CV-এর জন্য corr ≥ 0.997 দরকার</td></tr>
+<tr><td>Adjoint দিয়ে low-rank পথ</td><td>প্রভাবের মাত্র ১৪% low-rank</td></tr>
+<tr><td>Learned per-neuron correction, copula, 13-feature regression, star source, V39 depth multiplier, pairwise κ4 transport</td><td>100 MLP-এ বা teacher-এ কোনো লাভ নেই</td></tr>
+<tr><td>Join rebuild, age gate, rank, pass, screening</td><td>এক-এর-বদলে-এক নিয়ম (C5)</td></tr>
+</table>
+
+<h2>১১. সময়সূচি (বাংলাদেশ সময়)</h2>
+<table>
+<tr><th>তারিখ</th><th>লক্ষ্য</th></tr>
+<tr><td>২৪–২৮ সেপ্টেম্বর</td><td>Round 10/11-এর উত্তর triage; প্রতিটা প্রস্তাবের falsifier সংরক্ষিত data-তে চালানো</td></tr>
+<tr><td>~২ অক্টোবর</td><td>একটা mechanism এক layer-এর falsifier পাস করবে (না হলে M4/M5-এ সময় দেওয়া)</td></tr>
+<tr><td>~৮ অক্টোবর</td><td>একটা MLP-এ prototype, score &lt; chain × 0.8</td></tr>
+<tr><td>~১২ অক্টোবর</td><td>Kaggle 100-MLP paired যাচাই</td></tr>
+<tr><td>১৫–১৭ অক্টোবর</td><td>Submit, আর final দুটো submission বেছে নেওয়া</td></tr>
+</table>
+</body></html>
