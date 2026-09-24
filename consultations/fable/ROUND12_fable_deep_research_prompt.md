@@ -67,7 +67,23 @@ entries); reds 1.73e-8 @ 0.162; ben3 1.68e-8 @ 0.184; MeatProxy 1.79e-8 @ 0.182;
 are the public 504aldo chain (= us). So a 15–25% ACCURACY mechanism exists that many independent teams found, at no
 extra cost. Our own oracles say where it can be: the chain's closures are exact given true inputs; the κ4-diagonal
 oracle alone is −30% final MSE, and the chain's κ4 diagonal is its weakest channel (32–34% wrong at depth, slope ~0.78).
-**Therefore B3 (κ4) is now the FIRST thread**, with the question widened: what cheap (O(n²) or a few n³ per layer) change
+**Strongest evidence (LB snapshots 21 Sep vs 24 Sep):** emanuel_ruzak was at 2.13e-8 @ 0.249 on 17 Sep with ONE
+entry — exactly the public 504aldo chain, i.e. our starting point — and four submissions later is at 1.82e-8 @ 0.198.
+jlacombe went 2.10e-8 → 1.82e-8 at the same cost; MeatProxy 2.99e-8 → 1.79e-8; suliman 1.89 → 1.63; mliston 1.99 → 1.80.
+So a ~15% accuracy gain on top of THIS chain was found by several teams within days: it is probably a modest, local
+change, not a new architecture. AndreasHad04 (1.86e-8) mentions "a kappa4 to kappa3 FEED arm" in their chain.
+
+Our own partial hits on this lever (read before starting; do not repeat them blindly):
+- ARC's reference ladder (notes K3i): K3-augment (κ4-corrected Edgeworth terms) is 1.23–1.5× better than K3-simple, K4
+  1.3× better again; the leaders sit one rung above us — but ARC's implementations cost 8–170× more.
+- Astra's quartic κ4 kernel (notes K3af; probe_astra7_k4*.py, a7_kernel_e2e.py): its non-pair κ4 part correlates 0.63–0.78
+  with the truth but is 1.3–2.2× too small; end to end −5.0 to −6.4% MSE on MLP #0 (−1.5 to −2.6% synthetic) for 3 products
+  per layer (+7–10% cost). It was shelved as net ≈ 0; it is the closest thing we have to the missing mechanism.
+- Round 7 Fable (notes K3ae): the ported newborn carries exactly HALF of both K×C all-distinct families (504aldo's B2 block
+  and WK12 term were not ported); the full Edgeworth value over-propagates at depth; only FB_SCALE 1.25 survived (shipped).
+- r11_verify.py V5: the next κ4 diagonal is ~90% the (2,2) pair term; the (2,1,1)/(1,1,1,1) remainder grows with depth.
+
+**Therefore the accuracy question is now the FIRST thread**, with the question widened: what cheap (O(n²) or a few n³ per layer) change
 to the κ4 / variance channels removes ≥ 15% of the final MSE? Gate it end-to-end if the channel gate passes (the chain
 harness `experiments/chain/run_variant_teacher.py` measures final MSE against the teacher on MLP #0).
 
