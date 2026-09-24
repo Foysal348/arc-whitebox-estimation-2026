@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-24 (Sol: no transport-closed linear compression; lazy circuit = same cost)",
+ "updated": "2026-09-24 (Astra R11: no mechanism)",
  "baseline": "Best graded: #332110 score 5.1284e-9 (raw 2.1046e-8) — v40fb (FB 1.25 + beta 1.2). আগের: #331787 5.137e-9. Plain chain on public MLP #0: final MSE 2.290e-8.",
  "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে। Horizon oracle: kappa3 স্মৃতি খুব লম্বা — ১০ বয়স রাখলেও layer 15-এ 16% error; বয়সের অবদান প্রায় সমান ও লম্ব।",
  "items": [
@@ -431,6 +431,19 @@
    "gate": "-",
    "next": "Tensor-এর factorisation বদলানো বন্ধ। কী represent করা হচ্ছে সেটা বদলাতে হবে: দরকারি marginal channel (d3, variance, next-layer mean) kappa3 tensor ছাড়া হিসাব।",
    "files": "-"
+  },
+  {
+   "id": "D16",
+   "priority": "-",
+   "status": "dead",
+   "source": "GPT-6 Astra (Round 11)",
+   "title": "Channel-history state (m, C, Y, k4 সব layer-এর) + nonlinear memory closure",
+   "what": "Source leg বাদ দিয়ে শুধু দেখা যায় এমন channel-এর ইতিহাস রাখা; পরের Y আর k4-এর জন্য একটা nonlinear নিয়ম।",
+   "evidence": "Astra নিজেই কোনো নিয়ম দিতে পারেনি (সৎ 'না')। Injection যুক্তি: (a,b,c) all-distinct একটা লুকানো perturbation বর্তমান slice আর diagonal-এ দেখা যায় না, অথচ পরের slice বদলায় — তাই শুধু channel-এ সাধারণভাবে যথেষ্ট তথ্য নেই। বাস্তব MLP-এর ক্ষেত্রে: DHMP (pair state থেকে tree) corr 0.43-0.54, অর্ধেক all-distinct অংশ স্মৃতি; slice transport (K3g) আর learned correction আগেই মৃত। Budget: 125u = প্রতি layer-এ ~15টা square product।",
+   "cost": "-",
+   "gate": "-",
+   "next": "Injection test চালানো হয়নি: গঠন অনুযায়ীই পাস/ফেল নির্ধারিত (tautological), বাস্তব family সম্পর্কে কিছু বলে না।",
+   "files": "Architecture Analysis/Round_11_Astra_Channel_State_Assessment.pdf"
   }
  ]
 }

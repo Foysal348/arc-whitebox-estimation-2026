@@ -1,0 +1,41 @@
+Round 11  /  Assessment, not a validated estimator
+1
+Round 11 | Changing the represented state
+Focused research assessment / 24 September 2026 / GPT-6 Astra
+Verdict: I cannot provide a justified scheme meeting all three requirements: no κ₃ tensor or source legs, total cost
+≤125 u, and a credible path to the chain's accuracy. The single mechanism assessed below is a nonlinear closure with
+memory of the consumed channels. Its missing update is substantive; it is not a completed estimator.
+State and budget
+Carry ql = (ml, Cl, Yl, k4l), where Yij = kappa3(hi,hi,hj) for the current post-ReLU activations h. Variance and d3 are the
+diagonals of C and Y. All 16 channel snapshots need about 2Ln2 numbers: 256 MiB in float64, plus vectors. This stores
+channel history, not dense source legs.
+The known linear update m′ = Wm, C′ = WCWᵀ costs two square products per layer. Across 16 layers that is 16.32 u at
+0.51 u/product. The entire 125 u allowance permits only 15.32 square products per layer before elementwise work,
+leaving about 13.32 after covariance transport. This is a budget envelope, not a FLOP count for a finished closure.
+The missing update
+One must supply an explicit nonlinear rule from the stored history and fixed weights to the next Y and k4. The exact
+third-order target is the (2,1) slice after applying the next weight matrix M to each of the post-ReLU tensor K's three
+legs. Writing this target as a memory kernel does not evaluate it. General recurrent closure literature motivates
+retaining memory [1], but supplies no rule or accuracy bound for this fixed-weight ReLU problem. I have not
+constructed or trained such a rule.
+Why the visible channels alone do not close
+Let a, b, c be distinct. Add a symmetric perturbation H with value h at the six permutations of (a,b,c), zero elsewhere. Its
+current (2,1) slice and diagonal vanish. Nevertheless, with u = M[:,a], v = M[:,b], w = M[:,c], the next slice changes by
+DeltaY = 2h [outer(u*v,w) + outer(u*w,v) + outer(v*w,u)],
+Delta_d3 = 6h (u*v*w). Here * is entrywise multiplication.
+This is a realized odd contribution under M → −M. Marginal and pairwise observables do not identify it. Extra
+nonlinear history might encode it; neither this example nor linear irreducibility excludes that possibility. Likewise,
+irreducibility is not a proof of a universal 249 u arithmetic lower bound.
+One stored-capture falsifier - limited, explicit scope
+At the L14 capture, inject H only into the hidden post-ReLU third-order tensor; keep all visible channel snapshots
+unchanged. Use the actual L14→L15 map M and compute ΔY above in O(n²), without forming H. Choose h so ||ΔY||F =
+0.06 ||Y15||F. A rule seeing only the unchanged channel history returns the same answer in both cases and cannot attain
+2% relative error in both. This falsifies a claim of universal channel-state sufficiency; it does not establish failure on
+the realizable random-MLP family. This injection test is specified, not executed here.
+Research status: no qualifying ≤125 u mechanism established. The unresolved step is a cheap, deterministic,
+history-dependent rule for the hidden contribution and fourth-order channels. Giving it an unexplained fitted
+coefficient or a nominal O(n³) label would not answer Round 11.
+[1] Ma, Wang & E (2018), Model Reduction with Memory and the Machine Learning of Dynamical Systems. Supports the memory-closure
+framework only; no ARC performance claim.
+Local evidence: consultations/prompts/ROUND11_prompt_change_what_is_represented.md; writeup/WRITEUP_DRAFT_v3.md, §11. Project
+measurements are supplied evidence, not rerun results.

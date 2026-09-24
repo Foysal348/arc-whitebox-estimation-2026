@@ -1276,6 +1276,9 @@ bullets([
  "Every deep error is far above the teacher noise. The bar for a replacement is severe: variance to ~0.1% and off-diagonal covariance to ~0.7% - why sampling fails and why kappa3 must be carried at all.",
  "The weakest channel is the kappa4 diagonal: 32-34% at depth with a systematic slope 0.75-0.79 (~22% too small along the truth), correlation only 0.78-0.83; the kappa4 constants are at their score optimum, so what is missing is the pattern, not the scale.",
 ])
+bullets([
+ "ROUND 11 (GPT-6 Astra): no qualifying mechanism - an honest 'no'. Its proposed state (the history of the visible channels m, C, Y, k4; ~2 L n^2 numbers) needs a nonlinear update it could not supply. Its argument: an all-distinct perturbation at (a,b,c) is invisible in the current slice and diagonal but changes the next slice by 2h[outer(u*v,w)+perms], so visible channels are not sufficient in general; for the realisable family this matches DHMP (half the all-distinct part is memory). The budget envelope 125 u = ~15 square products per layer. Its injection falsifier is not run: it passes or fails by construction and says nothing about random MLPs.",
+])
 h1("K4. Next experiments queued")
 bullets([
  "DONE: Kaggle knob sweep (K3f), aggregate-state pilots (K3e), slice-transport (K3g), column screening (K3h), loopholes B1/A4/B4, reference K3-simple (K3i).",
