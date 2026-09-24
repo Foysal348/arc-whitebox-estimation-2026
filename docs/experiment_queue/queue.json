@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-24 (Sol shift carrier: 2.9%, memory problem is spatial)",
+ "updated": "2026-09-24 (Sol: no transport-closed linear compression; lazy circuit = same cost)",
  "baseline": "Best graded: #332110 score 5.1284e-9 (raw 2.1046e-8) — v40fb (FB 1.25 + beta 1.2). আগের: #331787 5.137e-9. Plain chain on public MLP #0: final MSE 2.290e-8.",
  "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে। Horizon oracle: kappa3 স্মৃতি খুব লম্বা — ১০ বয়স রাখলেও layer 15-এ 16% error; বয়সের অবদান প্রায় সমান ও লম্ব।",
  "items": [
@@ -418,6 +418,19 @@
    "gate": "-",
    "next": "Spatial প্রশ্ন: মোট kappa3-এর কোন representation 3kn column-এর চেয়ে সস্তা আর transport + ReLU-তে টিকে থাকে? (Tucker/TT/ISDF/vector-metric মৃত)",
    "files": "experiments/probes/r9_shift_carrier.py"
+  },
+  {
+   "id": "D15",
+   "priority": "-",
+   "status": "dead",
+   "source": "GPT 5.6 Sol (irreducibility + lazy cubic circuit)",
+   "title": "মোট kappa3-এর যেকোনো linear compression যা transport-এ বন্ধ; lazy cubic circuit",
+   "what": "(১) প্রমাণ: সব dense M-এর জন্য বন্ধ linear state-এর মাত্রা >= C(n+2,3) ~ 1.8e8 (Sym^3 irreducible)। (২) শুধু birth matrix + M রেখে reverse-mode-এ D21।",
+   "evidence": "Circuit-এর গণনা: depth l-এ ~4l square product, মোট ~480, ~245 u — chain-এর 249 u-র সমান (একই tensor network-এর দুই contraction order)। আমাদের সংশোধন: M স্থির ও জানা, তাই আসল সীমা ভবিষ্যৎ readout যা দেখে (প্রতি বাকি layer-এ <= n^2) — mid depth-এ chain-এর ~3kn^2-এর কাছাকাছি, ফ্রি ২x নেই।",
+   "cost": "-",
+   "gate": "-",
+   "next": "Tensor-এর factorisation বদলানো বন্ধ। কী represent করা হচ্ছে সেটা বদলাতে হবে: দরকারি marginal channel (d3, variance, next-layer mean) kappa3 tensor ছাড়া হিসাব।",
+   "files": "-"
   }
  ]
 }
