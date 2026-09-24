@@ -70,6 +70,16 @@ This is the moonshot's design specification. It records what our experiments hav
 <li><span class="c">C4.</span> Errors accumulate through the mean (gain 0.65–0.96 per layer) and through the covariance. The variance error is really the error of the off-diagonal post-ReLU covariance, with ~4.2e-5 of fresh error per entry per layer.</li>
 </ul>
 
+<div class="box"><span class="c">C12. The chain's own per-channel error (the stage-1 bar for any proposal)</span>, free-running plain chain vs the 6e7-sample teacher, MLP #0, relative Frobenius error (teacher sampling-noise floor in brackets); experiments/probes/r11_chain_channel_ref.py:
+<table>
+<tr><th>Layer</th><th>mean (rms, units of &sigma;)</th><th>variance</th><th>d3 = &kappa;3<sub>iii</sub></th><th>&kappa;4 diagonal (slope, corr)</th><th>C off-diagonal</th><th>D21 off-diagonal</th></tr>
+<tr><td>7</td><td>1.9e-4</td><td>0.04% (0.02%)</td><td>3.2% (1.1%)</td><td>15% (3.6%) (0.95, 0.78)</td><td>0.39% (0.17%)</td><td>4.6% (1.3%)</td></tr>
+<tr><td>11</td><td>3.1e-4</td><td>0.09% (0.02%)</td><td>3.8% (0.6%)</td><td>22% (2.5%) (0.89, 0.78)</td><td>0.59% (0.13%)</td><td>5.7% (0.8%)</td></tr>
+<tr><td>14</td><td>4.3e-4</td><td>0.12% (0.02%)</td><td>4.1% (0.4%)</td><td>32% (2.0%) (0.79, 0.81)</td><td>0.70% (0.11%)</td><td>6.2% (0.5%)</td></tr>
+<tr><td>15</td><td>4.6e-4</td><td>0.14% (0.02%)</td><td>4.6% (0.4%)</td><td>32% (2.0%) (0.78, 0.83)</td><td>0.73% (0.10%)</td><td>6.6% (0.5%)</td></tr>
+<tr><td>16</td><td>5.1e-4</td><td>0.14% (0.02%)</td><td>4.7% (0.4%)</td><td>34% (1.8%) (0.75, 0.82)</td><td>-</td><td>-</td></tr>
+</table>
+All deep-layer errors are well above the teacher's noise. <b>The bar is severe: variance to ~0.1% and off-diagonal covariance to ~0.7%.</b> This is why sampling fails and why κ3 must be carried at all. The weakest channel is the κ4 diagonal: 32–34% wrong at depth, with a systematic slope of 0.75–0.79 (the chain's κ4 is ~22% too small along the truth). Yet the κ4 constants test at their score optimum (C5), so the missing part is pattern, not scale.</div>
 <h2>5. Cost ledger: where the FLOPs go (K3ah)</h2>
 <table>
 <tr><th>Component</th><th>Cost (u)</th><th>Note</th></tr>

@@ -1262,6 +1262,20 @@ bullets([
  "NO LINEAR COMPRESSION CLOSED UNDER TRANSPORT (GPT 5.6 Sol, argument): a linear state s = L(K) of the total symmetric kappa3 that is closed under every dense M^(x3) and yields the next D21 for every full-rank M must be injective (a lost K0 has some x with K0[x,x,x] != 0; put x in the first row of M), so it needs >= C(n+2,3) ~ 1.8e8 numbers: Sym^3 is an irreducible GL(n) representation. Tucker / TT / CP / vector-metric / age modes / shared bases are all attempts at this. Caveat (ours): our M are fixed and known, so the relevant bound is the dimension of what the FUTURE readouts can observe, <= n^2 per remaining layer (+ n for d3) - comparable to the chain's ~3 k n^2 at mid depth, so there is no free factor 2 there either.",
  "LAZY CUBIC CIRCUIT (Sol): store only the birth matrices and the dense maps, p_l(x) = sum_b p_b(T_(l:b)^T x), and read D21 by batched reverse mode (one backward sweep of the n queries, 2 products per birth, one adjoint sweep, one final product): ~4 l square products at depth l, ~480 over 16 layers, ~245 u - the same as the chain's 249 u. Source-forward propagation and reverse-mode evaluation are dual contraction orders of one tensor network. Not implemented (the count is fixed by the structure and matches the metered ledger); recorded as the reason that any exact carrier of the total kappa3 costs what the chain costs. Conclusion: the leader must change WHAT is represented (a nonlinear trajectory-specific statistic, or the needed marginal channels computed without the kappa3 tensor), not how the same tensor is factorised."
 ])
+h1("K3ak. The chain's own per-channel error against the teacher (24 Sep, the Round 11 stage-1 bar)")
+p("Free-running plain chain vs the 6e7-sample MC teacher of public MLP #0, relative Frobenius error (experiments/probes/r11_chain_channel_ref.py; teacher sampling-noise floor in brackets). Mean in rms units of sigma.")
+table([
+ ["layer", "mean", "variance", "d3 = kappa3_iii", "kappa4 diag (slope, corr)", "C off-diag", "D21 off-diag"],
+ ["7", "1.9e-4", "0.04% (0.02%)", "3.2% (1.1%)", "15% (3.6%) (0.95, 0.78)", "0.39% (0.17%)", "4.6% (1.3%)"],
+ ["11", "3.1e-4", "0.09% (0.02%)", "3.8% (0.6%)", "22% (2.5%) (0.89, 0.78)", "0.59% (0.13%)", "5.7% (0.8%)"],
+ ["14", "4.3e-4", "0.12% (0.02%)", "4.1% (0.4%)", "32% (2.0%) (0.79, 0.81)", "0.70% (0.11%)", "6.2% (0.5%)"],
+ ["15", "4.6e-4", "0.14% (0.02%)", "4.6% (0.4%)", "32% (2.0%) (0.78, 0.83)", "0.73% (0.10%)", "6.6% (0.5%)"],
+ ["16", "5.1e-4", "0.14% (0.02%)", "4.7% (0.4%)", "34% (1.8%) (0.75, 0.82)", "-", "-"],
+], widths=[1.2*cm, 1.5*cm, 2.3*cm, 2.3*cm, 3.6*cm, 2.4*cm, 2.4*cm], fs=7.0)
+bullets([
+ "Every deep error is far above the teacher noise. The bar for a replacement is severe: variance to ~0.1% and off-diagonal covariance to ~0.7% - why sampling fails and why kappa3 must be carried at all.",
+ "The weakest channel is the kappa4 diagonal: 32-34% at depth with a systematic slope 0.75-0.79 (~22% too small along the truth), correlation only 0.78-0.83; the kappa4 constants are at their score optimum, so what is missing is the pattern, not the scale.",
+])
 h1("K4. Next experiments queued")
 bullets([
  "DONE: Kaggle knob sweep (K3f), aggregate-state pilots (K3e), slice-transport (K3g), column screening (K3h), loopholes B1/A4/B4, reference K3-simple (K3i).",
