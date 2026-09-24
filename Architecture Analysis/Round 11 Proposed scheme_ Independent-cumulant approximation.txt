@@ -1,0 +1,43 @@
+Proposed scheme: Independent-cumulant
+approximation
+Carry at each layer: the full covariance Σ, the mean vector μ, and only the diagonal third cumulants 
+d₃≡κ₃(i,i,i). (We ignore all off-diagonal third- and fourth-order terms.) We propagate these through the
+linear transform and ReLU nonlinearity as follows. First, propagate the linear layer: 
+Mean: μ′ = W μ. 
+Covariance: Σ′ = W Σ Wᵀ. (This captures all second-order correlations.) 
+Diagonal third cumulant: assuming inputs are independent beyond covariance, the third cumulant
+of a sum adds linearly【17†L161-L169】, so for each output neuron i
+(Here we use κ₃(Z_i+Z_j)=κ₃(Z_i)+κ₃(Z_j) under independence【17†L161-L169】.) We do not carry κ₄ or
+any off-diagonal κ₃ terms. 
+Next, to compute the post-ReLU means needed by the next layer , we treat each pre-activation as
+(approximately) Gaussian with its mean and variance. The expected ReLU output for Gaussian X∼N(μ,σ²) is
+given in closed form【23†L1199-L1202】:
+where φ,Φ are the standard normal PDF and CDF. We apply this per-neuron using μ_i and σ_i² = (Σ′)_{ii}.
+(Higher cumulants like κ₄ would only enter via small correction terms that we omit.) 
+Cost: In n³-unit terms, propagating Σ′ costs one n³ (matrix multiply) and propagating d₃ costs another n³.
+Mean updates are ≪n³. Total ≈2n³ products (≪125u), satisfying the budget. 
+Falsifier: A simple decisive check is to compare the scheme’s predicted κ₃-channel against the teacher’s
+data. For example, at layer 11 compute Y₂₁(i,j)=κ₃(i,i,j). Our scheme assumes off-diagonal κ₃=0, so it predicts
+Y₂₁ off-diagonals = 0. The teacher’s Y₂₁ at that layer is nonzero, so the relative Frobenius error on off-
+diagonals would greatly exceed the chain’s ~5% tolerance. Thus a one-step test of Y₂₁ at L11 (or similarly
+D_{21} at L15) would falsify this scheme by a wide margin. (In other words, neglecting cross-neuron third
+cumulants causes unacceptably large errors.) 
+Missing term: To approach the chain’s accuracy one would need to restore the omitted cross-cumulant
+terms (the off-diagonal K31 entries). Including a low-rank or structured approximation of those κ₃(i,i,j)
+contributions would close the gap. 
+• 
+• 
+• 
+d =3,i
+′ W d .
+j
+∑ ij
+3
+3,j
+E[max(X,0)] = σ ϕ( ) +σ
+μ μ Φ( ) ,σ
+μ
+1
+References: We use cumulant additivity under independence【17†L161-L169】 and the Gaussian ReLU
+mean formula【23†L1199-L1202】.
+2

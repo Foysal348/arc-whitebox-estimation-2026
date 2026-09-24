@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-24 (Astra R11: no mechanism)",
+ "updated": "2026-09-24 (Round 11 diagonal closures dead)",
  "baseline": "Best graded: #332110 score 5.1284e-9 (raw 2.1046e-8) — v40fb (FB 1.25 + beta 1.2). আগের: #331787 5.137e-9. Plain chain on public MLP #0: final MSE 2.290e-8.",
  "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে। Horizon oracle: kappa3 স্মৃতি খুব লম্বা — ১০ বয়স রাখলেও layer 15-এ 16% error; বয়সের অবদান প্রায় সমান ও লম্ব।",
  "items": [
@@ -444,6 +444,19 @@
    "gate": "-",
    "next": "Injection test চালানো হয়নি: গঠন অনুযায়ীই পাস/ফেল নির্ধারিত (tautological), বাস্তব family সম্পর্কে কিছু বলে না।",
    "files": "Architecture Analysis/Round_11_Astra_Channel_State_Assessment.pdf"
+  },
+  {
+   "id": "D17",
+   "priority": "-",
+   "status": "dead",
+   "source": "Round 11: SciMaster 'matrix sketch', 'independent-cumulant', 'diagonal-channel transport'",
+   "title": "শুধু diagonal kappa3/kappa4 (d3, K4d) বহন + Hadamard-power transport; low-rank(+diag) covariance; rank-1 kappa3",
+   "what": "Source leg আর off-diagonal kappa3 বাদ; পরের d3 = sum Q^3 d3 (+ covariance/tree term); covariance diag + rank r; kappa3 ~ s t(x)t(x)t।",
+   "evidence": "One-step teacher-forced (সত্যিকারের post state থেকে): পরের d3-এর error — independence 90-99%, + dressed tree 83-98%, পুরো repeated-index অংশ (off-diag slice লাগে) + tree 22-29% (chain free-run 3.2-4.7%)। d3 প্রায় পুরোটাই off-diagonal kappa3 থেকে আসে। সেরা rank-1 D21: 35-49% error। Diag + rank-r covariance-এর off-diag error r=4/16/32/64: L15-এ 65/43/27/14% (chain 0.7%)। SciMaster-এর 'prototype 115u-তে 1.18x MSE' — কোনো run হয়নি, বানানো ফল।",
+   "cost": "-",
+   "gate": "-",
+   "next": "-",
+   "files": "experiments/probes/r11_diag_closure_gate.py"
   }
  ]
 }

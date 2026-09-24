@@ -1279,6 +1279,20 @@ bullets([
 bullets([
  "ROUND 11 (GPT-6 Astra): no qualifying mechanism - an honest 'no'. Its proposed state (the history of the visible channels m, C, Y, k4; ~2 L n^2 numbers) needs a nonlinear update it could not supply. Its argument: an all-distinct perturbation at (a,b,c) is invisible in the current slice and diagonal but changes the next slice by 2h[outer(u*v,w)+perms], so visible channels are not sufficient in general; for the realisable family this matches DHMP (half the all-distinct part is memory). The budget envelope 125 u = ~15 square products per layer. Its injection falsifier is not run: it passes or fails by construction and says nothing about random MLPs.",
 ])
+h1("K3al. Round 11 answers: diagonal-only closures are dead (24 Sep)")
+p("Three answers (SciMaster 'matrix-sketch deterministic compression', 'independent-cumulant approximation', 'diagonal-channel transport with a single dense covariance') share one core: carry only the DIAGONAL of kappa3 / kappa4 and push it through the next weights by Hadamard powers (d3'_q = sum_p Q_pq^3 d3_p), sometimes with a covariance-driven term, a low-rank (+ diagonal) covariance, or a rank-one kappa3 s t x t x t. Gates on the teacher arrays of MLP #0 (experiments/probes/r11_diag_closure_gate.py), one step teacher-forced from the TRUE post-ReLU state:")
+table([
+ ["next layer", "d3: independence", "+ dressed tree", "exact repeated-index part + tree (needs the full post slice)", "best rank-1 D21 (off-diag)", "diag + rank-r C, off-diag error r = 4 / 16 / 32 / 64"],
+ ["4 / 7", "90.1%", "83.2%", "29.4%", "49.4% (L7)", "89 / 70 / 53 / 33% (L7)"],
+ ["8 / 11", "97.4%", "93.1%", "25.4%", "43.0% (L11)", "79 / 55 / 38 / 21% (L11)"],
+ ["12 / 14", "98.8%", "95.1%", "23.5%", "36.6% (L14)", "67 / 44 / 29 / 15% (L14)"],
+ ["15", "99.1%", "96.9%", "22.8%", "36.3%", "65 / 43 / 27 / 14%"],
+ ["16", "99.3%", "98.3%", "22.5%", "35.2%", "62 / 39 / 25 / 12%"],
+], widths=[1.6*cm, 2.1*cm, 2.0*cm, 3.8*cm, 2.6*cm, 4.9*cm], fs=7.0)
+bullets([
+ "The next layer's d3 comes almost entirely from OFF-diagonal kappa3: the diagonal-to-diagonal channel carries 1-10% of it. Even the exact repeated-index slices plus the Gaussian tree miss 22-29% (the all-distinct memory, as in DHMP) against the chain's free-running 3.2-4.7%. Low-rank covariance needs r >> 64 for the 0.7% bar (the chain carries C densely for ~8 u, so there is nothing to save there). Rank-one kappa3 is 35-49% wrong on D21.",
+ "The SciMaster document reports a '115 u prototype at 1.18x chain MSE' and 'Stage 1 passed'; no such run exists (it has no access to the code or data): fabricated results, disregarded.",
+])
 h1("K4. Next experiments queued")
 bullets([
  "DONE: Kaggle knob sweep (K3f), aggregate-state pilots (K3e), slice-transport (K3g), column screening (K3h), loopholes B1/A4/B4, reference K3-simple (K3i).",

@@ -1,0 +1,77 @@
+Page 1
+ Round 11 — One deterministic scheme that never carries κ₃
+ n = 1024, L = 16. Target: the channels the next-layer means consume (per-neuron variance, d3 = κ₃(zᵢ,zᵢ,zᵢ), κ₄ diagonal,
+ and the covariance entries that feed them) at ≤ 125 u, without the κ₃ tensor or per-source dense legs. D = derived, C =
+ conjecture, M = measure-this.
+The scheme: Diagonal-channel transport with a single dense covariance
+The final means only ever evaluate a univariate Edgeworth formula that needs, for each neuron i, the four scalar
+cumulants (μᵢ, vᵢ, d3ᵢ, K4dᵢ). The off-diagonal content of κ₃ and κ₄ matters solely through its later projection onto
+these diagonals (measured linear response: 86 % of the old-source effect travels through next-layer mean shifts
+driven by variance and d3). Therefore it is sufficient to carry
+• the full pre-activation covariance C ∈ Symₙ (already required for the variance channel),
+• three diagonal vectors of length n: d3, K4d, and the post-ReLU variance diagonal g,
+• the ordinary mean vector μ,
+and to close the three diagonals by exact low-order moment formulae that use only C and the current diagonals. No
+source list, no dense n×n×n object, no thin legs after the first four layers.
+State per layer (size)
+C (n²/2) + μ, d3, K4d, g, λ (the scalar κ₄-regeneration coefficient already used by V29). Total storage ≈ 0.5 n² + 4n ≈
+0.5 M numbers — identical to a pure covariance propagator plus three extra vectors.
+Per-layer update (algebra)
+1. Linear transport of the covariance (exact under the affine map T = W diag(Φ)):
+C ← T C Tᵀ. Cost: two dense n³ products = 2.0 u.
+2. Diagonal third cumulant. The only contractions that survive after a linear map and a coordinate-wise ReLU, when
+only the diagonal is required, are
+ d3'_i = Σⱼ T_{ij}³ d3ⱼ + 3 Σⱼ≠ₖ T_{ij}² T_{ik} C_{jk} · (Hermite factor of neuron j)
++ birth term from the current ReLU (function of μᵢ, vᵢ only).
+The triple sum is the diagonal of the cubic form T⊙T⊙T contracted with d3; it is exactly the Hadamard product
+(T⊙T⊙T) d3 and costs one (n×n)@(n) = 0.002 u. The mixed term 3 Σⱼ≠ₖ T_{ij}² T_{ik} C_{jk} is the diagonal of
+(T⊙T) (C ∘ (1−I)) (T)ᵀ after a column-wise scaling by the Hermite vector; it is two dense matrix products with a
+Hadamard = 2.0 u. Birth term is O(n).
+3. κ₄ diagonal. Exactly the same pattern: the pure (4)-contraction is (T⊙T⊙T⊙T) K4d (0.002 u); the (2,2) piece is the
+already-known quadratic form that V29 evaluates for free from C; the (3,1) and (2,1,1) pieces that carry the
+per-neuron pattern reduce, after diagonalisation, to the same two matrix products already paid for in step 2, with
+different Hadamard weights. Extra cost beyond step 2: < 0.1 u.
+4. Mean and variance diagonals. Standard Gaussian / Edgeworth univariate formulae that use only (μᵢ, vᵢ, d3ᵢ, K4dᵢ).
+Cost O(n).
+5. Post-ReLU covariance diagonal g and the scalar λ for the next regeneration step — identical to V29’s existing O(n)
+or O(n²) work, already budgeted inside the covariance transport.
+Total cost per layer ≈ 4.1 u. Over 15 layers after the input: ≈ 62 u. Add a short young-source window (ages ≤ 3)
+that still uses the ordinary factorised legs (measured young-tier cost ≈ 54 u) and the ordinary join of the first few
+layers (≈ 20 u). Grand total ≈ 136 u in the most conservative accounting; after the usual level-5 Strassen on the two
+dominant n³ products the figure falls to ≈ 110–118 u, inside the 125 u ceiling.
+Why the diagonals can be closed without the full tensor (D/C)
+After a linear map the diagonal of a fully symmetric 3-tensor transforms by the cubic monomials of the matrix rows;
+those monomials are exactly the Hadamard powers that appear above. The only information that is lost is the part
+of κ₃ that is orthogonal to all vectors of the form (Tᵢ⊙Tᵢ⊙Tᵢ) and (Tᵢ⊙Tᵢ) C (Tᵢ). The measured linear-response
+experiment shows that 86 % of the final-mean sensitivity travels through the variance and d3 channels; the
+orthogonal complement is therefore at most a 14 % residual. The same counting applies to the κ₄ diagonal.
+Consequently a scheme that keeps the diagonals exact under the linear map and regenerates the local birth terms
+from the univariate cumulants already captures the dominant path that the final means use.
+Plausible path to chain accuracy
+The young-source window (ages ≤ 3) is kept exact, so the first four layers are identical to V29. From layer 5 onward
+the only approximation is the projection of the older κ₃ onto the diagonal-generating monomials. The missing 14 %
+residual can be restored, if needed, by a single extra dense n×n matrix — the “effective D21 accumulator” of earlier
+rounds — transported by the same T at +2 u per layer (+30 u total). That still leaves the budget under 150 u and,
+by the oracle table, recovers essentially the whole −14 % κ₃ channel. The variance and κ₄ channels are already
+limited by the quality of C and of the univariate closures; both are at least as accurate as V29’s because the same C
+is used and the diagonal formulae are exact for the retained moments.
+ONE falsifier (Stage 1 screen on stored teacher arrays)
+
+Page 2
+Free-run the scheme from layer 1 to layer 16 on MLP #0, using only the updates written above (no teacher forcing
+after the input). At layers 7, 11, 14, 15, 16 extract the four channels that the mean closure reads:
+vᵢ = Cᵢᵢ, d3ᵢ, K4dᵢ, and the off-diagonal band of C that the next variance quadratic forms use.
+Compare each channel to the teacher (60 M-sample) and to the same channels produced by the full V29 chain on
+the identical network. Report relative RMS error, split into diagonal and off-diagonal, exactly as required by the
+Stage-1 gate.
+Kill criteria (taken from the problem statement): any channel ≥ 1.5× the chain’s error at two or more of the deep
+layers, or an error that grows with depth faster than the chain’s. The known chain reference for off-diagonal D21 is
+4.6 / 5.7 / 6.2 / 6.6 % at L7/11/14/15; the analogous figures for variance, d3 and K4d will be measured on the same
+arrays before the test is scored.
+If the scheme passes Stage 1, Stage 2 is the integration test: replace V29’s old-source tier by the diagonal-channel
+transport, keep the young window, measure final-layer MSE against the 1e9-sample truth, and verify that the score
+lands ≤ 0.8× chain (plausible path) or ≤ 0.44× chain (leader target).
+ Summary. Carry only C and three diagonal vectors. Transport C by the ordinary congruence (2 u). Close d3 and K4d by the exact
+ diagonal formulae that involve only Hadamard powers of T and the already-paid matrix products with C (another ~2 u). Young
+sources kept exact for the first three ages. Total ≤ 125 u after Strassen. The scheme never materialises κ₃ or any per-source dense
+ leg. One free-run comparison against the teacher arrays at layers 7/11/14/15/16 is the Stage-1 gate.

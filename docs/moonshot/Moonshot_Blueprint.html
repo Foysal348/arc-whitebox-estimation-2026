@@ -80,6 +80,7 @@ This is the moonshot's design specification. It records what our experiments hav
 <tr><td>16</td><td>5.1e-4</td><td>0.14% (0.02%)</td><td>4.7% (0.4%)</td><td>34% (1.8%) (0.75, 0.82)</td><td>-</td><td>-</td></tr>
 </table>
 All deep-layer errors are well above the teacher's noise. <b>The bar is severe: variance to ~0.1% and off-diagonal covariance to ~0.7%.</b> This is why sampling fails and why κ3 must be carried at all. The weakest channel is the κ4 diagonal: 32–34% wrong at depth, with a systematic slope of 0.75–0.79 (the chain's κ4 is ~22% too small along the truth). Yet the κ4 constants test at their score optimum (C5), so the missing part is pattern, not scale.</div>
+<div class="dead"><span class="c">C13. Diagonal-only closures are dead (Round 11 answers; r11_diag_closure_gate.py).</span> One step from the TRUE post-ReLU state, the next layer's d3 is 90–99% wrong when propagated from the diagonal alone (Hadamard powers), 83–98% with a covariance-driven (dressed-tree) term, and still 22–29% with the exact full repeated-index slice + tree (chain free-run: 3.2–4.7%). <b>d3 is fed almost entirely by off-diagonal κ3</b>, so the diagonal channels cannot be carried on their own. Also: best rank-1 D21 is 35–49% wrong; diag + rank-64 covariance is still 12–33% wrong off-diagonal (bar 0.7%).</div>
 <h2>5. Cost ledger: where the FLOPs go (K3ah)</h2>
 <table>
 <tr><th>Component</th><th>Cost (u)</th><th>Note</th></tr>
@@ -147,6 +148,7 @@ The chain sits at its own optimum. <b>Halving the cost is impossible inside this
 <table>
 <tr><th>Family</th><th>What was measured</th></tr>
 <tr><td>Tucker / TT / CP / ISDF / vector-metric compression</td><td>2% needs rank ≈ 250–300, i.e. 500u+ per layer (C8 explains why)</td></tr>
+<tr><td>Diagonal-only κ3/κ4 transport, low-rank covariance, rank-1 κ3 (Round 11)</td><td>d3 one-step 83–99% (C13)</td></tr>
 <tr><td>Short horizon (FHQR), age pooling, age modes</td><td>h = 10 still 16%; r = 6 still 8.5%</td></tr>
 <tr><td>Shift-stable carrier</td><td>2.9%, and the total κ3 is already carried exactly</td></tr>
 <tr><td>Source-free tree (DHMP)</td><td>36–40%</td></tr>

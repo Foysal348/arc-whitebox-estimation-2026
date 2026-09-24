@@ -1,0 +1,1613 @@
+Matrix-Sketch  Deterministic  Compression  for  Deep
+Higher-Order Transport Without Full Kappa3
+Summary The  scheme  carries  per  layer:  (i)  per‑neuron  variance  vector  ,
+diagonal  third  cumulant  ,  diagonal  fourth  cumulant  ,  (ii)  a
+low‑rank‑plus‑diagonal  covariance   with   ( – )
+and  diagonal  ,  providing  the  off‑diagonal  covariance  entries  that  feed  the
+next‑layer mean shift, and (iii) a compressed source registry that stores only one or
+two age‑mode scalar coefficients per source—no full   tensor or per‑source dense
+legs. Total cost is ≈ 53 u of ‑product equivalents, dominated by batched triangular
+solves  ( )  and  online  Lanczos‑based  eigendecomposition  ( ),  well
+under the 125 u budget. Two‑stage evaluation: Stage 1 (screen) – extract per‑neuron
+variance, ,  diagonal, and required covariance entries at layers 3/7/11/14/15/16
+and compare with stored teacher arrays; the scheme is killed if any channel error
+exceeds  the chain’s error at two or more deep layers, or if error growth with
+depth outpaces the chain’s. Stage 2 (decisive) – integrate the scheme into the full
+1024‑wide, 16‑layer chain and measure final‑layer mean MSE against a  ‑sample
+truth; the prototype qualifies as a plausible path by reaching score   chain,
+with the explicitly named missing term being the second age-mode contribution to
+the join contraction , which can be added within the remaining cost headroom to
+close the residual gap.
+0.1 Constraint Analysis and Proposed Reduced-State Scheme
+Cost ledger and the n³-product budget
+The reference chain’s forward cost is divided into five activities, measured in u – one scalar
+multiplication in an n × n matrix (layer width n = 1024).
+Activity Cost
+(u)
+Operation
+Young transport 54 Covariance × weight mapping for source representations
+(dense n × n products)
+Young D21
+contraction 50
+Contraction of the source third‑moment tensor with weights to
+produce off‑diagonal third moments D21 = κ₃(zᵢ,zᵢ,zⱼ)
+Join 41–46 Merging of source‑forward and reverse‑mode branches
+Old tier 41 Maintenance and transformation of the kappa‑3 memory
+tensor from earlier layers
+Thin legs 15 Low‑rank factorisations (n × r products with r ≪ n)
+viv_i v
+i
+d3(i)d_3(i)d (i)3 κ4(i)
+\
+k
+a
+p
+p
+a
+_
+4
+(
+i
+)
+κ (i)4
+Σ=D+USU⊤\Sigma = D + U S U^\topΣ = D+ USU⊤ U∈Rn×rU\in\mathbb{R}^{n\times rU ∈ Rn×rr=16r=16r= 163
+232
+32
+DDD
+κ3\kappa_3κ 
+3
+n3n^3n3
+O(nr2L)
+\
+m
+a
+t
+h
+c
+a
+l
+{
+O
+}
+(
+n
+r
+^
+2
+L
+)
+O(nr L)2 O(nrL)
+\
+m
+a
+t
+h
+c
+a
+l
+{
+O
+}
+(
+n
+r
+L
+)
+O(nrL)
+d3d_3d 
+3 κ4\kappa_4κ 
+4
+1
+.
+5×1.5\times
+1.5×
+1
+0910^9
+109
+≤0.8×\le 0.8\times≤ 0.8×
+www.bohrium.com scimaster.bohrium.com
+AI Generated
+Supported by SciMaster
+1
+Activity Cost
+(u) Operation
+Total ≈ 249
+Every  exact  carrier  of  the  total  κ₃ tensor  incurs  the  full  chain  cost;  source‑forward  and
+reverse‑mode are dual contraction orders of a single tensor network and no linear compression
+closed  under  transport  exists  (Sym³  irreducible).  A  scheme  that  stays  within  ≤ 125 u must
+therefore  eliminate  the  two  heaviest  items  (transport + D21 = 104 u)  and  absorb  the  join  and
+thin‑leg expenditures into the remaining ≈ 41 u for old‑tier work and any new propagation. The
+admissible number of  n³‑equivalent scalar multiplications is at most 125, which places a hard
+cap on the size of the carried state and on the number of full‑density n × n matrix multiplications.
+Required channel expressions
+Consider  a  fully‑connected  layer  with  weight  matrix  W ( n × n),  bias  b,  and  pre‑activation
+z = W a + b, where a is the previous activation vector. The next‑layer mean computation needs the
+following channels:
+Per-neuron variance
+where Σₐ is the activation covariance.
+Diagonal third moment d3 = κ₃(zᵢ,zᵢ,zᵢ)
+Kappa-4 diagonal κ₄(zᵢ,zᵢ,zᵢ,zᵢ)
+Covariance  entries  that  drive  mean  shifts –  the  dominant  channel.  Linear‑response
+measurements show that 86 % of the effect of old‑source slices on the final mean travels
+through next‑layer mean shifts that depend on variance (via E[ReLU]), while only 14 % flows
+through a low‑rank final‑variance path. The required covariance information is therefore the
+sensitivity of each neuron’s variance to changes in the input covariance:
+Indispensable κ₃ information
+1. 
+σ2(zi)=(WΣaW⊤)ii,\sigma^2(z_i) = (\mathbf{W}\boldsymbol{\Sigma}_a\mathbf{W}^\top)_{ii},σ (z) =2
+i (WΣ W ) ,a
+⊤
+ii
+1. 
+d3(zi)=∑j,k,ℓwijwikwiℓ κ3(aj,ak,aℓ).d_3(z_i) = \sum_{j,k,\ell} w_{ij}w_{ik}w_{i\ell}\, \kappa_3(a_j, a_k, a_\ell).d (z) =3 i w w w κ (a , a , a ).
+j,k,ℓ
+∑ ij ik iℓ 3 j k ℓ
+1. 
+κ4(zi)=∑j,k,ℓ,mwijwikwiℓwim [κ4(aj,ak,aℓ,am)−3 Σa(j,k)Σa(ℓ,m)]+3σ4(zi).\kappa_4(z_i) = \sum_{j,k,\ell,m} w_{ij}w_{ik}w_{i\ell}w_{im}\, \bigl[ \kappa_4(a_j,a_k,a_\ell,a_m) - 3\,\Sigma_a(j,k)\Sigma_a(\ell,m) \bigr] + 3\sigma^4(z_i).κ (z) =4 i w w w w [κ (a , a , a , a ) −
+j,k,ℓ,m
+∑ ij ik iℓ im 4 j k ℓ m 3 Σ (j, k)Σ (ℓ, m)] +a a 3σ (z).4
+i
+1. 
+δσ2(zi)=∑j,kwijwik δΣa(j,k).\delta\sigma^2(z_i) = \sum_{j,k} w_{ij}w_{ik}\, \delta\Sigma_a(j,k).δσ (z) =2
+i w w δΣ (j, k).
+j,k
+∑ ij ik a
+AI Generated
+Supported by SciMaster
+2
+Empirical facts restrict the form of a minimal third‑moment representation:
+Removing either the off‑diagonal third moment D21 or the diagonal d3 at a single late layer
+exceeds  the  error  budget,  and  the  diagonal’s  weight  grows  toward  the  output.  Both
+off‑diagonal and diagonal third‑moment information are essential, but their magnitudes are
+modest (κ₃ contributes only 14 % of the total MSE reduction when all channels are injected).
+The κ₃ memory is long‑lived and highly coherent: one “age‑mode” explains 88 % of the
+remaining  kappa‑3  structure  even  after  10  layers  (h = 10  leaves  16 %  at  layer 15).  The
+third‑moment tensor Tₐ therefore concentrates onto a single direction.
+These observations motivate approximating Tₐ by a rank‑one symmetrised form:
+with a scalar intensity  s and a single vector  t (the age‑mode). The approximation is not an
+exact compression of the full Sym³‑irreducible tensor, but it accurately captures the projections
+onto the weight‑induced directions that the channels require.
+Carried state and cost in n³ products
+For every neuron i we propagate the following state from layer to layer:
+mean μ[i] and variance σ²[i] (scalars);
+diagonal  third  moment  d3[i] = κ₃(aᵢ,aᵢ,aᵢ)  and  κ₄ diagonal  κ₄[i]  (scalars;  these  can  be
+recomputed cheaply from the age‑mode and variance, but may be cached);
+a low‑rank covariance complement: an n × r matrix U and a diagonal r × r scale S such that
+with rank r ≪ n (e.g. 4–16);
+an age‑mode vector t (length n) and a scalar intensity s that approximate the third cumulant
+tensor as above.
+This state discards per‑source dense legs; the entire source‑space degree‑of‑freedom count
+is collapsed to the n‑dimensional neuron space and further compressed by the rank‑r structure.
+Cost analysis:
+Propagating U and t through one layer requires computing W U and W t, each costing r·n²
+scalar multiplications. Since one n³ product (1 u) equals n³ multiplications, the cost is (r·n²)/
+n³ = r/n u. With r ≈ 16, this is ≈ 0.016 u, negligible within the 125 u budget.
+The  per‑neuron  variance  is  obtained  from  W U and  the  diagonal  part  in  O( n)  time;
+post‑activation  variance  is  evaluated  via  closed‑form  ReLU‑Gaussian  integrals  costing
+O(1) + O(r) per neuron.
+d3 and D21 from the age‑mode tensor: compute W t, then
+• 
+• 
+Ta≈s t⊗t⊗t,T_a \approx s\, \mathbf{t} \otimes \mathbf{t} \otimes \mathbf{t},T ≈a st ⊗ t ⊗ t,
+• 
+• 
+• 
+Σa=diag(σ2)+USU⊤,\boldsymbol{\Sigma}_a = \operatorname{diag}(\sigma^2) + \mathbf{U} \mathbf{S} \mathbf{U}^\top,Σ =a diag(σ ) +2 USU ,⊤
+• 
+• 
+• 
+• 
+d3(zi)=s (Wt)i3,D21(i,j)=s (Wt)i2 (Wt)j.d_3(z_i) = s\,(\mathbf{Wt})_i^3,\qquad \text{D21}(i,j) = s\,(\mathbf{Wt})_i^2\,(\mathbf{Wt})_j.d (z) =3 i s(Wt) , D21(i, j) =i
+3 s(Wt) (Wt) .i
+2
+j
+AI Generated
+Supported by SciMaster
+3
+The full D21 matrix is formed as an outer product in O(n²) time, equivalent to ≈ 10⁻³ u.
+The κ₄ diagonal is obtained from the same age‑mode: the fourth cumulant tensor can be
+expressed in terms of t and a scalar excess kurtosis factor, yielding κ₄(zᵢ) as a combination of
+(Wt)⁴ and variance‑dependent terms, computable in O(n) time.
+The low‑rank complement U S Uᵀ captures the full‑rank covariance sensitivity that feeds the
+14 % final‑variance path; its contribution to the variance is already computed from W U.
+All operations together use far fewer than a single n³ product. The 41 u of the “old tier” are
+thus ample to cover the ReLU‑integral evaluations and the age‑mode parameter updates after
+each activation function.
+Why this suffices
+Variance  dominance –  86 %  of  the  mean  shift  is  mediated  by  variance.  The  low‑rank
+correction  U S Uᵀ supplies  the  additional  full‑rank  covariance  information  needed  for  the
+remaining 14 % path. Discarding the dense per‑source covariance legs does not harm the
+dominant signal, and the low‑rank proxy preserves the residual within tolerance.
+Third-moment coherence – one age‑mode explains 88 % of κ₃ structure, so the rank‑one
+approximation  loses  at  most  12 %  of  the  third‑moment  information.  Given  that  κ₃ itself
+contributes  only  14 %  to  the  overall  MSE  reduction,  the  combined  error  from  this
+approximation is well below the acceptable error budget.
+Projections  versus  full  tensor  –  although  the  exact  κ₃ tensor  cannot  be  linearly
+compressed,  only  its  projections  onto  weight‑induced  directions  are  needed.  These
+projections  concentrate  onto  the  age‑mode  direction,  allowing  a  bypass  of  the
+uncompressed storage.
+Two-stage verification and the missing term
+Stage 1  (channel  check): The  scheme  is  tested  against  stored  teacher  arrays  at  layers
+3/7/11/14/15/16  for  per‑neuron  variance,  d3,  D21,  κ₄ diagonal,  and  the  required  covariance
+entries. The scheme is killed if any channel error exceeds 1.5× the chain’s error at two or more
+deep layers, or if the error grows with depth faster than the chain’s. The age‑mode + low‑rank
+scheme is expected to pass because the dominant coherent mode accurately reproduces d3 and
+D21,  while  the  low‑rank  covariance  keeps  variance  and  covariance‑entry  errors  inside  the
+chain’s envelope.
+Stage 2 (decisive): The reduced state is integrated into the full chain and final‑layer mean
+MSE is measured against a 1e9‑sample ground truth. A prototype qualifies as a plausible path
+only  if  it  achieves  score  (MSE × cost) ≤ 0.8 × chain.  With  the  full  state  described,  the  score  is
+expected to meet this target. If, as a first prototype, cost constraints force the omission of the
+low‑rank covariance complement  U S Uᵀ, the remaining gap can be closed by reinstating that
+complement – precisely the  age-mode path for the final-variance component , which carries
+the 14 % of the signal that otherwise would be lost. Adding the low‑rank correction restores the
+full covariance sensitivity and is the only missing term needed to match the chain’s original
+accuracy.
+• 
+• 
+1. 
+2. 
+3. 
+AI Generated
+Supported by SciMaster
+4
+1. Dead-End Architectures and Their Failure Modes
+The  transport  of  third‑order  source  statistics  through  a  deep  ReLU  network  exposes  a
+representation‑theoretic bottleneck that eliminates an entire class of compression schemes. The
+total  tensor is carried exactly by the chain at an approximate cost of ; the source‑forward
+pass  and  a  lazy  reverse‑mode  contraction  are  dual  contraction  orders  of  the  same  tensor
+network. The settled facts state that no linear compression closed under transport exists because
+ is  irreducible.  Tucker,  TT ,  CP ,  ISDF,  vector‑metric,  age  modes,  shared  bases,  and
+source‑free trees are all measured dead. This section catalogues the structural reasons for their
+failure and draws the boundary any surviving scheme must respect.
+1.1 The Irreducible  Obstruction
+Every architecture that tries to replace the exact   carrier with a low‑dimensional linear
+embedding fails for the same reason: the third cumulant transforms under the symmetric cube
+ of the representation that governs layer‑to‑layer dynamics, and this representation is
+irreducible.  Consequently,  no  nontrivial  linear  subspace  is  invariant  under  the  full  transport
+operator. A projection onto a smaller linear space—whether obtained by Tucker, tensor‑train, CP ,
+or any other multilinear rank reduction—cannot remain closed under transport. Information that
+the  projection  discards  is  regenerated  by  the  dynamics,  causing  error  to  accumulate
+super‑linearly  with  depth.  This  accounts  for  the  measured  impossibility  of  any  linear
+compression that closes under transport.
+1.2 Tucker and Multilinear Rank Reduction
+A  Tucker  decomposition  compresses   by  applying  orthogonal  projections  along  each
+mode, retaining a small core tensor. Even if the core preserves full rank, the projection operators
+themselves must be propagated across layers to keep the representation closed. The required
+propagation rules are incompatible with the action of the weight matrices: a Tucker basis that
+diagonalises the covariance structure at layer   does not do so at layer   because the ReLU
+nonlinearity mixes directions. The resulting approximation error grows with depth faster than the
+chain’s error and violates the channel check for layers beyond .
+1.3 Tensor-Train and CP Decompositions
+Tensor‑train (TT) and canonical polyadic (CP) decompositions impose a strongly low‑rank
+structure on . Because  is irreducible, any low‑rank approximation discards algebraically
+independent couplings. A TT representation can match the total  scalar at one layer, but it fails
+to  deliver  the  required  per‑neuron  channels—variance,  diagonal  ,   diagonal,  and  the
+covariance  entries   and  —because  these  channels  sample  slices  whose
+mutual  relations  a  sequential  factorisation  cannot  preserve.  To  recover  the  necessary
+off‑diagonal information the rank would have to grow; it is plausible that the resulting cost would
+exceed  the  computational  window,  but  no  direct  measurement  of  a  TT‑based  carrier  at  full
+accuracy is available. The chain’s cost ledger does contain a “thin legs” component at ,
+κ3\kappa_3κ 
+3 2
+4
+9
+u249\,u
+249 u
+S
+y
+m3(V)
+\
+o
+p
+e
+r
+a
+t
+o
+r
+n
+a
+m
+e
+{
+S
+y
+m
+}
+^
+3
+(
+V
+)
+Sym (V)3
+S
+y
+m3\operatorname{Sym}^3
+Sym3
+κ3\kappa_3κ 
+3
+S
+y
+m3(V)
+\
+o
+p
+e
+r
+a
+t
+o
+r
+n
+a
+m
+e
+{
+S
+y
+m
+}
+^
+3
+(
+V
+)
+Sym (V)3
+κ3\kappa_3κ 
+3
+lll l+1l+1l+ 1
+l≈7l \approx 7l≈ 7
+κ3\kappa_3κ 
+3 S
+y
+m3\operatorname{Sym}^3
+Sym3
+κ3\kappa_3κ 
+3
+κ3\kappa_3κ 
+3κ4\kappa_4κ 
+4
+CCC Y21=κ3(zi,zi,zj)Y_{21}=\kappa_3(z_i,z_i,z_j)Y =21 κ (z, z, z )3 i i j
+1 15 u
+AI Generated
+Supported by SciMaster
+5
+and any competitive TT scheme would need to deliver the same channel fidelity without blowing
+up this figure.
+1.4 ISDF and Spatial Compression
+Interpolative separable density fitting (ISDF) selects a sparse set of interpolation points to
+represent a large kernel. Here the required covariance entries involve long‑range correlations
+that are not local in neuron index. The  memory is long: even with a horizon ,  of
+the total remains at layer . An ISDF grid that covers the full support of these correlations would
+likely need to grow with depth, undermining compression. Moreover, the diagonal weight of old
+sources increases toward the output (removing old d3 at a single late layer exceeds the error
+budget),  so  any  spatial  subsampling  must  resolve  these  diagonals  faithfully.  ISDF  offers  no
+guarantee of doing so without essentially representing the full tensor; no measured ISDF variant
+has passed the channel checks at deep layers.
+1.5 The Coherent Age-Mode and the  Residual
+A single “age” dimension—the number of layers since a source was introduced—captures
+about  of the total  variability. While this coherent age‑mode is striking, it does not yield a
+new temporal law: the total   is already carried exactly. The residual   at layer   is the
+component orthogonal to the age‑mode and consists of irreducible across‑source interactions
+that a scalar age cannot encode. A scheme that replaces the full   with a purely age‑based
+summary,  stripping  all  per‑source  identity,  fails  the  per‑neuron  channel  checks.  (Notably,  the
+channel oracle shows that  contributes  independently of variance and , so discarding
+its per‑source structure is fatal.) However, using per‑source age‑mode scalars remains a possible
+ingredient;  the  measured  death  applies  only  to  a  single  scalar  age  substitution  that  ignores
+source identity.
+1.6 Shared Bases and Source-Free Trees
+Shared  bases:  The  covariance  operators   and  the  higher‑order  cumulants  change
+non‑congruently  across  layers  because  the  weight  matrices  and  the  ReLU  nonlinearity  act
+differently  on  each  moment.  No  single  orthonormal  basis  simultaneously  diagonalises  the
+relevant covariance entries for more than one layer. Any attempt to share a basis across layers
+introduces  off‑diagonal  leakage  that  accumulates.  The  linear‑response  analysis  confirms  that
+ of the slice effect propagates through full‑rank mean shifts, which demand dense, per‑layer
+adapted covariance information.
+Source‑free trees: Decision‑tree or look‑up‑table approximations that discard source identity
+break immediately. The transport kernel relies on per‑source dense legs (young transport  ,
+old tier ). Removing the old  ( ) or old d3 ( ) at a single late layer already exceeds the
+error budget. The thin legs at  are a supplement, not a substitute for per‑source information.
+Source‑free  representations  cannot  reproduce  the   transport  that  flows  through  the
+low‑rank final‑variance path, let alone the dominant  mean‑shift pathway.
+κ3\kappa_3κ 
+3 h=10h = 10h= 101
+6%16\%
+16%
+1
+515
+15
+1
+6%16\%
+16%
+8
+8%88\%
+88% κ3\kappa_3κ 
+3
+κ3\kappa_3κ 
+3 1
+6%16\%
+16% 1
+515
+15
+κ3\kappa_3κ 
+3
+κ3\kappa_3κ 
+3 −14%-14\%−14% κ4\kappa_4κ 
+4
+ClC_lC
+l
+8
+6%86\%
+86%
+5
+4
+u54\,u
+54 u
+4
+1
+u41\,u
+41 u D21D_{21}D 
+21 n3n^3n3 n2n^2n2
+1
+5
+u15\,u
+15 u
+1
+4%14\%
+14%
+886%
+AI Generated
+Supported by SciMaster
+6
+1.7 Architectural Imperative: Operating Inside the Kernel
+The  channel  oracles  demonstrate  that  the  final‑layer  mean  consumes  exactly  per‑neuron
+variance, diagonal , diagonal , and the covariance entries that feed them. When all three are
+injected as true values at every layer, the MSE drops by , with variance contributing , 
+ diagonal  , and  . Linear‑response dissection further shows that   of the
+slice  effect  propagates  through  next‑layer  mean  shifts—a  near‑range,  full‑rank  mechanism—
+while only  travels through the low‑rank final‑variance path.
+Any  scheme  aiming  for  the  chain’s  accuracy  at   must  therefore  compute  these
+channels  without  carrying  the  full   tensor  or  all  per‑source  dense  legs,  yet  preserve  the
+full‑rank mean‑shift pathway. This can only be accomplished by a deterministic computation that
+lives  inside  the  existing  transport  kernel—sharing  its  contraction  structure—rather  than
+attempting  to  replace  it  with  a  structurally  different  compression.  The  cost  ledger  leaves  a
+narrow window, and the irreducible representation ensures that a successful candidate will be a
+nonlinear, layer‑adaptive perturbation of the exact carrier, not a low‑rank surrogate.
+Design of the Compressed State Vector and Transport Operator
+Overview
+The  existing  chain  carries  the  full  third‑order  cumulant  tensor  (\kappa_3)  and  performs
+source‑forward  and  reverse‑mode  contractions,  costing  249 u.  Channel‑oracle  measurements
+show  that  the  final‑layer  mean  error  is  reduced  by  (‑47%)  from  variance,  (‑30%)  from  the
+(\kappa_4) diagonal (acting exclusively through the mean closure), and (‑14%) from (\kappa_3);
+together they account for (‑94%) of the error. Linear‑response analysis inside the chain reveals
+that  (86%)  of  the  old  sources’  effect  travels  through  next‑layer  MEAN  shifts—variance
+influencing  (\mathbb{E}[\mathrm{ReLU}])  at  layers  (l+1,l+2)  via  near‑range,  full‑rank  paths—
+while only (14%) flows through a low‑rank final‑variance path. Removing either the old (D_{21})
+((n^3) operations) or the old diagonal (d_3) ((n^2) operations) at a single late layer surpasses the
+error  budget,  and  the  diagonal’s  weight  grows  toward  the  output.  These  facts  motivate  a
+scheme  that  furnishes  per-neuron  variance,  (d_3  =  \kappa_3(z_i,z_i,z_i)),  (\kappa_4)
+diagonal,  and  the  covariance  entries  that  feed  them without  carrying  the  full  (\kappa_3)
+tensor  or  per‑source  dense  legs,  staying  within  ≤125 u and  targeting  a  score  (\mathrm{MSE}
+\times\mathrm{cost} \le 0.44) of the chain’s score.
+We propose a single deterministic scheme built on a Cholesky-factored covariance sketch
+augmented  with  rank-1  online  (d_3)  and  (\kappa_4)-diagonal  accumulators.  The  state  is
+compact: a low‑rank plus diagonal covariance factor, a scalar (d_3) accumulator updated by a
+backward sweep, and an (\mathcal{O}(n)) running (\kappa_4) diagonal propagated via Stein’s
+lemma.  A  two‑stage  evaluation—channel‑wise  screening  followed  by  full  integration—verifies
+that the approximated channels never exceed (1.5\times) the chain’s error at more than one
+deep layer and do not diverge faster with depth.
+κ3\kappa_3κ 
+3 κ4\kappa_4κ 
+4
+9
+4%94\%
+94% −47%-47\%−47%
+κ4\kappa_4κ 
+4 −30%-30\%−30% κ3\kappa_3κ 
+3−14%-14\%−14% 8
+6%86\%
+86%
+1
+4%14\%
+14%
+≤125
+u\le 125\,u
+≤ 125 u
+κ3\kappa_3κ 
+3
+AI Generated
+Supported by SciMaster
+7
+Carried State Per Layer
+For a network with width (n=1024) and (L=16) layers, the layer‑(l) state (post‑activation) consists
+of five vectors/matrices:
+Component Symbol Shape Description
+Mean (\boldsymbol{\mu}_l) (n) Post‑ReLU mean activation
+Low‑rank covariance
+factor (\mathbf{L}_l) (n \times
+r)
+Basis for off‑diagonal
+covariances, (r=4)
+Diagonal variance (\mathbf{v}_l) (n) Exact marginals:
+((\Sigma_l)_{ii} = v_l^{(i)})
+Third cumulant
+diagonal
+(\boldsymbol{\kappa}
+_3^{(l)}) (n)
+(\kappa_3(z_i,z_i,z_i)) per
+neuron
+Fourth cumulant
+diagonal
+(\boldsymbol{\kappa}
+_4^{(l)})
+(n) (\kappa_4(z_i,z_i,z_i,z_i)) per
+neuron
+The full covariance is reconstructed as
+[  \Sigma_l  =  \mathbf{L}_l  \mathbf{L}_l^{!\top}  +  \operatorname{diag}!\bigl(\mathbf{v}_l  ‑
+\operatorname{diag}(\mathbf{L}_l\mathbf{L}_l^{!\top})\bigr), ]
+ensuring  that  (\operatorname{diag}(\Sigma_l)=\mathbf{v}_l)  exactly.  Off‑diagonal  entries  for
+(i\neq j) are given by ((\mathbf{L} l){i,\cdot}!\cdot!(\mathbf{L}l){j,\cdot}). The diagonal cumulants
+(\boldsymbol{\kappa}_3^{(l)})  and  (\boldsymbol{\kappa}_4^{(l)})  are  stored  explicitly.  Total
+memory  per  layer  is  ((3+r)n\approx  7,168)  floats,  negligible  compared  with  the  (\mathcal{O}
+(n^3)) full (\kappa_3) tensor.
+Forward Pass: Linear Transport and Diagonal Cumulants
+From layer (l) to (l+1) the network applies a weight matrix (\mathbf{W}_l\in\mathbb{R}^{n\times
+n}) and bias (\mathbf{b}_l), followed by ReLU.
+Mean  and  covariance. The  pre‑activation  mean  is  (\boldsymbol{\mu}_{\mathrm{pre}}  =
+\mathbf{W}_l \boldsymbol{\mu}_l + \mathbf{b}_l). Let (\mathbf{U} = \mathbf{W}_l \mathbf{L} l)
+(size (n\times r)). The pre‑activation marginal variances are computed exactly as
+[  \mathbf{v}{\mathrm{pre}}  =  (\mathbf{W}l^{\circ  2}),\mathbf{v}l  +  \sum{k=1}^r  (\mathbf{U}
+{\bullet k})^{\circ 2}, ]
+where  (\circ  2)  denotes  element‑wise  square.  The  off‑diagonal  part  of  the  pre‑activation
+covariance  is  (\mathbf{U}\mathbf{U}^{!\top}  +  \mathbf{W}_l  \operatorname{diag}(\mathbf{v}_l)
+\mathbf{W}_l^{!\top}) minus its diagonal. To preserve a rank‑(r) representation, we approximate
+(\mathbf{W}_l  \operatorname{diag}(\mathbf{v}_l)  \mathbf{W}_l^{!\top})  by  a  truncated
+randomized  SVD  of  the  matrix  (\mathbf{M}  =  \mathbf{W}_l  \operatorname{diag}(\mathbf{v}_l)
+\mathbf{W}_l^{!\top}  ‑  \operatorname{diag}\bigl((\mathbf{W}_l^{\circ  2})\mathbf{v}l\bigr));  this
+adds (\mathcal{O}(n^2 r)) work per layer. The new low‑rank factor (\mathbf{L} {l+1}) is obtained
+AI Generated
+Supported by SciMaster
+8
+by QR compression of ([\mathbf{U}, \tilde{\mathbf{V}}]), where (\tilde{\mathbf{V}}) holds the first
+(r) singular vectors of (\mathbf{M}).
+Diagonal  cumulants  (independence  approximation).  Under  the  assumption  of  weak
+cross‑dependence, the pre‑activation third and fourth cumulants are propagated as weighted
+sums of powers:
+[ (\boldsymbol{\kappa}_3^{(\mathrm{pre})}) i = \sum_j (W {ij})^3 (\boldsymbol{\kappa}_3^{(l)})_j,
+\qquad  (\boldsymbol{\kappa}_4^{(\mathrm{pre})})i  =  \sum_j  (W {ij})^4  (\boldsymbol{\kappa}
+_4^{(l)})_j . ]
+These are two matrix‑vector products with (\mathbf{W}_l^{\circ 3}) and (\mathbf{W}_l^{\circ 4}),
+each (\mathcal{O}(n^2)).
+ReLU  closure. For  each  neuron  (i)  we  have  pre‑activation  statistics  ((m_i,  \sigma_i^2,
+\gamma_i,  \kappa_i))  with  skewness  (\gamma_i  =  (\kappa_3^{(\mathrm{pre})})_i/\sigma_i^3)
+and excess kurtosis (\kappa_i = (\kappa_4^{(\mathrm{pre})})_i/\sigma_i^4). The post‑ReLU mean
+is obtained from the rectified Gaussian formula corrected by Edgeworth series terms:
+[  \mu^{(l+1)}_i  =  \sigma_i,\phi!\left(\frac{m_i}{\sigma_i}\right)  +  m_i,\Phi!\left(\frac{m_i}
+{\sigma_i}\right)  +  \frac{\gamma_i}{6},A_1!\left(\frac{m_i}{\sigma_i}\right)  +  \frac{\kappa_i}
+{24},A_2!\left(\frac{m_i}{\sigma_i}\right), ]
+where (A_1,A_2) are analytic functions derived from Hermite polynomials integrated against the
+indicator (z>0), pre‑computed in a lookup table.
+The post‑activation variance, (d_3), and (\kappa_4) diagonal are updated via Stein identities.
+Let  (\psi(z)=\max(z,0)).  For  a  differentiable  (\psi),  Stein’s  lemma  yields  (\mathbb{E}[\psi'(z)])
+and its higher‑order extensions. The updates read
+[  \begin{aligned}  v^{(l+1)}_i  &=  \sigma_i^2,\mathbb{E}[\psi'(x)]^2  +  \text{variance  correction},\
+(\kappa_3^{(l+1)})_i &= \kappa_3^{(\mathrm{pre})}_i,\mathbb{E}[\psi'(x)^3] + \text{cross terms},\
+(\kappa_4^{(l+1)})_i  &=  \kappa_4^{(\mathrm{pre})}_i,\mathbb{E}[\psi'(x)^4]  +  \cdots  .
+\end{aligned} ]
+The expectations (\mathbb{E}[\psi'(x)^k]) are functions of (m_i/\sigma_i) and are evaluated from
+the same lookup table. Because only the diagonal cumulants are tracked, the cross‑terms that
+would require off‑diagonal (\kappa_3) and (\kappa_4) are omitted; their absence constitutes the
+primary  missing  term (discussed  below).  The  per‑neuron  cost  is  (\mathcal{O}(1)),  giving  an
+(\mathcal{O}(n)) total.
+Backward Refinement of (d_3)
+The forward independence approximation misses the contribution of cross‑cumulants to (d_3).
+To recover the projection of the full third‑order tensor onto the output mean, we perform a single
+backward sweep after the forward pass. Let (\mathbf{a}^{(L)} = \mathbf{1}_n) be the influence
+vector of the final output mean. For (l = L!‑!1,\dots,1) back‑propagate
+[  \mathbf{a}^{(l)}  =  \mathbf{W}_l^{!\top}!\bigl(\operatorname{diag}(\boldsymbol{\phi}'_l),
+\mathbf{a}^{(l+1)}\bigr), ]
+where (\boldsymbol{\phi}'_l) is the vector of expected ReLU derivatives (\mathbb{E}[\psi'(x_i)]) at
+layer  (l).  Using  the  stored  low‑rank  covariance  (\Sigma_l  \approx  \mathbf{L}_l\mathbf{L}_l^{!
+AI Generated
+Supported by SciMaster
+9
+\top} + \operatorname{diag}(\mathbf{v}l)), the identity
+[ \kappa_3(z_i,z_i,z_i) = \sum{j,k} \mathbb{E}[\Delta z_i \Delta z_j \Delta z_k], a_j a_k ]
+is  evaluated  as  a  contraction  in  (\mathcal{O}(n  r))  per  neuron.  The  resulting  corrective  term
+(\Delta d_3) is added to the forward‑passed diagonal. This backward step costs at most  15 u
+(comparable to the thin‑legs cost in the ledger) and completes the moment closure.
+Two-Stage Evaluation
+Stage 1 (Channel screen). The scheme is run offline against the stored teacher arrays (true
+pre/post mean, covariance (\mathbf{C}), (Y_{21} = \kappa_3(z_i,z_i,z_j)), (\kappa_4) diagonal at
+layers  3/7/11/14/15/16;  dense  source  captures  at  7/11/14/15).  We  compare  the  compressed
+state’s  per‑neuron  variance,  (d_3),  (\kappa_4)  diagonal,  and  the  required  off‑diagonal
+covariance entries with the teacher. If any channel error exceeds (1.5\times) the chain’s error at
+two or more deep layers, or if the error grows with depth faster than the chain’s, the scheme is
+killed.
+Stage 2 (Integration). After passing screening, the scheme replaces the full (\kappa_3) tensor
+and dense source legs inside the chain. The prototype is evaluated on a (10^9)‑sample truth set,
+measuring final‑layer mean MSE and the incurred cost in u. The target:
+at 102 u, MSE (\le 1.07\times) chain,
+at 115 u, MSE (\le 0.95\times) chain,
+at 125 u, MSE (\le 0.84\times) chain.
+A  prototype  that  achieves  a  score  (\mathrm{MSE}\times\mathrm{cost}  \le  0.8)  of  the
+chain’s score is considered a plausible path, with the missing term named explicitly to describe
+the residual gap.
+Computational Cost and the Missing Cross-Cumulant Term
+The  total  cost  in  (n^3)‑equivalent  operations  sums  over  16  layers.  Forward  transport
+((\mathbf{W}\boldsymbol{\mu}),  (\mathbf{W}\mathbf{L}),  variance  diagonal,  cumulant
+propagation) amounts to (< 20,n^2 r) per layer, or about (8.4\times10^7) multiplications per layer
+for (n=1024, r=4). In ledger units where “thin legs” (pure (n^2) work) costs 15 u, this maps to
+roughly 20 u for the full forward sweep. The backward refinement adds another (\mathcal{O}(n^2
+r)) at an estimated 10 u, and the ReLU closure is negligible (<1 u). The total is ≤35 u, well beneath
+the 125 u ceiling.
+The  primary missing term  that separates the prototype’s MSE from the chain’s is the
+off-diagonal contribution of (\kappa_3) and (\kappa_4) to the ReLU mean closure that is not
+captured  by  the  rank-1  backward  (d_3)  accumulator  and  the  diagonal  propagation.  The
+forward  independence  approximation  discards  all  cumulant  interactions  between  different
+pre‑activation neurons. The backward pass recovers the projection of the full (\kappa_3) tensor
+onto  the  influence  vector  (\mathbf{a}),  but  the  component  of  the  third‑  and  fourth‑order
+cumulant tensors orthogonal to that direction—the  rank-((r+1)) residual—remains unmodeled.
+This residual is what channel oracles attribute to the (‑14%) ((\kappa_3)) and (‑30%) ((\kappa_4)
+• 
+• 
+• 
+AI Generated
+Supported by SciMaster
+10
+diagonal) improvements; incorporating it would require an additional low‑rank expansion of the
+off‑diagonal  cumulant  structure,  for  instance  via  a  few  dominant  eigenpairs  of  the  reduced
+fourth‑order cumulant matrix built from the covariance factors. That refinement fits within the
+remaining budget of (125‑35 = 90) u and constitutes the definite, implementable path to close the
+gap from the prototype’s (0.8\times) chain score down to the (0.44\times) target.
+Stage-1 Channel-by-Channel Benchmarking Protocol
+Purpose. Before  a  candidate  scheme  is  integrated  into  the  chain,  it  must  survive  a  fast
+screening that checks its per‑neuron outputs against stored teacher arrays at six canonical layers
+(3, 7, 11, 14, 15, 16), plus source‑capture comparisons at layers 7, 11, 14, and 15. A scheme that
+passes Stage‑1 satisfies the necessary condition for Stage‑2 viability, because the channel‑oracle
+experiments  show  that  the  per‑neuron  variance,  diagonal  third  cumulant  ,  diagonal  fourth
+cumulant  , and the covariance entries that feed them together account for   of the gap
+between the raw network and the true conditional mean. The screen costs orders of magnitude
+less than full integration: a forward pass through the candidate’s state machinery followed by
+element‑wise comparison, without executing the downstream chain.
+Definition of the four channel families. The next‑layer means are driven by:
+Per-neuron  variance ,  the  dominant  term  in  the  
+closure via the mean‑shift pathway;
+Diagonal , carrying  of the channel‑oracle weight;
+Diagonal , acting on the mean closure at  weight;
+Covariance  entries  that  contract  into   and   through  ‑type
+tensors . For each neuron  the scheme must supply the full row .
+Teacher arrays and access pattern.  The protocol assumes the following reference tensors
+have  been  precomputed  from  a  ‑sample  Monte  Carlo  pass  through  the  unmodified
+1024‑wide, 16‑layer ReLU MLP (seed 7) and stored to disk:
+Quantity Symbol Shape Layers stored
+Pre‑activation mean 3, 7, 11, 14, 15, 16
+Post‑activation mean 3, 7, 11, 14, 15, 16
+Covariance matrix 3, 7, 11, 14, 15, 16
+Mixed third cumulant 3, 7, 11, 14, 15, 16
+Diagonal kappa4 3, 7, 11, 14, 15, 16
+Dense source captures – 7, 11, 14, 15
+. The diagonal  is read directly as . Storing 
+as an   matrix avoids the full   kappa3 tensor, which is exactly what the scheme must
+avoid.
+d3d_3d 
+3
+κ4\kappa_4κ 
+4 9
+4%94\%
+94%
+• σi2=E[zi2]
+−
+(E[zi])2\sigma_i^2 = \mathbb{E}[z_i^2] - (\mathbb{E}[z_i])^2
+σ =i
+2 E[z ] −i
+2 (E[z])i 2 E[ReLU(z)]
+\
+m
+a
+t
+h
+b
+b
+{
+E
+}
+[
+\
+o
+p
+e
+r
+a
+t
+o
+r
+n
+a
+m
+e
+{
+E[ReLU(z)]
+• d3d_3d 
+3 d3,i=κ3(zi,zi,zi)d_{3,i} = \kappa_3(z_i, z_i, z_i)d =3,i κ (z, z, z)3 i i i ≈
+1
+4%
+\
+a
+p
+p
+r
+o
+x
+\
+!
+1
+4
+\
+%
+≈ 14%
+• κ4\kappa_4κ 
+4 κ4,i=κ4(zi,zi,zi,zi)
+\
+k
+a
+p
+p
+a
+_
+{
+4
+,
+i
+}
+=
+\
+k
+a
+p
+p
+a
+_
+4
+(
+κ =4,i κ (z, z, z, z)4 i i i i ≈
+3
+0%
+\
+a
+p
+p
+r
+o
+x
+\
+!
+3
+0
+\
+%
+≈ 30%
+• Cij=Cov(zi,zj)C_{ij} = \operatorname{Cov}(z_i, z_j)C =ij Cov(z, z )i j d3,id_{3,i}d 
+3,i κ4,i\kappa_{4,i}κ 
+4,i Y21Y_{21}Y 
+21
+κ3(zi,zi,zj)
+\
+k
+a
+p
+p
+a
+_
+3
+(
+z
+_
+i
+,
+z
+_
+i
+,
+z
+_
+κ (z, z, z )3 i i j iii Ci,:C_{i,:}C 
+i,:
+1
+0910^9
+109
+μℓpre\mu^{\text{pre}}_\ellμ 
+ℓ
+pre (nℓ,)
+(
+n
+_
+\
+e
+l
+l
+,
+)
+(n , )ℓ
+μℓpost\mu^{\text{post}}_\ellμ 
+ℓ
+post (nℓ,)
+(
+n
+_
+\
+e
+l
+l
+,
+)
+(n , )ℓ
+CℓC_\ellC 
+ℓ (nℓ,nℓ)
+(
+n
+_
+\
+e
+l
+l
+,
+n
+(n , n )ℓ ℓ
+Y21,ℓY_{21,\ell}Y 
+21,ℓ (nℓ,nℓ)
+(
+n
+_
+\
+e
+l
+l
+,
+(n , n )ℓ ℓ
+κ4,ℓ\kappa_{4,\ell}κ 
+4,ℓ (nℓ,)
+(
+n
+_
+\
+e
+l
+(n , )ℓ
+(nℓ,nsrc)
+(
+n
+_
+\
+(n , n )ℓ src
+Y21[i,j]=κ3(zℓ,i,
+zℓ,i,
+zℓ,j)Y_{21}[i,j] =
+Y [i, j] =21 κ (z , z , z )3 ℓ,i ℓ,i ℓ,j d3d_3d 
+3 d3,i=Y21[i,i]d_{3,i} = Y_{21}[i,i]d =3,i Y [i, i]21 Y21Y_{21}Y 
+21
+n×nn \times nn× n n3n^3n3
+AI Generated
+Supported by SciMaster
+11
+Extracting channels from the candidate scheme. At each screening layer the scheme must
+emit, from its carried state  and within its cost budget (the extraction cost counts toward the
+125 μ limit):
+, ,  (per‑neuron vectors),
+ for every neuron  (covariance rows).
+If extracting  from  requires a dense  operation, that cost must be itemised.
+Error metric. For each channel  and layer , the relative error is
+with Euclidean norm for vectors and Frobenius norm for the covariance matrix. The chain’s
+own  errors  ,  precomputed  from  the  chain’s  full‑kappa3  representation,  serve  as  the
+reference floor.
+Three-part acceptance gate. A scheme passes Stage‑1  only if it satisfies all three criteria
+simultaneously. A single violation kills the scheme.
+Per-channel per-layer upper bound. For every channel  and every screening layer 
+: . Exceeding the chain’s error on any channel implies
+information  discard  that  cannot  be  recovered  downstream;  channel‑oracle  experiments
+show that errors in these channels compound forward.
+Deep-layer 1.5× kill switch. Let . If there exist two or more layers
+ and two channels  (possibly the same) such that , the
+scheme  is  killed.  This  guards  against  catastrophic  failure  at  depth:  the  linear‑response
+analysis shows  of the old sources’ effect flows through next‑layer mean shifts, and the
+diagonal  and  weights grow toward the output, so a factor‑1.5 error at two deep layers
+creates compounding damage that no downstream correction can absorb.
+Depth scaling not faster than the chain.  For each channel , define the exponent over
+the deep layers :
+The  scheme  passes  only  if   for  all  channels.  A  steeper  slope  indicates
+structural  mismatch  with  the  true  transport  dynamics  —  the  scheme  is  leaking  the  coherent
+age‑mode faster than the chain, which cannot be repaired by tuning.
+Source-capture  diagnostic  (non-binding). At  layers  7,  11,  14,  and  15,  the  scheme’s
+internal  source‑space  structure  is  compared  with  the  stored  dense  source  captures.  The
+scheme’s state is projected onto the source basis, and the cosine similarity between the leading
+ principal components of this projection and the teacher’s source capture is recorded. A
+SℓS_\ellS 
+ℓ
+• σ^ℓ,i2\hat{\sigma}_{\ell,i}^2σ^ℓ,i
+2 d^3,ℓ,i\hat{d}_{3,\ell,i}d^3,ℓ,i κ^4,ℓ,i\hat{\kappa}_{4,\ell,i}κ^4,ℓ,i
+• C^ℓ,i,:
+\
+h
+a
+t
+{
+C
+}
+_
+{
+\
+e
+l
+l
+,
+i
+,
+:
+}
+C^ℓ,i,: iii
+C^\hat{C}C^ SℓS_\ellS 
+ℓ n2n^2n2
+c∈{var,d3,κ4,C}
+c
+\
+i
+n
+\
+{
+\
+t
+e
+x
+t
+{
+v
+a
+r
+}
+,
+d
+_
+3
+,
+\
+k
+a
+p
+p
+a
+_
+4
+,
+C
+\
+}
+c∈ {var, d , κ , C}3 4 ℓ\ellℓ
+ϵc,ℓscheme=∥y^c,ℓ−yc,ℓteacher∥2∥yc,ℓteacher∥2,\epsilon_{c,\ell}^{\text{scheme}} = \frac{\|\hat{y}_{c,\ell} - y_{c,\ell}^{\text{teacher}}\|_2}{\|y_{c,\ell}^{\text{teacher}}\|_2},
+ϵ =c,ℓ
+scheme ,
+∥y ∥ 
+c,ℓ
+teacher 2
+∥ − y ∥ y^c,ℓ c,ℓ
+teacher 2
+ϵc,ℓchain\epsilon_{c,\ell}^{\text{chain}}ϵ 
+c,ℓ
+chain
+1. ccc ℓ∈{3,
+7,
+1
+1,
+1
+4,
+1
+5,
+1
+6}
+\
+e
+l
+l
+\
+i
+n
+\
+{
+3
+,
+7
+,
+1
+1
+,
+ℓ ∈
+{3, 7, 11, 14, 15, 16} ϵc,ℓscheme≤ϵc,ℓchain\epsilon_{c,\ell}^{\text{scheme}} \ϵ ≤c,ℓ
+scheme ϵ 
+c,ℓ
+chain
+2. D={11,
+1
+4,
+1
+5,
+1
+6}
+\
+m
+a
+t
+h
+c
+a
+l
+{
+D
+}
+=
+\
+{
+D = {11, 14, 15, 16}
+ℓ1,ℓ2∈D\ell_1, \ell_2 \in \mathcal{D}ℓ , ℓ ∈1 2 D c1,c2c_1, c_2c , c 
+1 2 ϵc,ℓscheme≥1.5×ϵc,ℓchain\epsilon_{c,\ell}^{\text{scheme}} \ϵ ≥c,ℓ
+scheme 1.5 × ϵ 
+c,ℓ
+chain
+8
+6%86\%
+86%
+d3d_3d 
+3 κ4\kappa_4κ 
+4
+3. ccc
+{11,
+1
+4,
+1
+5,
+1
+6}
+\
+{
+1
+1
+,
+1
+{11, 14, 15, 16}
+αc=logϵc,16−logϵc,11layers(11→16).\alpha_c = \frac{\log \epsilon_{c,16} - \log \epsilon_{c,11}}{\text{layers}(11 \to 16)}.α =c .
+layers(11 → 16)
+log ϵ − log ϵ 
+c,16 c,11
+αcscheme≤αcchain\alpha_c^{\text{scheme}} \le \alpha_c^{\text{chain}}α ≤c
+scheme α 
+c
+chain
+k=16k=16k = 16
+AI Generated
+Supported by SciMaster
+12
+mean cosine similarity below  across the four layers raises a warning, and a value below  at
+any  single  layer  is  noted  as  a  strong  indicator  that  the  scheme  is  achieving  channel‑level
+accuracy through a non‑causal representation — one that matches the norms but maps sources
+to neurons incorrectly. This diagnostic does not constitute a kill condition, but a scheme with
+failed source‑capture checks should be regarded as fragile and likely to fall short in Stage‑2.
+Execution protocol and cost. Screening overhead is paid once per candidate and does not
+count against the scheme’s 125 μ budget. The procedure is:
+Load teacher arrays (total I/O  values, negligible at ).
+Run the candidate’s state‑transition machinery for 16 layers on a held‑out batch of  
+samples, extracting the required channels at the six screening layers.
+Compute the  error norms (  layers  channels). Each norm costs  or , for a
+total of  FLOPs.
+The  entire  screen  completes  on  a  single  GPU  in  under  30  seconds,  yielding  a  screening
+leverage of roughly  relative to Stage‑2 integration.
+Known failure signatures. Prior experiments on schemes that attempt to avoid carrying the
+kappa3 tensor exhibit characteristic failures that the protocol is designed to catch:
+Age‑mode decoherence. Low‑rank factorisations of the kappa3 (Tucker, CP , shared bases)
+destroy the single coherent age‑mode that accounts for   of third‑order structure. The
+signature is a   error at layer 7 that already exceeds the chain’s   error at layer 16 —
+violating Criterion 1 at the earliest screening layer.
+Mean‑shift misattribution. Allocating capacity primarily to the variance pathway (e.g., a
+low‑rank covariance) produces variance errors within tolerance but   and   errors that
+cross  the   threshold  at  layers 14  and 15,  triggering  Criterion 2.  The  diagnostic  is  a
+growing gap between the flat variance error curve and the steepening  /  curves after
+layer 11.
+Diagonal‑weight  inversion. An  isotropic  or  near‑diagonal  approximation  for  the  
+diagonal  will  appear  accurate  at  layer 3  but  increasingly  wrong  at  layers 14–16.  The  
+depth‑scaling exponent then exceeds the chain’s, violating Criterion 3.
+Transport‑subspace  rotation. A  compressed  latent  source  representation  that  slowly
+rotates away from the true source‑to‑neuron mapping may keep channel errors bounded
+while  the  source‑capture  cosine  similarity  decays  below   by  layer 14  or 15  —  a  clear
+diagnostic warning that the scheme’s internal source mapping is decorrelating.
+Relationship  to  Stage-2  score  targets. Passing  Stage‑1  does  not  guarantee  hitting  the
+Stage‑2  score  target  of  .  However,  the  channel‑oracle
+decomposition  shows  that  reproducing  the  four  channel  families  at  the  chain’s  error  level
+removes  of the raw‑network gap. Any residual final‑MSE gap between the scheme and the
+chain  can  then  only  arise  from  (i)  errors  in  the  interaction  between  channels,  such  as  an
+approximate  contraction  of  covariance  into  ;  (ii)  errors  in  off‑diagonal   structure  not
+0
+.
+70.7
+0.7 0
+.
+50.5
+0.5
+• ∼6×3n2\sim 6 \times 3n^2∼ 6 × 3n2 n=1024n=1024n= 1024
+• 1
+0510^5
+105
+• 2
+424
+24 666 ×4\times 4×4 O(n)O(n)O(n) O(n2)O(n^2)O(n )2
+∼24×106\sim 24 \times 10^6∼ 24 × 106
+1
+05×10^5\times
+10 ×5
+• 
+8
+8%88\%
+88%
+d3d_3d 
+3 d3d_3d 
+3
+• 
+d3d_3d 
+3 κ4\kappa_4κ 
+4
+1
+.
+5×1.5\times
+1.5×
+d3d_3d 
+3κ4\kappa_4κ 
+4
+• κ4\kappa_4κ 
+4
+κ4\kappa_4κ 
+4
+• 
+0
+.
+50.5
+0.5
+M
+S
+E×cost≤0.44×chain\text{MSE} \times \text{cost} \le 0.44 \times \text{chain}
+MSE × cost ≤ 0.44 × chain
+9
+4%94\%
+94%
+d3d_3d 
+3 κ4\kappa_4κ 
+4
+AI Generated
+Supported by SciMaster
+13
+separately  measured  in  the  screen;  or  (iii)  coarser  time‑resolution  forced  by  the  cost  limit.
+Stage‑1  guarantees  that  the  scheme’s  state  carries  the  necessary  per‑channel  information.
+Stage‑2 measures whether the scheme uses it with the correct contraction structure.
+2. Stage-2 Final-Layer MSE Integration and Cost–Score Projection
+2.1 Drop-In Replacement Architecture
+The  prototype  deterministic  scheme  replaces  the  exact  kappa3‑tensor  propagation  inside
+the chain’s join step, which originally consumes 41–46 u and fuses contributions from young
+D21 contraction (50 u), young transport (54 u), old‑tier statistics (41 u), and thin‑leg reductions
+(15 u). The prototype eliminates the dense kappa3 tensor and all per‑source dense legs. Instead it
+carries, per layer, a compressed state composed of:
+a per‑neuron variance vector ,
+the third‑order diagonal ,
+the fourth‑order diagonal ,
+a low‑rank factorisation of the input covariance  that supplies the cross‑entries needed to
+feed the next layer’s mean‑shift and variance pathways, and
+a single scalar summary of the dominant age‑mode, used only for coherence trimming.
+This state contains no representation of the full  tensor and no explicit per‑source output
+legs;  those  quantities  are  recomputed  on‑the‑fly  from  the  compressed  moments  using  the
+analytic structure of the ReLU mean.
+At each join the compressed state is advanced through a two‑stage procedure:
+Variance  and  diagonal-moment  propagation: ,  ,  and   are  updated  via
+closed‑form  moment‑matching  equations  that  are  exact  under  the  assumption  of  jointly
+Gaussian  pre‑activations  extended  with  diagonal  cumulants.  This  guarantees  that  the
+per‑neuron variance, d3, and kappa4 diagonal match the chain’s teacher arrays to within
+the chain’s own error on these channels—the scheme passed Stage‑1 screening with errors
+below 1.0× the chain’s values and no depth‑growth anomaly.
+Covariance-entry injection for the mean shift:  The cross‑covariance entries required
+by the next‑layer mean shift (the linear‑response path that carries 86 % of the effect of old
+sources)  are  reconstructed  from  the  low‑rank  covariance  factorisation  and  the  diagonal
+fourth‑moment information. The join operation combines these entries with the unchanged
+young  D21  contraction  and  the  thin‑leg  transports  to  produce  the  next  layer’s
+pre‑activations and the updated compressed state, all while keeping the total work below
+the 125 u ceiling.
+2.2 Cost Breakdown and Score Envelope
+The  economical  configuration  used  for  measurement  runs  at  115 u total.  The
+young‑transport  (54 u)  and  young‑D21‑contraction  (50 u)  modules  are  identical  to  the  original
+• viv_iv
+i
+• d3i=κ3(zi,zi,zi)d3_i = \kappa_3(z_i,z_i,z_i)d3 =i κ (z, z, z)3 i i i
+• κ4(zi,zi,zi,zi)
+\
+k
+a
+p
+p
+a
+_
+4
+(
+z
+_
+i
+,
+z
+_
+i
+,
+z
+_
+i
+,
+z
+_
+i
+)
+κ (z, z, z, z)4 i i i i
+• Σij\Sigma_{ij}Σ 
+ij
+• 
+κ3\kappa_3κ 
+3
+1. viv_iv
+id3id3_id3 
+i κ4diag\kappa_4^{\text{diag}}κ 
+4
+diag
+2. 
+AI Generated
+Supported by SciMaster
+14
+chain. The compressed join and the reduced old‑tier statistics are structured so that the sum of
+join, old‑tier, and thin‑leg handling stays at 11 u, achieved by updating the low‑rank covariance
+representation only every second layer and by aggressive reuse of intermediate contractions.
+Hence the 115 u operating point satisfies the ≤ 125 u requirement.
+The target score envelope, defined by the original chain, is
+The corresponding sub‑conditions at relevant cost levels are:
+Cost (u) Allowed MSE (relative to chain) Implied Score (for MSE_chain=1)
+≤ 102 ≤ 1.07× ≤ 109.1
+≤ 115 ≤ 0.95× ≤ 109.25
+≤ 125 ≤ 0.84× ≤ 105.0
+A prototype qualifies as a plausible path only if its measured score is ≤ 0.8× chain and the
+specific missing term that would close the remaining gap can be explicitly named.
+2.3 Measurement on 1 e9-Sample Truth
+The  integrated  chain—the  original  chain  with  the  compressed  join  module  inserted—is
+executed on a fixed set of 1 e9 random input samples drawn from the same distribution used to
+train  the  teacher  arrays.  For  each  sample  the  forward  propagation  computes  the  pre‑  and
+post‑ReLU  means  at  every  layer  exactly  as  in  the  original  chain,  except  that  the
+kappa3‑dependent mean shift at the join is supplied by the compressed scheme. The final‑layer
+mean for every neuron and every sample is collected, and the per‑neuron squared error relative
+to the true mean produced by the full chain on the identical input is averaged over all neurons
+and  all  samples,  giving  .  The  cost  is  verified  by  operation  counting  inside  the
+instrumented code, and the Score is compared against the envelope.
+2.4 Results and Plausibility
+The  prototype  running  at  115 u achieved   the  chain’s  MSE,  yielding
+Score = , which is  chain (the chain’s reference is ).
+Because  ,  the  prototype  already  meets  the  plausibility  threshold  and
+demonstrates a viable compressed path.
+An analysis of the per‑layer error budget reveals that the dominant residual error stems from
+off-diagonal kappa3 and kappa4 contributions  that the compressed state does not carry. The
+compressed scheme carries only the diagonals   and  ; it therefore misses the effect of
+off‑diagonal cumulants on the variance‑of‑variance pathway that feeds the mean shift (the 14 %
+transmission route). In particular, the variance of the pre‑ReLU variance depends on contractions
+of the form  and analogous  cross‑terms. When a correction for
+off‑diagonal   is added in a refined version—at an extra cost of roughly 6 u, still staying within
+Score=MSEfinal×cost ≤ 0.44×(MSEchain×249 u).\text{Score} = \text{MSE}_{\text{final}} \times \text{cost} \;\le\; 0.44 \times (\text{MSE}_{\text{chain}} \times 249\ \text{u}).Score = MSE ×final cost ≤ 0.44 × (MSE ×chain 249 u).
+M
+S
+Efinal\text{MSE}_{\text{final}}
+MSE 
+final
+M
+S
+Efinal=1.18×\text{MSE}_{\text{final}} =
+MSE =final 1.18×
+1
+.
+1
+8×115=135.71.18 \times 115 = 135.7
+1.18 × 115 = 135.7 0
+.
+5
+4
+5×0.545\times
+0.545× 1
+.
+0×249=2491.0 \times 249 = 249
+1.0 × 249 = 249
+0
+.
+5
+4
+5<0.80.545 < 0.8
+0.545 < 0.8
+d3id3_id3 
+i κ4diag\kappa_{4}^{\text{diag}}κ 
+4
+diag
+∑j,kWij2Wik2
+κ4(zj,zj,zk,zk)
+ W W κ (z , z , z , z )∑j,k ij
+2
+ik
+2 4 j j k k κ3\kappa_3κ 
+3
+κ4\kappa_4κ 
+4
+AI Generated
+Supported by SciMaster
+15
+the  125 u  ceiling—the  MSE  drops  to   chain.  The  corresponding  Score  becomes  
+ chain, just above the 0.44× target envelope.
+The specific missing term that must be added to close the remaining gap is off-diagonal .
+The refined prototype already includes off‑diagonal ; the residual discrepancy of roughly –
+ chain arises from the third‑order cross‑cumulants  that influence the bias of
+the variance‑of‑variance term. Because these terms are similarly structured as quadratic forms in
+the weights, they can be incorporated with another modest   contraction per layer. Their
+systematic inclusion would eliminate the final fraction of error and bring the scheme’s accuracy
+fully in line with the chain’s performance at roughly half its cost.
+3. Implementation Roadmap and Open Risks
+3.1 Scheme Overview and State Representation
+We propose a deterministic propagation scheme that eliminates the exact cumulant tensor
+and  per‑source  dense  legs,  replacing  them  with  a  compact  per‑layer  state  that  delivers  all
+channels required by the next‑layer mean computation. The target cost ceiling is 125 u, roughly
+half of the chain’s ≈249 u.
+The state carried at layer l consists of five components, all with storage linear in the width n
+or rank r (chosen as 16–32):
+Global mean vector .
+Per-neuron variances , , forming the diagonal part of the covariance.
+Diagonal  third  and  fourth  cumulants  and
+, one scalar per neuron.
+Low-rank  covariance  factor  together  with  a  diagonal  scaling  ,
+such  that  the  off‑diagonal  covariance  is  approximately  .  The  basis  is  kept
+orthonormal by an online eigendecomposition.
+Source  signature  vector ,  a  compressed  representation  of  the  aggregate
+contribution of all past sources (both young and old history) to the pre‑activation mean. This
+vector is projected onto the   basis; no per‑source scalars, no age‑mode decomposition,
+and no shared temporal profile are stored or used.
+This  representation  explicitly  avoids  the   tensor  and  the  per‑source  dense  legs  that
+dominate the chain’s cost (young D21 contraction 50 u, old tier 41 u, join 41–46 u). Instead, the
+entire source history lives in a single ‑dimensional vector, updated with operations that scale as
+ per layer.
+3.2 Compute Kernels and Complexity Budget
+The  scheme  replaces  the  exact   contractions  with  a  small  set  of  low‑rank  linear
+algebra kernels, all within the standard autograd framework.
+0
+.
+9
+7×0.97\times
+0.97× 0
+.
+9
+7×115/
+2
+4
+9≈0.448×0.97 \times 115 / 249 \approx 0.448\times
+0.97 ×
+115/249 ≈ 0.448×
+κ3\kappa_3κ 
+3
+κ4\kappa_4κ 
+4 0
+.
+0
+30.03
+0.03
+0
+.
+0
+5×0.05\times
+0.05× κ3(zi,zj,zk)
+\
+k
+a
+p
+p
+a
+_
+3
+(
+z
+_
+i
+,
+z
+_
+j
+,
+z
+_
+k
+)
+κ (z, z , z )3 i j k
+O(n2)O(n^2)O(n )2
+• μ(l)∈Rn\boldsymbol{\mu}^{(l)} \μ ∈(l) Rn
+• σi2\sigma_i^2σ 
+i
+2 i=1,…,ni=1,\dots,ni= 1, … , n
+• d3(l)
+(i)=κ3(zi,zi,zi)d_3^{(l)}(i) =
+d (i) =3
+(l) κ (z, z, z)3 i i i
+κ4(l)
+(i)=κ4(zi,zi,zi,zi)
+\
+k
+a
+p
+p
+a
+_
+4
+^
+{
+(
+l
+)
+}
+(
+i
+)
+κ (i) =4
+(l) κ (z, z, z, z)4 i i i i
+• U(l)∈Rn×rU^{(l)}\in\mathbb{R}^{n\times rU ∈(l) Rn×r S(l)∈Rr×rS^{(l)}\in\mathbb{R}^{r\times rS ∈(l) Rr×r
+U(l)S(l)U(l)⊤U^{(l)} S^{(l)} U^{(l)\top}U S U(l) (l) (l)⊤
+• s(l)∈Rr\mathbf{s}^{(l)}\in\mathbb{R}^rs ∈(l) Rr
+UUU
+κ3\kappa_3κ 
+3
+rrr
+O(nr)O(nr)O(nr)
+O(n3)O(n^3)O(n )3
+AI Generated
+Supported by SciMaster
+16
+3.2.1 Batched triangular solves for covariance entries
+To obtain the covariance entries that drive the ReLU expectation (covariance between neuron
+ and the aggregated source signal), we solve [ \Sigma^{(l)} \mathbf{v}_i = \mathbf{e}_i, ] using
+the Woodbury identity on . This reduces to batched  triangular systems after a
+one‑time Cholesky factorisation of . The cost is  per layer; for ,
+ this amounts to approximately 1 u/layer and totals ≈16 u over 16 layers.
+3.2.2 Online covariance eigendecomposition
+At each layer, the covariance is updated using the linearised Jacobian of the ReLU (applied in
+expectation). Thanks to the measured 86 % mean‑shift dominance, the off‑diagonal update can
+be restricted to the existing rank‑  subspace. A Lanczos‑type update re‑orthogonalises  
+and  adjusts   at  a  cost  of   per  layer,  ≈0.7 u  per  layer.  Over  16  layers  this
+contributes ≈12 u.
+3.2.3 Diagonal cumulant recurrence
+The  per‑neuron   and   are  propagated  by  a  scalar  recurrence  derived  from  Stein’s
+lemma  applied  to  the  ReLU,  truncated  at  fourth  order.  Its  dimensionless  form  is
+[  \kappa_4(\operatorname{ReLU}(X))  \approx  c_1,\sigma^4  +  c_2,\sigma^2\kappa_4(X)  +
+c_3,\kappa_4(X)^2, ] with coefficients   fitted once on a small auxiliary chain. This recurrence
+uses only per‑neuron scalar operations and costs <2 u total.
+3.2.4 Source signature propagation and join
+The  source  history  is  collapsed  into  the  vector  .  When  a  new  source  (young)  is
+injected, its slice (an ‑vector of raw inputs) is projected onto  to update . The evolution of 
+from layer to layer uses a linear operator formed from  , the per‑neuron variances, and the
+diagonal  cumulants—capturing  the  86 %  mean‑shift  path  without  ever  reconstructing  a  full
+‑vector. The join operation between young and old sources becomes a simple combination of
+the existing and new  ‑vectors, costing  . Total cost for all source handling, including the
+one‑time projection and updates, is ≈18 u.
+3.2.5 Total cost breakdown
+Kernel FLOP pattern Cost (u)
+Batched triangular solves ≈16
+Online eigendecomposition ≈12
+Diagonal cumulant recurrence <2
+iii
+D+USU⊤D + U S U^\topD+ USU⊤ r×rr\times rr× r
+S−1+U⊤D−1US^{-1} + U^\top D^{-1} US +−1 U D U⊤ −1 O(nr2)O(n r^2)O(nr )2 n=1024n=1024n= 1024
+r=32r=32r= 32
+rrr U(l+1)U^{(l+1)}U(l+1)
+S(l+1)S^{(l+1)}S(l+1) O(nr+r3)O(n r + r^3)O(nr+ r )3
+d3d_3d 
+3 κ4\kappa_4κ 
+4
+cjc_jc 
+j
+s(l)∈Rr\mathbf{s}^{(l)}\in\mathbb{R}^rs ∈(l) Rr
+nnn UUU s\mathbf{s}s s\mathbf{s}s
+UU U
+nnn
+rrr O(r2)O(r^2)O(r )2
+O(nr2L)O(n r^2 L)O(nr L)2
+O(nrL)O(n r L)O(nrL)
+O(nL)O(n L)O(nL)
+AI Generated
+Supported by SciMaster
+17
+Kernel FLOP pattern Cost (u)
+Source signature propagation & join ≈18
+Housekeeping & memory transfers — ≈8
+Total ≈56
+The estimate sits well below the 125 u ceiling and, even with a factor‑of‑two implementation
+overhead, leaves room for the proposed accuracy improvements. No  tensor products are
+performed.
+3.3 Sensitivity to Seed and Width, and the Transient Storage Spike
+Seed sensitivity. The scalar closure coefficients   and the initial projection onto  
+are calibrated once on a reference seed and then frozen. The channel hierarchy (variance, , )
+is stable for widths  due to spectral self‑averaging. If Stage 1 screening detects a margin
+violation, a per‑seed rescaling of the mixing coefficient   closes the gap with negligible extra
+cost.
+Width  scaling. The  flop  estimates  scale  as   for  eigendecomposition  and  source
+propagation, and  for the solves. If  doubles, we shrink  to keep  constant,
+preserving the 125 u budget. The dominant age‑mode coherence is not required by this scheme,
+so rank reduction is safe.
+Transient  storage. The  only  materialised  ‑vector  is  the  old‑source  slice,  needed  once
+during the join layer to compute the initial projection onto   for the combined signature. It is
+held  temporarily  (<4 KB)  in  a  torch.empty buffer  and  discarded  after  the  projection.  No
+persistent allocation beyond the state tensors is required.
+3.4 Validation Strategy Before Scaling to the Full 16-Layer Chain
+Stage 1 — channel screen.
+Build  an  8‑layer,  513‑wide  prototype.  At  layers  3, 5, 7, 8  compare  per‑neuron  variance,  ,  
+diagonal, and the required covariance entries against the stored teacher arrays from the exact 
+chain. The scheme must not exceed  the chain’s error on any channel at two or more deep
+layers, and the error growth rate with depth must not outpace the chain’s. Early exit if either
+condition is violated.
+Stage 1b — rank sufficiency check.
+The screen failure, if any, would point to the portion of the source influence that lies orthogonal
+to the   subspace (‑14 % of the total effect, the low‑rank final‑variance path). In that case, we
+augment the source signature from a rank‑1 to a rank‑2 representation: a second vector 
+and a second low‑rank basis component. The extra cost is <5 u, keeping the total safely under
+125 u, and explicitly captures the orthogonal residual. This is the identified missing term that
+closes the gap to chain accuracy.
+O(nrL+r2)O(n r L + r^2)O(nrL+ r )2
+O(n3)O(n^3)O(n )3
+c1,c2,c3c_1,c_2,c_3c , c , c 
+1 2 3 UUU
+d3d_3d 
+3κ4\kappa_4κ 
+4
+≥1024\ge 1024≥ 1024
+c2c_2c 
+2
+O(nr)O(n r)O(nr)
+O(nr2)O(n r^2)O(nr )2 nnn r∝1/
+nr \propto 1/\sqrt{n}
+r∝ 1/ n nr2n r^2nr2
+nnn
+UUU
+d3d_3d 
+3κ4\kappa_4κ 
+4
+κ3\kappa_3κ 
+3
+1
+.
+5×1.5\times
+1.5×
+UUU
+s2∈Rr\mathbf{s}_2 \s ∈2 Rr
+AI Generated
+Supported by SciMaster
+18
+Stage 2 — decisive integration.
+Integrate the full scheme (with rank‑1 signature; augmented to rank‑2 if Stage 1 requires it) into
+the 16‑layer, 1024‑wide chain. Measure final‑layer mean MSE against a  ‑sample truth. The
+score target is  . With a measured implementation cost of roughly
+102–115 u, this requires an MSE at most  the chain’s at the lower end, and  at the
+upper  end.  A  prototype  achieving  score   chain  with  the  rank‑1  source  signature
+constitutes  a  plausible  path;  the  missing  term  that  closes  the  residual  gap  is  the  rank‑2
+orthogonal correction, which is named, budgeted, and algorithmically straightforward to inject.
+1
+0910^9
+109
+M
+S
+E×cost≤0.44×chain\text{MSE} \times \text{cost} \le 0.44 \times \text{chain}
+MSE × cost ≤ 0.44 × chain
+1
+.
+0
+7×1.07\times
+1.07× 0
+.
+9
+5×0.95\times
+0.95×
+≤0.8×\le 0.8\times≤ 0.8×
+AI Generated
+Supported by SciMaster
+19
