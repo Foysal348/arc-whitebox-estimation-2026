@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-24 (Sonnet: young-tier contraction order already optimal)",
+ "updated": "2026-09-25 (Opus R12: kappa4 is carried memory; next Q18)",
  "baseline": "Best graded: #332110 score 5.1284e-9 (raw 2.1046e-8) — v40fb (FB 1.25 + beta 1.2). আগের: #331787 5.137e-9. Plain chain on public MLP #0: final MSE 2.290e-8.",
  "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে। Horizon oracle: kappa3 স্মৃতি খুব লম্বা — ১০ বয়স রাখলেও layer 15-এ 16% error; বয়সের অবদান প্রায় সমান ও লম্ব।",
  "items": [
@@ -509,6 +509,32 @@
    "gate": "-",
    "next": "Young tier সস্তা করতে representation বদলাতে হবে, ক্রম না।",
    "files": "experiments/probes/sonnet10_*.py; consultations/sonnet/ROUND10_sonnet_report.md"
+  },
+  {
+   "id": "D22",
+   "priority": "-",
+   "status": "dead",
+   "source": "Opus 5.5 subagent (Round 12 accuracy thread)",
+   "title": "κ4-এর সস্তা per-layer নিয়ম (Astra kernel সস্তা করা, scale-mixture, C⊗C), B2/WK12 অর্ধেক পরিবার, λ refit, B1 স্মৃতি carrier",
+   "what": "Leaderboard-এর 15-25% accuracy ফাঁক কোথা থেকে, তার খোঁজ।",
+   "evidence": "নতুন ReLU physics গভীরে সত্যিকারের κ4-এর মাত্র 1-4% (L8 থেকে; L2-তে 1.02 sanity)। সত্যিকারের κ4 linear-ভাবে বহন করলে level 83-90%, pattern corr 0.77-0.80 (chain 0.26-0.34)। Chain-এর κ4-এ (1,1,1,1) all-distinct অংশ গঠনগতভাবেই নেই। Scale-mixture/C⊗C corr ≤0.09। FB 2.0 +3.8%/+3.2%, λ 0.85 +1.8%/+1.0% (MLP#0/synth)। D21 oracle: শুধু feedback-এ ×0.9999 (cross-talk মৃত), সব জায়গায় ×0.758 (নিখুঁত κ3 slice = -24%)। B1: সেরা ~2-product carrier L15-এ D21-এর 27% মিস; ঘাটতি 40%, rank90 ~85, আগের ধাপের সাথে corr -0.0004। 'κ4→κ3 feed arm' chain-এ আগেই আছে।",
+   "cost": "-",
+   "gate": "-",
+   "next": "Q18",
+   "files": "experiments/probes/opus12_*.py; consultations/fable/ROUND12_opus_report.md"
+  },
+  {
+   "id": "Q18",
+   "priority": "P1",
+   "status": "open",
+   "source": "Opus 5.5 subagent (Round 12)",
+   "title": "κ4 স্মৃতির দিগন্ত: শেষ 1-4 ধাপের birth কতটা pattern ধরে?",
+   "what": "opus12_k4_carry.py বাড়িয়ে সত্যিকারের κ4 শুধু শেষ h ধাপ (h=1..4) linear-ভাবে বহন করা; pattern corr আর level মাপা।",
+   "evidence": "κ4-এর গভীর pattern = বহন করা স্মৃতি (corr 0.77-0.80 বনাম chain 0.3); κ4 oracle -30%।",
+   "cost": "0u, ~30 মিনিট offline",
+   "gate": "শেষ 2 ধাপ ঘাটতির ≥ অর্ধেক ধরলে young κ4 carrier বানানো (~4 product/layer ≈ 28u, +11%); ship শুধু দুই network-এ raw ≥12% হলে",
+   "next": "আমি নিজে চালাব",
+   "files": "-"
   }
  ]
 }

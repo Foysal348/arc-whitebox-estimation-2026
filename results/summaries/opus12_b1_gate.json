@@ -1,0 +1,29 @@
+{
+ "part1_captures": {
+  "transport_check": 2.8740796661029273e-07,
+  "n_old15": 10,
+  "old_share_of_D21": 0.6536326409408683,
+  "slice_map_scale": 0.9985041292136821,
+  "err_vs_total_D21": 0.27327089845272273,
+  "err_vs_old": 0.41808025079556044,
+  "err_vs_total_decisive_rows": 0.24215283068565083,
+  "d3_err_vs_old": 0.24723575654163285
+ },
+ "part2_teacher": {
+  "15": {
+   "missing_share": 0.4062224448079257,
+   "rank90": 87,
+   "rank98": 253
+  },
+  "16": {
+   "missing_share": 0.40078609883090566,
+   "rank90": 82,
+   "rank98": 245
+  },
+  "align_16_from_15": {
+   "scale": -0.003486792418417082,
+   "corr": -0.0003667069994608847,
+   "rel_err_after_scale": 0.999999929584944
+  }
+ }
+}
