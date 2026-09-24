@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-24 (GPT Sol R9: DHMP মৃত, FHQR-2 P3)",
+ "updated": "2026-09-24 (Sol shift carrier: 2.9%, memory problem is spatial)",
  "baseline": "Best graded: #332110 score 5.1284e-9 (raw 2.1046e-8) — v40fb (FB 1.25 + beta 1.2). আগের: #331787 5.137e-9. Plain chain on public MLP #0: final MSE 2.290e-8.",
  "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে। Horizon oracle: kappa3 স্মৃতি খুব লম্বা — ১০ বয়স রাখলেও layer 15-এ 16% error; বয়সের অবদান প্রায় সমান ও লম্ব।",
  "items": [
@@ -405,6 +405,19 @@
    "gate": "-",
    "next": "প্রথম mode layer থেকে layer-এ একটা object হিসেবে transport হয় কি না — Sol-কে প্রশ্ন।",
    "files": "experiments/probes/r9_age_gram.py"
+  },
+  {
+   "id": "D14",
+   "priority": "-",
+   "status": "dead",
+   "source": "GPT 5.6 Sol (shift-stable coherent carrier)",
+   "title": "প্রথম age-mode-কে এক object হিসেবে layer থেকে layer-এ বহন (S_{l+1} = rho T S_l + birth)",
+   "what": "Age-Gram-এর প্রথম mode-এর ওজনে সব source যোগ করে একটা carrier; পরের layer-এ তার ওজন এক ধাপ সরে যায় কি না।",
+   "evidence": "L14 -> L15 (সত্যিকারের transported source দিয়ে): rho* = 0.944, eps_shift = 2.9% (শর্ত <= 2%; 2-5% = 'backbone')। Carrier + birth দিয়ে মোট D21: 13.9% error। মূল কথা: যেকোনো স্থির ওজন একই linear map-এ transport হয়, আর uniform ওজন (মোট kappa3 নিজেই) হুবহু shift-stable — তাই coherent mode সময়ের অক্ষে নতুন কিছু দেয় না। সমস্যা পুরোপুরি SPATIAL: একটা ঘন cubic tensor (মোট) সস্তায় ধরা।",
+   "cost": "-",
+   "gate": "-",
+   "next": "Spatial প্রশ্ন: মোট kappa3-এর কোন representation 3kn column-এর চেয়ে সস্তা আর transport + ReLU-তে টিকে থাকে? (Tucker/TT/ISDF/vector-metric মৃত)",
+   "files": "experiments/probes/r9_shift_carrier.py"
   }
  ]
 }

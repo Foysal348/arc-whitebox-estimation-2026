@@ -128,6 +128,8 @@ The κ₄ number corrects our earlier record (and the ~9 % ceiling quoted from t
 
 **11.9 Shipped from this analysis.** Restoring a quarter of the Edgeworth K×C family that the port carries at half strength (feedback scale 1.25) together with the adaptive κ₄ exponent 1.2: 100-network paired score ×0.9946 ± 0.0007 at zero cost; graded 5.1284e-9 (raw 2.1046e-8), submission #332110.
 
+**11.10 The κ₃ memory is long and coherent, and its problem is spatial (measured on dense source captures).** Keeping only the sources younger than h layers leaves 16 % of the layer-15 (2,1) slice at h = 10; a dressed Gaussian tree rebuilt from pair state alone (no memory) is 36–40 % wrong one step ahead. The age contributions are coherent (mean pairwise cosine 0.29–0.39; one age-mode carries ≈ 88 % of the deep total, with same-sign loadings) but not low-rank to 2 % (six modes leave 8.5 %), and the first mode is shift-stable only to 2.9 % between consecutive layers. Because transport is one linear map shared by every source, the total κ₃ is itself carried exactly as a single object; what a cheaper estimator needs is not a new temporal law but a compact spatial representation of that one cubic tensor.
+
 ## 12. Open experiments and earlier negative results [OPEN]
 
 - **Compensating closure (done, negative).** With the old tier removed the raw MSE is 7.43e-7 (32×) and no closure knob moves it: κ₄-regeneration scale 0.5–2.0 → 7.45–7.56e-7, frozen table 7.42e-7, a one-time young amplitude γ = 0.9 / 1.1 / 1.2 / 1.4 → 8.7e-7 / 6.8e-7 / 7.0e-7 / 9.9e-7 (a shallow −8 % optimum, still 30× the base). Keeping one more / one fewer age gives 4.9e-7 / 1.1e-6: the omitted content decays geometrically, ×0.66 per age, so every age is needed. (10 mini MLPs, baked 1e9 truth.)
