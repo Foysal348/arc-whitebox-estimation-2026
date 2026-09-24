@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-25 (Opus R12: kappa4 is carried memory; next Q18)",
+ "updated": "2026-09-25 (Q18: kappa4 memory is long; young carrier dead)",
  "baseline": "Best graded: #332110 score 5.1284e-9 (raw 2.1046e-8) — v40fb (FB 1.25 + beta 1.2). আগের: #331787 5.137e-9. Plain chain on public MLP #0: final MSE 2.290e-8.",
  "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে। Horizon oracle: kappa3 স্মৃতি খুব লম্বা — ১০ বয়স রাখলেও layer 15-এ 16% error; বয়সের অবদান প্রায় সমান ও লম্ব।",
  "items": [
@@ -62,11 +62,11 @@
    "source": "GPT 5.6 Sol R9 (FHQR-2)",
    "title": "Finite-Horizon Query Response (h = 2): ২ layer-এর kappa3 স্মৃতি query-space-এ, বাকিটা tree দিয়ে",
    "what": "Source bank-এর বদলে দুটো global n x n response matrix H = K3[:, Q, Q] (Q = পরের ১ ও ২ layer-এর query) বয়ে নেওয়া; পুরোনো অংশ dressed tree দিয়ে পূরণ।",
-   "evidence": "Horizon oracle (Fable-এর dense source capture, source-যোগফল chain D21-এর সাথে 1.5e-7 পর্যন্ত মেলে): শেষ h বয়স রেখে বাকি বাদ দিলে D21 error — layer 15: h2 84%, h4 65%, h6 46%, h8 31%, h10 16%; layer 11: h2 72%, h8 10%। প্রতিটা বয়স প্রায় সমান ভাগ দেয় (~0.15-0.20), আর অবদানগুলো প্রায় পরস্পর-লম্ব। FHQR-2 মৃত; Sol-এর নিয়মে: leader-রা লম্বা স্মৃতি রাখে কিন্তু একেবারে ভিন্ন সস্তা coordinate-এ।",
+   "evidence": "Horizon oracle (Fable-এর dense source capture, source-যোগফল chain D21-এর সাথে 1.5e-7 পর্যন্ত মেলে): শেষ h বয়স রেখে বাকি বাদ দিলে D21 error — layer 15: h2 84%, h4 65%, h6 46%, h8 31%, h10 16%; layer 11: h2 72%, h8 10%। প্রতিটা বয়স প্রায় সমান ভাগ দেয় (~0.15-0.20), আর অবদানগুলো প্রায় পরস্পর-লম্ব। FHQR-2 মৃত; Sol-এর নিয়মে: leader-রা লম্বা স্মৃতি রাখে কিন্তু একেবারে ভিন্ন সস্তা coordinate-এ। | ফল (q18_k4_horizon.py, N=1e6, MLP#0): L−h-এ সব স্মৃতি মুছে Gaussian দিয়ে h ধাপ আসল network চালালে decisive neuron-এ κ4 level L12: h=1/2/3/4/6 → 2/6/12/18/35%, L16: 3/2/5/9/20%; teacher-এর সাথে pattern corr L12 0.23/0.40/0.53/0.67/0.78, L16 0.20/0.41/0.59/0.65/0.77; best-scale errG4 h=2: 0.90/0.99, h=6: 0.37/0.63 — chain 0.19/0.21। শেষ ২ ধাপের জন্ম κ4-এর মাত্র 2-6% বহন করে; ৬ ধাপেও 20-35%। κ4-এর স্মৃতি κ3-এর মতোই লম্বা: young κ4 carrier মৃত; κ4 lever-এর জন্য পুরো κ4 source chain লাগবে — খরচে বন্ধ।",
    "cost": "~82-90 u (Strassen) দাবি",
    "gate": "teacher-forced D21 error <= 2.5%",
-   "next": "Source capture দিয়ে h = 1/2 oracle (Sol-এর falsifier 10-12)।",
-   "files": "experiments/probes/r9_horizon_oracle.py"
+   "next": "-",
+   "files": "experiments/probes/q18_k4_horizon.py"
   },
   {
    "id": "Q1",
@@ -526,15 +526,15 @@
   {
    "id": "Q18",
    "priority": "P1",
-   "status": "open",
+   "status": "dead",
    "source": "Opus 5.5 subagent (Round 12)",
    "title": "κ4 স্মৃতির দিগন্ত: শেষ 1-4 ধাপের birth কতটা pattern ধরে?",
    "what": "opus12_k4_carry.py বাড়িয়ে সত্যিকারের κ4 শুধু শেষ h ধাপ (h=1..4) linear-ভাবে বহন করা; pattern corr আর level মাপা।",
-   "evidence": "κ4-এর গভীর pattern = বহন করা স্মৃতি (corr 0.77-0.80 বনাম chain 0.3); κ4 oracle -30%।",
+   "evidence": "κ4-এর গভীর pattern = বহন করা স্মৃতি (corr 0.77-0.80 বনাম chain 0.3); κ4 oracle -30%। | ফল (q18_k4_horizon.py, N=1e6, MLP#0): L−h-এ সব স্মৃতি মুছে Gaussian দিয়ে h ধাপ আসল network চালালে decisive neuron-এ κ4 level L12: h=1/2/3/4/6 → 2/6/12/18/35%, L16: 3/2/5/9/20%; teacher-এর সাথে pattern corr L12 0.23/0.40/0.53/0.67/0.78, L16 0.20/0.41/0.59/0.65/0.77; best-scale errG4 h=2: 0.90/0.99, h=6: 0.37/0.63 — chain 0.19/0.21। শেষ ২ ধাপের জন্ম κ4-এর মাত্র 2-6% বহন করে; ৬ ধাপেও 20-35%। κ4-এর স্মৃতি κ3-এর মতোই লম্বা: young κ4 carrier মৃত; κ4 lever-এর জন্য পুরো κ4 source chain লাগবে — খরচে বন্ধ।",
    "cost": "0u, ~30 মিনিট offline",
    "gate": "শেষ 2 ধাপ ঘাটতির ≥ অর্ধেক ধরলে young κ4 carrier বানানো (~4 product/layer ≈ 28u, +11%); ship শুধু দুই network-এ raw ≥12% হলে",
-   "next": "আমি নিজে চালাব",
-   "files": "-"
+   "next": "-",
+   "files": "experiments/probes/q18_k4_horizon.py"
   }
  ]
 }
