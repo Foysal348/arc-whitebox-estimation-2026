@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-24 (Round 11 diagonal closures dead)",
+ "updated": "2026-09-24 (Round 11: particles and rank-k CP dead)",
  "baseline": "Best graded: #332110 score 5.1284e-9 (raw 2.1046e-8) — v40fb (FB 1.25 + beta 1.2). আগের: #331787 5.137e-9. Plain chain on public MLP #0: final MSE 2.290e-8.",
  "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে। Horizon oracle: kappa3 স্মৃতি খুব লম্বা — ১০ বয়স রাখলেও layer 15-এ 16% error; বয়সের অবদান প্রায় সমান ও লম্ব।",
  "items": [
@@ -470,6 +470,32 @@
    "gate": "-",
    "next": "-",
    "files": "experiments/probes/r11_rsc_gate.py"
+  },
+  {
+   "id": "D19",
+   "priority": "-",
+   "status": "dead",
+   "source": "SciMaster (Round 11): Deterministic Particle Propagation / dNTC",
+   "title": "Source bank-এর বদলে K = kM (~448) deterministic moment-matched particle; সব channel cloud-এর empirical cumulant থেকে",
+   "what": "Spherical design / cross-polytope particle, প্রতি particle-এ exact W আর ReLU; খরচ ~K/n u প্রতি layer।",
+   "evidence": "সরাসরি free-run (MLP #0, L15): cross-polytope 2048 — variance 3.0%, C off 16%, d3 47%, K4d 183%, D21 74%; দুই-radius 4096 — প্রায় একই; 448 particle — variance 6.7%, D21 160%। Deterministic design আর random Gaussian-এর মধ্যে পার্থক্য প্রায় নেই (প্রথম ReLU-র পরে design-এর গুণ হারায়)। Chain: variance 0.14%, D21 6.6% — ২০-৫০ গুণ খারাপ। (sampling আগেই মৃত।) dNTC landmark অংশ = Nyström/ISDF (মৃত)।",
+   "cost": "-",
+   "gate": "-",
+   "next": "-",
+   "files": "experiments/probes/r11_particle_gate.py"
+  },
+  {
+   "id": "D20",
+   "priority": "-",
+   "status": "dead",
+   "source": "Round 11: aggregated rank-k old kappa3 (T_old ~ sum sigma_a u_a x u_a x v_a, k ~ 230)",
+   "title": "পুরোনো kappa3-এর aggregate rank-k CP, factor-গুলো B দিয়ে transport",
+   "what": "সব পুরোনো source একসাথে একটা CP-তে; transport প্রতি factor-এ exact; D21 = (U o U) diag(sigma) V^T।",
+   "evidence": "নতুন run লাগেনি, আগের মাপা প্রমাণ: (১) pooled old tensor-এর (a)|(bc) unfolding-এ 2% পেতে rank ~250 লাগে (32/128/256 -> 35/7.8/1.6%) — এটা CP rank-এর নিম্নসীমা, বাস্তবে CP আরও অনেক বেশি rank চায়; (২) chain-এ CP-rank capping 2%-এর জন্য ~8n column চেয়েছে; (৩) forum-এর rank-4608 CP channel 1.07e-7 (chain-এর ৫ গুণ খারাপ)। দাবি করা 'rank-230-এ 2%' আসলে D21 slice-এর matrix rank, tensor-এর CP rank না। প্রতি layer-এ ~3n নতুন rank-এর birth যোগ হয়, আর re-compression (factored CP-ALS) প্রতি sweep-এ ~2u খরচ।",
+   "cost": "-",
+   "gate": "-",
+   "next": "-",
+   "files": "docs notes F88/K3 pooled-core rows"
   }
  ]
 }

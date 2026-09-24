@@ -1,0 +1,125 @@
+Round 11 — Change What is Represented
+Corrected technical assessment of the aggregated rank-k old
+third-cumulant proposal
+Bottom line. The supplied aggregated rank-k idea is a stronger candidate than the earlier query-only
+construction because it preserves long-lived old third-cumulant information in a transport-compatible
+representation. However, the previous PDF overstated what follows from a rank-230 Frobenius
+approximation and understated the cost/accounting and nonlinear recompression issues. The scheme
+should be treated as a promising candidate, not as a demonstrated ≤125u solution.
+1. State carried per layer
+Carry the usual mean μ and covariance C, plus an aggregate old third-cumulant representation:
+ T_old ≈ Σ(a=1..k) σ_a · u_a ⊗ u_a ⊗ v_a.
+This removes per-source dense legs and never materializes the full n×n×n tensor. The representation
+is transport-compatible under a linear map B because each factor can be pushed forward:
+ u_a ← B u_a, v_a ← B v_a.
+2. What is genuinely good about it
+ • It attacks the right object. The old κ3 contribution is long-lived and coherent, while the final mean is
+ mainly sensitive through next-layer mean shifts. An aggregate representation can preserve that
+memory without retaining every source separately.
+• Transport is exact before truncation. If the current aggregate representation is exact, linear
+ transport of each rank-one component is exact. The approximation enters through the initial
+truncation and any later recompression, not through the transport itself.
+• It is directly falsifiable. The stored teacher arrays can test the exact channels that matter: variance,
+ diagonal d3, K4d, and the covariance entries feeding them.
+• It is plausibly outside the measured dead list. It is not source-by-source storage, and it does not
+ require a shared basis for all individual source legs. It is an aggregate representation of the
+combined old contribution.
+3. The important corrections
+A. Rank-230 D21 error does not imply 2% channel error. A Frobenius-optimal rank-k approximation
+minimizes ||D21−D21_k||_F, but the next-layer variance uses specific W-weighted quadratic queries. A
+small global Frobenius residual can still concentrate in directions that matter strongly to those queries.
+Therefore the decisive quantities are the actual channel errors, not D21 Frobenius error alone.
+B. The d3 factor needs a convention check. If T = Σ σ_a u_a⊗u_a⊗v_a literally, then T_iii = Σ σ_a u_ai²
+v_ai. A factor of 3 is not automatic. It is valid only if the stored representation is a specifically
+symmetrized convention whose diagonal expands with that factor. Match this exactly to the teacher
+definition before testing.
+C. The nonlinear/ReLU recompression step is the key missing algorithmic detail. Linear transport can
+preserve the factors, but after the ReLU/young-source join the aggregate old contribution must either
+remain representable without rank growth or be deterministically recompressed. If recompression
+requires forming the dense tensor, the claimed cost advantage disappears. The implementation
+therefore needs an explicit factor-space update/recompression rule and its cost must be included.
+D. The quoted cost needs normalization. For n=1024 and k=230, two n×n matvecs per component
+require about 4.82×10^8 multiply/add-scale operations per layer. Relative to n^3 this is approximately
+0.449 n^3, not 0.22 n^3. The ~400-neuron contraction is about 9.42×10^7 operations, approximately
+0.090 n^3. Use the competition's exact unit convention when converting these counts to u. In any
+
+case, the old-tier overhead is not enough by itself to establish a total ≤125u if the young tier remains
+near 153u.
+4. Correct channel formulas
+For T_ijk ≈ Σ σ_a u_ai u_aj v_ak, the required D21 slice is:
+ D21_i,c = Σ_a σ_a · u_ai² · v_ac.
+The old contribution to the variance of output neuron i is:
+ δVar_i = Σ_a σ_a · [w_iᵀ(u_a∘u_a)] · [w_iᵀ v_a].
+The diagonal third cumulant must follow the exact teacher convention; under the literal unsymmetrized
+tensor above:
+ d3_i = Σ_a σ_a · u_ai² · v_ai.
+5. The decisive Stage-1 screen
+Do not use D21 Frobenius error as the main gate. Use the stored teacher arrays to compare the actual
+mean-relevant channels. At layers 7, 11, 14, 15 and 16, report relative errors separately for diagonal
+and off-diagonal quantities.
+Channel
+Required test
+Variance
+Relative error of the old-source variance correction; emphasize the W-weighted query.
+d3
+Relative error per neuron using the exact teacher convention.
+K4d
+Relative error in the diagonal fourth cumulant after the closure.
+Covariance
+Diagonal and off-diagonal C errors at the layers used by the chain.
+Use the user's gate exactly: kill the method if any channel is ≥1.5× the chain error at two or more deep
+layers, or if its error grows with depth faster than the chain. Also perform both teacher-forced one-step
+tests and a true free-run from layer 1; the latter is essential because a source-free or locally accurate
+approximation can accumulate memory error.
+6. Comparison with the earlier alternative
+ Criterion
+Earlier query-focused idea
+Aggregated rank-k proposal
+Object represented
+Only mean-relevant projections
+Aggregate old κ3 / D21 structure
+Long-memory preservation
+Potentially incomplete
+Explicitly retained
+Linear transport
+Query-dependent
+Exact on retained factors
+Source legs
+Avoided
+Avoided
+Main risk
+Missing an important query
+Rank growth / recompression + query mismatch
+Falsifiability
+Moderate
+Strong with stored teacher arrays
+Current status
+More speculative
+More promising, still unproven
+7. Recommended single falsifier
+At layer 7, take the exact old-source aggregate from the teacher data. Construct its best rank-k
+representation for k = 100, 150, 200, 230, 300. For each k, immediately evaluate the three quantities
+that matter to the next-layer means: (i) the W-weighted variance correction for the active neurons, (ii)
+d3, and (iii) K4d after the existing closure. Then run the same factor state forward without teacher
+resets to layers 11, 14, 15 and 16. This single experiment simultaneously tests compression quality,
+query alignment, and memory stability.
+
+Interpretation: If k=230 passes the channel gate and the free-run errors remain within the chain's gate,
+the representation is worth integrating. If it fails, the failure mode tells you what to fix: a variance-only
+failure indicates query-misaligned compression; a depth-growing failure indicates rank
+loss/recompression error; a d3/K4d failure indicates that D21 alone is not sufficient to reconstruct the
+channels required by the closure.
+8. Stage 2 target
+Only after Stage 1 passes should the method be integrated into the chain. Measure final-layer mean
+MSE against the 1e9-sample truth, paired with the chain, and then test across 100 MLPs on Kaggle.
+Apply the supplied score thresholds exactly: MSE ≤ 1.07× chain at 102u, ≤ 0.95× at 115u, or ≤ 0.84×
+at 125u. A prototype is plausibly useful at ≤0.8× chain score, but that is not the final target.
+Final assessment
+Verdict: the aggregated rank-k mechanism is the better Round-11 direction. Its central
+insight—compress the aggregate long-memory third-cumulant content rather than each source leg—is
+exactly the representation change the measurements suggest. But the claim that k=230 gives the
+required channel accuracy is not established by a 2% Frobenius D21 result, and the total-cost claim
+must be recomputed using the same u normalization as the chain. The next experiment should
+therefore be a channel-aware, free-run rank sweep, not another argument from matrix rank alone.
+Note: This corrected version intentionally avoids the broken LaTeX rendering that affected the previous PDF. Equations
+are rendered as plain Unicode text so they remain legible in standard PDF viewers.
