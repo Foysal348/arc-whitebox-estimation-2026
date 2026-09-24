@@ -49,10 +49,10 @@
    "source": "নিজের (moonshot A)",
    "title": "Young tier (~104 u) অর্ধেক খরচে — Round 10 prompt",
    "what": "Age 1-4 source-এর transport + contraction কম product-এ: A = P a_b ব্যবহার, পরপর source-এর shared propagator factor, age-1/2 closed form, batched contraction।",
-   "evidence": "Cost ledger: young transport ~54 u + contraction ~50 u। একজন leader সমান accuracy অর্ধেক খরচে দেখিয়েছে।",
+   "evidence": "Cost ledger: young transport ~54 u + contraction ~50 u। একজন leader সমান accuracy অর্ধেক খরচে দেখিয়েছে। নিজের বীজগণিত (24 Sep): (১) A = P a_b দিয়ে A-transport বাদ — লাভ নেই, (P o A) term-এ A-র entry-wise মান লাগে তাই A বানাতে n^3 লাগেই; (২) P_old = P_new M — তৈরি করতেও n^3; (৩) batching — FLOP একই; (৪) age-1 P = W আগেই কাজে লাগানো। Hadamard গুণফল full-rank (Khatri-Rao wall) — প্রতি source-layer ৪টা n^3 এই কাঠামোর ন্যূনতম। সমাধান থাকলে কাঠামোর বাইরে।",
    "cost": "গবেষণা",
    "gate": "D21 relative error <= 2% রেখে <= 55 u",
-   "next": "Round 10 prompt AI-দের কাছে (consultations/prompts/ROUND10_prompt_young_tier_cost.md); আমি নিজেও বীজগণিত দেখছি।",
+   "next": "Round 10 AI উত্তরের অপেক্ষা।",
    "files": "-"
   },
   {
