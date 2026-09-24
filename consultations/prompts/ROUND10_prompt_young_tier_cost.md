@@ -9,7 +9,7 @@ Fixed bias-free ReLU MLP, width n = 1024, depth 16, weights N(0, 2/n), input x ~
 means. Score = MSE × max(0.1, FLOPs/2⁴¹). 1 u = 2³¹ FLOPs = one dense n³ product; a level-5 Strassen square product
 counts ≈ 0.51 u. Our estimator: 504aldo's factorised K = 3 cumulant chain (mean, covariance, κ₃ as a sum over sources,
 memoryless κ₄, bivariate Wick/Edgeworth closure). A source born at a ReLU carries two n × n legs P (the propagator,
-P ← W·diag(Φ)·P each layer, identity at birth) and A = P·a_b (a_b = diag(Φ)·C_off); the next closure needs
+P ← W·diag(Φ)·P each layer) and a second leg A (A is a second dense leg, born as W·X_b (X_b an n×n birth matrix built from the covariance) and transported alongside P; measured on our captures, A and P are NOT related by any fixed right factor (P⁻¹A changes by 100–970% between consecutive layers), so both legs must be transported); the next closure needs
 D21 = Σ_s [(P_s∘P_s)·diag(w_s)·A_sᵀ + 2(P_s∘A_s)·diag(w_s)·P_sᵀ]/3 and its diagonal. Sources older than 4 layers are
 moved into a shared rank-384 basis (rank-224 sub-basis after age 7).
 
@@ -51,11 +51,11 @@ old tier ≈ 41 u, thin legs ≈ 15 u, covariance + closure ≈ 8 u, Strassen ad
 cost). Success brings the total from ~249 u to ~200 u.
 
 Already checked by us and found to save nothing (do not re-propose without an exact count that says otherwise):
-- skipping A's transport because A = P·diag(a_b): the Hadamard terms need A entry-wise, so forming A costs n³ anyway;
+- skipping A's transport: A is not a fixed function of P (measured), and forming it entry-wise costs n³ anyway;
 - reusing P_old = P_new·M: forming it is itself an n³ product;
 - batching the four ages into wider products: identical FLOPs;
 - age-1 P = W: already used.
-We are also running an exact contraction-order search of the young-tier tensor network (mixed forward/reverse orders).
+An exact contraction-order search (24 Sep) found NO cheaper order: the shipped forward order is at the floor (4 relative products per source lifetime for transport; the Hadamard hyperedge forces materialisation, and the code already fuses to 2 right-factor contractions); reverse-style suffix precompute costs +75%, per-age independent +150%. A cheaper young tier must change the representation, not the order.
 
 Also measured (so a proposal cannot rely on them): the next layer's d3 is fed 90–99% by off-diagonal κ3; diagonal-only
 transport, low-rank covariance, rank-1 κ3, slice-state recursions, deterministic particles and aggregate CP are all dead.
@@ -67,7 +67,7 @@ source ages at every layer. **Is there an algebraic reorganisation or a differen
 that produces the same D21 (to ≤ 2 % relative error) and its diagonal at ≤ 55 u in total?** For example (take or reject
 with a reason): exploiting that consecutive young sources share propagator factors (P_{b} = P_{b+1}·M_{b+1}); computing
 the age-1 and age-2 contributions in closed form from W, C and a_b without transporting their legs; batching the
-contractions of all four ages into fewer products; or avoiding the separate A-leg transport since A = P·a_b.
+contractions of all four ages into fewer products.
 
 Deliverable: the method, its exact FLOP count per layer (count every product at its real shape; Strassen only for
 square products), why its D21 error stays ≤ 2 %, and one falsifier we can run on stored legs (we have dense legs,

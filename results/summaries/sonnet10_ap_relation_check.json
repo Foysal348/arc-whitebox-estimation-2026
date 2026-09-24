@@ -1,0 +1,109 @@
+{
+ "layers": {
+  "15": [
+   {
+    "s": 0,
+    "age": 14,
+    "rel_col_nonconstancy": 9.098186658668784,
+    "frob_A": 8.615895470576572,
+    "frob_P": 8.581854620895916
+   },
+   {
+    "s": 1,
+    "age": 13,
+    "rel_col_nonconstancy": 9.146039631934322,
+    "frob_A": 10.282542859073837,
+    "frob_P": 11.075323055070404
+   },
+   {
+    "s": 2,
+    "age": 12,
+    "rel_col_nonconstancy": 8.958088723440099,
+    "frob_A": 12.355168629409931,
+    "frob_P": 13.376740084692438
+   },
+   {
+    "s": 3,
+    "age": 11,
+    "rel_col_nonconstancy": 9.181179531971921,
+    "frob_A": 14.249603243762689,
+    "frob_P": 16.014424815171594
+   },
+   {
+    "s": 4,
+    "age": 10,
+    "rel_col_nonconstancy": 9.061843684655718,
+    "frob_A": 15.596901133175665,
+    "frob_P": 18.783744132548573
+   },
+   {
+    "s": 5,
+    "age": 9,
+    "rel_col_nonconstancy": 9.43757253656346,
+    "frob_A": 16.832540374015785,
+    "frob_P": 21.38395682269498
+   },
+   {
+    "s": 6,
+    "age": 8,
+    "rel_col_nonconstancy": 9.025969685458499,
+    "frob_A": 17.860427765923266,
+    "frob_P": 24.0337739517989
+   },
+   {
+    "s": 7,
+    "age": 7,
+    "rel_col_nonconstancy": 9.2178777355359,
+    "frob_A": 18.735322256390983,
+    "frob_P": 28.47759182384857
+   },
+   {
+    "s": 8,
+    "age": 6,
+    "rel_col_nonconstancy": 8.880899649222291,
+    "frob_A": 18.681385400046082,
+    "frob_P": 31.71407834924329
+   },
+   {
+    "s": 9,
+    "age": 5,
+    "rel_col_nonconstancy": 9.187094012244815,
+    "frob_A": 19.39461229740317,
+    "frob_P": 33.91668208583307
+   },
+   {
+    "s": 10,
+    "age": 4,
+    "rel_col_nonconstancy": 9.256909249591189,
+    "frob_A": 20.766425768923543,
+    "frob_P": 36.65888870370324
+   },
+   {
+    "s": 11,
+    "age": 3,
+    "rel_col_nonconstancy": 9.114676571930652,
+    "frob_A": 21.929740398237016,
+    "frob_P": 40.55493701519942
+   },
+   {
+    "s": 12,
+    "age": 2,
+    "rel_col_nonconstancy": 9.315508368700442,
+    "frob_A": 22.52421970700176,
+    "frob_P": 43.252974681805306
+   },
+   {
+    "s": 13,
+    "age": 1,
+    "rel_col_nonconstancy": 9.218033450924299,
+    "frob_A": 23.503412267602762,
+    "frob_P": 45.17095070221683
+   }
+  ]
+ },
+ "birth_code": {
+  "A_birth_line": "            a_b = fnp.multiply(w1col, C_off, out=legs[\"AP0\"][k_b, 0])",
+  "P_birth_line": "                fnp.copyto(legs[\"AP0\"][k, 1], W)",
+  "note": "A_birth = diag(w1col) @ C_off (row-scaled covariance); P_birth = W (raw weight matrix). Unrelated matrices -> A = P.diag(a_b) does not hold in this shipped code, so the LA@A^T + LP@P^T -> 1-matmul fusion is NOT available."
+ }
+}

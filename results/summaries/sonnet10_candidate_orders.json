@@ -1,0 +1,25 @@
+{
+ "mm_unit_u": 0.6333909034729004,
+ "ages": 4,
+ "candidates": {
+  "C0_incremental_shipped": {
+   "products_per_source_lifetime": 4,
+   "description": "one new dense product per age, reusing the previous age's leg",
+   "mm_units_u": 2.5335636138916016,
+   "vs_shipped_pct": 0.0
+  },
+  "C1_explicit_suffix_precompute": {
+   "products_per_source_lifetime": 7,
+   "description": "form T2..T4 explicitly (3 products, chain-order-invariant since all factors are n x n) then apply T1..T4 to P_b (4 more)",
+   "mm_units_u": 4.433736324310303,
+   "vs_shipped_pct": 75.0
+  },
+  "C2_independent_per_age": {
+   "products_per_source_lifetime": 10,
+   "description": "recompute each age's leg from scratch, no reuse across ages",
+   "mm_units_u": 6.333909034729004,
+   "vs_shipped_pct": 150.0
+  }
+ },
+ "verdict": "no candidate found cheaper than the shipped incremental order (C0); C1 and C2 are strictly more expensive, C3 (batching) is FLOP-neutral (measured directly, see sonnet10_unit_costs.json)."
+}

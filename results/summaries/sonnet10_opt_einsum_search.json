@@ -1,0 +1,27 @@
+{
+ "n": 1024,
+ "u": 2147483648,
+ "single_block": {
+  "opt_cost_flops": 2148532224.0,
+  "opt_cost_u": 1.00048828125,
+  "path": "[(0, 1), (0, 1)]"
+ },
+ "four_independent_terms": {
+  "opt_cost_flops": 8594128896.0,
+  "opt_cost_u": 4.001953125
+ },
+ "two_terms_shared_right_factor": {
+  "opt_cost_flops": 2151677952.0,
+  "opt_cost_u": 1.001953125
+ },
+ "chain_4step_single_output": {
+  "opt_cost_flops": 8589934592.0,
+  "opt_cost_u": 4.0,
+  "path": "[(0, 1), (0, 1), (0, 2), (0, 1)]"
+ },
+ "all_four_ages": {
+  "naive_independent_u": 10,
+  "incremental_u": 4,
+  "note": "computing every prefix independently costs 1+2+3+4=10u; the shipped incremental scheme already achieves the minimum 4u (1 new O(n^3) matmul per age, each of which is a REQUIRED, distinct output consumed by D21 at that layer -- no order can produce k required distinct full-rank n x n prefixes of a matrix chain in fewer than k-1 relative matmuls from P_b)."
+ }
+}

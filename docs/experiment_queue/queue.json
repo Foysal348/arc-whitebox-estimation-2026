@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-24 (FB x beta grid: shipped setting is optimal)",
+ "updated": "2026-09-24 (Sonnet: young-tier contraction order already optimal)",
  "baseline": "Best graded: #332110 score 5.1284e-9 (raw 2.1046e-8) — v40fb (FB 1.25 + beta 1.2). আগের: #331787 5.137e-9. Plain chain on public MLP #0: final MSE 2.290e-8.",
  "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে। Horizon oracle: kappa3 স্মৃতি খুব লম্বা — ১০ বয়স রাখলেও layer 15-এ 16% error; বয়সের অবদান প্রায় সমান ও লম্ব।",
  "items": [
@@ -496,6 +496,19 @@
    "gate": "-",
    "next": "-",
    "files": "docs notes F88/K3 pooled-core rows"
+  },
+  {
+   "id": "D21",
+   "priority": "-",
+   "status": "dead",
+   "source": "Sonnet 5 subagent (Round 10 A1, contraction-order search)",
+   "title": "Young tier-এর mixed forward/reverse বা hierarchical contraction order",
+   "what": "Young tier-কে tensor network হিসেবে লিখে সব গুণের ক্রম খোঁজা (opt_einsum + হাতে বানানো mixed order)।",
+   "evidence": "Ledger পুনরুৎপাদন: transport 54.5u (108 product), D21 hub 50.5u (100 product), মোট 105.0u। Hadamard আগে তৈরি করতে হয়, আর code আগেই 2টা right-factor contraction-এ fuse করা — এটাই floor। Transport chain-এর খরচ ক্রম-নিরপেক্ষ (সব n×n)। Reverse-style suffix precompute +75%, প্রতি age আলাদা +150%, batching FLOP-নিরপেক্ষ। A আর P কোনো স্থির right factor দিয়ে সম্পর্কিত না (P^-1 A পরপর layer-এ 100-970% বদলায়; আমার প্রম্পটের 'A = P diag(a_b)' ভুল ছিল, সংশোধিত)।",
+   "cost": "-",
+   "gate": "-",
+   "next": "Young tier সস্তা করতে representation বদলাতে হবে, ক্রম না।",
+   "files": "experiments/probes/sonnet10_*.py; consultations/sonnet/ROUND10_sonnet_report.md"
   }
  ]
 }
