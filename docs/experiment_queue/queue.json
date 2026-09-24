@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-25 (Q19: refit the disabled online mean correction)",
+ "updated": "2026-09-25 (Q19 dead: fresh error unpredictable, R2 0.02)",
  "baseline": "Best graded: #332110 score 5.1284e-9 (raw 2.1046e-8) — v40fb (FB 1.25 + beta 1.2). আগের: #331787 5.137e-9. Plain chain on public MLP #0: final MSE 2.290e-8.",
  "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে। Horizon oracle: kappa3 স্মৃতি খুব লম্বা — ১০ বয়স রাখলেও layer 15-এ 16% error; বয়সের অবদান প্রায় সমান ও লম্ব।",
  "items": [
@@ -539,15 +539,15 @@
   {
    "id": "Q19",
    "priority": "P0",
-   "status": "open",
+   "status": "dead",
    "source": "নিজের (504aldo findings log F47 পড়ে, 25 Sep)",
    "title": "বন্ধ করা online mean correction (CORR_BETA) v40fb-এর trajectory-তে নতুন করে fit করা",
    "what": "v40fb-এ online mean correction আছে কিন্তু বন্ধ (NO_CORR=1): পুরোনো V16b-এর জন্য fit করা β নতুন base-এ ক্ষতি করে, 'refit না হওয়া পর্যন্ত বন্ধ' — refit কখনো হয়নি। F47 পদ্ধতি: teacher-forced trajectory-তে (আগের layer-এর সত্যিকারের mean বসিয়ে) 13টা per-neuron feature (mu, var, sigma, alpha, phi, Phi, pred, D3, |D21| row-sum, K4 ...) থেকে প্রতি layer-এর fresh error-এর ridge fit, তারপর loop-এর ভেতরে online প্রয়োগ। খরচ প্রায় শূন্য (13 dot/neuron/layer)।",
-   "evidence": "F47: V16b base-এ 3.65e-8 -> 2.52e-8 = 1.45x (5 train / 3 test MLP, train~test, generalizes)। আমাদের পুরোনো 'learned OUTPUT correction dead' ছিল loop-এর বাইরের correction — এটা আলাদা। ঝুঁকি: v40fb-এর regen/vecww base ইতিমধ্যে এর একাংশ ধরে থাকতে পারে; লাভ অজানা।",
+   "evidence": "F47: V16b base-এ 3.65e-8 -> 2.52e-8 = 1.45x (5 train / 3 test MLP, train~test, generalizes)। আমাদের পুরোনো 'learned OUTPUT correction dead' ছিল loop-এর বাইরের correction — এটা আলাদা। ঝুঁকি: v40fb-এর regen/vecww base ইতিমধ্যে এর একাংশ ধরে থাকতে পারে; লাভ অজানা। | ফল (25 Sep, MLP#0, experiments/variants/estimator_q19corr.py + experiments/chain/q19_run.py): correction বন্ধ রাখলে variant হুবহু shipped (2.2364e-8)। Teacher-forced run-এ প্রতি layer-এর fresh error-এর rms 1.5-6.7e-5; 13টা feature দিয়ে একই network-এ in-sample R² মাত্র L3 0.15, L8/12/15 0.02 — 13 parameter / 1024 neuron-এর সুযোগ-সীমার (~0.013) প্রায় সমান, অর্থাৎ কোনো signal নেই (F47-এ V16b base-এ R² ছিল 0.3-0.6)। v40fb-এর regen/vec+ww base আগেই অনুমানযোগ্য অংশ শুষে নিয়েছে। বাড়তি তথ্য: mean জোর করে সত্যি রাখলে final MSE 2.24e-8 -> 4.2e-9 — final error-এর ~80% হলো আগের layer-এর mean error জমে বয়ে আসা।",
    "cost": "~0u (13 dot/neuron/layer)",
    "gate": "held-out MLP-এ paired raw ≥3% কমলে Kaggle 100-MLP; fit শুধু local MLP-এ, leaderboard-এ না",
-   "next": "force-mean + feature dump variant -> train MLP-এ ridge fit -> held-out test",
-   "files": "-"
+   "next": "-",
+   "files": "experiments/variants/estimator_q19corr.py; experiments/chain/q19_run.py"
   }
  ]
 }
