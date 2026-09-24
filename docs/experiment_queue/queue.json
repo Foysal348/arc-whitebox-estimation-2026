@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-25 (Q18: kappa4 memory is long; young carrier dead)",
+ "updated": "2026-09-25 (Q19: refit the disabled online mean correction)",
  "baseline": "Best graded: #332110 score 5.1284e-9 (raw 2.1046e-8) — v40fb (FB 1.25 + beta 1.2). আগের: #331787 5.137e-9. Plain chain on public MLP #0: final MSE 2.290e-8.",
  "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে। Horizon oracle: kappa3 স্মৃতি খুব লম্বা — ১০ বয়স রাখলেও layer 15-এ 16% error; বয়সের অবদান প্রায় সমান ও লম্ব।",
  "items": [
@@ -535,6 +535,19 @@
    "gate": "শেষ 2 ধাপ ঘাটতির ≥ অর্ধেক ধরলে young κ4 carrier বানানো (~4 product/layer ≈ 28u, +11%); ship শুধু দুই network-এ raw ≥12% হলে",
    "next": "-",
    "files": "experiments/probes/q18_k4_horizon.py"
+  },
+  {
+   "id": "Q19",
+   "priority": "P0",
+   "status": "open",
+   "source": "নিজের (504aldo findings log F47 পড়ে, 25 Sep)",
+   "title": "বন্ধ করা online mean correction (CORR_BETA) v40fb-এর trajectory-তে নতুন করে fit করা",
+   "what": "v40fb-এ online mean correction আছে কিন্তু বন্ধ (NO_CORR=1): পুরোনো V16b-এর জন্য fit করা β নতুন base-এ ক্ষতি করে, 'refit না হওয়া পর্যন্ত বন্ধ' — refit কখনো হয়নি। F47 পদ্ধতি: teacher-forced trajectory-তে (আগের layer-এর সত্যিকারের mean বসিয়ে) 13টা per-neuron feature (mu, var, sigma, alpha, phi, Phi, pred, D3, |D21| row-sum, K4 ...) থেকে প্রতি layer-এর fresh error-এর ridge fit, তারপর loop-এর ভেতরে online প্রয়োগ। খরচ প্রায় শূন্য (13 dot/neuron/layer)।",
+   "evidence": "F47: V16b base-এ 3.65e-8 -> 2.52e-8 = 1.45x (5 train / 3 test MLP, train~test, generalizes)। আমাদের পুরোনো 'learned OUTPUT correction dead' ছিল loop-এর বাইরের correction — এটা আলাদা। ঝুঁকি: v40fb-এর regen/vecww base ইতিমধ্যে এর একাংশ ধরে থাকতে পারে; লাভ অজানা।",
+   "cost": "~0u (13 dot/neuron/layer)",
+   "gate": "held-out MLP-এ paired raw ≥3% কমলে Kaggle 100-MLP; fit শুধু local MLP-এ, leaderboard-এ না",
+   "next": "force-mean + feature dump variant -> train MLP-এ ridge fit -> held-out test",
+   "files": "-"
   }
  ]
 }

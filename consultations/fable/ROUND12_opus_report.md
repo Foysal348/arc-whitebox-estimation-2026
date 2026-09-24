@@ -12,8 +12,10 @@ Scripts: `experiments/probes/opus12_errmap.py`, `opus12_k4_gaussmc.py`, `opus12_
 
 1. **The final-MSE error is made late, and it is coherent across the three channels (measured, linear-response map).**
    Removing 25% of the fresh error of all three closure inputs (variance, kappa3_iii, kappa4_iiii) at every layer gives
-   x0.573. Removing 25% of the variance channel's error alone gives x0.784. A leaderboard-size gain (-15 to -25%) therefore
-   needs only about a 10-25% more accurate input channel. It does not need an oracle.
+   x0.573. Removing 25% of the variance channel's error alone gives x0.784. *[Corrected 25 Sep, see 7.2: the "fresh"
+   errors include inherited error, so single-channel ratios are upper bounds on the gain of a per-layer fix of that
+   channel. The all-three row is just the linear scaling (1-f)^2 = 0.5625. The sentence "only a 10-25% more accurate
+   input channel is needed" is withdrawn.]*
 2. **kappa4 (the brief's first thread): the deep kappa4 pattern is linear memory of the full pre-activation kappa4 tensor, not
    fresh ReLU physics.** Exact Gaussian inputs with the true mean and covariance give 1-4% of the true decisive-neuron
    kappa4 level from layer 8 on. The exact linear response of the true non-Gaussian z carries 83-90% of that level at
@@ -122,8 +124,9 @@ Inline check: the chain's kappa4 x var gives corr -0.33 to -0.27, and kappa4 / v
 0.26-0.37).
 
 **Reading.** The per-neuron kappa4 pattern at depth is the linear image of the (2,1,1)/(1,1,1,1) sectors of the
-pre-activation kappa4 tensor. Those sectors are themselves carried from earlier layers and fed mostly by
-kappa3-driven births: QUAD - LIN is large and positive, while the Gaussian births are ~1%.
+pre-activation kappa4 tensor. Those sectors are themselves carried from earlier layers. *[Withdrawn 25 Sep, see 7.4:
+"fed mostly by kappa3-driven births". Not measured, and QUAD overshoots the level 1.4-1.7x, so the second-order split
+is unreliable.]*
 
 - The chain's use side, Sym(G x mI), has a (1,1,1,1) sector of **0 by construction** (F51 table). The same is true of
   504aldo's dense G channel.
@@ -175,8 +178,9 @@ arm" is already in the chain (F68 X3/Y3/M_t1). **Dead as a knob.**
 
 - The transport check is exact: an L14 leg transported by diag(w1) W[14] equals the L15 leg to <5e-5.
 - The old sources (10 sources, age >= 5) carry 65.4% of ||D21||.
-- The best carrier costing <= ~2 products is the (2,1) slice of the old content under the exact repeated-index slice map
-  (scale 0.9985). Its errors are below.
+- The one carrier tested (about 2 products) is the (2,1) slice of the old content under the exact repeated-index
+  slice map (scale 0.9985). Its errors are below. *[Reworded 25 Sep, see 7.5: this is one candidate, not a proven
+  optimum.]*
 
 | measure of the slice-map carrier | error |
 |---|---|
@@ -209,6 +213,9 @@ Section 2 adds one fact: the kappa4 channel has the same memory structure as the
 status: needs a new idea.**
 
 ## 5. The single most promising next experiment
+
+*[Superseded 25 Sep, see 7.4. The horizon gate below was answered by Q18 plus `opus12_k4_young_blend.py`: even the ideal
+young carrier (h = 2) fails its own go criterion. The replacement proposal is at the end of section 7.]*
 
 **Gate: the kappa4 memory horizon**, offline, 0 u, about 30 min of CPU. Extend `opus12_k4_carry.py` with LIN_k: the
 kappa4 at L of the k-step linearised response from the true z_(L-k), for k = 1..4. Then T - LIN_k is what the last k
@@ -245,3 +252,119 @@ ReLUs gave birth to.
 | Kernel "cheaper" ledger (~14 u), carrier cost 4 products/layer (~28 u) | derived, not run |
 | B2 closed by R6 / R9 / R11 | argument on earlier measurements, no new run |
 | Leaderboard: no public 504aldo release after 22 Sep (commit list); forum topic 18218 has nothing past F105 | checked on the web, 25 Sep |
+
+## 7. Response to review (25 Sep)
+
+This round used four new script runs:
+
+- `opus12_e2e.py` with the extended `experiments/variants/opus12_d21oracle.py`, both networks
+- `opus12_k4_carry_synth.py`
+- `opus12_q18_noise.py`
+- `opus12_k4_young_blend.py`
+
+Their results are in `results/summaries/opus12_e2e_d21oracle2.json`, `opus12_k4_carry_synth.json`,
+`opus12_q18_noise.json` and `opus12_k4_young_blend.json`.
+
+**Chains and networks used.** The D21 oracle runs the shipped v40fb with `V31_ANGULAR=0` (FB 1.25, BETA 1.2). The
+angular input has to be off because its internal state describes the spherical input, which the Gaussian teacher cannot
+be compared with. `errmap` and the kappa4 comparisons use the plain V29 dumps (FB 1.0, BETA 1.0), on MLP #0 and on the
+synthetic net (`errbudget_v29plain_synth.npz`).
+
+| # | point | verdict | evidence / new wording |
+|---|---|---|---|
+| 7.1 | Single network | **proved on the second network** (b is partial there) | See **7.1** below. |
+| 7.2 | "Fresh" error is not fresh | **corrected** | See **7.2** below. |
+| 7.3 | The D21 oracle keeps the chain's d3 | **stated, and the perfect-kappa3 value measured** | "All" means the teacher's **off-diagonal** (2,1) slice only; the chain's own d3 = kappa3_iii is kept. New mode `all_d3` injects the teacher d3 = diag(Y21) as well, at every layer including the trimmed last one. A perfect kappa3 input (slice + d3) is worth **x0.6075 on MLP #0** and x0.7147 on the synthetic net (partial, 8 of 14 layers). |
+| 7.4 | Unmeasured "fed by kappa3 births"; Q18 check | **sentence withdrawn; Q18 audited: correct, with one caveat; young carrier measured dead** | See **7.4** below. |
+| 7.5 | "Best carrier" in B1 | **corrected** | New wording: "the one carrier tested (the exact repeated-index slice map of the old (2,1) slice, ~2 products) misses 27.3% of the total D21". The rank-87 / zero-alignment facts show that this family cannot be patched by a low-rank or recursive correction. They are **not** a lower bound over all carriers, so "best" is dropped. The B1 verdict now reads: dead for the slice-map family; other carriers were not tested. |
+| 7.6 | Derived costs (~14 u kernel, ~28 u carrier) | **confirmed: no decision depends on them beyond "net <= 0"** | See **7.6** below. |
+
+**7.1 Single network.**
+
+- **(a) proved.** `opus12_k4_carry_synth.py`, synthetic net, N 1.6e6. Decisive-neuron correlation with the independent
+  teacher, split-half noise-corrected values in brackets:
+
+  | layer | LIN | chain | MC truth | LIN level |
+  |---|---|---|---|---|
+  | L8 | 0.539 (0.729) | 0.338 | 0.827 | 0.740 |
+  | L12 | 0.736 (0.813) | 0.328 | 0.920 | 0.853 |
+  | L14 | 0.776 (0.852) | 0.252 | 0.930 | 0.864 |
+  | L15 | 0.816 (0.876) | 0.242 | 0.953 | 0.865 |
+
+  - The Monte Carlo truth has level 1.00 against the teacher.
+  - errG4 at L15: chain 0.223, LIN (affine, 2-parameter in-sample fit) 0.122.
+  - Same picture as MLP #0: LIN ~0.8, chain ~0.25-0.34.
+- **(b) proved on MLP #0, partial on the synthetic net.**
+  - The true slice everywhere gives **x0.7580** on MLP #0, reproduced bit for bit (1.7243e-8 against 2.2747e-8).
+  - On the synthetic net it gives **x0.8784** (1.6894e-8 against 1.9232e-8).
+  - The synthetic teacher stores Y21 only at layers 2, 4, ..., 14, 15, so only 8 of the 14 injectable layers are
+    corrected. x0.878 is therefore an upper bound on the ratio a full oracle would give (a lower bound on its gain).
+
+**7.2 "Fresh" error is not fresh.**
+
+- The map's per-layer term is E(chain inputs) - E(chain with channel c from the teacher). It contains the error
+  inherited from layers < l, including error fed into channel c by the other channels' mean and covariance errors.
+- Single-channel ratios (variance 0.532 / 25% -> 0.784, kappa4 0.702 / 25% -> 0.869) therefore measure the value of
+  reducing the **total** error of that channel as it enters the mean closure. For a fix that improves only that
+  channel's own per-layer generation, they are **upper bounds on the gain**.
+- The "all three" rows are the linear scaling of the whole error: x0.573 at f = 0.25 and x0.273 at f = 0.5, against
+  (1-f)^2 = 0.5625 and 0.25.
+- New wording for section 0 item 1: *"The error is late: about 70% of the kappa4 value, and most of the variance value,
+  sits at layers >= 12. Single-channel ratios are upper bounds for per-layer fixes."*
+- The late-layer localisation stands as measured. I did not run a teacher-forced one-layer measurement: it needs a
+  teacher-forced source state that does not exist. The statement is kept as a bound.
+
+**7.4 Unmeasured claim; audit of Q18.**
+
+- **Sentence withdrawn.** "Fed mostly by kappa3-driven births" was not measured.
+- **Q18 method and indexing: correct.**
+  - A negative control (h = 0: Gaussian z_L itself) gives level 0.001 +- 0.004 and correlation -0.05.
+  - Replicated levels agree within noise: L16 h=2 0.032 +- 0.007 (Q18: 0.024), h=6 0.196 (0.195); L12 h=2 0.048
+    (0.055), h=6 0.365 (0.353).
+  - The decisive weighting is consistent: level and correlation unweighted on |mu/sigma| < 1.5, errG4 G4-weighted over
+    all neurons. This is the same convention as mine.
+- **Caveat: the pattern correlations are noise-attenuated at N = 1e6.** The per-neuron noise std in excess kurtosis is
+  0.0044-0.0051, the same size as the h = 2 signal std (0.0051-0.0058). Split-half reliability is 0.50-0.62 at h = 2 and
+  0.76-0.83 at h = 6.
+
+  | case | Q18 correlation | noise-corrected |
+  |---|---|---|
+  | h = 2, L16 | 0.41 | **0.52** |
+  | h = 2, L12 | 0.41 | **0.58** |
+  | h = 6, L16 | 0.77 | **0.85** |
+  | h = 6, L12 | 0.79 | **0.90** |
+
+  So the LEVEL memory is long, as Q18 says (h = 6 holds 20-37%). The PATTERN memory is shorter: 6 steps hold 0.85-0.90
+  of it and 2 steps about half.
+- **Is the young content usable?** `opus12_k4_young_blend.py` blends the chain with the ideal young carrier (exact
+  births of the last h layers, exact transport: chain + a K_h + b var^2). The fit is made on L12 and tested on L16, and
+  vice versa.
+
+  | carrier | errG4 at L16 (chain 0.210) | errG4 at L12 (chain 0.193) | decisive corr (chain 0.32-0.34) |
+  |---|---|---|---|
+  | h = 2 | 0.203 | 0.184 | 0.43-0.46 |
+  | h = 3 | 0.188 | 0.173 | 0.54-0.56 |
+
+  - Out-of-sample and in-sample errors agree.
+  - At most a 10% cut of the kappa4 error, for an ideal carrier of 3 layers. From Table 1 this is of order -2 to -4%
+    MSE **(derived)**.
+  - My own gate (correlation toward 0.8) fails. **The young kappa4 carrier is dead**, and the section 5 experiment is
+    closed.
+
+**7.6 Derived costs.**
+
+- **Cheaper kernel.** Break-even against a7's measured -6.4% / -2.6% is 249 (1/0.936 - 1) = **17 u** on MLP #0 and
+  249 (1/0.974 - 1) = **6.6 u** on the synthetic net (arithmetic).
+  - The kernel needs at least the two dense products Q = C(d1 W) and R = C(d2 W o Q) per layer, >= 28 products in total.
+    That is >= 6.6 u at any price above 0.24 u per product, and Strassen L5 bills 0.51.
+  - So "net about zero on MLP #0, negative on the synthetic net" holds for any metered cost in that range. Only the sign
+    is used.
+- **~28 u carrier.** Moot: the carrier is dead on value (7.4), whatever its cost.
+
+**Replacement next experiment (0 u, oracle only).**
+
+- The largest lever measured this round is the kappa3 input: slice + d3 is worth x0.61 on MLP #0, and the kappa4 carrier
+  is closed.
+- Proposed next run: `opus12_d21oracle.py` in `all_d3` mode restricted to layers >= 12 (and >= 14). By analogy with
+  Table 1 it would price a late-layer-only kappa3 refinement.
+- No deployable mechanism for it is identified. Round 7-8 found the slice error unexplained past second order.

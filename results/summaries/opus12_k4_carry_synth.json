@@ -1,0 +1,95 @@
+{
+ "N": 1600000,
+ "L8": {
+  "n_dec": 580,
+  "T": {
+   "level_vs_teacher": 1.0072098057144798,
+   "dec_corr_teacher": 0.8274107044088375,
+   "reliability": 0.6455191844940393,
+   "dec_corr_teacher_nc": 1.0298324166820596,
+   "errG4_teacher": 0.10167412459466764
+  },
+  "LIN": {
+   "level_vs_teacher": 0.7401473456913278,
+   "dec_corr_teacher": 0.5387488186087497,
+   "reliability": 0.5458865772371654,
+   "dec_corr_teacher_nc": 0.7291806291911711,
+   "errG4_teacher": 0.28937159603901147,
+   "affine_errG4_teacher": 0.1369921587427481
+  },
+  "chain": {
+   "level_vs_teacher": 1.0070587432425062,
+   "dec_corr_teacher": 0.3384919262783458,
+   "errG4_teacher": 0.15843196536063797
+  }
+ },
+ "L12": {
+  "n_dec": 390,
+  "T": {
+   "level_vs_teacher": 1.0047440180366638,
+   "dec_corr_teacher": 0.9196704391036834,
+   "reliability": 0.8492664035596347,
+   "dec_corr_teacher_nc": 0.9979533840898955,
+   "errG4_teacher": 0.08378689946516475
+  },
+  "LIN": {
+   "level_vs_teacher": 0.8533685570333739,
+   "dec_corr_teacher": 0.7359583638767117,
+   "reliability": 0.818962057361397,
+   "dec_corr_teacher_nc": 0.8132449115600281,
+   "errG4_teacher": 0.19489602675120551,
+   "affine_errG4_teacher": 0.13379767708497972
+  },
+  "chain": {
+   "level_vs_teacher": 1.0099085679589164,
+   "dec_corr_teacher": 0.328439817753284,
+   "errG4_teacher": 0.18360245498122144
+  }
+ },
+ "L14": {
+  "n_dec": 337,
+  "T": {
+   "level_vs_teacher": 1.0041324163583312,
+   "dec_corr_teacher": 0.9304204599048498,
+   "reliability": 0.8584916497157363,
+   "dec_corr_teacher_nc": 1.0041791835980165,
+   "errG4_teacher": 0.073697022051161
+  },
+  "LIN": {
+   "level_vs_teacher": 0.863651172796969,
+   "dec_corr_teacher": 0.775986851381096,
+   "reliability": 0.8292649484506315,
+   "dec_corr_teacher_nc": 0.8521336352089628,
+   "errG4_teacher": 0.1718025720037532,
+   "affine_errG4_teacher": 0.1170568819243367
+  },
+  "chain": {
+   "level_vs_teacher": 0.9958208542133876,
+   "dec_corr_teacher": 0.25190138023894265,
+   "errG4_teacher": 0.18592903713700976
+  }
+ },
+ "L15": {
+  "n_dec": 371,
+  "T": {
+   "level_vs_teacher": 0.9981491940010114,
+   "dec_corr_teacher": 0.9528715920446136,
+   "reliability": 0.9031635642285121,
+   "dec_corr_teacher_nc": 1.002654194835405,
+   "errG4_teacher": 0.07675668081132893
+  },
+  "LIN": {
+   "level_vs_teacher": 0.8646768244292752,
+   "dec_corr_teacher": 0.8159977713205173,
+   "reliability": 0.8669926228528754,
+   "dec_corr_teacher_nc": 0.8763574268745493,
+   "errG4_teacher": 0.1757072232550132,
+   "affine_errG4_teacher": 0.12244408866754715
+  },
+  "chain": {
+   "level_vs_teacher": 0.9991474242841013,
+   "dec_corr_teacher": 0.24159609153943168,
+   "errG4_teacher": 0.22269533058012808
+  }
+ }
+}

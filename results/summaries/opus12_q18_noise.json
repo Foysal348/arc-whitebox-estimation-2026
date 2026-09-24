@@ -1,0 +1,67 @@
+{
+ "L16_h0": {
+  "level": 0.001054356798505116,
+  "level_half_spread": 0.003722871118931027,
+  "corr_teacher": -0.0514589625839334,
+  "split_half_r": 0.1291733742791778,
+  "reliability": 0.2287928093622244,
+  "corr_teacher_noise_corrected": -0.10758205629704985,
+  "noise_sd_exkurt": 0.004402048300843225,
+  "signal_sd_exkurt": 0.0023928952388707872,
+  "truth_sd_exkurt": 0.013793437978874369,
+  "truth_mean_exkurt": 0.06029401327961084,
+  "sec": 83.02586627006531
+ },
+ "L16_h2": {
+  "level": 0.03246938960129455,
+  "level_half_spread": 0.007052239245345406,
+  "corr_teacher": 0.40506700584927463,
+  "split_half_r": 0.44706939767608256,
+  "reliability": 0.6178962783596316,
+  "corr_teacher_noise_corrected": 0.5153106047867292,
+  "noise_sd_exkurt": 0.004572701590453552,
+  "signal_sd_exkurt": 0.005814834583949752,
+  "truth_sd_exkurt": 0.013793437978874369,
+  "truth_mean_exkurt": 0.06029401327961084,
+  "sec": 144.4471869468689
+ },
+ "L16_h6": {
+  "level": 0.1960436077619918,
+  "level_half_spread": 0.0005358311202292209,
+  "corr_teacher": 0.7739882303668385,
+  "split_half_r": 0.7021288907087024,
+  "reliability": 0.8250008498667365,
+  "corr_teacher_noise_corrected": 0.8521325573597216,
+  "noise_sd_exkurt": 0.005049367263214855,
+  "signal_sd_exkurt": 0.010945139426749151,
+  "truth_sd_exkurt": 0.013793437978874369,
+  "truth_mean_exkurt": 0.06029401327961084,
+  "sec": 253.30279302597046
+ },
+ "L12_h2": {
+  "level": 0.04755739470239744,
+  "level_half_spread": 0.0012614845056585203,
+  "corr_teacher": 0.4102238047863278,
+  "split_half_r": 0.3343625298769619,
+  "reliability": 0.5011569530625123,
+  "corr_teacher_noise_corrected": 0.5794740314584261,
+  "noise_sd_exkurt": 0.005094542751164343,
+  "signal_sd_exkurt": 0.005106339438675358,
+  "truth_sd_exkurt": 0.01015954113426636,
+  "truth_mean_exkurt": 0.051407069827334784,
+  "sec": 136.9216661453247
+ },
+ "L12_h6": {
+  "level": 0.3652146426848982,
+  "level_half_spread": 0.0003535312807381293,
+  "corr_teacher": 0.7873805963624821,
+  "split_half_r": 0.617998853741481,
+  "reliability": 0.7639051811593224,
+  "corr_teacher_noise_corrected": 0.9008759236373589,
+  "noise_sd_exkurt": 0.004982552634043445,
+  "signal_sd_exkurt": 0.008961175734673251,
+  "truth_sd_exkurt": 0.01015954113426636,
+  "truth_mean_exkurt": 0.051407069827334784,
+  "sec": 262.91173219680786
+ }
+}
