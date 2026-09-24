@@ -13,7 +13,7 @@ sources, memoryless κ₄, bivariate Wick/Edgeworth closure). Cost is metered in
 **Sources.** Every ReLU layer b gives birth to one third-cumulant source. At a later layer l it carries two dense n × n legs:
 - P_{b→l} = M_l · M_{l−1} ⋯ M_{b+1} (the propagator; M_t = W_t · diag(Φ_t), with Φ_t = P(z_t > 0) per neuron), updated
   each layer by one product P ← M · P;
-- A_{b→l}: A is a second dense leg, born as W·X_b (X_b an n×n birth matrix built from the covariance) and transported alongside P; measured on our captures, A and P are NOT related by any fixed right factor (P⁻¹A changes by 100–970% between consecutive layers), so both legs must be transported.
+- A_{b→l}: A is a second dense leg, born as W·R_b and transported by the SAME left map as P, so A = P·R_b with a fixed full n×n birth matrix R_b (verified on our captures: one common left map fits both legs to 1e-14; R_b is not diagonal); forming A entry-wise from P is still an n³ product, so both legs cost one product each.
 
 The next closure needs, at every layer l, the (2,1) slice D21 (n × n) and its diagonal d3, summed over sources:
 
@@ -41,7 +41,7 @@ every layer: ≈ 104 u.
 
 ## Already checked, no saving (do not re-propose without an exact count showing otherwise)
 
-- Skipping A's transport: A is not a fixed function of P (see above), and even if it were, forming A entry-wise for the Hadamard terms costs an n³ product anyway.
+- Skipping A's transport: A = P·R_b, but forming A entry-wise for the Hadamard terms costs an n³ product anyway.
 - Reusing P_old = P_new·M: forming it is itself an n³ product.
 - Batching the four ages into wider products: identical FLOPs.
 - Age-1 P = M_l (the weight map itself): already used.

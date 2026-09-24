@@ -1,0 +1,102 @@
+Validation of the Proposed Round 10 Young-Tier Answer
+ Independent shape check and exact source-target product enumeration. This report validates the uploaded output; it does not
+ introduce a new approximation.
+Verdict
+ The uploaded answer is not valid as written. Its final 49-55 u claim follows from dimension/FLOP errors and from
+an unsupported shared-suffix saving. The corrected exact count for the young-tier square-product core is 193 n x
+n products. Under the prompt's L5 Strassen billing (0.51 u per eligible square product), that core is 98.43 u, before
+small elementwise/packing work. This is consistent with the measured approximately 104 u young-tier ledger and
+is nowhere near 55 u.
+1. Exact count I ran
+I enumerated target layers 2..16 with young ages 1..4. Full D21 is needed through layer 15; the final layer needs only d3, so its
+dense D21 products are omitted. Age-1 P is the current map M and does not require a separate P product. Every A use still
+requires one dense application/transport.
+Quantity
+Exact count
+Reason
+Young source-target uses through L16
+54
+sum_l min(4,l-1), l=2..16
+P map/update products
+39
+only ages 2-4 need an explicit P product
+A application/transport products
+54
+one for every young source-target use
+D21 dense contractions
+100
+2 per pair, 50 pairs through L15
+TOTAL square products
+193
+39 + 54 + 100
+L5-Strassen core cost
+98.43 u
+193 x 0.51 u
+Independent enumeration output: P = 39, A = 54, D21 = 100, total = 193. This was computed in this session from the layer/age schedule, not
+inferred from the approximately 104 u measurement.
+2. Specific errors in the uploaded answer
+ Row-stacked transport is mispriced.
+For Z=[P;A] in R^(2n x n), the written block operator (I2 kron M) is 2n x 2n. A generic multiply costs 2*(2n)*(2n)*n = 8n^3 FLOPs
+= 4 u. Exploiting the block-diagonal structure reduces it to two independent n x n products = 2 u, not 1 u. Therefore stacking P
+and A does not halve transport.
+Four-age batching has the wrong real shape.
+For one D21 term, four age blocks concatenate as n x 4n multiplied by 4n x n. That costs 2*n*(4n)*n = 8n^3 FLOPs = 4 u,
+exactly the cost of four separate square products. There are two D21 terms, so batching is FLOP-neutral.
+The 6.5 effective layers normalization is circular.
+It is not a structural count. The exact combinatorics are 50 D21 source-target pairs through L15 and 54 young source-target
+state uses through L16. Using 104/16=6.5 and then multiplying per-layer costs by 6.5 creates the contradictory 52 u / 104 u
+passages in the uploaded answer.
+The shared-suffix saving is not established.
+Precomputing a consecutive-map suffix requires a dense map product; applying that suffix to a source-specific birth matrix/leg
+requires another dense product. The exact hierarchical schedule therefore pays 39 interval-map products + 54 birth applications
++ 100 contractions = 193 products - exactly the forward count.
+The final 5.55 u/layer and 49-55 u claims are unsupported.
+They depend on subtracting an unproven suffix reuse and on the incorrect stacked-transport arithmetic. They also conflict with
+the answer's own final paragraph, which says the young tier remains about 86 u.
+
+3. Current order versus the best exact hierarchical order
+The most favorable exact alternative is to store consecutive interval maps and reconstruct A only when a birth-target pair is
+queried. This is the natural mixed/hierarchical competitor because it maximizes reuse of the M chain without approximating any
+source.
+Exact order
+P / interval
+A / birth
+D21
+Total
+Optimized forward
+39
+54
+100
+193
+Hierarchical interval-map
+39
+54
+100
+193
+Four-age wide batching
+same FLOPs
+same FLOPs
+same FLOPs
+193 equivalent
+Why the tie is structural: the Hadamard nodes P o P and P o A bind two entries carrying the same row index before the trailing
+source-specific leg can be contracted. Summing source identities before this nonlinear node would create cross-source terms that
+are not present in D21. Keeping source identities separate until after the Hadamard node leaves one dense trailing contraction
+per term and per source-use. Reassociating the linear M chain can move where the products are paid, but not remove them.
+4. What is and is not validated
+Validated: batching is FLOP-neutral; row-stacking P/A is FLOP-neutral; exact suffix/interval reuse ties the forward count; the
+square-product core is 193 products under the stated layer schedule.
+Not validated from the uploaded HTML alone: the claim that P^-1 A drifts by 100-970 percent. The attachment cites that as a
+measurement but provides no underlying capture output in the document. It should not be used as a premise unless separately
+verified from the stored arrays.
+Also not validated: any claim that applying Strassen-5 only to transports newly saves a specific number of u. Whether that is
+new depends on what the approximately 54 u measured transport figure already includes. The safe statement is only the exact
+algebraic core count above.
+5. Corrected bottom line
+ Do not implement the uploaded shared-suffix / stacked-pair method. Its claimed 55 u result is an arithmetic
+artifact. Under exact dense young-source algebra and the clarified final-layer trim, the best contraction orders
+checked have the same 193 square-product core. At 0.51 u per square product this is 98.43 u, before small
+overhead. Therefore a <=55 u exact young tier requires a genuine change of representation or a new algebraic
+identity that removes source-specific dense products - not a different contraction order.
+Recommended falsifier for any future exact-reuse claim: list every GEMM with dimensions (m,k)x(k,p), compute 2mkp FLOPs, and compare the
+complete schedule against the 193-product reference. Any claimed saving must reduce that exact sum while reproducing D21 to <=1e-6 on stored
+dense legs.

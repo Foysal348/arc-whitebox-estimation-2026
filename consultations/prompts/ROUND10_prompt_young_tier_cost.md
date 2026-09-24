@@ -9,7 +9,7 @@ Fixed bias-free ReLU MLP, width n = 1024, depth 16, weights N(0, 2/n), input x ~
 means. Score = MSE × max(0.1, FLOPs/2⁴¹). 1 u = 2³¹ FLOPs = one dense n³ product; a level-5 Strassen square product
 counts ≈ 0.51 u. Our estimator: 504aldo's factorised K = 3 cumulant chain (mean, covariance, κ₃ as a sum over sources,
 memoryless κ₄, bivariate Wick/Edgeworth closure). A source born at a ReLU carries two n × n legs P (the propagator,
-P ← W·diag(Φ)·P each layer) and a second leg A (A is a second dense leg, born as W·X_b (X_b an n×n birth matrix built from the covariance) and transported alongside P; measured on our captures, A and P are NOT related by any fixed right factor (P⁻¹A changes by 100–970% between consecutive layers), so both legs must be transported); the next closure needs
+P ← W·diag(Φ)·P each layer) and a second leg A (A is a second dense leg, born as W·R_b and transported by the SAME left map as P, so A = P·R_b with a fixed full n×n birth matrix R_b (verified on our captures: one common left map fits both legs to 1e-14; R_b is not diagonal); forming A entry-wise from P is still an n³ product, so both legs cost one product each); the next closure needs
 D21 = Σ_s [(P_s∘P_s)·diag(w_s)·A_sᵀ + 2(P_s∘A_s)·diag(w_s)·P_sᵀ]/3 and its diagonal. Sources older than 4 layers are
 moved into a shared rank-384 basis (rank-224 sub-basis after age 7).
 
@@ -51,7 +51,7 @@ old tier ≈ 41 u, thin legs ≈ 15 u, covariance + closure ≈ 8 u, Strassen ad
 cost). Success brings the total from ~249 u to ~200 u.
 
 Already checked by us and found to save nothing (do not re-propose without an exact count that says otherwise):
-- skipping A's transport: A is not a fixed function of P (measured), and forming it entry-wise costs n³ anyway;
+- skipping A's transport: A = P·R_b, but forming it entry-wise costs n³ anyway;
 - reusing P_old = P_new·M: forming it is itself an n³ product;
 - batching the four ages into wider products: identical FLOPs;
 - age-1 P = W: already used.

@@ -1,4 +1,4 @@
-# Round 12 — Fable 5 deep research: the young tier (Round 10) and a different represented state (Round 11)
+# Round 12 — Fable 5 deep research: a different represented state (Round 11); the young tier (Round 10) is closed
 
 *Prepared 24 Sep 2026. Updated after every external research round. Do not launch without the user's go-ahead
 (token budget).*
@@ -9,12 +9,12 @@ or projected results as measured.** Put scripts in `experiments/probes/fable12_*
 `results/summaries/fable12_*.json`. Do not edit anything else, and do not commit, push or start Kaggle runs. Final report:
 `consultations/fable/ROUND12_fable_report.md`, at most ~4 pages.
 
-Budget discipline: at most three falsifier scripts per track. If a track dies at its first gate, say so and stop that track.
+Budget discipline: at most three falsifier scripts per thread (B1, B2, B3), B1 first. If a track dies at its first gate, say so and stop that track.
 
 ## Read first (in this order, skim what you already know)
 
 1. `docs/moonshot/Moonshot_Blueprint.html` — the design specification: target, constraints C1–C13, dead list.
-2. `consultations/prompts/ROUND10_prompt_young_tier_cost.md` and `ROUND11_prompt_change_what_is_represented.md`.
+2. `consultations/prompts/ROUND11_prompt_change_what_is_represented.md` (Round 10 is closed; see Track A below).
 3. The estimator: `submissions/v40fb/estimator.py` (V29/V31 factorised K3 chain, 504aldo MIT, + FB_SCALE 1.25, BETA 1.2).
 4. Existing gate scripts, as templates for loading data: `experiments/probes/r9_dhmp_gate.py`,
    `r9_horizon_oracle.py`, `r11_chain_channel_ref.py`, `r11_diag_closure_gate.py`, `m1_matmul_ledger.py`.
@@ -54,25 +54,27 @@ Budget discipline: at most three falsifier scripts per track. If a track dies at
   R' = (W∘W)RWᵀ + αY21 + βC — 36% D21 error even in-sample from the true state); low-rank(+diag) covariance (r = 64 still 12–33% off-diagonal);
   rank-1 κ3; aggregate rank-k CP of the old κ3 (unfolding bound: rank ≫ 250); deterministic
   moment-matched particles (2048 points: variance 3%, D21 74% at L15 — no better than random); sampling / control variates; adjoint low-rank paths; learned corrections; join rebuilds; A = P·a_b tricks,
-  P_old = P_new·M, batching (same FLOPs; checked 24 Sep).
+  P_old = P_new·M, batching (same FLOPs); any contraction-order change of the young tier (193 products is the floor);
+  lower-precision arithmetic (float16 billed like float32).
 
-## Track A (Round 10): the young tier, ~104 u → ≤ 55 u at ≤ 2% D21 error
+## Track A (Round 10) is CLOSED — do not spend budget on it
 
-The young tier is four dense products per source-layer (two transports, two contractions) for ages 1–4. My own
-algebra found no saving inside the sum-over-sources form. Candidate threads to examine (take or kill each with a number):
-
-- **A1. Mixed contraction order.** Source-forward and reverse-mode are dual orders of one tensor network. Is there a mixed
-  or hierarchical order over the (birth b, target layer l) pairs, e.g. forward for ages 1–2 and reverse sweeps shared by
-  several targets, whose product count is below both? Count products exactly for the young tier at our shapes.
-- **A2. Closed-form ages 1–2.** The age-1 legs are P = W-like and A = P·a_b; can the age-1 (and age-2) contributions
-  to D21 be written as a few products of W, C and diag vectors already computed for the covariance step, so the legs
-  are never transported?
-- **A3. Any Round 10 answer** that arrives before launch (this section will be updated with them).
-
-Gate: on the captures, the reorganised young-tier D21 must match `blocks_of_source` summed over ages 1–4 to ≤ 2%
-relative error, with a product count ≤ 55 u over the network (count at real shapes; Strassen only for square products).
+The young tier (ages 1–4) is an exact dense computation of 193 square products per network (39 P transports + 54 A
+transports/applications + 100 D21 contractions; 98.4 u core, 105 u metered). An exact contraction-order search (Sonnet 5
+subagent, opt_einsum + hand-built mixed/hierarchical orders) and four external answers agree: every order — forward,
+reverse, interval maps, on-demand A, batching — costs the same 193 products; the Hadamard hyperedge forces
+materialisation before each n³ contraction. Also measured: A = P·R_b with a FIXED full n×n birth matrix R_b (A and P share
+the same left transport to 1e-14; R_b is not diagonal), which saves nothing because forming A entry-wise is itself a
+product. The meter bills float16 = float32 = 1.0 and float64 = 2.0, so there is no precision discount (numerical packing
+fails the cost gate). **A cheaper young tier must change the representation, not the order.** Approximating the young legs
+is dead too (they are near full rank; their Hadamard products are full rank).
 
 ## Track B (Round 11): represent something different at ≤ ~15 products per layer
+
+Practical framing (use it to prioritise): the leaders' bill (~130 u) is about our exact young tier alone (~100 u) plus
+cheap work. So the most concrete target architecture is **exact young tier + an old-content surrogate costing ≤ ~20 u in
+total** that replaces the join + old tier + thin legs (~100 u). The surrogate must supply what sources aged ≥ 5 contribute
+(keeping only ages ≤ 4 leaves 65% of D21 at L15; the old content is coherent — one age mode ~88% — but not low-rank).
 
 Carrying the κ3 tensor, in any factorisation, costs what the chain costs. What must be carried is whatever the next means
 need: variance, d3, κ4 diagonal and the covariance feeding them, **plus the hidden all-distinct memory**, since visible
@@ -83,6 +85,9 @@ the next slice). Candidate threads:
   the missing 22–29% (d3) / 36–40% (D21) actually is: its rank, its alignment with the previous layer's all-distinct
   residual transported by W, and whether a single extra n × n state matrix per layer, updated with ≤ 4 products, predicts it
   to ≤ 2%. If no such matrix exists, say so with the numbers. The prior "slice transport" (K3g) is dead, so show what differs.
+  Then the architecture question: on the captures (L7/11/14/15, every source dense), can the summed D21 of the sources aged
+  ≥ 5 be produced by a carried object updated with ≤ ~1.3 square products per layer (≈ 20 u over the network) to ≤ 2% of
+  the total D21? This is the old-content surrogate of the framing above.
 - **B2. A nonlinear, trajectory-specific state.** The Sym³ wall applies only to linear states closed under every M. Our M
   are fixed and known. Propose one state that exploits that (e.g. a per-network precomputed operator applied to a small
   carried object) and gate it on the captures.

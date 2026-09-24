@@ -1,0 +1,101 @@
+Round 10 | Two-way numerical packing: cost gate failed
+1
+Round 10 | Can the young tier be halved?
+One mechanism, an exact cost obstruction, and a stored-leg test | 24 September 2026
+Answer: no qualifying method established. I tested a different arithmetic representation: two-way numerical
+packing in float64. It retains the full dense legs and realized signs. It can combine two products into one, but the
+installed production meter charges float64 at twice float32. Thus this mechanism cannot deliver the requested 104
+u to 55 u reduction. This is a no-go result for this packing substitution, not for every possible representation.
+The one method assessed
+Keep the original P and A for every young source; four ages occupy 8n2 float32 numbers, or 32 MiB. Form
+quantized integer-valued operands in float64, plus O(n2) packing buffers. No source, hub, tensor entry, or sign is
+averaged away. Numerical packing is an established approximate matrix-multiplication technique [1]; the following
+application is the method assessed here.
+For transport, quantize M, P and A with known scales, and calculate one square product Mq(Pq + B Aq). Decode its
+low and high signed radix-B coefficients to obtain both transported legs, then undo their individual scales. Here M
+is the actual transport map, including the Wick scaling when applicable.
+For the requested slice, define four n-by-n factors (the division by 3 is included):
+L1 = (P*P) diag(w)/3; R1 = A.T
+L2 = 2(P*A) diag(w)/3; R2 = P.T
+D21 = L1 R1 + L2 R2. (* means entrywise product.)
+Choose quantization scales so both desired products have the same dequantization factor s. For the integer-valued
+quantized factors, compute
+For reproducibility, set Q = 511, c = max over j of max|Lj| max|Rj|,
+aj = max|Lj|/Q, bj = c/(Q^2 aj), Ljq = round(Lj/aj),
+Rjq = round(Rj/bj), and s = c/Q^2. Zero terms can be skipped.
+Z = (B L1q + L2q)(B R2q + R1q)
+= B^2 L1q R2q + B(L1q R1q + L2q R2q) + L2q R1q.
+T = round(Z/B); Dhat = s [T - B round(T/B)].
+In exact arithmetic this extracts the middle coefficient when the low coefficient and the signed middle coefficient lie
+strictly between -B/2 and B/2. Floating-point error also needs sufficient guard space. The state can reproduce odd
+fluctuations because it encodes the actual signed legs. Quantization and Strassen roundoff still require
+validation; algebra alone does not guarantee 2% accuracy.
+Exact cost obstruction
+Let S be the charged cost of one float32 square product at the chosen Strassen depth. The same arithmetic in
+float64 costs 2S. A pair of float32 products therefore costs 2S before substitution and 2S after substitution, before
+packing, quantization and decoding. Those additional operations have nonnegative cost. Shared left-operand
+preprocessing in the original transport does not create an advantage for the packed version.
+Consequently, replacing every eligible two-product pair cannot halve its product bill. At the prompt's S
+approximately 0.51 u, four ordinary products cost 2.04 u; two packed float64 products also cost 2.04 u, plus
+preprocessing. Any unpaired newborn product remains chargeable.
+
+Round 10 | Two-way numerical packing: cost gate failed
+2
+Exact shape ledger and the falsifier
+All dense products below are (1024 x 1024) by (1024 x 1024).
+At a layer with all four young ages, the age-1 P = W is already available. Three older young sources need six
+transports; the newborn A needs one. Four sources need eight slice products. Covariance riders are outside this
+source-only count and remain charged.
+Source-only operation
+Original
+Two-way packed
+Ages 2-4 transport
+6 float32 squares
+3 float64 squares
+Age-1 A transport
+1 float32 square
+1 float32 square
+Four D21 contributions
+8 float32 squares
+4 float64 squares
+Total, before elementwise work
+15S
+7(2S) + S = 15S
+For the 16-layer schedule, with the first birth read at layer 2 and the shipped final-layer d3-only shortcut, the
+square-product counts are 0, 3, 7, 11, then 15 at layers 5-15, and 7 at layer 16: 193 float32-product equivalents in
+either representation. At 0.51 u each this is 98.43 u before the separately charged work. This ideal source-only
+ledger is not an exact reconstruction of the measured approximately 104 u family ledger, whose covariance riders
+and other allocations must be reconciled. The equality of the before/after product bill does not depend on that
+allocation.
+For a conventional five-level recursion with 32-by-32 leaves, the exact leaf arithmetic is 75(2 x 323 - 322) =
+1,084,253,184 operations per square. Standard Strassen adds 96,970,752 block additions/subtractions. These and
+packing operations must also be charged; counting a float64 product as 0.51 u would omit its dtype multiplier.
+One falsifier, executed on a stored source
+Use data/dumps/young_dump_L14.npz, source index 12, and the two-term slice formula in the prompt. Run two
+ordinary float32 square products and one packed float64 square product under the installed meter. Stop if the
+product-only cost ratio exceeds 55/104 = 0.52885; adding packing overhead cannot repair that failure.
+Readout
+Measured result
+Environment
+flopscope 0.12.1; whestbench 0.16.1; no weight overrides
+Two ordinary float32 matmuls
+4,292,870,144 charged FLOPs
+One packed float64 matmul
+4,292,870,144 charged FLOPs
+Product-only ratio / cost gate
+1.0000 / FAIL
+Q = 511; B = 231
+D21 error 1.1858%; diagonal error 0.6495%
+Decoded vs. separately multiplied quantized reference
+0 difference in this run
+The reference for these errors uses the original stored legs in float64. The test uses classical matmul on one
+source, not Strassen, not the full fused production slice, and not a recurrent four-age rollout. Quantization accounts
+for the observed error. Quantization, packing and decoding were excluded from the charged totals to give the
+candidate a favorable lower bound; its full bill is higher.
+Conclusion: this concrete mechanism fails the cost gate even on a slice where its numerical error is below 2%. I
+have no justified 55 u method and no general arithmetic lower bound ruling one out. This result establishes only
+that two float32 products replaced by one float64 product cannot supply the required savings under this meter.
+[1] Anastasia & Andreopoulos, Throughput-Distortion Computation of Generic Matrix Multiplication, IEEE Transactions on Signal
+Processing (2012), author manuscript. Cited for numerical packing, not for ARC accuracy or billing.
+Local billing evidence: installed flopscope _dtype_billing.py / _weights.py and the executed BudgetContext probe. Accuracy target and
+network ledger: supplied Round 10 prompt. No estimator or repository source was edited.

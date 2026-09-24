@@ -1,0 +1,129 @@
+ROUND 10 / YOUNG-SOURCE COST BOUND
+1
+Round 10
+The young-source cost bound
+One focused assessment · n = 1024, L = 16 · 24 September 2026
+Answer: no justified 55 u construction
+I do not have a different representation that meets both ≤55 u and ≤2% D21 error. A precise
+negative result is possible for the dense-leg contraction model in your question: accepting your exhaustive
+contraction-order result, its product calls alone cost at least about 98.43 u, even allowing the final layer to
+compute D3 only. This is a conditional bound for that computational model, not a proof against every
+approximate representation.
+Derived, conditional claim. Fix the carried legs, birth coefficients and source identities. Permit the
+specified dense products, elementwise operations, associativity, intermediate reuse and batching, with the
+supplied level-5 square-product primitive. Assume, as your search reports, that an interior source needs
+two transport products and two fused right-factor contractions. Under these assumptions the 55 u target is
+impossible. A different nonlinear approximation is outside this claim.
+The state and the unavoidable calls in this model
+At layer ℓ let mℓ=min(4,ℓ−1) young sources be active. Their persistent state is 2mℓ dense n×n legs and mℓ
+birth-weight vectors: at four sources, 8n²+4n float32 numbers, or about 32.016 MiB. Count the newborn
+identity shortcut P=W, which you already use. Birth-matrix construction, thin feedback, joins and the old
+tier remain outside this young-only count.
+Layer(s)
+Young sources
+Square products per layer
+2
+1
+1 transport + 2 slice = 3
+3
+2
+3 transport + 4 slice = 7
+4
+3
+5 transport + 6 slice = 11
+5-16
+4
+7 transport + 8 slice = 15
+If layer 16 needs only D3, delete its eight slice products: N=193. This deliberately gives the
+implementation the cheaper terminal branch. If your deliverable literally requires full D21 there too, use
+201. With S₅ the actual metered FLOPs of one level-5 square product, the product-only bound is 193 S₅/2³¹
+u. At S₅/2³¹≈0.51 this is 98.43 u, versus 102.51 u for all full slices.
+Even before elementwise arithmetic, reaching 55 u with 193 calls would require ≤0.28497 u per call, or
+eliminating approximately 45% of the current calls. Batching does not supply that elimination under the
+stipulated counting rule.
+
+ROUND 10 / YOUNG-SOURCE COST BOUND
+2
+FIXED WEIGHTS / GAUSSIAN INPUT / n = 1024 / L = 16 / 1 u = 2^31 FLOPs
+An exact ledger, and the boundary of the proof
+Derived: explicit arithmetic schedule. Form M=W diag(Φ) once (n² multiplies); transport old young legs
+with M and the newborn A with W. For each transported source form P², PA, their two column-weighted
+versions, and multiply the second by 2: 5n² operations. Form the two n×n products, accumulate all 2m
+outputs, and divide the final sum by 3. Extracting its diagonal needs no arithmetic. This particular schedule
+has the exact cost
+Here S₅ includes all additions internal to that square-product implementation. Do not add the same
+Strassen overhead twice. The formula specifies a reproducible schedule, not an assertion that it is the
+shipped meter’s exact decomposition; cheaper elementwise scheduling only reduces the small n² term.
+For the terminal D3-only branch, use d3ᵢ=ΣₛⱼwₛⱼPₛ,ᵢⱼ²Aₛ,ᵢⱼ. Its exact cost in this schedule is
+(2m−1)S₅+(4m+1)n²−n. Therefore:
+Requested readout
+Exact network FLOPs
+Nominal u if S₅/2³¹=0.51
+Full D21 at all 15 transitions
+201 S₅ + 393 n²
+102.701895
+Final transition D3 only
+193 S₅ + 381 n² − n
+98.616035
+For classical square products S₅ is replaced by g=2,146,435,072 FLOPs: the corresponding exact totals are
+431,845,539,840 and 414,661,475,328 FLOPs. Your rounded 0.51 u does not specify an exact integer
+Strassen bill; substitute its measured S₅ in the formulas. Extra source/birth operations can only increase this
+schedule’s bill.
+Why the suggested regroupings do not evade this certificate. Transporting [P₁,A₁,…,Pₘ,Aₘ] has
+shape (n,n)×(n,2mn), costing 2m g classically before the newborn shortcut. Combining the slice products
+has shape (n,2mn)×(2mn,n), costing n²(4mn−1). Equivalently, 2m square calls plus (2m−1)n² accumulation
+operations. Calling either a “single product” does not make it a single square-product unit.
+Shared propagator factors do not close their squares:
+Keeping those cross terms explicitly requires a contraction of shapes (n,q)×(q,n), q=n(n−1)/2=523,776.
+That contraction alone costs n²(2q−1)/2³¹=511.499512 u at n=1024, before feature formation. The original
+dense-leg route is much cheaper. A closed age-2 expression merely chooses how to evaluate these same
+factors unless it introduces a new approximation.
+Accuracy boundary. These identities preserve D21 exactly in real arithmetic, but exceed the cost target.
+Neither flat spectra nor a contraction-order search proves a lower bound for every 2%-accurate algorithm.
+The allowed error corresponds to 4.2×10⁻⁶(0.02)²=1.68×10⁻⁹ extra final MSE under your measured law. No
+unmeasured replacement is claimed to satisfy it.
+
+ROUND 10 / YOUNG-SOURCE COST BOUND
+3
+FIXED WEIGHTS / GAUSSIAN INPUT / n = 1024 / L = 16 / 1 u = 2^31 FLOPs
+One falsifier: test the stated transport model without an inverse
+Derived consistency condition. There is a conflict between two stated premises. If a particular source
+obeys P₊=MP and A₊=MA with the same M, then any exact relation A=PR is preserved: A₊=P₊R. If P and M
+are invertible, P₊⁻¹A₊=P⁻¹A exactly. Therefore a 100-970% change in numerically computed P⁻¹A does not,
+by itself, establish a changing right factor. An ill-conditioned inverse, source misalignment, a change of
+coordinates, or an unrecorded update can produce that observation.
+I still charge A’s transport. Even if this invariant holds, evaluating A₊=P₊R is another dense multiplication,
+so it does not yield the requested saving. The issue matters because a no-go statement must specify the
+actual computation it covers.
+Measure. Select one matched birth at age 2→3, away from the join, and capture both legs immediately
+before and after the same transport. Preserve birth identity and coordinate conventions. Use float64
+products on the captured float32 values; compute
+M  = W.astype(np.float64) * phi[None, :]
+P0 = P_before.astype(np.float64)
+A0 = A_before.astype(np.float64)
+P1 = P_after.astype(np.float64)
+A1 = A_after.astype(np.float64)
+RP, RA = P1 - M @ P0, A1 - M @ A0
+rhoP = np.sqrt(np.sum(RP * RP) / np.sum(P1 * P1))
+rhoA = np.sqrt(np.sum(RA * RA) / np.sum(A1 * A1))
+Interpretation. If ρ_A substantially exceeds the transport’s forward-roundoff scale while ρ_P does not, the
+stipulated same-left-multiplication model is false for A at that capture boundary; an innovation or
+unmatched convention must be included, and the certificate above does not describe that graph. If both
+residuals are at roundoff scale, the inverse-based drift does not refute exact common transport. Establish
+the roundoff scale by replaying the same operation, rather than using a universal fixed tolerance.
+Exact diagnostic cost. For the shown algorithm, treating sqrt/division as one arithmetic operation each
+and charging float64 twice, the arithmetic is 4g+22n² = 8,608,808,960 FLOPs = 4.0087890625 u. Casts
+and copies are excluded under the stated arithmetic model. It uses two classical 1024-square products and
+O(n²) storage; one stored transition should take well under an hour on a CPU that runs the benchmark.
+This is a falsifier of the model underlying the conditional bound, not a test of a secretly proposed 55 u
+algorithm. No such algorithm has been supplied here. Your leaderboard result demonstrates a cheaper
+successful estimator, but does not establish that the gain is achievable by changing only ages 1-4 while
+freezing the rest of V29.
+Conclusion
+The requested target remains open. The supplied facts support exclusion of the specified exact
+dense-leg regroupings. They do not support a universal impossibility proof for different approximate
+representations, and I cannot honestly provide a representation with both the requested cost and an
+evidence-based ≤2% error claim.
+Evidence scope: network measurements and the exhaustive contraction-order result are supplied by the user. Counts and
+identities above are derived here. No stored network captures were supplied for this response, so the falsifier has not been
+run on the network. No additional literature-based accuracy claim is made.

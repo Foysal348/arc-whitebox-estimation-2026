@@ -1,0 +1,96 @@
+Round 10b | Exact contraction-order count | 24 Sep 2026
+Round 10b - Exact Contraction-Order Search for the Young K3 Tier
+Result: no mixed or hierarchical contraction order is cheaper; the optimum ties the current order.
+Scope. This is a contraction-order result for the tensor network specified in the prompt, using dense n x n intermediates and standard 
+GEMM/Hadamard operations. It does not claim a lower bound against unrelated arithmetic circuits. n=1024, depth=16, young ages 1-4. 
+The final layer needs d3 only, matching the measured ~50 u D21-contraction ledger.
+1. Tensor network and hyperedges
+For birth b and target l, let B_b denote the dense birth map such that A_{b,l}=P_{b,l} B_b, and let D_b=diag(w_b). The transported legs 
+are P,A in R^{n x n}; each layer map M_t is n x n. A D21 contribution is
+D_{b,l} = [ (P o P) D_b A^T + 2 (P o A) D_b P^T ] / 3.
+The Hadamard nodes are copy-hyperedges: in P o P or P o A, the same target-row index i and birth-column index k occur in both 
+factors. This is the obstruction to moving a dense M through the nonlinear node without creating a three-index intermediate.
+Tensor Shape Role
+M_t n x n dense layer map
+B_b n x n dense birth map; fixed for source b
+P_{b,l} n x n transported propagator
+A_{b,l} n x n P_{b,l} B_b
+w_b n column weights
+D_{b,l} n x n source contribution to D21
+2. Exact current-order count
+I ran a counting script on the exact 16-layer/age-4 band. The source-target counts by age are 15,14,13,12. Full D21 is consumed 
+through layer 15, so D21 readout counts are 14,13,12,11; layer 16 only consumes d3.
+pair_counts_by_age       {1:15, 2:14, 3:13, 4:12}
+readout_counts_by_age    {1:14, 2:13, 3:12, 4:11}
+forward transport GEMMs  93
+D21 contraction GEMMs    100
+total square GEMMs       193
+classical FLOPs          193 x 2^31 = 414,464,344,064
+L5 at the stated 0.51 u  193 x 0.51 = 98.43 u
+Why 93 transports/materializations? There are 15 age-1 nodes: P=M is already available, but A=M B_b costs one square GEMM -> 
+15. There are 14+13+12=39 age-2/3/4 nodes; each needs P<-MP and A<-MA, two square GEMMs -> 78. Total 15+78=93.
+Why 100 readout GEMMs? There are 14+13+12+11=50 source-target D21 uses, and each exact readout has two n x n contractions. 
+Thus 100 square GEMMs. The final-layer d3 is only a row reduction of (P o P o A)w and needs no n^3 product.
+The exact structural count is therefore 98.43 u if every square GEMM receives the prompt's 0.51-u L5 billing. The reported ~104 u is an 
+external metered number; I do not relabel it as an exact measurement. The ~5.6-u gap can include family-specific billing and non-
+square implementation work.
+Round 10b | Exact contraction-order count | 24 Sep 2026
+3. Contraction-order search: all useful competitors tie
+A. Hierarchical interval maps (strongest reuse candidate). Precompute every consecutive 2-, 3-, and 4-step map T_{b,l}
+=M_l...M_{b+1}, then reuse it for P and apply it once to B_b to obtain A. Counts:
+Operation Count of square n x n products
+Build all length-2 interval maps 14
+Extend to all length-3 maps 13
+Extend to all length-4 maps 12
+Apply T_{b,l} to B_b for all ages 1-4 54
+D21 readouts: two products x 50 uses 100
+TOTAL 193
+This is exactly the forward count: 39 map products + 54 birth applications = 93 state products. The apparent reuse simply moves the 
+same multiplication from the source state to the interval map.
+B. Store only P; reconstruct A on demand. Transport P only for ages >=2: 39 products. Form A=P B_b at every one of the 54 
+source-target nodes: 54 products. Readouts: 100. Total = 39+54+100 = 193. This is the forward/reverse dual in its simplest form.
+C. Batch all ages at one target. After Hadamard formation, q sources can be written as one rectangular multiplication [U_1...U_q, 
+V_1...V_q][A_1...A_q, P_1...P_q]^T. Its exact classical cost is 2*n*(2qn)*n = 4q n^3 FLOPs, exactly the same as 2q separate square 
+products. For q=1,2,3,4 the script returned square-product equivalents 2,4,6,8. No saving; under the prompt, Strassen is only credited 
+to square products.
+D. Factor the common P^T using A=P B_b. The readout can be rewritten exactly as
+D = { [(P o P)D_b] B_b^T + 2(P o A)D_b } P^T / 3.
+This compresses the 2n bond to n, but it still requires two square products: one for [(P o P)D_b]B_b^T and one for the final 
+multiplication by P^T. If A is not stored, A=P B_b is an additional product. Therefore it ties, rather than beats, the direct two-product 
+readout.
+4. Why mixed forward/reverse orders cannot cross the floor
+The local D21 network has two contraction branches across the birth-column index k. With U=(P o P)D_b and V=2(P o A)D_b,
+D = [U  V] [A  P]^T / 3,       inner bond width = 2n.
+A single rectangular contraction across that cut costs 4n^3 FLOPs, exactly two square products. Using A=P B_b reduces the bond 
+width to n only by paying the dense U B_b^T product first, followed by the final product with P^T: again two. Thus every full-D21 source 
+use has a two-product readout floor for generic dense B_b.
+The transport side has the analogous invariant. For every age >=2 node, either (i) extend P and A forward (two products), or (ii) 
+extend/build its interval map T (one) and apply T to the source-specific dense B_b (one). A mixed schedule chooses between two 
+equal-cost realizations independently at each node. Age 1 costs one because P=M is already present. Hence 93 state products is 
+invariant over every such mixed schedule.
+Round 10b | Exact contraction-order count | 24 Sep 2026
+5. Hadamard cut: why pushing M through is not a hidden escape
+Suppose at one transition P=MP0 and A=MA0. In term 1, moving M behind the Hadamard gives
+T_ij = sum_{alpha,beta,gamma} M_{i,alpha} M_{i,beta} M_{j,gamma}
+       * [ sum_k w_k P0_{alpha,k} P0_{beta,k} A0_{gamma,k} ].
+The bracket is a generic n x n x n intermediate. At n=1024 it has 1,073,741,824 entries (4 GiB in float32 before workspace). Contracting 
+one dense M across one index of such an object costs 2 n^4 FLOPs = 1024 u in the prompt's units. Therefore any contraction tree that 
+crosses the row-copy/Hadamard hyperedge before materializing the n x n transported legs is immediately outside the target regime. 
+The only viable trees keep intermediates at O(n^2), which returns to the 93+100 invariant above.
+6. Verdict
+No >=10% cheaper exact contraction order exists within this tensor network under the stated dense-GEMM/Hadamard model 
+and O(n^2) intermediates. The best orders found all use 193 square products. At the stated L5 factor, that is 98.43 u for the algebraic 
+young-tier core - already far above the <=55-u target. Reaching 55 u therefore requires changing the represented quantity or using an 
+arithmetic identity outside this contraction network; rearranging birth-target contractions is insufficient.
+7. One falsifier on the stored legs
+Implement the hierarchical interval-map/on-demand-A order, because it is maximally different from the current source-forward schedule 
+while having the same predicted count. For each stored young source and target: build T_{b,l} from cached length-2/3/4 interval maps, 
+set P=T_{b,l}, A=T_{b,l}B_b, and evaluate the common-right readout above. Check
+||D21_hier - D21_forward||_F / ||D21_forward||_F <= 1e-6.
+Instrument only n x n GEMMs. Prediction: exactly 39 interval-map products + 54 birth applications + 100 readout products = 193. The 
+no-go is falsified if an exact implementation reaches <=173 square-product equivalents (>=10% saving) without an n^3 intermediate, 
+sampling, or one of the measured-dead compressions.
+Code actually run for this answer. A Python counter produced the 15/14/13/12 pair counts, 14/13/12/11 D21 counts, 93/100/193 
+product totals, and the rectangular batching costs 2q square-product equivalents. opt_einsum was also run on one Hadamard branch 
+ik,ik,k,jk->ij; its optimized path used elementwise contractions followed by one GEMM and kept only n^2 intermediates, confirming one 
+GEMM per branch. These are operation-count checks, not grader measurements.

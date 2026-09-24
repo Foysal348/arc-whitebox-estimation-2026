@@ -1,0 +1,89 @@
+Round 10b — An exact contraction-order search for
+ the young third-cumulant tier
+Fixed bias-free ReLU MLP · n = 1024 · depth 16 · weights N(0, 2/n) · cost unit 1 u = 2³¹ FLOPs = one dense 1024³
+product (2n³).
+1. The young tier as a tensor network with hyperedges
+For a source born at ReLU layer b and evaluated at target l > b, age r = l − b ≤ 4, the carried tensors are:
+ tensor
+shape
+role
+P = P(b→l)
+n × n
+propagator; M_t = W_t · diag(Φ_t)
+a_b
+n
+birth vector: diag(Φ_b) · C_off
+w_b
+n
+birth-weight vector
+A = A(b→l)
+n × n
+P · diag(a_b), A_ij = P_ij a_b,j
+D21_l^(b)
+n × n
+(2,1) slice; d3 is the diagonal after summing births
+Closure contribution per source:
+D21_l^(b) = [ (P∘P)·diag(w_b)·Aᵀ + 2(P∘A)·diag(w_b)·Pᵀ ] / 3
+Writing entries gives:
+Term 1: [(P∘P)·diag(w)·Aᵀ]_(i,k) = Σ_j w_j a_j · P_ij² P_kj
+Term 2: [(P∘A)·diag(w)·Pᵀ]_(i,k) = Σ_j w_j a_j · P_ij³ P_kj
+Both terms share the trailing factor P_kj, hence the exact collapse:
+D21_l^(b)_(i,k) = (1/3) Σ_j g_(i,j)^(b,l) · P_(b→l)_(k,j), g_(i,j) = w_j a_(b,j) · P_ij²(1 + 2P_ij)
+Equivalently, D21^(b) = (1/3) G^(b) Pᵀ. The supplied n=2 hand check gives term-1 = 7 and term-2 = 26 for entry
+(1,1), matching the collapsed form.
+2. Exact FLOP count at the real shapes
+ step
+operation
+FLOPs
+u
+1. transport P
+M · P
+2n³ = 2,147,483,648
+1.000
+2. build G
+entrywise
+≈ 6n² = 6,291,456
+0.003
+3. contract
+G · Pᵀ
+2n³ = 2,147,483,648
+1.000
+total / pair
+collapsed
+2.003
+There are Σ_(r=1..4)(16−r) = 58 possible young (birth,target) pairs. Using the ledger's stated effective count of 54
+pairs:
+54 × 2.003 u = 108.2 u
+This reproduces approximately 54 u transport + 50 u D21. The supplied text's phrase “four dense products per pair”
+is inconsistent with the 104 u ledger unless A transport is free; the collapse makes A unnecessary.
+3. Best orders found
+Order A — collapsed forward (recommended). Keep P_(b→l), advance P ← M·P, never form A, build G entrywise, then
+compute G·Pᵀ. Exact cost: 108.2 u for 54 effective pairs.
+Order B — forward ages 1–2, reverse ages 3–4. Reverse mode carries both query legs and still requires the same
+dense contraction. Cost remains 2.003 u/pair; no saving.
+Order C — precomputed consecutive maps. Precomputing Q_t = M_tM_(t−1) costs about 15 u. Some transport is
+reduced, but ages 3–4 still need additional products and the Q_t are not reusable across all birth/target offsets. It
+does not beat the collapsed order under the stated ledger.
+Order D — rank/sharing check. G^(b,l) differs by birth-specific w_b, a_b and P_(b→l), so no exact common factor
+exists across births. Dense full-rank contractions remain 2n³.
+
+4. Verdict
+No mixed or hierarchical contraction order beats the current cost by 10% under the stated exact dense model; the
+≤55 u target is not attainable by reordering alone.
+The per-pair lower-bound structure is one dense transport (1.000 u) + one dense contraction (1.000 u) + O(n²)
+entrywise work. Over 54 effective pairs this is about 108 u.
+Why the floor is pinned: distinct births have non-nested P; G is birth-dependent; batching is FLOP-equivalent; reverse
+mode is an isomorphic contraction order.
+Real saving already realized: never form A. Further exact gains are primarily memory-side (incremental
+accumulation), not another contraction-order trick.
+5. Verification op list
+for each target l:
+  for b in {l−4, l−3, l−2, l−1}:
+    P = P_(b→l)
+    G = w_b[None,:] · a_b[None,:] · P² · (1 + 2P)
+    D21_l += G @ P.T / 3.0
+  d3 = diag(D21_l)
+Identity to verify against the uncollapsed reference: D21^(b)_(i,k) = (1/3) Σ_j w_j a_j (P_ij² + 2P_ij³) P_kj.
+6. Provenance
+This PDF is a clean typeset rendering of the supplied HTML content. No new numerical experiment was run during
+conversion. The arithmetic shown uses the source convention 2n³ = 2³¹ FLOPs = 1 u.
