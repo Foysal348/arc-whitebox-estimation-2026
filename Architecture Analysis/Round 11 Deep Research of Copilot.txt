@@ -1,0 +1,36 @@
+Round 11 - One Mechanism Proposal
+Mechanism: Response-State Closure (RSC)
+Represent only the quantities consumed by the next-layer mean closure. Do not carry kappa3
+sources or dense legs. Carry per layer four dense objects: C (covariance), Y21 (kappa3 iij slice),
+K4d (kappa4 diagonal), and an auxiliary response matrix R capturing regeneration of odd structure.
+The key approximation is that the missing deep content acts through a regenerated response field
+rather than through explicit source histories.
+State
+C: n x n. Y21: n x n. K4d: n. R: n x n. Total O(n^2) memory. R is updated recursively and replaces
+explicit source transport.
+Update Rule
+R(l+1)=(W■W)R(l)W^T + alpha*Y21(l)+beta*C(l). Variance, d3 and K4d are read out from linear
+combinations of C, Y21, K4d and R. No source identities are stored.
+Cost
+Transport of C ~2 units/layer. Y21 ~2 units/layer. R ~2 units/layer. Readout and diagonals <1
+unit/layer. Total about 6-7 units/layer or roughly 96-112 units over 16 layers, below the 125-unit
+target.
+Stage 1 Falsifier
+Free-run from layer 1 using only stored teacher layer-1 state. Compare C off-diagonal, Y21, d3 and
+K4d at layers 7, 11, 14 and 15. Kill immediately if any channel exceeds 1.5x chain error at two deep
+layers or diverges faster with depth.
+Teacher Check
+Fit alpha and beta on layers 3 and 7. Evaluate frozen coefficients on layers 11, 14, 15 and 16.
+Required result: channel errors no worse than the chain and ideally improved on K4d and variance.
+Stage 2 Target
+Integrate into the chain. Plausible path: match channel accuracy while removing the 41-unit old tier
+and most join work. Target total cost about 102-120 units. To beat the chain score, MSE must
+remain within roughly 1.07x chain at 102 units or 0.95x chain at 115 units.
+Specific Missing Term
+The hypothesis is that the omitted information is not source memory itself but repeated ReLU
+regeneration of odd response structure, summarized by R. If Stage 1 succeeds but Stage 2 misses,
+enrich R with one extra matrix R2 driven by K31 and K22.
+Why This One
+All exact source carriers are closed by measurement. This proposal changes representation
+entirely: it tracks the response field that produces the channels consumed by means, not the
+underlying kappa3 tensor.

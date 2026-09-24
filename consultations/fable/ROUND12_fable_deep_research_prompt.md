@@ -50,7 +50,8 @@ Budget discipline: at most three falsifier scripts per track. If a track dies at
   repeated-index slices still miss 22–29% of the next d3 and 36–40% of the next D21. Diagonal-only transport
   (Hadamard powers) misses 90–99% of the next d3: **d3 is fed almost entirely by off-diagonal κ3**.
 - **Dead:** Tucker/TT/CP/ISDF/vector-metric/shared-basis compression; short horizons; age modes; shift-stable carrier;
-  source-free trees; diagonal-only κ3/κ4 transport; low-rank(+diag) covariance (r = 64 still 12–33% off-diagonal);
+  source-free trees; diagonal-only κ3/κ4 transport; slice-state recursions (Copilot RSC: carry Y21 + response matrix
+  R' = (W∘W)RWᵀ + αY21 + βC — 36% D21 error even in-sample from the true state); low-rank(+diag) covariance (r = 64 still 12–33% off-diagonal);
   rank-1 κ3; sampling / control variates; adjoint low-rank paths; learned corrections; join rebuilds; A = P·a_b tricks,
   P_old = P_new·M, batching (same FLOPs; checked 24 Sep).
 

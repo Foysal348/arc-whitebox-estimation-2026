@@ -1291,6 +1291,7 @@ table([
 ], widths=[1.6*cm, 2.1*cm, 2.0*cm, 3.8*cm, 2.6*cm, 4.9*cm], fs=7.0)
 bullets([
  "The next layer's d3 comes almost entirely from OFF-diagonal kappa3: the diagonal-to-diagonal channel carries 1-10% of it. Even the exact repeated-index slices plus the Gaussian tree miss 22-29% (the all-distinct memory, as in DHMP) against the chain's free-running 3.2-4.7%. Low-rank covariance needs r >> 64 for the 0.7% bar (the chain carries C densely for ~8 u, so there is nothing to save there). Rank-one kappa3 is 35-49% wrong on D21.",
+ "Copilot's Response-State Closure (carry C, the slice Y21, K4d and one response matrix R' = (W o W) R W^T + alpha Y21 + beta C; experiments/probes/r11_rsc_gate.py): most generous gate - true post-ReLU states at L14/L15, coefficients fitted in-sample on the target L16 - leaves 35.9% of the off-diagonal D21 and 21.6% of d3 (chain 6.6% / 4.7%); the R memory term buys 0.3%. No linear slice-to-slice recursion carries the all-distinct memory (as K3g).",
  "The SciMaster document reports a '115 u prototype at 1.18x chain MSE' and 'Stage 1 passed'; no such run exists (it has no access to the code or data): fabricated results, disregarded.",
 ])
 h1("K4. Next experiments queued")

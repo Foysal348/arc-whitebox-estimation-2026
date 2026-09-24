@@ -457,6 +457,19 @@
    "gate": "-",
    "next": "-",
    "files": "experiments/probes/r11_diag_closure_gate.py"
+  },
+  {
+   "id": "D18",
+   "priority": "-",
+   "status": "dead",
+   "source": "Copilot (Round 11): Response-State Closure",
+   "title": "C, Y21 slice, K4d আর একটা response matrix R (R' = (WoW) R W^T + alpha Y21 + beta C) বহন",
+   "what": "Source বাদ; slice-কে state হিসেবে রেখে linear recursion + fitted coefficient।",
+   "evidence": "সবচেয়ে উদার gate (সত্যিকারের post state, একই layer-এ in-sample fit, L15->L16): off-diag D21 error 35.9%, d3 21.6% (chain 6.6% / 4.7%)। R memory term লাভ দেয় মাত্র 0.3%। Slice-থেকে-slice কোনো linear recursion all-distinct স্মৃতি ধরতে পারে না (K3g-এর সাথে একই)।",
+   "cost": "-",
+   "gate": "-",
+   "next": "-",
+   "files": "experiments/probes/r11_rsc_gate.py"
   }
  ]
 }
