@@ -1257,7 +1257,7 @@ table([
 ], widths=[2.4*cm, 1.4*cm, 1.4*cm, 1.4*cm, 1.4*cm, 1.5*cm, 6.8*cm], fs=7.0)
 bullets([
  "Every age contributes a similar share and the shares decay slowly; their squares sum to ~1, so the contributions are nearly orthogonal - no pooling of old ages into a small common object, and no short horizon (FHQR-2, h = 2, leaves 72-84%). The same holds on the rows of the decisive neurons.",
- "This sharpens the architectural question to one sentence: how can ~14 nearly independent, equally important realized kappa3 components of the same network be carried without a dense pair of legs per component? By Sol's own gate (h = 8 still far above 2%), a method at leader cost must keep the long memory in a radically cheaper coordinate system.",
+ "CORRECTION (pointed out by GPT 5.6 Sol): the squared shares sum to only 0.25-0.49, so the ages are NOT orthogonal - 50-76% of the energy comes from positive cross-age inner products. AGE-GRAM TEST (experiments/probes/r9_age_gram.py): mean pairwise cosine 0.29 / 0.32 / 0.39 / 0.38 (layers 7 / 11 / 14 / 15); the first age-mode holds 47 / 35 / 36 / 34% of the energy with same-sign loadings on every age. Projecting the age axis on its first r modes leaves an error in the TOTAL D21 of 12.2% (r = 1), 10.3% (r = 4), 8.5% (r = 6) at layer 15 and 23.5 / 14.1 / 7.4% at layer 11: one coherent mode carries ~88% of the deep total, but the remaining ~12% is spread over many modes, so the 2% target is out of reach along the age axis. The memory is long AND coherent, but not low-rank across ages.",
 ])
 h1("K4. Next experiments queued")
 bullets([

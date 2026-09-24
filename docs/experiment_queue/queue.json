@@ -392,6 +392,19 @@
    "gate": "-",
    "next": "-",
    "files": "experiments/probes/r9_dhmp_gate.py"
+  },
+  {
+   "id": "D13",
+   "priority": "-",
+   "status": "dead",
+   "source": "GPT 5.6 Sol (Age-Gram test)",
+   "title": "বয়সের অক্ষে kappa3 স্মৃতি সংক্ষেপ (age-mode projection)",
+   "what": "সব বয়সের D21 অবদানের Gram matrix-এর প্রথম r mode দিয়ে মোট D21 পুনর্গঠন।",
+   "evidence": "সংশোধন: বয়সগুলো লম্ব না, coherent (sum s^2 = 0.25-0.49, mean cosine 0.29-0.39, প্রথম mode 34-47% শক্তি, সব loading একই চিহ্ন)। কিন্তু মোট D21-এর error: layer 15 r1 12.2%, r4 10.3%, r6 8.5%; layer 14 r1 15.4%, r6 9.7%; layer 11 r1 23.5%, r6 7.4% — লক্ষ্য 2%-এর অনেক উপরে। প্রথম mode depth-এ মোটের ~88% ধরে, বাকি ~12% অনেক mode-এ সমানভাবে ছড়ানো।",
+   "cost": "-",
+   "gate": "-",
+   "next": "প্রথম mode layer থেকে layer-এ একটা object হিসেবে transport হয় কি না — Sol-কে প্রশ্ন।",
+   "files": "experiments/probes/r9_age_gram.py"
   }
  ]
 }
