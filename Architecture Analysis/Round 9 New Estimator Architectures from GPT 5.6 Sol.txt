@@ -1,0 +1,370 @@
+Round 9 - New Estimator Architectures | GPT-5.6 Sol
+Round 9 - New Estimator Architectures
+Designing from the complete error map, not patching V29
+Bias-free ReLU MLP, n = 1024, depth = 16, fixed He-Gaussian weights
+Target: raw MSE 1.64-1.9e-8 at 133-165 u (or better)
+Bottom line. I would stop treating the third cumulant as a bank of birth sources. The complete error map says the 
+failure is fresh and local: the missing signal is the all-distinct post-ReLU cubic field plus a fresh quartic graph field. The 
+most promising replacement is therefore a layer operator that constructs only the contractions the next layer needs. A 
+second, safer design keeps two future-query contractions of the cubic tensor, not the tensor or its sources. Both change 
+the cost law from O(number of sources x n^3) to O(few x n^3) per layer.
+Recommendation order: DHMP first; FHQR-2 second. A quadratic-chaos Galerkin design is included as a high-risk third 
+architecture, not as the first implementation target.
+Architecture Persistent high-order 
+state Classical ledger L5 ledger Primary risk
+1. Dressed Hypertree 
+Moment Propagation 
+(DHMP)
+No K3 source bank; C, exact 
+pair planes, marginals, 
+graph responses
+~133-163 u/network ~74-90 u/network
+Whether dressed trees + 
+full KxC partner close the 
+all-distinct residual to <2-
+3%
+2. Finite-Horizon Query 
+Response, h=2 (FHQR-2)
+2 global n x n cubic query-
+response matrices + 
+backward queries
+~148-163 u/network ~82-90 u/network
+Tail closure after horizon 2; 
+query closure must beat 
+the source-bank error
+3. Quadratic-Chaos 
+Galerkin (QCG)
+First-chaos map + moving 
+second-chaos response 
+matrices
+~105-150 u/network ~60-90 u/network Quadratic basis leakage 
+may recreate an n^3 state
+The cost numbers are architecture ledgers, not grader measurements. They use 1 u per conventional dense n^3 product and 0.51 u for a 
+level-5 Strassen product, plus the measured ~13 u/network for covariance + nonlinear closure. All designs must be re-metered in FlopScope 
+before promotion.
+1. What the error map forces an architecture to do
+ The mean formula is not the problem. A new design should spend essentially no research budget on a new marginal 
+ReLU mean closure.
+ The all-distinct post-ReLU K3 field must be created at the ReLU where it is born. A representation that first collapses 
+it to repeated-index stars and hopes future linear mixing recreates it is structurally misaligned with the measured 
+error.
+ K4 cannot be a scalar regeneration law. The missing pattern is a fresh connected four-vertex field, especially 
+(2,1,1)/(1,1,1,1), but it is only needed after contraction with the next weight row.
+ The coefficient paradox is a warning against adding one Edgeworth family in isolation. Any new architecture should 
+carry a coupled set of diagrams or a renormalized object in which partner terms are generated automatically.
+ The new cost must be independent of the number of birth layers. The 116 u young tier and 107 u old tier cannot both 
+survive.
+A useful change of viewpoint
+For a symmetric cubic tensor K and a query matrix Q, define the two-leg contracted response
+H_Q(K)[i,p] = sum_{j,k} K[i,j,k] Q[j,p] Q[k,p].
+If Q is the next weight matrix W, the next pre-activation (2,1) slice is obtained without reconstructing K:
+D21_next[p,q] = sum_i H_W(K)[i,p] W[i,q] = (H_W(K)^T W)[p,q].
+Round 9 - New Estimator Architectures | GPT-5.6 Sol
+This identity is the key architectural escape hatch. V29 transports factor legs and then forms Hadamard products. The 
+proposed architectures contract two tensor legs against the actual future queries before paying for transport.
+2. Architecture 1 - Dressed Hypertree Moment Propagation (DHMP)
+Status: strongest recommendation. Source-free, graph-based, and directly aligned with the measured fresh-error 
+mechanism.
+2.1 State
+Object Shape Purpose
+mu n Marginal pre/post mean
+C or E n x n Exact bivariate covariance edge; E denotes 
+post-ReLU covariance
+T = K3(i,i,j) n x n Exact repeated-index cubic plane from the 
+bivariate closure
+d3 n Cubic diagonal
+K22, K31 n x n Repeated-index K4 slices already available to 
+the closure
+d4 n K4 diagonal
+No source bank 0 No A_b/P_b/T_b objects, no age tiers
+Memory is O(n^2). At n=1024, even six float32 dense matrices are only about 24 MiB before work buffers, far below 8 GB.
+2.2 The dressed cubic field
+For the post-ReLU layer let E be the exact bivariate covariance returned by the bivariate closure. Let a_i = w(1,1)_i and 
+b_i = w(2,1)_i. The weak-correlation Gaussian tree has the familiar center-leaf form b_i a_j a_k C_ij C_ik + permutations. 
+Instead of using the bare edge a_i a_j C_ij, DHMP uses the exact bivariate edge E_ij and preserves the same weak-
+correlation limit with
+tau_i = b_i / max(a_i^2, eps).
+The all-distinct cubic skeleton is
+K3_tree(i,j,k) = tau_i E_ij E_ik + tau_j E_ji E_jk + tau_k E_ki E_kj,   for distinct i,j,k.
+This is not a low-rank tensor approximation. It is a connected-tree graphical closure with n^2 edge degrees of freedom. 
+Higher Hermite ladders in each pair are already resummed inside E.
+For Q = W_next, define
+R = E Q
+X = (diag(tau) Q) elementwise* R
+H_tree = diag(tau) (R elementwise* R) + 2 E X
+D21_tree_next = H_tree^T Q.
+Three dense products produce the all-distinct tree contraction for all n next-layer neurons at once: E Q, E X, and 
+H_tree^T Q.
+2.3 Make the repeated planes exact instead of asking the tree model to fit them
+The teacher map says the missing information is the strictly-distinct bulk, while the bivariate closure can provide the 
+repeated planes. Therefore DHMP uses the tree model only for the all-distinct sector and adds an exact repeated-plane 
+correction.
+Compute the tree model's T_tree(i,j)=K3_tree(i,i,j) and d3_tree. Let DeltaT = T_exact - T_tree, with diagonal set to 
+(d3_exact-d3_tree)/3. The symmetric tensor supported only on repeated patterns contracts through Q as
+U = DeltaT Q
+Round 9 - New Estimator Architectures | GPT-5.6 Sol
+Repeat_next = (Q elementwise^2)^T U + 2 (Q elementwise* U)^T Q.
+This is three more dense products and exactly restores the known iij/iii sector. The architecture therefore spends 
+approximation error only on the sector your teacher says is missing.
+2.4 Add the non-Gaussian K3 x C families as a coupled operator, not a coefficient patch
+The two measured first-order K3 x C families can be generated from the ARC vector-partition table and compiled directly 
+into contractions of T, C/E and Q. Their operands are matrices, so each family can be grouped into one dense product 
+after elementwise Wick weighting. Budget two products per layer for the full pair.
+The important architectural rule is that the K3 x C pair is evaluated together with the dressed-edge tree field below. Do 
+not scan its coefficient in isolation in production.
+2.5 K4 diagonal from the same graph messages
+The ARC factor-K4 implementation organizes the fresh all-distinct fourth-order field into connected path, star and 3+2 
+hypertrees. That is exactly the structure needed here: contract the graph with Q four times; never build K4(i,j,k,l).
+With c_i = w(3,1)_i and sigma_i = c_i/max(a_i^3,eps), reuse R=EQ. The dressed Gaussian star is
+k4_star[p] = 4 sum_i sigma_i Q[i,p] R[i,p]^3.     (no dense product)
+For the path graphs, the two degree-2 vertices carry tau. Set
+P = (diag(tau) Q) elementwise* R,    Y = E P,
+k4_path[p] = 12 sum_i P[i,p] Y[i,p].
+This adds one dense product E P for all outputs. The K3 x C 3+2 graph uses the already available cubic two-leg response 
+H and R; its final contraction is a columnwise dot product after the appropriate Wick ratio is applied at the shared 
+vertex. The coefficient is 12 in the ARC graph enumeration. Pairwise K4 level terms (K4 diagonal + K22/K31) are retained 
+exactly; the K22 term requires one dense product against Q elementwise^2.
+2.6 The item-6 paradox: what the missing partner probably is
+The strongest explanation is diagrammatic double counting. The theoretical K3 x C coefficient is a coefficient in a bare 
+expansion whose two-point edge is a_i a_j C_ij. But your actual chain already uses a near-exact bivariate ReLU closure, so 
+the physical edge is dressed:
+E = G + DeltaE,    G_ij = a_i a_j C_ij.
+A dressed cubic tree contains
+tau_i E_ij E_ik = tau_i G_ij G_ik + tau_i(G_ij DeltaE_ik + DeltaE_ij G_ik) + tau_i DeltaE_ij DeltaE_ik.
+The second line is a deterministic partner correction. If it is omitted while the bare K3 x C coefficient is restored to its 
+formal value, the update can over-shoot. The shipped half-strength coefficient can then be an accidental counterterm. 
+DHMP includes the partner automatically because its edge is E, not G.
+2.7 FLOP ledger
+Per transition item Dense products
+Dressed all-distinct cubic tree: R, E X, H^T Q 3
+Exact repeated-plane correction: U, (Q^2)^T U, (Q*U)^T Q 3
+Full paired K3 x C families <=2
+K4 pairwise level term (K22 vs Q^2) 1
+K4 dressed path (E P) 1
+K4 star + 3+2 final reductions 0
+Total 8-10
+Over 15 transitions this is 120-150 u with conventional GEMMs. Adding the measured ~13 u/network covariance + 
+closure ledger gives 133-163 u. If all eligible products use the stated level-5 price, the same arithmetic is about 74-90 u 
+Round 9 - New Estimator Architectures | GPT-5.6 Sol
+including covariance + closure. There is therefore enough cost headroom to be wrong by one or two extra GEMMs per 
+layer and still live in the leader cost band.
+2.8 Falsifier - run this before writing an estimator
+1. Teacher-force one layer at a time. Use true current post E, T, d3, K22, K31, d4 and the actual next W. Build DHMP 
+D21_next and d4_next. Compare to the stored true next pre-activation slices.
+2. Cubic kill gate: relative RMS(D21_DHMP - D21_true) / RMS(D21_true) must be <= 2.5% at layers 4-14. Also require that 
+the error is not strongly depth-growing. If it is >4% at two mid/deep layers, kill DHMP.
+3. Paradox test: compare bare-edge and dressed-edge versions while sweeping only the K3 x C coefficient. Promotion 
+signal: with dressed edges, the optimum moves toward the formal full coefficient and the fresh D21 error drops. If 
+the optimum remains near the shipped 1.25x and dressing is neutral, the proposed partner explanation is wrong.
+4. Quartic gate: on |mu/sigma|<1.5 neurons, require K4-diagonal correlation >=0.90 and relative RMS <=12% using 
+teacher-forced inputs. The current ~20% error leaves enough room that this is a meaningful gate.
+5. Only after those one-step gates pass, run end-to-end on the two teacher networks, then the 100-network harness. 
+Promotion target: raw <=1.9e-8 at <=165 u. Stretch target: <=1.8e-8 at <=120 u.
+3. Architecture 2 - Finite-Horizon Query Response (FHQR-2)
+Status: second recommendation. More state than DHMP, but it preserves young cubic memory in the exact query 
+directions that will actually be used.
+3.1 Why this is different from the adjoint/source approaches already killed
+A per-source adjoint still pays one contraction for every source-layer pair. FHQR performs the sum over sources first. It 
+stores global contractions of the entire cubic tensor against known future queries. The state count depends on a short 
+horizon h, not on the number of births.
+3.2 State and backward query pass
+After a cheap forward pass supplies the derivative diagonals a_l=w(1,1), construct tangent queries backward. For h=2, 
+keep
+Q_l^(1) = W_{l+1}
+Q_l^(2) = W_{l+1} diag(a_{l+1}) W_{l+2}        (orientation adjusted to the implementation convention).
+The forward high-order state is two n x n response matrices
+H_l^(t)[i,p] = sum_{j,k} K3_post_l[i,j,k] Q_l^(t)[j,p] Q_l^(t)[k,p],   t=1,2.
+For h=2 this is two global matrices, regardless of how many birth layers contributed to K3.
+3.3 Propagation rule
+6. Linear shift: because Q_l^(2) already contains the next tangent map, the linearly transported old cubic content 
+needed one layer later is obtained from H_l^(2) by a first-leg multiplication with W_{l+1}; no A_b/P_b legs are 
+transported.
+7. Nonlinearity: multiply the old response by the appropriate ReLU first-derivative factors and add the fresh dressed-
+tree birth directly in each query Q^(t). The fresh term uses the same two products E Q and E((tau Q)*R) as DHMP.
+8. Readout: D21_{l+1} is H_l^(1)^T W_{l+1} plus the exact repeated-plane correction. The K4 3+2 term reuses H_l^(1); 
+the Gaussian K4 path/star use the same E Q message.
+9. Horizon tail: information older than h steps is not dropped. It is closed by the DHMP dressed tree operator. Thus h 
+controls how much non-Gaussian memory is exact in query space, while the tail has constant cost.
+Round 9 - New Estimator Architectures | GPT-5.6 Sol
+3.4 Why this specifically attacks the 116 u young tier
+Young source legs are expensive because V29 carries two dense n x n legs for every recent birth even though the next 
+layer consumes only quadratic queries of the tensor. FHQR stores those quadratic queries directly. It therefore preserves 
+the part of a young source that is visible to the next h layers without carrying the source identity or suffering the Khatri-
+Rao reformation wall.
+3.5 FLOP ledger for h=2
+Item Dense products per transition
+Backward construction of the second query ~1
+First-leg transport of H^(1), H^(2) ~2
+Fresh dressed-tree birth for two query families ~4
+D21 readout H^(1)^T W 1
+K4 path/level sidecar ~1-2
+Total ~9-10
+This gives about 148-163 u/network including the measured covariance + closure ledger with conventional products, or 
+about 82-90 u with the stated level-5 product price. State memory is small: two H matrices + one extra Q matrix + the 
+ordinary pairwise state is tens of MiB, not GiB.
+3.6 Falsifier
+10. Use stored V29 source factors only as an oracle, not as the proposed state. At layers 3, 7, 11 and 14, contract the full 
+source sum directly into H_Q for Q^(1) and Q^(2). This is a one-time numpy teacher calculation.
+11. Verify the query-shift identity numerically through the next linear layer. This should be machine-precision if 
+indexing and derivative placement are correct.
+12. Then replace the exact horizon tail by the dressed-tree tail. Kill h=2 if the resulting next D21 error exceeds 2.5% RMS 
+or if h=2 improves pure DHMP by <20% of its remaining error. In that case h=3 is unlikely to justify its extra 
+products unless the error decay from h=1 to h=2 is close to geometric.
+13. Optional independent test: the public width-256 full-K3 tensors can be contracted into H_Q directly. This avoids 
+trusting V29 factors when validating the query state.
+14. End-to-end ladder: h=0 (DHMP), h=1, h=2, h=3 only on layers 8-15. Promote the cheapest point with raw <=1.9e-8 and 
+score improvement on the paired 100-network harness.
+4. Architecture 3 - Quadratic-Chaos Galerkin (QCG)
+Status: high-risk research architecture. It is attractive because K3 and K4 are generated by one common stochastic 
+state, so inconsistent coefficient patches disappear. I would run only its falsifier before implementation work.
+4.1 Idea
+Write each centered neuron as a truncated Wiener-Hermite field rather than as cumulants born at layers:
+h_i - E[h_i] ~= u_i^T xi + (xi^T H_i xi - tr(H_i)).
+A quadratic Gaussian field automatically produces covariance, third cumulants and fourth cumulants through 
+contractions of the same u_i and H_i. The architecture therefore cannot independently mis-tune a K3 x C family without 
+also changing the partner quartic terms; this is exactly the consistency missing in item 6.
+4.2 Compressed Galerkin state
+The impossible version stores one full H_i per neuron (O(n^3) state). The testable version uses a moving common 
+quadratic basis B with n modes and stores only coefficient matrix S:
+H_i ~= sum_r S[i,r] b_r b_r^T,     B = [b_1 ... b_n].
+Round 9 - New Estimator Architectures | GPT-5.6 Sol
+State: U (n x n first-chaos map), B (n x n quadratic basis), S (n x n coefficients), plus mean. This is O(n^2) memory. A 
+linear layer mixes rows of U and S. A ReLU adds a local rank-one quadratic birth proportional to w(2,1)_i u_i u_i^T, then 
+the quadratic field is projected back into the moving B basis.
+4.3 Cost and the dangerous step
+A practical implementation would spend roughly 6-9 dense products per transition: first-chaos transport, coefficient 
+mixing, one overlap/rebasis product, and 3-6 Gram contractions to obtain covariance/K3/K4. That is roughly 105-150 
+u/network conventionally including closure, or 60-90 u at the stated L5 price.
+The dangerous step is the re-basis projection. A fresh square (u_i^T xi)^2 creates cross terms in a generic basis. If the off-
+diagonal quadratic-core energy is not small, the required basis dimension grows to n(n+1)/2 and the architecture 
+collapses back to an impossible state. This is why QCG is third, not first.
+4.4 Falsifier
+15. On a width-256 public full-K3 tensor, fit the best n-mode common quadratic-basis model at layers 0, 4, 8 and 16 using 
+only an evaluation split. Measure tensor contraction error after the next W, not raw Frobenius error.
+16. Kill if the best n-mode quadratic basis cannot reach <=3% contracted D21 error at the early layers. Public evidence 
+already says early K3 is much less compressible than deep K3, so this is a severe gate.
+17. If it passes, implement the one-network forward Galerkin chain at n=1024 and compare var, d3 and d4 teacher 
+channels. Require simultaneous improvement in all three; improvement in K3 with degradation in K4 is a direct 
+failure of the motivation.
+5. Which architecture I would build first
+Rank Architecture Reason Stop condition
+1 DHMP
+It attacks the measured fresh all-
+distinct K3 and fresh K4 exactly 
+where they are born, has no source 
+count, and the one-step falsifier 
+uses arrays you already have.
+Teacher-forced D21 error >4% at 
+two mid/deep layers, or dressed-
+edge paradox test fails.
+2 FHQR-2
+If DHMP is close but not enough, 
+this preserves two layers of cubic 
+memory in the exact future 
+directions while still avoiding 
+source identities.
+h=2 captures <20% of DHMP 
+residual or costs >165 u after real 
+metering.
+3 QCG
+The only proposal here that makes 
+K3 and K4 manifestations of one 
+common stochastic state; 
+theoretically elegant but closure-
+risky.
+Early-layer common quadratic 
+basis needs more than n modes for 
+<=3% contracted error.
+Expected score economics
+These are promotion targets, not predictions. If DHMP reaches raw 1.8e-8 at 118 u, the score is about 2.07e-9. At <=102.4 
+u the competition multiplier hits the 0.1 floor, so the same raw error scores 1.8e-9. FHQR-2 at raw 1.8e-8 and 148 u scores 
+about 2.60e-9. Therefore DHMP should spend any sub-floor headroom on accuracy rather than further arithmetic 
+trimming.
+The first experiment I would run
+Do not implement an estimator yet. Build a pure numpy one-step notebook with teacher-forced layer inputs and the 
+actual next W. It should output four curves across depth:
+ bare tree D21 error;
+ dressed tree D21 error;
+ dressed tree + exact repeated-plane correction;
+Round 9 - New Estimator Architectures | GPT-5.6 Sol
+ dressed tree + repeated correction + full K3 x C pair.
+For each curve also compute the next K4 diagonal using star/path/3+2 contractions. This single notebook decides 
+whether the source-free architecture is real. If the final curve is <=2.5% D21 RMS and <=12% active-neuron K4 RMS at 
+the mid/deep teacher layers, proceed directly to DHMP. If not, run the FHQR h=1/h=2 oracle contraction before 
+abandoning the architecture family.
+6. Minimal DHMP pseudocode
+for l in 0..L-2:
+    # existing exact/near-exact bivariate state
+    mu_pre, C_pre, T_pre, d3_pre, K22_pre, K31_pre, d4_pre = state
+    post = exact_bivariate_relu_closure(state)
+    E, T, d3, K22, K31, d4 = post.pair_state
+    Q = W[l+1]
+    # dressed all-distinct cubic tree
+    tau = w2 / maximum(w1*w1, eps)
+    R = E @ Q
+    X = (tau[:,None] * Q) * R
+    H = tau[:,None] * (R*R) + 2 * (E @ X)
+    D21 = H.T @ Q
+    # exact repeated-plane replacement
+    T_model, d3_model = pair_planes_of_tree(E, tau)
+    Delta = T - T_model
+    diag(Delta) = (d3 - d3_model)/3
+    U = Delta @ Q
+    D21 += (Q*Q).T @ U + 2 * (Q*U).T @ Q
+    # add the two full K3 x C vector-partition families
+    D21 += compiled_KC_pair(T, E, Q, wick_coeffs)
+    # quartic diagonal: exact repeated level + dressed fresh graphs
+    q2 = Q*Q
+    k4 = exact_pairwise_k4_level(d4, K22, K31, Q)
+    sigma = w3 / maximum(w1*w1*w1, eps)
+    k4 += 4 * colsum((sigma[:,None]*Q) * (R**3))
+    P = X
+    Y = E @ P
+    k4 += 12 * colsum(P*Y)
+    k4 += contracted_3plus2_from_H(H, R, Q, wick_coeffs)
+    state_next = build_next_pre_state(mu_post, C_post, D21, k4, Q, ...)
+7. What would falsify the entire thesis
+ If teacher-forced current pair statistics do not predict the next preactivation D21 through any dressed tree/KxC 
+graph operator to within ~3%, then the missing all-distinct field has genuine long memory that cannot be 
+summarized by pair state. DHMP is then dead.
+Round 9 - New Estimator Architectures | GPT-5.6 Sol
+ If FHQR h=2 does not materially reduce that residual, the useful memory is not short-horizon in query space. At that 
+point the source-bank floor is probably a real information-complexity floor for deterministic analytic methods at 
+this accuracy.
+ If the paradox persists after replacing bare edges by exact bivariate dressed edges, then the missing partner is not 
+pair-edge dressing. The next suspects are higher connected K4/K5 blocks rather than a coefficient issue.
+ If K4 path/star/3+2 predicts the teacher pattern but end-to-end MSE worsens, the chain contains trajectory-level 
+error cancellation. Then promotion must be based only on 100-network paired score, not local channel accuracy.
+8. External anchors and why they matter
+These sources do not publish the architectures above. They support the algebraic ingredients or provide negative 
+evidence that constrains the designs:
+[1] Alignment Research Center, "Cumulant propagation for wide random MLPs" (public code). 
+https://github.com/alignment-research-center/mlp_cumulant_propagation - The factor_k4 implementation explicitly 
+organizes connected fourth-order content into path, star and 3+2 hypertree diagrams, which motivates direct graph 
+contraction.
+[2] G. Peccati and M. S. Taqqu, Wiener Chaos: Moments, Cumulants and Diagrams, Springer, 2011. 
+https://doi.org/10.1007/978-88-470-1679-8 - General diagram/cumulant calculus for nonlinear functionals of Gaussian 
+fields.
+[3] F. Voigtlaender, "A General Version of Price's Theorem," Journal of Theoretical Probability 34 (2021). 
+https://doi.org/10.1007/s10959-020-01017-w - Justifies differentiating Gaussian nonlinear expectations with respect to 
+covariance; conceptually supports dressed bivariate response edges.
+[4] K. Fischer et al., "Decomposing neural networks as mappings of correlation functions," Physical Review 
+Research 4, 043143 (2022). https://doi.org/10.1103/PhysRevResearch.4.043143 - Uses Price-theorem/correlation-function 
+expansions for nonlinear networks; useful context for graph expansions, though it does not solve this high-accuracy 
+fixed-weight problem.
+[5] jamesrahenry/arc-whitebox-replication, public full-K3 evaluation. https://github.com/jamesrahenry/arc-
+whitebox-replication - Independent evidence that strictly-distinct K3 carries most recoverable signal and that a naive 
+local/windowed analytic carrier is not accurate enough; this is why DHMP uses exact pair-plane replacement and FHQR 
+uses future queries instead of a bare local source.
+[6] J. Exenberger, S. Ranftl, R. Peharz, "Deep Polynomial Chaos Expansion," AISTATS 2026. 
+https://proceedings.mlr.press/v300/exenberger26a.html - Motivation for the high-risk Galerkin alternative: structured 
+polynomial-chaos representations can avoid explicit high-dimensional basis enumeration, but applicability here must be 
+falsified early.
+9. Final recommendation
+Build the DHMP one-step falsifier first. It is the only proposal that simultaneously (i) removes the source-count cost, (ii) 
+creates the all-distinct cubic field at the ReLU where the teacher says the error is born, (iii) obtains the K4 star/path/3+2 
+correction from the same messages, and (iv) gives a concrete explanation for the coefficient paradox. If DHMP is close 
+but misses the 2-3% cubic target, add FHQR-2 rather than restoring source identities. I would not spend implementation 
+time on QCG unless its basis-leakage falsifier passes.
+Important: the architectures are new proposals derived from the supplied error map and public diagram identities. They are not claimed as 
+published leaderboard methods. The raw-MSE targets in the report are promotion thresholds, not predictions.

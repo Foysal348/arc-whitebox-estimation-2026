@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-24 (moonshot A: cost ledger, V41 join, Round 10 prompt)",
+ "updated": "2026-09-24 (GPT Sol R9: DHMP মৃত, FHQR-2 P3)",
  "baseline": "Best graded: #332110 score 5.1284e-9 (raw 2.1046e-8) — v40fb (FB 1.25 + beta 1.2). আগের: #331787 5.137e-9. Plain chain on public MLP #0: final MSE 2.290e-8.",
  "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে।",
  "items": [
@@ -54,6 +54,19 @@
    "gate": "D21 relative error <= 2% রেখে <= 55 u",
    "next": "Round 10 AI উত্তরের অপেক্ষা।",
    "files": "-"
+  },
+  {
+   "id": "Q18",
+   "priority": "P3",
+   "status": "open",
+   "source": "GPT 5.6 Sol R9 (FHQR-2)",
+   "title": "Finite-Horizon Query Response (h = 2): ২ layer-এর kappa3 স্মৃতি query-space-এ, বাকিটা tree দিয়ে",
+   "what": "Source bank-এর বদলে দুটো global n x n response matrix H = K3[:, Q, Q] (Q = পরের ১ ও ২ layer-এর query) বয়ে নেওয়া; পুরোনো অংশ dressed tree দিয়ে পূরণ।",
+   "evidence": "DHMP gate-এ tree নিজে মাত্র ~অর্ধেক 'নতুন' অংশ ধরে (corr 0.43-0.54); স্মৃতি প্রতি বয়সে x0.66 হারে কমে (৪ বয়স পরেও ~20%) — h = 2-এ কাটলে ঝুঁকি বেশি।",
+   "cost": "~82-90 u (Strassen) দাবি",
+   "gate": "teacher-forced D21 error <= 2.5%",
+   "next": "Source capture দিয়ে h = 1/2 oracle (Sol-এর falsifier 10-12)।",
+   "files": "Architecture Analysis/Round 9 New Estimator Architectures from GPT 5.6 Sol.pdf"
   },
   {
    "id": "Q1",
@@ -366,6 +379,19 @@
    "gate": "-",
    "next": "-",
    "files": "experiments/variants/make_v41join.py"
+  },
+  {
+   "id": "D12",
+   "priority": "-",
+   "status": "dead",
+   "source": "GPT 5.6 Sol R9 (DHMP)",
+   "title": "DHMP: source bank বাদ, প্রতি layer-এ dressed tree দিয়ে 'সব index আলাদা' kappa3",
+   "what": "Source-free architecture (দাবি ~74-90 u)।",
+   "evidence": "Kill gate (teacher-forced, সত্যিকারের post E, T, d3): পরের D21-এর relative error 40.4% / 38.4% / 36.4% / 36.7% / 36.3% (L4/8/12/15/16) — শর্ত <= 2.5%, chain 4-7%। Tree 'সব index আলাদা' অংশের সাথে corr মাত্র 0.43-0.54 (scale ঠিক, slope 0.88-1.16): বাকি অর্ধেক আগের layer-এর স্মৃতি। Dressed বনাম bare edge পার্থক্য 0.4-1% — paradox-এর ব্যাখ্যাও না।",
+   "cost": "-",
+   "gate": "-",
+   "next": "-",
+   "files": "experiments/probes/r9_dhmp_gate.py"
   }
  ]
 }
