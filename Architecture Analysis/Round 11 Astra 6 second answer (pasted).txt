@@ -1,0 +1,8 @@
+GPT Astra 6, Round 11, second answer (pasted by the user, 24 Sep 2026):
+Cannot give a defensible <=125 u scheme with a plausible path to the measured accuracy. The next variance and skewness
+read v_i' = w_i^T C_post w_i and d3_i' = K_post[w_i,w_i,w_i]; the second query depends on tensor content absent from the
+stored slices, and its effect mostly enters subsequent means. A state S = (mu, C, Y21, d3, d4) has O(n^2) storage and
+~1.02 u/layer Gaussian covariance transport, but the unidentified nonlinear transition supplying the missing cubic and
+quartic content is the whole problem; assigning it zero cost would manufacture the result. The exact-carrier obstruction
+does not prove every alternative impossible: a successful one needs a new, quantitatively accurate approximation to the
+realized channel responses, not another tensor representation.

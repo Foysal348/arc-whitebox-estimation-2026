@@ -439,7 +439,7 @@
    "source": "GPT-6 Astra (Round 11)",
    "title": "Channel-history state (m, C, Y, k4 সব layer-এর) + nonlinear memory closure",
    "what": "Source leg বাদ দিয়ে শুধু দেখা যায় এমন channel-এর ইতিহাস রাখা; পরের Y আর k4-এর জন্য একটা nonlinear নিয়ম।",
-   "evidence": "Astra নিজেই কোনো নিয়ম দিতে পারেনি (সৎ 'না')। Injection যুক্তি: (a,b,c) all-distinct একটা লুকানো perturbation বর্তমান slice আর diagonal-এ দেখা যায় না, অথচ পরের slice বদলায় — তাই শুধু channel-এ সাধারণভাবে যথেষ্ট তথ্য নেই। বাস্তব MLP-এর ক্ষেত্রে: DHMP (pair state থেকে tree) corr 0.43-0.54, অর্ধেক all-distinct অংশ স্মৃতি; slice transport (K3g) আর learned correction আগেই মৃত। Budget: 125u = প্রতি layer-এ ~15টা square product।",
+   "evidence": "Astra নিজেই কোনো নিয়ম দিতে পারেনি (সৎ 'না')। Injection যুক্তি: (a,b,c) all-distinct একটা লুকানো perturbation বর্তমান slice আর diagonal-এ দেখা যায় না, অথচ পরের slice বদলায় — তাই শুধু channel-এ সাধারণভাবে যথেষ্ট তথ্য নেই। বাস্তব MLP-এর ক্ষেত্রে: DHMP (pair state থেকে tree) corr 0.43-0.54, অর্ধেক all-distinct অংশ স্মৃতি; slice transport (K3g) আর learned correction আগেই মৃত। Budget: 125u = প্রতি layer-এ ~15টা square product। | Astra (২য় উত্তর, 24 Sep): আবার সৎ 'না' — S = (mu, C, Y21, d3, d4) state-এর O(n^2) storage আর ~1u/layer covariance transport ঠিক, কিন্তু missing cubic/quartic content-এর nonlinear transition-টাই অজানা; সেটাকে শূন্য খরচ ধরলে ফল 'বানানো' হবে। নতুন কিছু নেই।",
    "cost": "-",
    "gate": "-",
    "next": "Injection test চালানো হয়নি: গঠন অনুযায়ীই পাস/ফেল নির্ধারিত (tautological), বাস্তব family সম্পর্কে কিছু বলে না।",

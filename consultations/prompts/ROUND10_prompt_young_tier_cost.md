@@ -43,6 +43,23 @@ moved into a shared rank-384 basis (rank-224 sub-basis after age 7).
    corrections; any Monte-Carlo or control-variate estimator (coupled surrogates correlate 0.19–0.73 with the needed
    statistics); learned corrections; mixed-coordinate re-ordering (same FLOPs); Strassen levels ≥ 6 (memory cap 8 GB).
 
+## Scope (clarified 24 Sep)
+
+Only the young tier changes: the young sources' (ages 1–4) contribution to D21 and its diagonal d3 must cost **≤ 55 u
+in total over the network** (today ≈ 104 u), at ≤ 2% relative D21 error. Everything else stays as it is (join ≈ 41–46 u,
+old tier ≈ 41 u, thin legs ≈ 15 u, covariance + closure ≈ 8 u, Strassen additions ≈ 12 u; κ4 is memoryless, no transport
+cost). Success brings the total from ~249 u to ~200 u.
+
+Already checked by us and found to save nothing (do not re-propose without an exact count that says otherwise):
+- skipping A's transport because A = P·diag(a_b): the Hadamard terms need A entry-wise, so forming A costs n³ anyway;
+- reusing P_old = P_new·M: forming it is itself an n³ product;
+- batching the four ages into wider products: identical FLOPs;
+- age-1 P = W: already used.
+We are also running an exact contraction-order search of the young-tier tensor network (mixed forward/reverse orders).
+
+Also measured (so a proposal cannot rely on them): the next layer's d3 is fed 90–99% by off-diagonal κ3; diagonal-only
+transport, low-rank covariance, rank-1 κ3, slice-state recursions, deterministic particles and aggregate CP are all dead.
+
 ## The question
 
 The young tier costs ≈ 104 u: four dense n×n products per source-layer (two transports, two contractions) for four
