@@ -88,7 +88,7 @@
    "source": "Fable R7",
    "title": "R7_FB_SCALE = 1.25 (feedback constant একটু বাড়ানো)",
    "what": "Port-এর সময় Edgeworth-এর দুটো K x C term-এর অর্ধেক বাদ পড়েছিল; পুরোটা ফেরালে (2.0) খারাপ, 1.25 সামান্য ভালো।",
-   "evidence": "100 MLP, paired (base bit-identical): fb1.25 score x0.9963 +- 0.0008; fb1.5 x1.0001; fb1.25 + beta1.2 x0.9946 +- 0.0007 (73% network-এ ভালো), খরচ শূন্য। Submit: v40fb (#332110), আনুমানিক LB 5.109e-9। GRADED: #332110 score 5.1284e-9 (raw 2.1046e-8) — নতুন best (আগে 5.137e-9): -0.17%, local অনুমানের (-0.54%) চেয়ে কম (লুকানো network আলাদা)। | FB x beta grid (100 MLP, paired vs shipped 1.25/1.2, 24 Sep): fb1.15/b1.2 +0.10% +-0.03, fb1.35/b1.2 +0.00% +-0.03, fb1.15/b1.3 +0.12% +-0.05, fb1.35/b1.1 +0.08% +-0.05 — shipped setting সেরা (সমতল শীর্ষ); fb1.25 x b1.1/b1.3 (runner-b) চলছে।",
+   "evidence": "100 MLP, paired (base bit-identical): fb1.25 score x0.9963 +- 0.0008; fb1.5 x1.0001; fb1.25 + beta1.2 x0.9946 +- 0.0007 (73% network-এ ভালো), খরচ শূন্য। Submit: v40fb (#332110), আনুমানিক LB 5.109e-9। GRADED: #332110 score 5.1284e-9 (raw 2.1046e-8) — নতুন best (আগে 5.137e-9): -0.17%, local অনুমানের (-0.54%) চেয়ে কম (লুকানো network আলাদা)। | FB x beta grid (100 MLP, paired vs shipped 1.25/1.2, 24 Sep): fb1.15/b1.2 +0.10% +-0.03, fb1.35/b1.2 +0.00% +-0.03, fb1.15/b1.3 +0.12% +-0.05, fb1.35/b1.1 +0.08% +-0.05 — shipped setting সেরা (সমতল শীর্ষ); fb1.25/b1.1 +0.04% +-0.03, fb1.25/b1.3 -0.01% +-0.03 — কোনো পার্থক্য নেই; grid শেষ।",
    "cost": "0 u (শুধু constant)",
    "gate": "100-MLP suite-এ paired gain > SE",
    "next": "শেষ।",
