@@ -157,20 +157,28 @@ import math
 
 import flopscope as flops
 import flopscope.numpy as fnp
-# OPUS R12 ORACLE VARIANT (not for submission): v40fb with the TEACHER's (2,1) kappa3 slice injected.
-# OPUS_D21ORACLE = none | fb (only the D21 feedback thin legs of the newborn see the true slice) | all (true slice
-# replaces the chain's D21 everywhere after _dslices: closure terms, feedback, S21/rep21). Needs V31_ANGULAR=0.
+# OPUS R12 ORACLE VARIANT (not for submission): v40fb with the TEACHER's kappa3 input injected.
+# OPUS_D21ORACLE = none | fb (only the D21 feedback thin legs of the newborn see the true slice) | all (the true
+# OFF-DIAGONAL (2,1) slice replaces the chain's D21 everywhere after _dslices: closure terms, feedback, S21/rep21;
+# the chain's own d3 = kappa3_iii is KEPT) | all_d3 (as all, and the teacher's d3 = diag(Y21) also replaces the chain's
+# D3 everywhere, including the trimmed last layer) | d3 (teacher d3 only). Needs V31_ANGULAR=0.
+# Teacher directory by network: mlp.name == "synthetic" -> OPUS_TEACHER_SYNTH, else OPUS_TEACHER. Layers without a
+# teacher file are left to the chain (the synthetic teacher has layers 2,4,...,14,15 only).
 import numpy as _np_or, os as _os_or
 _OR_MODE = _os_or.environ.get("OPUS_D21ORACLE", "none")
-_OR_DIR = _os_or.environ.get("OPUS_TEACHER", "../data/kaggle_out/kaggle_out_k4pub/k4teach")
+_OR_DIRS = {"synthetic": _os_or.environ.get("OPUS_TEACHER_SYNTH", "../data/kaggle_out/kaggle_out_k4/k4teach")}
+_OR_DIR0 = _os_or.environ.get("OPUS_TEACHER", "../data/kaggle_out/kaggle_out_k4pub/k4teach")
 _OR_CACHE = {}
-def _or_slice(layer1):
-    if layer1 not in _OR_CACHE:
-        f = _os_or.path.join(_OR_DIR, f"layer{layer1}_seed0.npz")
-        if not _os_or.path.exists(f): _OR_CACHE[layer1] = None
+_OR_USED = []
+def _or_load(name, layer1):
+    key = (name, layer1)
+    if key not in _OR_CACHE:
+        f = _os_or.path.join(_OR_DIRS.get(name, _OR_DIR0), f"layer{layer1}_seed0.npz")
+        if not _os_or.path.exists(f): _OR_CACHE[key] = None
         else:
-            Y = _np_or.asarray(_np_or.load(f)["Y21"], _np_or.float32).copy(); _np_or.fill_diagonal(Y, 0.0); _OR_CACHE[layer1] = Y
-    return _OR_CACHE[layer1]
+            Y = _np_or.asarray(_np_or.load(f)["Y21"], _np_or.float32).copy(); d3 = _np_or.diag(Y).copy(); _np_or.fill_diagonal(Y, 0.0)
+            _OR_CACHE[key] = (Y, d3)
+    return _OR_CACHE[key]
 from whestbench import BaseEstimator, SetupContext
 from whestbench.domain import MLP
 
@@ -1116,11 +1124,16 @@ class Estimator(BaseEstimator):
                                         sb1=(fap4[2 * fa_off:2 * (fa_off + ka - kb)] if ka > kb else None),
                                         sb2=(fap24[:2 * kb] if kb > 0 else None), s_sb=s_sb)
                 D21_fbsrc = D21
-                if _OR_MODE != "none" and D21 is not None and _or_slice(li + 1) is not None:
-                    _t = fnp.asarray(_or_slice(li + 1))
-                    if _OR_MODE == "all":
-                        D21 = _t
-                    D21_fbsrc = _t
+                _orv = _or_load(str(mlp.name), li + 1) if _OR_MODE != "none" else None
+                if _orv is not None:
+                    _OR_USED.append((str(mlp.name), li + 1))
+                    if D21 is not None and _OR_MODE in ("fb", "all", "all_d3"):
+                        _t = fnp.asarray(_orv[0])
+                        if _OR_MODE in ("all", "all_d3"):
+                            D21 = _t
+                        D21_fbsrc = _t
+                    if _OR_MODE in ("all_d3", "d3"):
+                        D3 = fnp.asarray(_orv[1].astype(_np_or.float32))
                 if regen:
                     # F68: exact transported diagonal of the regenerated core
                     # G = diag(g) + lam C_off:  dG = (W*W) g + lam (diag(C_pre)
