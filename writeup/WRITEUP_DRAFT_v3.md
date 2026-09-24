@@ -1,6 +1,6 @@
 # The whole error is three numbers per neuron: an error map of the factorised cumulant chain for random ReLU MLPs — and why the sum-of-sources chain cannot be made cheap
 
-**Phase 2 algorithmic-contribution write-up · submission #331787 (adjusted 5.137e-9, raw final-layer MSE 2.108e-8, 0.244 B, 0 failed MLPs) · participant foyshal_sk (Foysal Emon Shanto)**
+**Phase 2 algorithmic-contribution write-up · submission #332110 (adjusted 5.128e-9, raw final-layer MSE 2.105e-8, 0.244 B, 0 failed MLPs; previously #331787, 5.137e-9) · participant foyshal_sk (Foysal Emon Shanto)**
 
 *Draft v3, 24 September 2026 (v2: 21–23 September) — §11 (the error map) is new and is now the central result; the κ₄ entries of §12 are corrected. Items marked [OPEN] are still running and will be updated before the 24 October deadline. Claims are labelled **derived**, **measured** or **conjecture**.*
 
@@ -123,6 +123,10 @@ The κ₄ number corrects our earlier record (and the ~9 % ceiling quoted from t
 **11.6 Sampling cannot supply the corrections (measured).** A 10⁴-sample forward costs 156 u and gives the variance to 1.4 %; the target is 0.1 %. A control variate needs a samplewise-coupled surrogate with correlation ≥ 0.997 for a 100× reduction. Measured on MLP #0 with 10⁴–2·10⁴ samples: the tangent (linearised) network fed the same input correlates with the centred second/third/fourth powers at 0.73 / 0.76 / 0.68 (layer 2) → 0.32 / 0.41 / 0.26 (layer 8) → 0.19 / 0.29 / 0.15 (layer 16); a second-order Taylor surrogate 0.967 (layer 2) → 0.73 (layer 8) → 0.00 (layer 16). Variance reductions of 1.0–2.2× at depth.
 
 **11.7 The constants are at their score optimum (100 networks).** On the 100-network public mini split with its 10⁹-sample truth, the chain is bit-identical across runs, so paired ratios have standard errors of 0.01–0.15 %. Score ratios against the shipped chain: β 1.2 ×0.9993, λ-table ×0.9 ×1.0026, per-row λ ×1.0003, three tier-2 basis passes ×1.0006, tier-2 age gate 8 ×1.0006 (raw −0.9 % for +1.0 % cost), two tier-1 passes ×1.073 (raw −1.0 % for +8.3 % cost). Accuracy is bought one-for-one with cost in every knob.
+
+**11.8 Where the cost goes, and the one-for-one law (measured).** A per-call-site ledger of the metered FLOPs (every matmul and einsum attributed to its source line) gives 249 u per network, 88 % in matrix products: young-source transports ≈ 54 u, young-source D21 contractions ≈ 50 u, joining a source to the shared basis ≈ 41–46 u, old sources in the basis ≈ 41 u, thin feedback legs ≈ 15 u, covariance and closure ≈ 8 u, Strassen additions ≈ 12 u. Rebuilding the shared basis at a join from the transported old basis alone saves 6.6 % of the cost but loses 1–6 % accuracy; truncating the span of the old basis plus 64 fresh directions of the joiner by the eigen-decomposition of the full core is 1 % more accurate than the range finder at +0.5 % cost (score −0.5 % on both teacher networks). Across every such change — age gates, basis ranks, subspace passes, birth-column screening, basis rebuilds, a late-layer κ₄ correction — accuracy is bought with cost at about one per cent per per cent: the public chain sits on its score optimum, and a method of equal accuracy at half the cost (which the leaderboard shows exists) must lie outside the sum-over-sources family.
+
+**11.9 Shipped from this analysis.** Restoring a quarter of the Edgeworth K×C family that the port carries at half strength (feedback scale 1.25) together with the adaptive κ₄ exponent 1.2: 100-network paired score ×0.9946 ± 0.0007 at zero cost; graded 5.1284e-9 (raw 2.1046e-8), submission #332110.
 
 ## 12. Open experiments and earlier negative results [OPEN]
 

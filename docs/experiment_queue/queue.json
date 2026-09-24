@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-24 (FB_SCALE ফল; #332110 submit)",
+ "updated": "2026-09-24 (moonshot A: cost ledger, V41 join, Round 10 prompt)",
  "baseline": "Best graded: #332110 score 5.1284e-9 (raw 2.1046e-8) — v40fb (FB 1.25 + beta 1.2). আগের: #331787 5.137e-9. Plain chain on public MLP #0: final MSE 2.290e-8.",
  "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে।",
  "items": [
@@ -27,6 +27,32 @@
    "cost": "~3টা chain run (offline) + ~1 u replay",
    "gate": "কোনো channel-এর oracle optimum-কে S=2-এর দিকে সরালে সেই channel-ই partner",
    "next": "সময় পেলে।",
+   "files": "-"
+  },
+  {
+   "id": "Q16",
+   "priority": "P2",
+   "status": "open",
+   "source": "নিজের (moonshot A, V41)",
+   "title": "Join-এ eigen-truncated basis (aug64) — 100-MLP যাচাই",
+   "what": "Join-এর সময় range finder-এর বদলে: transported old basis + joiner-এর ৬৪টা নতুন দিক, full core-এর eigen-decomposition দিয়ে r = 384-এ কাটা।",
+   "evidence": "দুই teacher network: util +0.5%, MSE -1.0% / -1.1%, score -0.5% / -0.55%।",
+   "cost": "+0.5% util",
+   "gate": "100-MLP paired score < 1 - 2 SE",
+   "next": "Grid-এর সেরা setting-এর সাথে একসাথে Kaggle-এ।",
+   "files": "experiments/variants/make_v41join.py"
+  },
+  {
+   "id": "Q17",
+   "priority": "P1",
+   "status": "open",
+   "source": "নিজের (moonshot A)",
+   "title": "Young tier (~104 u) অর্ধেক খরচে — Round 10 prompt",
+   "what": "Age 1-4 source-এর transport + contraction কম product-এ: A = P a_b ব্যবহার, পরপর source-এর shared propagator factor, age-1/2 closed form, batched contraction।",
+   "evidence": "Cost ledger: young transport ~54 u + contraction ~50 u। একজন leader সমান accuracy অর্ধেক খরচে দেখিয়েছে।",
+   "cost": "গবেষণা",
+   "gate": "D21 relative error <= 2% রেখে <= 55 u",
+   "next": "Round 10 prompt AI-দের কাছে (consultations/prompts/ROUND10_prompt_young_tier_cost.md); আমি নিজেও বীজগণিত দেখছি।",
    "files": "-"
   },
   {
@@ -327,6 +353,19 @@
    "gate": "-",
    "next": "-",
    "files": "-"
+  },
+  {
+   "id": "D11",
+   "priority": "-",
+   "status": "dead",
+   "source": "নিজের (moonshot A, V41)",
+   "title": "Join-এ range finder বাদ দেওয়া (transport mode) ও ছোট sketch (aug16/32)",
+   "what": "Join-এর খরচ কমানো।",
+   "evidence": "transport: util -6.6% কিন্তু MSE +6.3% / +1.0%; aug16/32: score +1.3% / +0.8% খারাপ। Join থেকে বড় খরচ বাঁচে না।",
+   "cost": "-",
+   "gate": "-",
+   "next": "-",
+   "files": "experiments/variants/make_v41join.py"
   }
  ]
 }

@@ -1,5 +1,4 @@
 {
- "base_ang": {"file": "v31ang.py", "env": {}},
- "fb1.25": {"file": "r7fb.py", "env": {"R7_FB_SCALE": 1.25}},
- "fb1.5": {"file": "r7fb.py", "env": {"R7_FB_SCALE": 1.5}}
+ "fb1.25_b1.1": {"file": "r7fb.py", "env": {"R7_FB_SCALE": 1.25, "V25_BETA": 1.1}},
+ "fb1.25_b1.3": {"file": "r7fb.py", "env": {"R7_FB_SCALE": 1.25, "V25_BETA": 1.3}}
 }
