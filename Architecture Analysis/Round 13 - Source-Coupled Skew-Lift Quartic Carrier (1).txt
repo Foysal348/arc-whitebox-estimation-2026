@@ -1,0 +1,73 @@
+Round 13 - Source-Coupled Skew-Lift Quartic Carrier
+ONE mechanism for a cheap carried fourth cumulant with a genuine all-distinct sector
+Proposal: keep the existing source-wise third-cumulant tensors T_s exactly as the chain already does, and add only one vector r_s 
+in R^n to each source. Represent carried fourth-cumulant memory as K4_mem = sum_s Sym4(T_s tensor r_s). This creates a 
+genuine (1,1,1,1) sector, is closed under the same linearized ReLU/weight transport as the measured 83-90% memory carry, and 
+adds 0 dense n x n products per layer.
+1. State and exact transport
+[Derived] State. For every live K3 source s, retain its existing symmetric cubic contribution T_s and attach a vector r_s in R^n. The 
+extra memory is only the vectors {r_s}; no fourth-order tensor is materialized. With Sym4 defined as the average over the four 
+placements,
+K4_s[a,b,c,d] = 1/4 ( T_s[a,b,c] r_s[d] + T_s[a,b,d] r_s[c] + T_s[a,c,d] r_s[b] + T_s[b,c,d] r_s[a] ).
+[Derived] Genuine all-distinct sector. If a,b,c,d are all distinct and T_s has all-distinct content, K4_s[a,b,c,d] is generically non-zero. 
+Therefore this is not a diagonal or (2,2)-only carrier.
+[Derived] Linear transport h_l -> z_{l+1}. With z_i = sum_a h_a W_ai, the existing source obeys T'_s = T_s x_1 W^T x_2 W^T x_3 
+W^T. Transport only the vector
+r'_s = W^T r_s.
+[Derived] Old-memory ReLU dressing. For D = diag(Phi(mu/sigma)), use r_s^post = D r_s^pre while the chain applies the same first-
+order D^{tensor 3} dressing to the old T_s source. Hence the composite carrier transforms as D^{tensor 4} K4_s. This is exactly the 
+linearized carry tested in the prompt, but with a compressed quartic factor that remains tied to the realized K3 orientation.
+2. Birth rule at a ReLU
+[Derived proposal] When a new K3 source T_new is born, let d_new[i] = T_new[i,i,i]. Let q_fresh[i] be the diagonal of the chain's 
+existing memoryless K4 birth/core at that ReLU (the same fresh object already computed today). Initialize a source vector by the 
+separable projection
+r_new[i] = q_fresh[i] d_new[i] / ( d_new[i]^2 + tau^2 ),
+[Estimated design choice] tau is only a numerical ridge, e.g. a small fraction of RMS(d_new); it is not a learned per-neuron correction. If the oracle 
+falsifier below fails, do not tune tau - kill the representation.
+[Derived] Why this is not the dead diagonal-only K4 route. The vector is never transported as a K4 diagonal. It multiplies the full 
+carried cubic source. The resulting pair and 3+1 slices are
+K22_s[a,b] = 1/2( D21_s[a,b] r_s[b] + D21_s[b,a] r_s[a] )
+K31_s[a,b] = 1/4( d3_s[a] r_s[b] + 3 D21_s[a,b] r_s[a] ).
+3. Diagonal readout and mean closure
+[Derived exact readout for this representation] For output column w_i of W,
+K4_s[w_i,w_i,w_i,w_i] = T_s[w_i,w_i,w_i] * (r_s^T w_i).
+Therefore, if d3'_s[i] is the per-source next-layer cubic diagonal already obtainable from the K3 source loop and u_s = W^T r_s,
+q4_mem[i] = sum_s d3'_s[i] u_s[i].
+[Derived proposal] Use q4_mem as the carried K4 diagonal input to the existing univariate mean closure. The current memoryless K4 
+core is used to seed r_new, not added again to q4_mem, avoiding double counting.
+4. Exact incremental FLOP ledger at n = 1024
+operation real shape exact FLOPs u
+transport all r_s (n x n)(n x k) 2 n^2 k k/n
+ReLU slopes n x k elementwise n k k/(2n^2)
+quartic readout (d3'_s cached) n x k elementwise + row sum n k + n(k-1) (2k-1)/(2n^2)
+new-source ridge birth length n <= 4 n <= 2/n^2
+[Derived] Deepest layer, k = 15. The complete extra update/readout above is 31,506,432 FLOPs = 0.01467 u. Across all 15 
+transitions, sum k = 120, giving 252,072,960 FLOPs = 0.11738 u total.
+[Derived conservative standalone count] If per-source d3 is not already cached, the simplified source formula d3_s[i] = sum_j w_j 
+P_ij^2 A_ij costs (4 n^2 - n) FLOPs per source. Charging that again for all 120 source-uses adds 503,193,600 FLOPs = 0.23432 u. 
+Thus the entire extra K4 mechanism is <= 0.35170 u over the network under the prompt's source formula. It uses zero dense square 
+products.
+5. Why the pattern could reach 0.7
+• [Quoted] The exact linear K4 carry has pattern correlation 0.77-0.80 at deep layers. This carrier is explicitly closed under the same 
+D^{tensor 4} / W^{tensor 4} linear memory transport.
+• [Derived] Parity is correct. A K3 source is odd in later weights; r_s is transported linearly and is also odd. Their product is even, so 
+the carrier can encode the fixed-network K4 content that even scalar summaries miss.
+• [Derived] The dominant (2,2) sector is not discarded: K22 is generated directly from the full off-diagonal D21_s and r_s. The all-
+distinct 1,1,1,1 sector is also non-zero by construction.
+• [Quoted + inference] The measured K4 memory horizon is >= 6 layers. Source vectors live exactly as long as the existing K3 
+sources, so the mechanism has no short-horizon cutoff. This is a structural reason for plausibility, not a measured guarantee.
+• [Estimated hypothesis] Pattern correlation >= 0.7 is plausible only if the true K4 memory lies close to the source-coupled subspace 
+span{Sym4(T_s tensor r_s)}. The falsifier below tests that directly before any end-to-end implementation.
+6. ONE falsifier: teacher-forced source-vector oracle
+[Derived test; no free-run claim] At each stored deep post-ReLU capture l in {11,14,15}, reconstruct every source's D21_s and d3_s. 
+Using the teacher post K22 and K31 at that same layer, solve only offline for the best vectors r_s in the linear model
+min_R ||K22_hat(R)-K22_teacher||_F^2 + ||K31_hat(R)-K31_teacher||_F^2,
+with K22_hat and K31_hat given by the equations in section 2. Do not use the next layer's K4 diagonal in the fit. Then transport each 
+fitted r_s once with the actual W_l and predict the next pre-activation diagonal by q4_hat[i] = sum_s d3'_{s}[i] (W_l^T r_s)[i].
+[Quoted gate] On the decisive neurons |mu/sigma| < 1.5, require pattern correlation >= 0.70 against the teacher at the available deep 
+one-step targets L12, L15 and L16 on both networks. If any network is consistently below 0.70, kill this representation; tuning the birth 
+ridge cannot rescue a failed oracle subspace.
+Bottom line: Source-Coupled Skew-Lift is a genuine carried K4 object, not a fresh predictor. It inherits long source memory, has a 
+real all-distinct sector, preserves the required weight parity, and costs < 0.36 u total beyond the existing K3 chain under a 
+conservative count. The decisive uncertainty is representational, not computational; the teacher-forced source-vector oracle 
+should be run before any free-run implementation.

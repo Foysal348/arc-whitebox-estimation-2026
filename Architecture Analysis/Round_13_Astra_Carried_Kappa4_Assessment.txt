@@ -1,0 +1,166 @@
+ROUND 13  /  ASTRA  /  Costed candidate rejected by stored-data test
+1
+Round 13 | Carried fourth cumulants
+One explicit mechanism, costed and falsified
+Astra research note | 25 September 2026
+Verdict: I do not have a mechanism that meets your gate. A full-depth dense pair core has a genuine
+all-distinct sector and a derived arithmetic cost of 15.981 u [D]. I tested it against your stored public-network
+teacher: its deep standardized-kurtosis correlations are negative [Q-test]. It should be rejected, not presented as
+a solution.
+Number labels: [D] = derived algebra/arithmetic; [Q] = quoted from your prompt or project evidence; [Q-test] = quoted from the new
+test log embedded in this PDF; [E] = estimate. Constants and dimensions in displayed equations are [D]; layer/source labels are indices.
+No estimated correlation is presented as a measurement.
+The single candidate: a pair core carried from the first ReLU
+Keep a symmetric dense matrix G and a dense propagator Ul, each n by n [D]. Use the chain's existing first
+post-ReLU pair slices as the birth:
+ G_aa = k4(h_1)_aaaa
+G_ab = 3 K22(h_1)_ab   (a != b)
+U_2 = W_1;   U_(l+1) = U_l D_l W_l
+D_l = diag(Phi(mu_l / sigma_l))
+Later births are zero by definition. The slopes come from the baseline chain. Thus this is an explicit
+approximation with long memory, not an exact cumulant update through ReLU. Under your row-vector
+convention, Ul maps the first post-ReLU coordinates to pre-activation layer l.
+ F_l(v) = ((U_l v) * (U_l v)).T G ((U_l v) * (U_l v))
+S_l = U_l * U_l;   V_l = G S_l
+k4hat_l = colsum(S_l * V_l)
+Here * means elementwise multiplication. At birth, the coefficient of va2vb2 is 2Gab = 6K22ab [D], which fixes the
+normalization. After dense transport, expanding F produces mixed monomials vavbvcvd with all indices distinct. G
+is unrestricted and dense; this is neither diagonal-only transport nor a covariance scale-mixture. It does discard
+other first-birth sectors and all subsequent nonlinear replenishment.
+How it would enter the existing mean closure
+It would replace the regenerated pre-activation diagonal in the existing Edgeworth term. Holding the other
+channels fixed, with alpha = mu/sigma:
+ delta mean_i = phi(alpha_i) (alpha_i^2 - 1)
+               * (k4hat_i - k4regen_i) / (24 sigma_i^3)
+This is the linear fourth-cumulant contribution [D]. The probe tested the auxiliary carrier only; it did not feed its failed prediction back
+into the means or covariance.
+
+ROUND 13  /  ASTRA  /  Costed candidate rejected by stored-data test
+2
+Arithmetic at the real shapes
+All costs on this page are [D], unless marked otherwise. n = 1024 [Q]; one u = 231 scalar FLOPs [Q].
+The state uses 2n2 scalars: 8 MiB in float32 [D], excluding readout buffers and multiplication workspace. G is
+fixed. One recurring transition plus readout uses exactly these shapes:
+Operation
+Shape
+Scalar arithmetic
+Scale U by slopes
+1024 by 1024
+n2
+Transport (UD)W
+(1024 by 1024)(1024 by 1024)
+One square product
+Form S = U * U
+1024 by 1024
+n2
+Form V = GS
+(1024 by 1024)(1024 by 1024)
+One square product
+Multiply S * V; reduce columns
+1024 by 1024 to 1024
+2n2 - n
+For an explicit, standard Strassen recursion of depth 5 with classical 32 by 32 leaves, let B be the scalar FLOPs of a
+square product. This uses 18 block additions per internal node; it does not assume the prompt's faster Winograd
+implementation.
+ B = 7^5 (2*32^3 - 32^2)
+    + 18 sum_(j=0..4) 7^j (1024/2^(j+1))^2
+  = 1,181,223,936 FLOPs = 0.550050259 u
+Stage
+Exact scalar FLOPs [D]
+Cost [D]
+Recurring transition + readout
+2B + 4n2 - n = 2,366,641,152
+1.102053165 u
+First readout at layer 2
+(U is copied from W)
+B + 3n2 - n = 1,184,368,640
+0.551514626 u
+Whole network, including G = 3K22
+29B + 60n2 - 15n
+= 34,318,393,344
+15.980747223 u
+There are 14 transported transitions and 15 readouts [D]. Fully classical products instead cost 29.015129566 u [D].
+The diagnostic used classical float64 operations; it did not benchmark a metered Strassen implementation.
+Copies, allocations, peak workspace, and meter-specific charges are excluded. Phi and the birth slices are reused
+from the existing chain.
+Budget ambiguity: this is two square-product calls per recurring layer [D], so it fails a literal cap of 1.5 calls [Q]. It
+fits the separate 20-25 u arithmetic allowance [Q]. Whether a deployed implementation fits the billed allowance
+remains unmeasured; arithmetic cost alone is not a billing guarantee.
+Why long memory does not imply the requested correlation
+The exact one-step carry oracle starts from the true, continually replenished tensor. This candidate starts from a
+restricted birth and thereafter uses only linearized transport. The oracle therefore cannot establish its accuracy.
+Adding arbitrary later births into this same G is not an exact closure; keeping separate propagated births changes
+this cost ledger.
+Parity correction [D]: with an upstream tensor fixed, a fourth-order contraction contains four factors of the
+current W and is even under W to -W. The odd-parity argument for carried third cumulants cannot be applied
+unchanged to fourth cumulants. The prompt's empirical failure of cheap even-statistic predictors [Q] remains
+evidence, but is not such a parity theorem.
+
+ROUND 13  /  ASTRA  /  Costed candidate rejected by stored-data test
+3
+One falsifier, executed
+Public MLP #0 | full history from the first birth | no teacher feedback
+Run the equations above with stored baseline mu and variance at every layer. Compare k4hat with the teacher on
+|mutrue/sigmatrue| < 1.5 [Q]. To match the project's pattern diagnostic, correlate excess kurtoses k4hat/vartrue2
+and k4true/vartrue2. Also report raw-diagonal correlation, so the metric convention cannot hide the failure. The
+required threshold is 0.7 [Q].
+Layer
+Pattern corr.
+candidate
+Pattern corr.
+baseline
+Raw k4 corr.
+candidate
+Mean excess
+level ratio
+12
+-0.347
+0.339
+0.641
+1.84%
+13
+-0.217
+0.281
+0.655
+1.47%
+14
+-0.311
+0.298
+0.628
+1.29%
+15
+-0.275
+0.264
+0.651
+1.17%
+16
+-0.269
+0.324
+0.636
+0.97%
+Every table entry is [Q-test]. The level ratio is mean(predicted excess kurtosis) divided by mean(teacher excess
+kurtosis), on the same mask. It is not a norm ratio. There are 323-442 decisive neurons in these layers [Q-test].
+Result: standardized pattern correlation is -0.347 to -0.217 [Q-test]; raw-diagonal correlation is 0.628-0.655
+[Q-test]. Only 0.97-1.84% [Q-test] of the deep excess-kurtosis level survives in this candidate. It fails under either
+correlation convention. A positive rescaling cannot repair a negative standardized correlation [D].
+The synthetic network was not run because failure on the public network already rejects a gate requiring both.
+This is a baseline-driven, full-history auxiliary test, not a teacher-forced one-step test and not a fully coupled
+end-to-end run. No final-mean MSE improvement is claimed.
+Reproducibility
+The PDF embeds pair_carry_probe.py and pair_carry_probe.json. Extract them with a PDF attachment viewer, then run python
+pair_carry_probe.py. The script uses NumPy and scipy.special.ndtr; its project-root path is explicit. It reads only these stored
+project files:
+ data/dumps/r7_cap_L1.npz
+data/dumps/errbudget_v29plain.npz
+data/kaggle_out/kaggle_out_k4pub/k4teach/weights_seed0.npz
+data/kaggle_out/kaggle_out_k4pub/k4teach/layer{L}_seed0.npz
+The first file supplies K4 and K22; the second supplies baseline L{l}_cmu, L{l}_cvar and L{l}_ck4; teacher files supply mean, C and K4d
+only for scoring. The script writes its JSON beside itself. Research/source files were not edited.
+What this establishes
+I reject this single mechanism. It demonstrates that a cheap, full-depth object with genuine all-distinct entries can
+still lose the needed memory because the birth rule and nonlinear evolution are inadequate. It does not prove
+that every inexpensive nonlinear state is impossible. I cannot justify a qualifying replacement from the available
+evidence, and I will not claim the requested correlation without a passing falsifier.
+Sources: your attached Round 13 prompt [Q]; consultations/fable/ROUND12_opus_report.md [Q] for the carry-oracle
+context and pattern convention; embedded test log [Q-test]. Linear tensor transport background: ARC, mlp_cumulant_propagation.
+Equations and costs here are derived, not performance claims from that repository.

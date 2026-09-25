@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-26 (transport knob grid: AGE_OLD 5 -1% with wall-time risk; R_OLD2 192 / R_OLD 448 no gain)",
+ "updated": "2026-09-26 (Round 13: skew-lift and Astra carriers dead; pair innovations untested)",
  "baseline": "Best graded: #332257 (v42tr = v40fb + transport join) adjusted 4.9519e-9, raw 2.1788e-8, util 0.2273, 0 failures (25 Sep 2026). Previous: #332110 5.1284e-9.",
  "headroom": "Channel oracle (true values fed into mean closure): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, all three combined -94%. Q5: closure is near-exact; the error is the fresh kappa3/kappa4 error at each layer, which accumulates through mean and covariance. Horizon oracle: kappa3 memory is very long — even keeping 10 ages, layer 15 still has 16% error; age contributions are roughly equal and orthogonal.",
  "items": [
@@ -613,6 +613,45 @@
    "gate": "score <= x0.99 on 100 MLPs AND a safe wall-time margin (grader cap 120 s/MLP)",
    "next": "AGE_OLD 5 gains ~1% but raises the Kaggle wall max to 146 s: not worth a timeout risk unless the grader wall time can be checked. Wait for runner C.",
    "files": "kaggle/estimators/set_{a,b,c}/variants.json; data/kaggle_out/eval5_*"
+  },
+  {
+   "id": "D26",
+   "priority": "-",
+   "status": "dead",
+   "source": "Round 13 external answer: 'Source-Coupled Skew-Lift Quartic Carrier'",
+   "title": "Carried kappa4 = sum_s Sym4(T_s x r_s) (one vector r_s per kappa3 source)",
+   "what": "The proposal's own teacher-forced oracle: fit all r_s at post-ReLU layer 14 to the teacher K22 / K31 off-diagonals (13 sources, LSQR), then predict the layer-15 kappa4 diagonal q4 = sum_s d3'_s (W^T r_s).",
+   "evidence": "experiments/probes/r13_skewlift_oracle.py (300 and 1500 LSQR iterations, identical): best fit leaves 50% of K22 and 83% of K31; predicted pattern corr with the teacher 0.03 on the decisive neurons (chain 0.26, gate 0.70); level 54%; chain + q4 corr 0.07. The source-coupled subspace does not contain the carried kappa4. Dead.",
+   "cost": "~0.35 u (proposal)",
+   "gate": "corr >= 0.70",
+   "next": "-",
+   "files": "experiments/probes/r13_skewlift_oracle.py; results/summaries/r13_skewlift_oracle*.json"
+  },
+  {
+   "id": "D27",
+   "priority": "-",
+   "status": "dead",
+   "source": "Round 13 external answer: Astra",
+   "title": "Dense pair core born at the first ReLU, transported by U_l D_l W_l (full history, no later births)",
+   "what": "G = 3 K22(h_1) (+ diag kappa4), readout colsum((U o U) * (G (U o U))), ~16 u.",
+   "evidence": "Astra ran it on our MLP #0 teacher: pattern corr -0.35 to -0.22 at L12-16 (chain 0.26-0.34), level 1-2%. Astra rejected it itself. Also noted: a kappa4 contraction is EVEN in W, so the kappa3 parity obstruction does not carry over to kappa4.",
+   "cost": "16 u",
+   "gate": "-",
+   "next": "-",
+   "files": "Architecture Analysis/Round_13_Astra_Carried_Kappa4_Assessment.pdf"
+  },
+  {
+   "id": "Q22",
+   "priority": "P3",
+   "status": "open",
+   "source": "Round 13 external answer: 'Carried pair innovations'",
+   "title": "Carried kappa4 via two vectors (gamma, eta) per kappa3 source, read through the source's own P leg",
+   "what": "Tensor per source: sum_j gamma_j S6(p_j p_j^T, P P^T) + eta_j p_j^(x4); readout q = 6 (Z gamma) o rowsum(Z) + (Z o Z) eta, Z = P o P (no extra dense products); birth: row-additive fit of the modelled K22 innovation.",
+   "evidence": "Untested. An oracle fit like D26 needs one n^3 product per source per LSQR matvec (the 4 G_ab sum_j gamma_j P_aj P_bj term): ~1.5-2 h CPU. The proposal's own falsifier is a free-history replay through all layers with the chain's P buffers (needs a new dump of per-layer legs).",
+   "cost": "~0.35 u (proposal)",
+   "gate": "pattern corr >= 0.70 at L12-16",
+   "next": "Only if time allows; D26 failing suggests the source-coupled family is weak.",
+   "files": "Architecture Analysis/Round_13_Carried_Fourth_Cumulant_Proposal.pdf"
   }
  ]
 }

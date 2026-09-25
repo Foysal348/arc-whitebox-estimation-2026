@@ -1,0 +1,162 @@
+ROUND 13 / CARRIED FOURTH-CUMULANT INNOVATIONS
+1
+Round 13
+Carry pair innovations
+One mechanism: a fourth-cumulant birth model transported with the existing cubic-source propagators.
+Status: a concrete, cheap hypothesis, not a validated correlation ≥0.7 solution [Q: requested
+gate]. The transport and incremental FLOP ledger are exact for the stated inputs. Accuracy of the birth
+approximation is unknown.
+Number labels: Q = quoted from your prompt; D = derived here; E = estimated. All numerical coefficients and operation
+counts in equations are D; n=1024, L=16 and 1 u=2³¹ FLOPs are Q. No network result is claimed as measured.
+Object: keep the birth metric’s transported form
+D. Attach two signed vectors γ_b, η_b ∈ Rⁿ to every existing cubic source. Reuse its propagator P_b ∈ Rⁿˣⁿ;
+do not create another dense leg. Define two implicit matrices and the carried tensor:
+D. Here p_br is a column of P_b and S₆ is the unnormalized six-term symmetric product:
+D. At birth P_b=I. Thus the birth’s off-diagonal K22 entries equal γ_bi+γ_bj, its marginal fourth cumulant
+equals 6γ_bi+η_bi, and its other index sectors vanish. After mixing, H_b and S_b are dense: the tensor has a
+genuine all-distinct sector. Neither matrix is formed explicitly.
+D: transport. With your row-vector convention, B_l=W_lᵀdiag(Φ_l). For sources already present before the
+ReLU,
+D. The newborn is inserted after the ReLU with P_b=I and crosses the raw W_lᵀ. These are the propagators
+already computed for K₃. Under your existing old-leg projections, the tensor remains exactly the polynomial
+of the retained P; the additional κ₄ error caused by those projections is untested.
+Why the closed-list measurements do not directly test this
+D. This carries the complete modeled tensor from every birth, including its off-diagonal sectors; it is not a
+diagonal-state update using W⁴. There is no new leg-rank truncation or source cap. It is also not the
+covariance-only predictor a·Sym(C_l⊗C_l): each S_b retains its own weight history, H_b has independent
+signed weights, and η_b is a separate signed tensor term. Its quartic form can be negative, unlike a
+centered Gaussian covariance-mixture’s fourth cumulant.
+D. The approximation is instead explicit and local: project the nonlinear birth’s K22 onto a row-additive
+form, match its marginal birth exactly, and discard the other birth sectors. A test of this same full-history,
+shared-leg birth model would close this proposal; low-rank leg tests or a current-C scale-mixture test do not
+establish its error.
+
+ROUND 13 / CARRIED FOURTH-CUMULANT INNOVATIONS
+2
+FIXED WEIGHTS / GAUSSIAN INPUT / n = 1024 / L = 16 / 1 u = 2^31 FLOPs
+Birth rule and diagonal readout
+D. Use the chain’s own modeled pre/post K22 and marginal fourth cumulants, not teacher values. Denote
+these by bars and put d_i=Φ_i, u_i=d_i². Subtract the modeled linearly carried part to define the nonlinear
+innovation:
+D. Let J_ii=0. The unique unweighted least-squares fit of J_ij by γ_i+γ_j over off-diagonal pairs is
+D. Hence the modeled birth matches b_i exactly. This is an analytic moment projection, with no trained
+coefficient or λ refit. Subtracting the linear part avoids repeatedly injecting the whole regenerated κ₄ level.
+These innovations use the chain’s non-Gaussian inputs; they are not a Gaussian-input estimate of the entire
+deep κ₄. Keep the chain’s regenerated core and its pair closure as the innovation provider; the new readout
+replaces its κ₄ only in the mean closure.
+The existing core makes the birth calculation linear in n
+D, conditional on the stated core. Write v_i= k̄₄,pre_i and k_i=v_i/6. For Sym(G⊗mI), the off-diagonal
+pre-K22 is k_i+k_j. If R_i is the already computed post-K22 off-diagonal row sum, then no new n×n birth
+array is needed:
+D. This uses the same post-K22 row sums that the regenerated-core update can expose. The pre/post
+channels must use consistent cumulant normalization. If your modified implementation no longer has this
+pre-K22 form, use the full J formula and charge its explicit array operations; do not silently apply the
+shortcut.
+Readout: matrix-vector work only
+D. At the next pre-activation, reuse Z_b=P_b∘P_b from the cubic slice routine. Compute
+D. This is exactly the diagonal of Σ_b K̂_b for the retained legs. The source’s all-distinct entries contribute
+implicitly through the transported Gram forms. Holding the previous state fixed, changing W_l to −W_l
+leaves this quartic readout unchanged, as required; the odd-parity obstruction for cubic sources does not
+transfer to this readout.
+D. Start with zero pre-activation κ₄ at the first layer, since that pre-activation is Gaussian. Use k̂₄ in the
+existing Edgeworth mean formula in place of the regenerated diagonal, not added to it. Retain all births
+through the output. This does not change the covariance or K₃ carrier.
+
+ROUND 13 / CARRIED FOURTH-CUMULANT INNOVATIONS
+3
+FIXED WEIGHTS / GAUSSIAN INPUT / n = 1024 / L = 16 / 1 u = 2^31 FLOPs
+Exact incremental FLOP ledger
+D. Counts below are additional to the existing chain. Persistent extra state: two n-vectors per birth, giving
+122,880 bytes for fifteen births in float32. The underlying P matrices and their re-formation are already paid
+for by K₃. Evaluate the new readout while those buffers are live; reconstructing P a second time is not
+included or permitted by this ledger.
+Operation [D]
+Real shape [D]
+FLOPs [D]
+s = row_sum(Z)
+n × n → n
+n(n−1)
+h = Zγ
+(n,n) @ (n,1)
+n(2n−1)
+t = (Z∘Z)η
+n² multiply + (n,n) @ (n,1)
+3n²−n
+q = 6h∘s + t
+Three vector operations
+3n
+Per source, total
+No matrix-matrix product
+6n²
+Sum k source outputs
+k vectors of length n
+(k−1)n
+Birth, using the row shortcut
+Vector operations/reductions
+19n−2
+D: birth count. Form k=v/6, u=d², t=k∘u; reduce u and t; evaluate r=R−u∘(kΣu+Σt−2t); form b=
+k̄₄,post−u²∘v; then compute s, γ and η. This sequence costs 19n−2 operations. The dimension-dependent
+denominators are precomputed constants. Copies, indexing and diagonal extraction carry no arithmetic
+charge under the specified model.
+D. The first layer has only the birth charge. The final layer has no new birth charge. Across the network
+there are 120 source-readouts and fifteen births:
+D. The largest layer increment is 0.0439519882 u. Additional dense square products: zero. Additional
+matrix-vector products: two per live source, charged at their real shapes above. Strassen is not invoked for
+this added work.
+D. If P∘P cannot be reused, charging one n² square operation per source-readout raises the total to
+0.4103422025 u. If post-K22 row sums are not reused but its matrix already exists, ordinary row reductions
+add 0.0073170662 u over the network. If neither pre/post K22 is computed by your modified chain, its
+closure cost must be included separately; this ledger assumes those existing channels.
+Q → D. With the quoted baseline of approximately 232 u, the specified added arithmetic gives
+approximately 232.352 u total. The baseline is approximate; the incremental integer FLOP count is exact for
+this schedule. This is an accuracy proposal with negligible added arithmetic, not a claim to halve the
+baseline cost.
+D: the symmetric-product identity, transported diagonal and row-fit normal equations were independently checked on small
+random arrays. These checks verify algebra only. They are not measurements of network correlation, memory usage or
+runtime.
+
+ROUND 13 / CARRIED FOURTH-CUMULANT INNOVATIONS
+4
+FIXED WEIGHTS / GAUSSIAN INPUT / n = 1024 / L = 16 / 1 u = 2^31 FLOPs
+Why it is worth testing, and what is not established
+Q. Your true linear carry retains 83-90% of the deep level and has pattern correlation 0.77-0.80 on the
+public network; the pair contribution dominates the reported norm. Those findings motivate preserving the
+full history of a pair-sector birth model. They do not show that its row-additive projection captures the
+centered pattern.
+D. This carrier keeps precisely the memory that a reset to Sym(G⊗mI) discards: the initially diagonal metric
+is transported into S_b=P_bP_bᵀ. Its off-diagonal entries remain paired with the transported H_b. No
+expectation over later weights is taken. The signs and directions of the actual network determine every
+source’s contribution.
+Unknown accuracy. The model omits the residual K22 birth after row fitting, the K31 birth, and the
+all-distinct nonlinear birth. It also uses imperfect chain inputs, and its κ₄ response may be more sensitive
+than κ₃ to existing old-leg projections. Subtracting two approximate pre/post channels can magnify their
+errors. The quoted dominance of the total pair norm does not control any of these errors.
+D, conditional estimate. Suppose the candidate reproduces an ideal carried prediction of correlation ρ₀
+and adds centered error independent of both that prediction and the teacher. Then its correlation is
+ρ₀/√(1+τ²), where τ is added-error standard deviation divided by the ideal predictor’s standard deviation.
+Using ρ₀=0.77-0.80 [Q], reaching 0.7 [Q] requires τ≤0.458-0.553 [D]. Independence is an assumption, not a
+measured property; no bound on τ has been established.
+Answer to the accuracy requirement: I cannot claim that this reaches the requested gate. Its cost and
+transport are established; whether these particular innovations retain the required pattern is the
+unresolved hypothesis.
+One falsifier: a free-history replay on both networks
+Protocol. Run the carrier from the first layer with the chain’s own stored pre/post κ₄ channels and gains,
+and with the actual P buffers used by the cubic chain. Teachers must never enter birth, transport,
+normalization or coefficients. Retain every birth; use the existing old-source approximations exactly as
+shipped. This tests a free κ₄ carrier driven by frozen baseline channels, not a teacher-forced step and not
+yet a fully coupled mean rerun.
+Q: gate. At each available target layer in L12-16, calculate centered Pearson correlation between k̂₄ and
+the teacher on the sensitive neurons |μ/σ|<1.5, using the teacher mask. Require correlation ≥0.7 on both
+networks with no fitted rescaling or noise correction. Failure at any available target layer falsifies this birth
+model. Do not rescue it by fitting λ or depth coefficients.
+Q → D: data coverage. The synthetic teacher has even layers plus L15, so it covers L12, L14, L15 and L16
+here. A failure on these suffices to reject the model; passing them does not certify the missing synthetic
+L13. Passing the full stated gate requires that additional teacher slice.
+D / E: test cost. If the baseline source buffers must be regenerated, two baseline passes plus this
+diagnostic cost approximately 464.7035 u [D from the approximate quoted baseline], excluding any
+missing-channel extraction. Runtime should be under one CPU hour on hardware that can run the quoted
+baseline [E; not timed here]. If the gate passes, the next validation is the ordinary fully coupled
+mean-closure run with k̂₄ replacing the regenerated diagonal; the correlation gate alone does not establish
+a final-MSE gain.
+Scope: all benchmark measurements are quoted from the prompt. No teacher arrays were supplied to this session, so the
+network gate has not been executed.

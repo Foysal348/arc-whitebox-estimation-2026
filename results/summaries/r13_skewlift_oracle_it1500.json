@@ -1,0 +1,17 @@
+{
+ "layer_fit": 14,
+ "layer_pred": 15,
+ "n_sources": 13,
+ "fit_resid_K22": 0.4982563131231164,
+ "fit_resid_K31": 0.8329463988027338,
+ "corr_q4_vs_teacher": 0.029793456919434812,
+ "corr_chain_vs_teacher": 0.2642570497540268,
+ "corr_chain_plus_q4": 0.07099124554373946,
+ "level_q4_over_teacher": 0.5443683390423703,
+ "best_blend_coef_chain_q4_const": [
+  0.6649676901856982,
+  0.009676396454925833,
+  0.018440629910406903
+ ],
+ "corr_best_blend_insample": 0.26533915457749696
+}
