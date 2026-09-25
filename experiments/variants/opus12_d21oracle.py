@@ -166,6 +166,7 @@ import flopscope.numpy as fnp
 # teacher file are left to the chain (the synthetic teacher has layers 2,4,...,14,15 only).
 import numpy as _np_or, os as _os_or
 _OR_MODE = _os_or.environ.get("OPUS_D21ORACLE", "none")
+_OR_LMIN = int(_os_or.environ.get("OPUS_OR_LMIN", "1")); _OR_LMAX = int(_os_or.environ.get("OPUS_OR_LMAX", "99"))  # 25 Sep: teacher layer window (li + 1)
 _OR_DIRS = {"synthetic": _os_or.environ.get("OPUS_TEACHER_SYNTH", "../data/kaggle_out/kaggle_out_k4/k4teach")}
 _OR_DIR0 = _os_or.environ.get("OPUS_TEACHER", "../data/kaggle_out/kaggle_out_k4pub/k4teach")
 _OR_CACHE = {}
@@ -1124,7 +1125,7 @@ class Estimator(BaseEstimator):
                                         sb1=(fap4[2 * fa_off:2 * (fa_off + ka - kb)] if ka > kb else None),
                                         sb2=(fap24[:2 * kb] if kb > 0 else None), s_sb=s_sb)
                 D21_fbsrc = D21
-                _orv = _or_load(str(mlp.name), li + 1) if _OR_MODE != "none" else None
+                _orv = _or_load(str(mlp.name), li + 1) if (_OR_MODE != "none" and _OR_LMIN <= li + 1 <= _OR_LMAX) else None
                 if _orv is not None:
                     _OR_USED.append((str(mlp.name), li + 1))
                     if D21 is not None and _OR_MODE in ("fb", "all", "all_d3"):

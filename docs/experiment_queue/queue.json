@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-25 (Q19 dead: fresh error unpredictable, R2 0.02)",
+ "updated": "2026-09-25 (late-layer kappa3 oracle: value spread over L8-16; reallocation dead)",
  "baseline": "Best graded: #332110 score 5.1284e-9 (raw 2.1046e-8) — v40fb (FB 1.25 + beta 1.2). আগের: #331787 5.137e-9. Plain chain on public MLP #0: final MSE 2.290e-8.",
  "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে। Horizon oracle: kappa3 স্মৃতি খুব লম্বা — ১০ বয়স রাখলেও layer 15-এ 16% error; বয়সের অবদান প্রায় সমান ও লম্ব।",
  "items": [
@@ -548,6 +548,19 @@
    "gate": "held-out MLP-এ paired raw ≥3% কমলে Kaggle 100-MLP; fit শুধু local MLP-এ, leaderboard-এ না",
    "next": "-",
    "files": "experiments/variants/estimator_q19corr.py; experiments/chain/q19_run.py"
+  },
+  {
+   "id": "D23",
+   "priority": "-",
+   "status": "dead",
+   "source": "নিজের (25 Sep)",
+   "title": "Layer অনুযায়ী rank/বয়সসীমা পুনর্বণ্টন (শেষের layer-এ বেশি খরচ) দিয়ে এক-এর-বদলে-এক নিয়ম ভাঙা",
+   "what": "নিখুঁত κ3 input (slice + d3) শুধু নির্দিষ্ট layer window-এ বসিয়ে দেখা লাভ কোথায় জমা।",
+   "evidence": "Oracle (opus12_d21oracle.py + OPUS_OR_LMIN/LMAX, plain chain, MLP#0 / synthetic): সব layer 0.608 / 0.715; layer ≥8 0.637 / 0.754; ≥12 0.704 / 0.863; ≥14 0.848 / 0.903; ≤11 0.884 / 0.837 (প্রভাব গুণফলে যোগ হয়: 0.884×0.704≈0.62)। লাভ layer 8-16 জুড়ে ছড়ানো, শেষ ২-৩ layer-এ জমা না। আর আগের মাপ (notes K3ad/F-A5): পুরোনো source একদম না ছেঁটে (সব dense, exact) slice error 6.7%->6.6%, final MSE মাত্র -3.9% (+19% খরচ) — κ3 error compression থেকে আসে না, K3 formulation-এর জন্মে (all-distinct post-ReLU κ3) অন্তর্নিহিত। তাই rank/বয়সসীমা যেভাবেই ভাগ করা হোক, বড় লাভ সম্ভব না।",
+   "cost": "-",
+   "gate": "-",
+   "next": "-",
+   "files": "experiments/variants/opus12_d21oracle.py; results/summaries/teacher_eval_q20_late_k3oracle.json"
   }
  ]
 }
