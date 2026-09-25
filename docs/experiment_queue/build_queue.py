@@ -12,18 +12,18 @@ import json, os, html, subprocess, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 Q = json.load(open(os.path.join(HERE, "queue.json"), encoding="utf-8"))
 EDGE = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
-STATUS = {"running": ("চলছে", "#1565c0"), "open": ("বাকি", "#6d4c41"), "success": ("সফল", "#2e7d32"), "dead": ("মৃত", "#9e9e9e")}
-PRIO = {"P1": ("P1 — এখনই (সস্তা, বড় সম্ভাবনা)", "#c62828"), "P2": ("P2 — P1-এর পরে", "#ef6c00"), "P3": ("P3 — শর্তসাপেক্ষ / দামি", "#5d4037")}
+STATUS = {"running": ("Running", "#1565c0"), "open": ("Open", "#6d4c41"), "success": ("Success", "#2e7d32"), "dead": ("Dead", "#9e9e9e")}
+PRIO = {"P1": ("P1 — Now (cheap, high potential)", "#c62828"), "P2": ("P2 — After P1", "#ef6c00"), "P3": ("P3 — Conditional / expensive", "#5d4037")}
 e = lambda s: html.escape(str(s))
 
 def card(it):
     st, stc = STATUS.get(it["status"], (it["status"], "#000"))
-    rows = [("কী করতে হবে", it["what"]), ("প্রমাণ / এখন পর্যন্ত", it["evidence"]), ("খরচ", it["cost"]),
-            ("পাস করার শর্ত", it["gate"]), ("পরের ধাপ", it["next"]), ("File", it["files"])]
+    rows = [("What to do", it["what"]), ("Evidence / so far", it["evidence"]), ("Cost", it["cost"]),
+            ("Gate to pass", it["gate"]), ("Next step", it["next"]), ("File", it["files"])]
     body = "".join(f"<tr><th>{e(k)}</th><td>{e(v)}</td></tr>" for k, v in rows if v and v != "-")
     return (f'<div class="card"><div class="hd"><span class="id">{e(it["id"])}</span> {e(it["title"])}'
             f'<span class="st" style="background:{stc}">{e(st)}</span></div>'
-            f'<div class="src">উৎস: {e(it["source"])}</div><table>{body}</table></div>')
+            f'<div class="src">Source: {e(it["source"])}</div><table>{body}</table></div>')
 
 active = [i for i in Q["items"] if i["status"] in ("running", "open")]
 done = [i for i in Q["items"] if i["status"] in ("success", "dead")]
@@ -35,7 +35,7 @@ for p in ("P1", "P2", "P3"):
         secs.append(f'<h2 style="border-color:{PRIO[p][1]}">{e(PRIO[p][0])}</h2>' + "".join(card(i) for i in its))
 summary = "".join(f'<tr><td>{e(i["id"])}</td><td>{e(i["priority"])}</td><td>{e(STATUS[i["status"]][0])}</td><td>{e(i["title"])}</td><td>{e(i["cost"])}</td></tr>'
                   for i in sorted(active, key=lambda i: (i["priority"], i["status"] != "running", i["id"])))
-doc = f"""<!doctype html><html lang="bn"><head><meta charset="utf-8"><title>Experiment Queue</title><style>
+doc = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Experiment Queue</title><style>
 @page {{ size: A4; margin: 14mm 12mm; }}
 body {{ font-family: 'Nirmala UI', 'Segoe UI', sans-serif; font-size: 10.5pt; color: #222; }}
 h1 {{ font-size: 18pt; margin: 0 0 4px 0; }} h2 {{ font-size: 13pt; border-left: 6px solid; padding-left: 8px; margin-top: 18px; }}
@@ -50,13 +50,13 @@ td {{ padding: 2px 0; vertical-align: top; }}
 .dead .card {{ opacity: 0.75; }}
 </style></head><body>
 <h1>Experiment Queue — ARC WhestBench 2026 (Phase 2)</h1>
-<div class="meta">হালনাগাদ: {e(Q["updated"])} · {e(Q["baseline"])}<br>{e(Q["headroom"])}</div>
-<p>সব AI model-এর (Astra, Fable, GPT…) আর নিজেদের যে ধারণাগুলো পরীক্ষা করার মতো, সেগুলো এখানে priority অনুযায়ী সাজানো।
-P1 = সস্তা আর বড় সম্ভাবনা, এখনই করতে হবে; P2 = P1-এর পরে; P3 = দামি বা শর্তসাপেক্ষ। মৃত (পরীক্ষা করে ব্যর্থ) ধারণাগুলো শেষে আছে, যাতে আবার সময় নষ্ট না হয়।</p>
-<h2 style="border-color:#37474f">সংক্ষেপ (বাকি ও চলমান)</h2>
-<table class="sum"><tr><th>ID</th><th>Priority</th><th>Status</th><th>বিষয়</th><th>খরচ</th></tr>{summary}</table>
+<div class="meta">Updated: {e(Q["updated"])} · {e(Q["baseline"])}<br>{e(Q["headroom"])}</div>
+<p>All the ideas worth testing, from any AI model (Astra, Fable, GPT…) or from our own work, are sorted here by priority.
+P1 = cheap and high potential, do now; P2 = after P1; P3 = expensive or conditional. Dead ideas (tested and failed) are listed last, so time isn't wasted testing them again.</p>
+<h2 style="border-color:#37474f">Summary (open and running)</h2>
+<table class="sum"><tr><th>ID</th><th>Priority</th><th>Status</th><th>Topic</th><th>Cost</th></tr>{summary}</table>
 {''.join(secs)}
-<h2 style="border-color:#9e9e9e">শেষ হয়েছে (সফল / মৃত)</h2><div class="dead">{''.join(card(i) for i in done)}</div>
+<h2 style="border-color:#9e9e9e">Finished (success / dead)</h2><div class="dead">{''.join(card(i) for i in done)}</div>
 </body></html>"""
 hp = os.path.join(HERE, "Experiment_Queue.html"); pdf = os.path.join(HERE, "Experiment_Queue.pdf")
 open(hp, "w", encoding="utf-8").write(doc)
