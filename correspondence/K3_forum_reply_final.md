@@ -1,3 +1,5 @@
+> CORRECTION (25 Sep 2026): the claim that the 7-22% trim seen by 504aldo on 14 Sep was ours is FALSE - our first submission was 21 Sep and our trims are ~4%. A correction email was drafted (K3b_correction_email.md). Rewrite this draft's opening before any public use.
+
 EMBARGOED UNTIL 18 OCTOBER 2026
 ===============================
 Do not post before the Phase 2 submission window closes (17 Oct 2026, 23:59 UTC).
@@ -12,9 +14,9 @@ Paste everything below the line into the reply box. It is Markdown; Discourse re
 
 ---
 
-**The 7–22% trim you saw on the leaderboard was Strassen block size, and here are the numbers**
+**Two Strassen constants that trim ~4% of the public chain's cost, with numbers**
 
-In post #3 you said you could see someone had trimmed 7–22% of the chain's cost without losing accuracy, and that the cost anatomy hadn't found it for you. That was me, so here it is in full. Thanks for the MIT release — it is what got me on the board (#331681, V29 verbatim: 5.418e-9 adjusted, raw 2.133e-8, util 0.254, 0 failed).
+In post #3 you said you could see someone had trimmed 7–22% of the chain's cost without losing accuracy, and that the cost anatomy hadn't found it for you. [FALSE - removed 25 Sep: that trim was another team's; mine is ~4%.] Here is what I measured. Thanks for the MIT release — it is what got me on the board (#331681, V29 verbatim: 5.418e-9 adjusted, raw 2.133e-8, util 0.254, 0 failed).
 
 Everything below is the *same arithmetic* as your V29 — prediction drift against it is MSE ≤ 6e-13, i.e. float32 noise. Only the block recursion changes.
 

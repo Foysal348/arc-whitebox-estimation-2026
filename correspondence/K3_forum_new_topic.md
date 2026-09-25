@@ -1,3 +1,5 @@
+> CORRECTION (25 Sep 2026): the claim that the 7-22% trim seen by 504aldo on 14 Sep was ours is FALSE - our first submission was 21 Sep and our trims are ~4%. A correction email was drafted (K3b_correction_email.md). Rewrite this draft's opening before any public use.
+
 EMBARGOED UNTIL 18 OCTOBER 2026
 ===============================
 Do not post before the Phase 2 submission window closes (17 Oct 2026, 23:59 UTC).
@@ -13,7 +15,7 @@ left sidebar is. Post this as its own topic in the "ARC White-Box Estimation Cha
 
 TITLE (paste into the title box):
 
-[Phase 2] Where the 7-22% cost trim on the public K=3 chain is: two Strassen constants, measured, plus a free -1.1% from a spherical input
+[Phase 2] Two Strassen constants that trim ~4% of the public K=3 chain, measured, plus a free -1.1% from a spherical input
 
 TAGS (optional, if the box offers them): phase-2
 
@@ -21,7 +23,7 @@ BODY (paste everything below the line):
 
 ---
 
-@504aldo asked in [his thread](https://discourse.aicrowd.com/t/18218) (post #3) what the 7-22% cost trim visible on the leaderboard was, since his own cost anatomy had not found it. That was my submissions, so here are the numbers. I cannot reply in that thread (no reply button on my account), hence a separate topic.
+@504aldo asked in [his thread](https://discourse.aicrowd.com/t/18218) (post #3) what the 7-22% cost trim visible on the leaderboard was, since his own cost anatomy had not found it. [FALSE - removed 25 Sep: the trim he saw was another team's; our trims are ~4%.] Here are my numbers for the same chain. I cannot reply in that thread (no reply button on my account), hence a separate topic.
 
 Everything below is the **same arithmetic** as the public V29 chain — prediction drift against it is MSE ≤ 6e-13, i.e. float32 noise. Only the block recursion changes. All graded numbers are from the live leaderboard, all local numbers from `whest run` on the public mini split with baked 1e9 truth.
 

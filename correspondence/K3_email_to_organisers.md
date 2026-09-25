@@ -1,3 +1,5 @@
+> CORRECTION (25 Sep 2026): the claim that the 7-22% trim seen by 504aldo on 14 Sep was ours is FALSE - our first submission was 21 Sep and our trims are ~4%. A correction email was drafted (K3b_correction_email.md). Rewrite this draft's opening before any public use.
+
 HOW TO SEND
 ===========
 To:      arc-whestbench@aicrowd.com

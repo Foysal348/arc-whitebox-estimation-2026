@@ -37,3 +37,8 @@ Discourse staff (@mohanty) or `devops@aicrowd.com` instead.
   reply in topic 18218).
 * `K3_forum_reply_final.md` - **embargoed**: the same content as a reply, if the reply control returns.
 * `K3_forum_reply_draft.md`, `K3_forum_reply_plaintext.md` - earlier drafts, kept for the record.
+
+
+## 25 Sep 2026
+- `K3b_correction_email.md`: correction of the false attribution in the 23 Sep email (the 7-22% trim seen by 504aldo on 14 Sep was not ours) + a question on the flopscope version of the final re-evaluation. To be sent by the user to both addresses used on 23 Sep.
+- The K3 forum drafts carry a correction banner; rewrite their opening before any public use.
