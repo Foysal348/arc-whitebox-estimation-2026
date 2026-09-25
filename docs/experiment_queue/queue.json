@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-26 (#332318 AGE_OLD 5 graded 4.906e-9 = new best; R_FB 8 submitted)",
+ "updated": "2026-09-26 (moonshot-ideas audit: SSC kappa4 closure under test; rows-only compaction, per-layer refit, neighbour corrector queued)",
  "baseline": "Best graded: #332318 (v43a5 = v40fb + transport join + AGE_OLD 5) adjusted 4.9057e-9, raw 2.0771e-8, util 0.2362 (26 Sep 2026). Previous: #332257 4.9519e-9, #332110 5.1284e-9.",
  "headroom": "Channel oracle (true values fed into mean closure): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, all three combined -94%. Q5: closure is near-exact; the error is the fresh kappa3/kappa4 error at each layer, which accumulates through mean and covariance. Horizon oracle: kappa3 memory is very long — even keeping 10 ages, layer 15 still has 16% error; age contributions are roughly equal and orthogonal.",
  "items": [
@@ -652,6 +652,58 @@
    "gate": "pattern corr >= 0.70 at L12-16",
    "next": "Only if time allows; D26 failing suggests the source-coupled family is weak.",
    "files": "Architecture Analysis/Round_13_Carried_Fourth_Cumulant_Proposal.pdf"
+  },
+  {
+   "id": "Q23",
+   "priority": "P1",
+   "status": "running",
+   "source": "Moonshot-ideas audit 26 Sep: Team Puffi's Phase 1 write-up (forum 18175, #327725) - missed; the forum audit wrongly marked it covered",
+   "title": "SSC response closure for kappa4: kappa4 ~ sum_ab Lambda_ab Sym(B_a x B_b) from <= 4 live modes",
+   "what": "Modes: C, vbar I, gate-weighted C, and a fitted quadratic form Q of the lower-order state (C, C o C, the kappa3 (2,1) slice with the mean, kappa3 diagonal, v v^T, 1 1^T); Lambda (4x4) fitted per layer to the next marginal kappa4; readout kappa4_j = 3 q_j^T Lambda q_j, q_aj = w_j^T B_a w_j. Our chain's lambda C_off regeneration is the 1-mode special case.",
+   "evidence": "Puffi: disabling the response branch raises layer-32 MSE 2.73e-6 -> 7.70e-6 (-64.6% for the branch; 256 x 32 networks, relative to a plain K=3 chain). Opus R12 only tested Sym(C x C) and a scale mixture (corr <= 0.09), not the multi-mode fitted form. Test: experiments/probes/ssc_k4_oracle.py (teacher-forced, out-of-layer fit, pattern corr vs chain 0.26-0.34).",
+   "cost": "~2 dense products/layer for the non-trivial modes (~15 u) - estimate",
+   "gate": "out-of-layer pattern corr >= 0.60 at L12-16 (kill < 0.45)",
+   "next": "read the oracle",
+   "files": "experiments/probes/ssc_k4_oracle.py; scratchpad puffi_ssc.txt"
+  },
+  {
+   "id": "Q24",
+   "priority": "P2",
+   "status": "open",
+   "source": "Moonshot-ideas audit 26 Sep (Q20 'dead-narrow')",
+   "title": "Rows-only compaction: drop D21 ROWS (not columns) of neurons with |alpha| > 3",
+   "what": "Q20 killed 'D21 rows and columns of dead neurons at Phi < 1e-2'; dropping only the rows of neurons far from the threshold (|alpha| > 3, dead or always-on) was never tested. Then emulate the metered saving with 32-multiple packing.",
+   "evidence": "Audit estimate: the whole compaction stack is worth ~6-12% util (below the moonshot bar, but the largest missing cost trim).",
+   "cost": "0 u",
+   "gate": "<= +0.3% MSE on both networks; >= 5% metered util saving",
+   "next": "oracle on the teacher harness",
+   "files": "experiments/variants/estimator_q20dead.py"
+  },
+  {
+   "id": "Q25",
+   "priority": "P2",
+   "status": "open",
+   "source": "Moonshot-ideas audit 26 Sep (Puffi measured -13.6% from refitting to the downstream mean correction)",
+   "title": "Per-layer end-to-end refit of the closure constants (lambda, kappa4 diagonal weight, FB)",
+   "what": "Our sweeps varied global scalars only. Fit ~12 per-layer multipliers by finite differences on the two teacher networks, then check on 100 MLPs.",
+   "evidence": "Untested.",
+   "cost": "0 u",
+   "gate": ">= -3% on both networks, then <= x0.98 on 100 MLPs",
+   "next": "-",
+   "files": "-"
+  },
+  {
+   "id": "Q26",
+   "priority": "P3",
+   "status": "open",
+   "source": "Moonshot-ideas audit 26 Sep",
+   "title": "Neighbour-feature drift corrector (Q19 used linear per-neuron features only)",
+   "what": "Add features aggregated over each neuron's incoming weights (e.g. W^T of the previous layer's residual proxies) to the teacher-forced drift regression.",
+   "evidence": "Untested.",
+   "cost": "~0 u",
+   "gate": "cross-network R^2 >= 0.10 (kill < 0.05)",
+   "next": "-",
+   "files": "experiments/chain/q19_run.py"
   }
  ]
 }
