@@ -1330,6 +1330,8 @@ bullets([
  "Q20 PACKING CAVEAT: packing live columns into 1024-wide chunks saves nothing for dead-only compaction (7373 live of 8192 columns still needs 8 chunks); pack to multiples of 32 with rectangular Strassen and MEASURE the metered saving first (stop if < 5% util).",
  "WORK RULES adopted: submit each validated gain the same day; keep one Kaggle runner busy; write-up capped at ~30 min/day until 18 Oct; no new outside-AI rounds or accuracy oracles without a concrete mechanism.",
 ])
+bullets([" K-2 CLOSED (25 Sep): Sharada Mohanty replied (24 Sep 23:24) that the submission-status API behaviour is expected - the same per-submission information is public on the Submissions List page and the submission detail pages (details vary by viewer role). Report acknowledged. Using that public information is legitimate."])
+bullets([" NEW BEST (25 Sep 15:37 BST): #332257 = submissions/v42tr (v40fb + shared-basis join by transporting the previous basis, no range finder; V41_JOIN=transport default). Graded adjusted 4.9519e-9, raw 2.1788e-8, util 0.2273, 0 failures; vs #332110 5.1284e-9: -3.4% (100-MLP local prediction -4.1%, 92/100 networks better). After transport the knob optimum moves: on MLP #0, AGE_OLD 5 score x0.957, R_OLD 448 x0.976, R_OLD2 192 x0.983 (AGE_OLD 3 x1.21, R_OLD 320 x1.10) - queued for the 100-MLP Kaggle grid."])
 h1("K4. Next experiments queued")
 bullets([
  "DONE: Kaggle knob sweep (K3f), aggregate-state pilots (K3e), slice-transport (K3g), column screening (K3h), loopholes B1/A4/B4, reference K3-simple (K3i).",

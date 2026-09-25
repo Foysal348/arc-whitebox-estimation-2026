@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-25 (translated to English; D24 V31c dead, D25 Strassen L6 dropped, Q20 dead-neuron compaction running)",
- "baseline": "Best graded: #332110 score 5.1284e-9 (raw 2.1046e-8) — v40fb (FB 1.25 + beta 1.2). Previous: #331787 5.137e-9. Plain chain on public MLP #0: final MSE 2.290e-8.",
+ "updated": "2026-09-25 (#332257 transport graded 4.952e-9 = new best)",
+ "baseline": "Best graded: #332257 (v42tr = v40fb + transport join) adjusted 4.9519e-9, raw 2.1788e-8, util 0.2273, 0 failures (25 Sep 2026). Previous: #332110 5.1284e-9.",
  "headroom": "Channel oracle (true values fed into mean closure): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, all three combined -94%. Q5: closure is near-exact; the error is the fresh kappa3/kappa4 error at each layer, which accumulates through mean and covariance. Horizon oracle: kappa3 memory is very long — even keeping 10 ages, layer 15 still has 16% error; age contributions are roughly equal and orthogonal.",
  "items": [
   {
@@ -32,14 +32,14 @@
   {
    "id": "Q16",
    "priority": "P2",
-   "status": "open",
+   "status": "success",
    "source": "Own idea (moonshot A, V41)",
-   "title": "Eigen-truncated basis at join (aug64) — 100-MLP verification",
+   "title": "Shared-basis join without the range finder (transport) / eigen-truncated (aug64): 100-MLP check",
    "what": "At join, instead of the range finder: transported old basis + the joiner's 64 new directions, truncated to r = 384 via eigen-decomposition of the full core.",
-   "evidence": "Two teacher networks: util +0.5%, MSE -1.0% / -1.1%, score -0.5% / -0.55%.",
+   "evidence": "Two teacher networks: util +0.5%, MSE -1.0% / -1.1%, score -0.5% / -0.55%. | 100-MLP Kaggle (25 Sep, paired vs shipped v40fb, deterministic): aug64 score x0.9997 (raw -0.55%, util +0.5%, 48/100 better) - no gain; TRANSPORT score x0.959 +- 0.003 (raw +2.8%, util 0.2433 -> 0.2269, 92/100 better), 0 failures, residual median 0.88 s vs 0.94 s, wall max 124 s vs 133 s (Kaggle clocks). Submitted as v42tr = #332257 (predicted ~4.92e-9 if the local ratio transfers). | GRADED 25 Sep 15:37 BST: #332257 adjusted 4.9519e-9 (raw 2.1788e-8, util 0.2273) vs #332110 5.1284e-9 (raw 2.1046e-8): score -3.4% (local prediction -4.1%). NEW BEST.",
    "cost": "+0.5% util",
    "gate": "100-MLP paired score < 1 - 2 SE",
-   "next": "Together with the grid's best setting, on Kaggle.",
+   "next": "Wait for the grade of #332257; re-tune age/rank knobs around transport (Kaggle grid).",
    "files": "experiments/variants/make_v41join.py"
   },
   {
