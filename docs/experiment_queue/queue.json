@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-25 (#332257 transport graded 4.952e-9 = new best)",
+ "updated": "2026-09-26 (transport knob grid: AGE_OLD 5 -1% with wall-time risk; R_OLD2 192 / R_OLD 448 no gain)",
  "baseline": "Best graded: #332257 (v42tr = v40fb + transport join) adjusted 4.9519e-9, raw 2.1788e-8, util 0.2273, 0 failures (25 Sep 2026). Previous: #332110 5.1284e-9.",
  "headroom": "Channel oracle (true values fed into mean closure): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, all three combined -94%. Q5: closure is near-exact; the error is the fresh kappa3/kappa4 error at each layer, which accumulates through mean and covariance. Horizon oracle: kappa3 memory is very long — even keeping 10 ages, layer 15 still has 16% error; age contributions are roughly equal and orthogonal.",
  "items": [
@@ -600,6 +600,19 @@
    "gate": "step 1: final MSE change <= +0.3% on both networks at thr >= 1e-3",
    "next": "Decide after the direction review and the Q16 Kaggle results: implement packed live-column legs in the young tier (then old tier).",
    "files": "experiments/variants/estimator_q20dead.py"
+  },
+  {
+   "id": "Q21",
+   "priority": "P2",
+   "status": "open",
+   "source": "Own (25 Sep, after the transport result)",
+   "title": "Re-tune age/rank knobs around the transport join (100-MLP Kaggle grid)",
+   "what": "After transport the old basis is slightly less accurate, so the knob optimum may move. Variants on v42tr: AGE_OLD 5, AGE_OLD 5 + R_OLD2 192, R_OLD2 192, R_OLD 448, AGE_OLD 5 + R_OLD 448, AGE_OLD 6.",
+   "evidence": "MLP #0 smoke (score vs transport): AGE_OLD 5 x0.957, AGE_OLD 5 + R_OLD2 192 x0.949, R_OLD 448 x0.976, R_OLD2 192 x0.983, AGE_OLD 6 x0.997, AGE_OLD 3 x1.21, R_OLD 320 x1.10. 100-MLP Kaggle (paired vs transport): AGE_OLD 5 x0.9895 +- 0.0032 (65/100 better; raw -4.8%, util 0.227 -> 0.236; Kaggle wall max 146 s vs 124 s); AGE_OLD 5 + R_OLD2 192 x0.9913 +- 0.0035; R_OLD2 192 x1.0003; R_OLD 448 x1.0113. Runner C (AGE_OLD 5 + R_OLD 448, AGE_OLD 6) running.",
+   "cost": "0 u",
+   "gate": "score <= x0.99 on 100 MLPs AND a safe wall-time margin (grader cap 120 s/MLP)",
+   "next": "AGE_OLD 5 gains ~1% but raises the Kaggle wall max to 146 s: not worth a timeout risk unless the grader wall time can be checked. Wait for runner C.",
+   "files": "kaggle/estimators/set_{a,b,c}/variants.json; data/kaggle_out/eval5_*"
   }
  ]
 }
