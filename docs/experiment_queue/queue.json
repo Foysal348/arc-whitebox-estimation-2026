@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-26 (SSC kappa4 closure dead (+0.05 corr); R_FB 4 -4.3% on both teacher nets, 4 submissions)",
- "baseline": "Best graded: #332318 (v43a5 = v40fb + transport join + AGE_OLD 5) adjusted 4.9057e-9, raw 2.0771e-8, util 0.2362 (26 Sep 2026). Previous: #332257 4.9519e-9, #332110 5.1284e-9.",
+ "updated": "2026-09-26 (#332322 R_FB 8 = 4.860e-9 new best; Q24 rows-only compaction dead)",
+ "baseline": "Best graded: #332322 (v44rfb8 = transport join + R_FB 8) adjusted 4.8603e-9, raw 2.2100e-8, util 0.2199 (26 Sep 2026). Previous: #332318 4.9057e-9, #332257 4.9519e-9, #332110 5.1284e-9.",
  "headroom": "Channel oracle (true values fed into mean closure): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, all three combined -94%. Q5: closure is near-exact; the error is the fresh kappa3/kappa4 error at each layer, which accumulates through mean and covariance. Horizon oracle: kappa3 memory is very long — even keeping 10 ages, layer 15 still has 16% error; age contributions are roughly equal and orthogonal.",
  "items": [
   {
@@ -669,14 +669,14 @@
   {
    "id": "Q24",
    "priority": "P2",
-   "status": "open",
+   "status": "dead",
    "source": "Moonshot-ideas audit 26 Sep (Q20 'dead-narrow')",
    "title": "Rows-only compaction: drop D21 ROWS (not columns) of neurons with |alpha| > 3",
    "what": "Q20 killed 'D21 rows and columns of dead neurons at Phi < 1e-2'; dropping only the rows of neurons far from the threshold (|alpha| > 3, dead or always-on) was never tested. Then emulate the metered saving with 32-multiple packing.",
-   "evidence": "Audit estimate: the whole compaction stack is worth ~6-12% util (below the moonshot bar, but the largest missing cost trim).",
+   "evidence": "Audit estimate: the whole compaction stack is worth ~6-12% util (below the moonshot bar, but the largest missing cost trim). | RESULT (estimator_q20dead.py mode 32, teacher pair): D21 rows zeroed for |alpha| > 3: MSE +6.5% / +19.6%; |alpha| > 2.5: +42% / +60%. Rows of far-from-threshold neurons enter the covariance closure of their partners - not droppable. Only the input-side compaction (Q20 step 1) remains.",
    "cost": "0 u",
    "gate": "<= +0.3% MSE on both networks; >= 5% metered util saving",
-   "next": "oracle on the teacher harness",
+   "next": "-",
    "files": "experiments/variants/estimator_q20dead.py"
   },
   {
@@ -712,7 +712,7 @@
    "source": "Own (26 Sep)",
    "title": "Feedback thin-leg rank R_FB 16 -> 8 / 4 (on top of transport)",
    "what": "The D21 feedback thin legs cost ~15 u; lower rank after the transport change.",
-   "evidence": "Teacher pair (MLP #0 / synthetic), score vs transport: R_FB 8 x0.973 / x0.956; R_FB 4 x0.957 / x0.956; feedback off x1.029 / x0.988. Submitted: #332322 (transport + R_FB 8), #332324 (AGE_OLD 5 + R_FB 4), #332325 (AGE_OLD 5 + R_FB 8), #332326 (transport + R_FB 4).",
+   "evidence": "Teacher pair (MLP #0 / synthetic), score vs transport: R_FB 8 x0.973 / x0.956; R_FB 4 x0.957 / x0.956; feedback off x1.029 / x0.988. Submitted: #332322 (transport + R_FB 8), #332324 (AGE_OLD 5 + R_FB 4), #332325 (AGE_OLD 5 + R_FB 8), #332326 (transport + R_FB 4). | GRADED: #332322 (transport + R_FB 8) 4.8603e-9 (raw 2.2100e-8, util 0.2199) = NEW BEST.",
    "cost": "negative (saves ~2-4% util)",
    "gate": "grader",
    "next": "read the grades",

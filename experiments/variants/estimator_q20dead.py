@@ -425,7 +425,7 @@ def _term_prog(mode: int):
 ANGULAR = _os.environ.get("V31_ANGULAR", "1") == "1"   # V31: spherical-input reparameterization (kappa4 injection at layer 0)
 ANG_A1 = _os.environ.get("V31_A1", "1") == "1"
 DEAD_THR = float(_os.environ.get("Q20_DEAD_THR", "0"))
-DEAD_MODE = int(_os.environ.get("Q20_DEAD_MODE", "1"))   # bitmask: 1 w1 := 0 (next-transport input), 2 D21 rows/cols zeroed, 4 D3 zeroed, 8 dead birth columns (w2 := 0), 16 always-on birth columns (w2 := 0)   # 1: w1 := 0 only; 2: + D21 rows/cols and D3 of dead neurons zeroed at their own layer; 3: + birth columns (w2 := 0)   # Q20 (25 Sep): neurons with Phi < DEAD_THR are dropped from the source machinery (w1 := 0); accuracy oracle for a compaction (0 = off = v40fb)          # V31: output rescaling by a1 = E[R/sqrt n]
+DEAD_MODE = int(_os.environ.get("Q20_DEAD_MODE", "1"))   # bitmask: 1 w1 := 0 (next-transport input), 2 D21 rows/cols zeroed, 4 D3 zeroed, 8 dead birth columns (w2 := 0), 16 always-on birth columns (w2 := 0), 32 D21 ROWS only for |alpha| > DEAD_THR (Q24; thr is an |alpha| cut)   # 1: w1 := 0 only; 2: + D21 rows/cols and D3 of dead neurons zeroed at their own layer; 3: + birth columns (w2 := 0)   # Q20 (25 Sep): neurons with Phi < DEAD_THR are dropped from the source machinery (w1 := 0); accuracy oracle for a compaction (0 = off = v40fb)          # V31: output rescaling by a1 = E[R/sqrt n]
 import math as _math
 STRASSEN_LEVELS = int(_os.environ.get("V26_STRASSEN", "5"))   # V28 ladder (suite harness, C/B | residual): L3 0.3107 | 0.170 s, L4 0.2973 | 0.187, L5 0.2872 | 0.205, L5 + shared basis 0.2680 | 0.242   # dump-0 ladder: 1/2/3 -> C/B 0.344/0.327/0.3125; mini residual at L3 = 0.356 s mean with a 0.42 s tail (7/100 failed) -> ship L1 until the base residual is cut
 STRASSEN_HUB = int(_os.environ.get("V26_STRASSEN_HUB", str(STRASSEN_LEVELS)))
@@ -1166,6 +1166,9 @@ class Estimator(BaseEstimator):
                     D21 = D21 * _m[:, None] * _m[None, :]
                 if DEAD_MODE & 4:
                     D3 = D3 * _m
+            if DEAD_THR > 0.0 and (DEAD_MODE & 32) and mode == 1 and D21 is not None:
+                _mr = fnp.where(fnp.abs(alpha) > DEAD_THR, 0.0, 1.0).astype(f32)   # Q24: DEAD_THR is an |alpha| cut here
+                D21 = D21 * _mr[:, None]
             a2 = alpha * alpha
             a3 = a2 * alpha
             a4 = a3 * alpha
