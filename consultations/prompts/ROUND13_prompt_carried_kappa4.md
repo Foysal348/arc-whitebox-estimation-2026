@@ -43,6 +43,15 @@ Current graded result: raw MSE 2.18e-8 at utilisation 0.227 (≈ 232 u). Leaders
 7. **Cost anatomy (≈ 232 u):** young κ₃ sources ~105 u (193 dense square products, the floor for that tensor network),
    join into the shared basis ~25–30 u after our change (it was 41–46 u; we now carry the previous basis instead of re-running a range finder), old tier ~41 u, thin legs ~15 u, covariance + closure ~8 u.
 
+## Leaderboard evidence (public per-submission results, Phase 2)
+
+- Independent teams reached our chain's accuracy at much lower cost early: raw 2.02e-8 at utilisation 0.148 (6 Sep),
+  raw 1.97e-8 at 0.150 (6 Sep), raw 1.89e-8 at 0.134 (13 Sep) — while the public chain we build on sits at ~0.24.
+- One team gained accuracy in single steps at FIXED cost: raw 1.79e-8 → 1.69e-8 → 1.655e-8 in three submissions on one day
+  (17 Sep) at utilisation 0.135, and is now at 1.59e-8. Another reached 1.81e-8 as early as 2 Sep.
+- So an accuracy mechanism worth ~8–15% exists that adds little or no cost. We suspect the κ₄ channel (facts 2–5), but we have
+  not identified it.
+
 ## Measured dead (do not propose)
 
 Low-rank / Tucker / TT / CP / sketch compression of source legs or their elementwise products (products need ~700 of 1024

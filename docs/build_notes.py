@@ -1332,6 +1332,14 @@ bullets([
 ])
 bullets([" K-2 CLOSED (25 Sep): Sharada Mohanty replied (24 Sep 23:24) that the submission-status API behaviour is expected - the same per-submission information is public on the Submissions List page and the submission detail pages (details vary by viewer role). Report acknowledged. Using that public information is legitimate."])
 bullets([" NEW BEST (25 Sep 15:37 BST): #332257 = submissions/v42tr (v40fb + shared-basis join by transporting the previous basis, no range finder; V41_JOIN=transport default). Graded adjusted 4.9519e-9, raw 2.1788e-8, util 0.2273, 0 failures; vs #332110 5.1284e-9: -3.4% (100-MLP local prediction -4.1%, 92/100 networks better). After transport the knob optimum moves: on MLP #0, AGE_OLD 5 score x0.957, R_OLD 448 x0.976, R_OLD2 192 x0.983 (AGE_OLD 3 x1.21, R_OLD 320 x1.10) - queued for the 100-MLP Kaggle grid."])
+h1("K3ap. The Phase 2 record progression (public per-submission results, 25 Sep)")
+p("Organiser ruling (Mohanty, 24 Sep): per-submission results are public on the Submissions List page. We scanned all Phase 2 ids through the status API (1 request/s; data/lb_scan/phase2_api.csv, 3,239 graded) and read the participant names of the 76 record-setting submissions from their public detail pages (data/lb_scan/record_progression.json).")
+bullets([
+ "The top teams (Puffi, J2W, marius_binner, suliman_tadros) built their own methods from 24 Aug; the public 504aldo chain (released 10 Sep) was never on the frontier. By 2-6 Sep: J2W raw 2.23e-8 at util 0.211 (2 Sep), marius_binner raw 1.81e-8 at 0.26 (2 Sep) and 1.84e-8 at 0.183 (6 Sep), Puffi (andrew_epstein) 2.02e-8 at 0.148 (6 Sep), suliman_tadros 1.97e-8 at 0.150 (6 Sep) and 1.89e-8 at 0.134 (13 Sep).",
+ "COST: our chain's accuracy at util ~0.15 was reached by two independent teams within two weeks of the start - the halving we call the moonshot is common knowledge at the top.",
+ "ACCURACY: J2W gained in single steps at FIXED cost on 17 Sep: raw 1.79e-8 -> 1.694e-8 -> 1.655e-8 at util 0.135 (a discrete mechanism, ~8% then ~2.5%), then small steps to 1.590e-8 at 0.127 (25 Sep). marius_binner: 1.734e-8 (8 Sep) -> 1.679e-8 (16 Sep) at ~0.15.",
+ "Used in the Round 13 prompt (consultations/prompts/ROUND13_prompt_carried_kappa4.md) as evidence that a cheap accuracy mechanism exists.",
+])
 h1("K4. Next experiments queued")
 bullets([
  "DONE: Kaggle knob sweep (K3f), aggregate-state pilots (K3e), slice-transport (K3g), column screening (K3h), loopholes B1/A4/B4, reference K3-simple (K3i).",
