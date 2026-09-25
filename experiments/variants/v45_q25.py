@@ -339,9 +339,9 @@ NO_SRC_LAST = _os.environ.get("V19_NO_SRC_LAST", "0") == "1"  # V19 probe: D3(la
 NO_CORR = _os.environ.get("V17_NO_CORR", "1") == "1"
 # V25: table scale 0.95 (8-dump scan 0.9/0.92/0.95/1.0 -> 2.2752/2.2727/2.2704/2.2782e-8)
 LAM = [c * float(_os.environ.get("V17_LAM_SCALE", "0.95")) for c in LAM]
-_Q25_LB = [float(x) for x in _os.environ.get("Q25_LAMB", "1,1,1,1").split(",")]   # Q25 (26 Sep): per depth-block lambda multipliers (layers 0-3, 4-7, 8-11, 12-15)
+_Q25_LB = [float(x) for x in _os.environ.get("Q25_LAMB", "1:1:1:1").split(":")]   # Q25 (26 Sep): per depth-block lambda multipliers (layers 0-3, 4-7, 8-11, 12-15)
 LAM = [c * _Q25_LB[min(i // 4, 3)] for i, c in enumerate(LAM)]
-_Q25_FB = [float(x) for x in _os.environ.get("Q25_FBB", "1,1,1,1").split(",")]    # Q25: per depth-block feedback-scale multipliers
+_Q25_FB = [float(x) for x in _os.environ.get("Q25_FBB", "1:1:1:1").split(":")]    # Q25: per depth-block feedback-scale multipliers
 # V25: reference ratio mean(dG)/mean(var) at layer l+1 (8-dump mean, scratch/lam_obs_d0-7.npz)
 # and the log-log exponent of the adaptive rule (pooled fit 1.08; 1.0 shipped).
 REF_R = [6.58815e-03, 8.18414e-03, 8.53136e-03, 8.38859e-03, 8.10153e-03, 7.74287e-03,
