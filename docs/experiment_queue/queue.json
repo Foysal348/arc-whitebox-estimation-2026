@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-25 (late-layer kappa3 oracle: value spread over L8-16; reallocation dead)",
+ "updated": "2026-09-25 (audit clean-up: Q4/Q6/Q17 dead, duplicate Q18 renamed)",
  "baseline": "Best graded: #332110 score 5.1284e-9 (raw 2.1046e-8) — v40fb (FB 1.25 + beta 1.2). আগের: #331787 5.137e-9. Plain chain on public MLP #0: final MSE 2.290e-8.",
  "headroom": "Channel oracle (mean closure-e সত্যিকারের মান): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, তিনটাই -94%. Q5: closure নিখুঁত; error = প্রতি layer-এর নতুন kappa3/kappa4 ভুল, যা mean ও covariance দিয়ে জমে। Horizon oracle: kappa3 স্মৃতি খুব লম্বা — ১০ বয়স রাখলেও layer 15-এ 16% error; বয়সের অবদান প্রায় সমান ও লম্ব।",
  "items": [
@@ -45,24 +45,24 @@
   {
    "id": "Q17",
    "priority": "P1",
-   "status": "open",
+   "status": "dead",
    "source": "নিজের (moonshot A)",
    "title": "Young tier (~104 u) অর্ধেক খরচে — Round 10 prompt",
    "what": "Age 1-4 source-এর transport + contraction কম product-এ: A = P a_b ব্যবহার, পরপর source-এর shared propagator factor, age-1/2 closed form, batched contraction।",
-   "evidence": "Cost ledger: young transport ~54 u + contraction ~50 u। একজন leader সমান accuracy অর্ধেক খরচে দেখিয়েছে। নিজের বীজগণিত (24 Sep): (১) A = P a_b দিয়ে A-transport বাদ — লাভ নেই, (P o A) term-এ A-র entry-wise মান লাগে তাই A বানাতে n^3 লাগেই; (২) P_old = P_new M — তৈরি করতেও n^3; (৩) batching — FLOP একই; (৪) age-1 P = W আগেই কাজে লাগানো। Hadamard গুণফল full-rank (Khatri-Rao wall) — প্রতি source-layer ৪টা n^3 এই কাঠামোর ন্যূনতম। সমাধান থাকলে কাঠামোর বাইরে।",
+   "evidence": "Cost ledger: young transport ~54 u + contraction ~50 u। একজন leader সমান accuracy অর্ধেক খরচে দেখিয়েছে। নিজের বীজগণিত (24 Sep): (১) A = P a_b দিয়ে A-transport বাদ — লাভ নেই, (P o A) term-এ A-র entry-wise মান লাগে তাই A বানাতে n^3 লাগেই; (২) P_old = P_new M — তৈরি করতেও n^3; (৩) batching — FLOP একই; (৪) age-1 P = W আগেই কাজে লাগানো। Hadamard গুণফল full-rank (Khatri-Rao wall) — প্রতি source-layer ৪টা n^3 এই কাঠামোর ন্যূনতম। সমাধান থাকলে কাঠামোর বাইরে। | 24-25 Sep: Round 10 বন্ধ — Sonnet-এর exact contraction-order search + ৪টা বাইরের উত্তর: যেকোনো ক্রমে 193 square product (D21)।",
    "cost": "গবেষণা",
    "gate": "D21 relative error <= 2% রেখে <= 55 u",
-   "next": "Round 10 AI উত্তরের অপেক্ষা।",
+   "next": "-",
    "files": "-"
   },
   {
-   "id": "Q18",
+   "id": "Q18a",
    "priority": "-",
    "status": "dead",
    "source": "GPT 5.6 Sol R9 (FHQR-2)",
    "title": "Finite-Horizon Query Response (h = 2): ২ layer-এর kappa3 স্মৃতি query-space-এ, বাকিটা tree দিয়ে",
    "what": "Source bank-এর বদলে দুটো global n x n response matrix H = K3[:, Q, Q] (Q = পরের ১ ও ২ layer-এর query) বয়ে নেওয়া; পুরোনো অংশ dressed tree দিয়ে পূরণ।",
-   "evidence": "Horizon oracle (Fable-এর dense source capture, source-যোগফল chain D21-এর সাথে 1.5e-7 পর্যন্ত মেলে): শেষ h বয়স রেখে বাকি বাদ দিলে D21 error — layer 15: h2 84%, h4 65%, h6 46%, h8 31%, h10 16%; layer 11: h2 72%, h8 10%। প্রতিটা বয়স প্রায় সমান ভাগ দেয় (~0.15-0.20), আর অবদানগুলো প্রায় পরস্পর-লম্ব। FHQR-2 মৃত; Sol-এর নিয়মে: leader-রা লম্বা স্মৃতি রাখে কিন্তু একেবারে ভিন্ন সস্তা coordinate-এ। | ফল (q18_k4_horizon.py, N=1e6, MLP#0): L−h-এ সব স্মৃতি মুছে Gaussian দিয়ে h ধাপ আসল network চালালে decisive neuron-এ κ4 level L12: h=1/2/3/4/6 → 2/6/12/18/35%, L16: 3/2/5/9/20%; teacher-এর সাথে pattern corr L12 0.23/0.40/0.53/0.67/0.78, L16 0.20/0.41/0.59/0.65/0.77; best-scale errG4 h=2: 0.90/0.99, h=6: 0.37/0.63 — chain 0.19/0.21। শেষ ২ ধাপের জন্ম κ4-এর মাত্র 2-6% বহন করে; ৬ ধাপেও 20-35%। κ4-এর স্মৃতি κ3-এর মতোই লম্বা: young κ4 carrier মৃত; κ4 lever-এর জন্য পুরো κ4 source chain লাগবে — খরচে বন্ধ।",
+   "evidence": "Horizon oracle (Fable-এর dense source capture, source-যোগফল chain D21-এর সাথে 1.5e-7 পর্যন্ত মেলে): শেষ h বয়স রেখে বাকি বাদ দিলে D21 error — layer 15: h2 84%, h4 65%, h6 46%, h8 31%, h10 16%; layer 11: h2 72%, h8 10%। প্রতিটা বয়স প্রায় সমান ভাগ দেয় (~0.15-0.20), আর অবদানগুলো [সংশোধিত 24 Sep: লম্ব না — বয়সগুলো coherent, বর্গের যোগফল 0.24-0.49]। FHQR-2 মৃত; Sol-এর নিয়মে: leader-রা লম্বা স্মৃতি রাখে কিন্তু একেবারে ভিন্ন সস্তা coordinate-এ। | ফল (q18_k4_horizon.py, N=1e6, MLP#0): L−h-এ সব স্মৃতি মুছে Gaussian দিয়ে h ধাপ আসল network চালালে decisive neuron-এ κ4 level L12: h=1/2/3/4/6 → 2/6/12/18/35%, L16: 3/2/5/9/20%; teacher-এর সাথে pattern corr L12 0.23/0.40/0.53/0.67/0.78, L16 0.20/0.41/0.59/0.65/0.77; best-scale errG4 h=2: 0.90/0.99, h=6: 0.37/0.63 — chain 0.19/0.21। শেষ ২ ধাপের জন্ম κ4-এর মাত্র 2-6% বহন করে; ৬ ধাপেও 20-35%। κ4-এর স্মৃতি κ3-এর মতোই লম্বা: young κ4 carrier মৃত; κ4 lever-এর জন্য পুরো κ4 source chain লাগবে — খরচে বন্ধ।",
    "cost": "~82-90 u (Strassen) দাবি",
    "gate": "teacher-forced D21 error <= 2.5%",
    "next": "-",
@@ -110,14 +110,14 @@
   {
    "id": "Q4",
    "priority": "P3",
-   "status": "open",
+   "status": "dead",
    "source": "Fable R7",
    "title": "Oracle: সত্যিকারের D21 শুধু feedback leg-এ",
    "what": "kappa3 slice error-এর 55-65% এখনও ব্যাখ্যা হয়নি; closure-এর cross-talk কিনা আলাদা করা।",
-   "evidence": "Fable: first-order theory 35-45% ব্যাখ্যা করে। Fable R8: 'সব index আলাদা' kappa3 error-এর ~55% দ্বিতীয় ক্রম পর্যন্তও ব্যাখ্যা হয় না — এই formulation-এর মেঝে।",
+   "evidence": "Fable: first-order theory 35-45% ব্যাখ্যা করে। Fable R8: 'সব index আলাদা' kappa3 error-এর ~55% দ্বিতীয় ক্রম পর্যন্তও ব্যাখ্যা হয় না — এই formulation-এর মেঝে। | 25 Sep: Opus R12 চালিয়েছে — সত্যিকারের D21 শুধু feedback leg-এ ×0.9999 (কোনো প্রভাব নেই)।",
    "cost": "একটা chain run (offline oracle)",
    "gate": "slice error বা final MSE উল্লেখযোগ্য কমলে -> সস্তা approximation খোঁজা",
-   "next": "estimator-এ Xt/Yt-তে teacher Y21 inject করে run।",
+   "next": "-",
    "files": "-"
   },
   {
@@ -136,14 +136,14 @@
   {
    "id": "Q6",
    "priority": "P1",
-   "status": "open",
+   "status": "dead",
    "source": "Astra R7 appendix A",
    "title": "Kernel-এ K4 x C term যোগ",
    "what": "Harmonic input kappa4-এর সাথে covariance-এর পরের order-এর term (দুটো অতিরিক্ত query product)।",
-   "evidence": "Q1-এর kernel depth-এ magnitude কম ধরে (দরকারি scale 1.3 -> 2.2); এই term সেই ঘাটতির অংশ হতে পারে।",
+   "evidence": "Q1-এর kernel depth-এ magnitude কম ধরে (দরকারি scale 1.3 -> 2.2); এই term সেই ঘাটতির অংশ হতে পারে। | 25 Sep: Q1 মৃত, আর Opus R12 (D22) দেখিয়েছে kernel-এর সস্তা রূপগুলো নিট ≤ 0; κ4-এর গভীর pattern দীর্ঘ স্মৃতি (C15, Q18)।",
    "cost": "+2m/n u/layer (~+0.7 u per layer at m=350)",
    "gate": "one-layer diagnostic-এ non-pair corr/slope ভালো হলে",
-   "next": "Q1 পাস করলে।",
+   "next": "-",
    "files": "-"
   },
   {

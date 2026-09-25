@@ -37,6 +37,7 @@ This is the moonshot's design specification. It records what our experiments hav
 </table>
 <div class="key"><b>Key point:</b> accuracy alone cannot reach the top 3: it would need raw 9e-9, and no one is near that. <b>At our current accuracy, cutting the cost to ~110u (44% of today's) reaches the top 3, and ≤102u ties #1.</b> a_s6 shows near-our accuracy (2.0e-8) at ~129u. The moonshot target is therefore <b>the same accuracy at ≤ ~115u</b>. Every further u saved buys accuracy slack (table above).</div>
 
+<div class="dead"><b>Revision (24-25 Sep, leaderboard re-read):</b> the premise above ("the leaders have our accuracy at half the cost") is only half true. At least 12 teams have 15-26% LOWER raw MSE (1.56-1.86e-8) at utilisation 0.13-0.20, and teams that started from the public 504aldo chain (emanuel_ruzak, jlacombe) reached ~1.82e-8 within four submissions. Priorities since 24 Sep: (1) accuracy, (2) cost trims, (3) the halving moonshot. Accuracy lines measured dead on 25 Sep: cheap κ4 rules and the missing half-families (Opus R12, D22), the young κ4 carrier (Q18), refitting the online mean correction (Q19), layer-dependent rank reallocation (D23). Running: join aug64 / transport on 100 MLPs (Q16).</div>
 <h2>2. How far we are: an honest assessment</h2>
 <table>
 <tr><th>Stage</th><th>Status</th></tr>

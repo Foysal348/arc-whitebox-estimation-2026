@@ -20,7 +20,7 @@ ul, ol { margin: 4px 0 6px 0; } li { margin-bottom: 3px; }
 submission <b>#332110</b> (adjusted 5.128e-9, raw final-layer MSE 2.105e-8, utilisation 0.244, 0 failed MLPs) ·
 DRAFT of 25 Sep 2026 · deadline 24 Oct 2026 23:59 UTC</div>
 
-<div class="todo">Draft status: the structure, the claims and the numbers are in place; every number is from a script in the
+<div class="todo">Master full text: writeup/WRITEUP_DRAFT_v3.md (parity proof, measurement sections A-E, engineering, knob map); this file is the condensed deliverable. Draft status: the structure, the claims and the numbers are in place; every number is from a script in the
 repository (listed in section 8). Still to do: figures (error map by layer, memory horizon, cost ledger), a human editing pass,
 and hand-checking each derivation. Target length ≤ 10 pages.</div>
 
@@ -92,7 +92,7 @@ on a 100-network paired harness: the chain sits at its own score optimum.</li>
 <ul>
 <li>Teacher-forced closure (all inputs from a 6x10<sup>7</sup>-sample Monte-Carlo teacher at one layer): the post-ReLU covariance
 error falls to the teacher's noise.</li>
-<li>Channel oracles (teacher value injected at every layer, final MSE ratio): variance x0.53, fourth-cumulant diagonal x0.70,
+<li>Channel oracles (teacher value injected at every layer, final MSE ratio, MLP #0 only so far): variance x0.53, fourth-cumulant diagonal x0.70,
 third-cumulant diagonal x0.87, all three x0.057.</li>
 <li>A perfect third-cumulant input, the (2,1) slice κ<sub>3</sub>(z<sub>i</sub>, z<sub>i</sub>, z<sub>j</sub>) plus its diagonal:
 x0.608 (MLP #0) / x0.715 (a second, synthetic network). The slice alone: x0.758; the slice fed only to the chain's feedback
