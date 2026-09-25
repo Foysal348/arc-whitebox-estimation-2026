@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-26 (Round 13: skew-lift and Astra carriers dead; pair innovations untested)",
- "baseline": "Best graded: #332257 (v42tr = v40fb + transport join) adjusted 4.9519e-9, raw 2.1788e-8, util 0.2273, 0 failures (25 Sep 2026). Previous: #332110 5.1284e-9.",
+ "updated": "2026-09-26 (#332318 AGE_OLD 5 graded 4.906e-9 = new best; R_FB 8 submitted)",
+ "baseline": "Best graded: #332318 (v43a5 = v40fb + transport join + AGE_OLD 5) adjusted 4.9057e-9, raw 2.0771e-8, util 0.2362 (26 Sep 2026). Previous: #332257 4.9519e-9, #332110 5.1284e-9.",
  "headroom": "Channel oracle (true values fed into mean closure): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, all three combined -94%. Q5: closure is near-exact; the error is the fresh kappa3/kappa4 error at each layer, which accumulates through mean and covariance. Horizon oracle: kappa3 memory is very long — even keeping 10 ages, layer 15 still has 16% error; age contributions are roughly equal and orthogonal.",
  "items": [
   {
@@ -604,11 +604,11 @@
   {
    "id": "Q21",
    "priority": "P2",
-   "status": "open",
+   "status": "success",
    "source": "Own (25 Sep, after the transport result)",
    "title": "Re-tune age/rank knobs around the transport join (100-MLP Kaggle grid)",
    "what": "After transport the old basis is slightly less accurate, so the knob optimum may move. Variants on v42tr: AGE_OLD 5, AGE_OLD 5 + R_OLD2 192, R_OLD2 192, R_OLD 448, AGE_OLD 5 + R_OLD 448, AGE_OLD 6.",
-   "evidence": "MLP #0 smoke (score vs transport): AGE_OLD 5 x0.957, AGE_OLD 5 + R_OLD2 192 x0.949, R_OLD 448 x0.976, R_OLD2 192 x0.983, AGE_OLD 6 x0.997, AGE_OLD 3 x1.21, R_OLD 320 x1.10. 100-MLP Kaggle (paired vs transport): AGE_OLD 5 x0.9895 +- 0.0032 (65/100 better; raw -4.8%, util 0.227 -> 0.236; Kaggle wall max 146 s vs 124 s); AGE_OLD 5 + R_OLD2 192 x0.9913 +- 0.0035; R_OLD2 192 x1.0003; R_OLD 448 x1.0113. Runner C (AGE_OLD 5 + R_OLD 448, AGE_OLD 6) running.",
+   "evidence": "MLP #0 smoke (score vs transport): AGE_OLD 5 x0.957, AGE_OLD 5 + R_OLD2 192 x0.949, R_OLD 448 x0.976, R_OLD2 192 x0.983, AGE_OLD 6 x0.997, AGE_OLD 3 x1.21, R_OLD 320 x1.10. 100-MLP Kaggle (paired vs transport): AGE_OLD 5 x0.9895 +- 0.0032 (65/100 better; raw -4.8%, util 0.227 -> 0.236; Kaggle wall max 146 s vs 124 s); AGE_OLD 5 + R_OLD2 192 x0.9913 +- 0.0035; R_OLD2 192 x1.0003; R_OLD 448 x1.0113. Runner C (AGE_OLD 5 + R_OLD 448, AGE_OLD 6) running. | Runner C: AGE_OLD 5 + R_OLD 448 x1.0244 +- 0.0037 (23/100 better), AGE_OLD 6 x1.0134 +- 0.0035 (wall max 161 s) - both worse. Submitted anyway per the new rule: #332318 (AGE_OLD 5), #332319 (AGE_OLD 5 + R_OLD2 192). Next grid (26 Sep): AGE_OLD2 6/8 (runner A), LAM 0.90 / FB 1.40 (runner B); R_FB 8 pending a local check (laptop RAM). | GRADED 26 Sep 01:25 BST: #332318 (AGE_OLD 5) 4.9057e-9 (raw 2.0771e-8, util 0.2362) = NEW BEST, no timeouts; #332319 (AGE_OLD 5 + R_OLD2 192) 4.9217e-9 (raw 2.1139e-8, util 0.2328). The Kaggle wall-time worry was unfounded. R_FB 8 (MLP #0 score x0.973) submitted as #332322.",
    "cost": "0 u",
    "gate": "score <= x0.99 on 100 MLPs AND a safe wall-time margin (grader cap 120 s/MLP)",
    "next": "AGE_OLD 5 gains ~1% but raises the Kaggle wall max to 146 s: not worth a timeout risk unless the grader wall time can be checked. Wait for runner C.",
