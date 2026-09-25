@@ -1,3 +1,4 @@
 {
- "transport": {"file": "v41join.py", "env": {"V41_JOIN": "transport"}}
+ "tr_r2_192": {"file": "v42tr.py", "env": {"V24_R_OLD2": 192}},
+ "tr_r448": {"file": "v42tr.py", "env": {"V21_R_OLD": 448}}
 }
