@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Phase 2 Write-up Draft</title>
+<style>
+body { font-family: 'Segoe UI', sans-serif; font-size: 10.5pt; color: #222; line-height: 1.45; max-width: 820px; margin: 0 auto; }
+h1 { font-size: 18pt; margin: 0 0 4px 0; color: #1a2b4c; }
+h2 { font-size: 13pt; border-left: 6px solid #1a4c8b; padding-left: 8px; margin-top: 18px; color: #1a2b4c; page-break-after: avoid; }
+h3 { font-size: 11pt; margin: 10px 0 4px 0; color: #1a2b4c; }
+.meta { color: #555; font-size: 9.5pt; margin-bottom: 10px; }
+table { border-collapse: collapse; width: 100%; margin: 6px 0 10px 0; page-break-inside: avoid; }
+th, td { border: 1px solid #bbb; padding: 3px 6px; vertical-align: top; font-size: 9.3pt; text-align: left; }
+th { background: #dde6f2; }
+.todo { background: #fff7e0; border: 1px dashed #d4a017; padding: 6px 9px; margin: 6px 0; font-size: 9.5pt; }
+.claim { background: #eef5ee; border-left: 4px solid #4c8b4c; padding: 6px 9px; margin: 6px 0; }
+.status { font-size: 8.5pt; color: #666; }
+ul, ol { margin: 4px 0 6px 0; } li { margin-bottom: 3px; }
+</style></head><body>
+
+<h1>Where the error of a cumulant chain lives in a deep random ReLU network</h1>
+<div class="meta">ARC White-Box Estimation Challenge 2026, Phase 2 · Algorithmic contribution write-up · team foyshal_sk ·
+submission <b>#332110</b> (adjusted 5.128e-9, raw final-layer MSE 2.105e-8, utilisation 0.244, 0 failed MLPs) ·
+DRAFT of 25 Sep 2026 · deadline 24 Oct 2026 23:59 UTC</div>
+
+<div class="todo">Draft status: the structure, the claims and the numbers are in place; every number is from a script in the
+repository (listed in section 8). Still to do: figures (error map by layer, memory horizon, cost ledger), a human editing pass,
+and hand-checking each derivation. Target length ≤ 10 pages.</div>
+
+<h2>0. Summary</h2>
+<p>We start from the public factorised third-order cumulant chain of team 504aldo (MIT), which propagates the mean, the
+covariance and the third cumulant (as a sum over "sources" born at each ReLU) through a 1024-wide, 16-layer bias-free ReLU
+network. We add one exact identity (a spherical-input reparameterisation, section 2) and some cost engineering. Most of this
+report is a <b>measured map of where the remaining error comes from, and why it resists every cheap fix we and others tried</b>:</p>
+<ol>
+<li>The closures are essentially exact given true inputs. The error is made by the inputs: a perfect third-cumulant input
+(slice + diagonal) removes 39% of the final MSE (x0.61 on one network, x0.71 on a second), a perfect fourth-cumulant diagonal 30%,
+and forcing the true mean at every layer 81%. The gain is spread over layers 8-16.</li>
+<li>That input error is <b>carried memory, not fresh physics</b>. Erasing all non-Gaussian history h layers back recovers only
+2-6% of the deep fourth cumulant at h = 2 and 20-35% at h = 6; the third cumulant behaves the same way (keeping the sources of
+the last 10 layers still leaves 16% of the (2,1) slice at layer 15).</li>
+<li>The carried content is <b>odd in the later weights</b>, so any statistic that is even in them (per-neuron variances,
+kurtosis, ensemble averages) has zero conditional correlation with it (parity theorem, section 5).</li>
+<li>It is <b>not compressible</b> in the ways that would make it cheap: the elementwise products the chain needs are full-rank
+with a flat spectrum; no linear state closed under the dense layer maps is smaller than the symmetric cube; every contraction
+order of the young-source tensor network costs the same 193 square products.</li>
+</ol>
+
+<h2>1. Setting and baseline</h2>
+<ul>
+<li>Task: estimate the final-layer post-ReLU means of a He-initialised bias-free ReLU MLP (n = 1024, L = 16, x ~ N(0, I));
+score = MSE x max(0.1, FLOPs / 2<sup>41</sup>).</li>
+<li>Baseline: 504aldo's V29 (github.com/504aldo/whest-p2-cumulant-k3, MIT): a port of the factorised K = 3 algorithm of
+Wu et al. (arXiv:2605.05179) with a memoryless, regenerated fourth cumulant, a bivariate Wick/Edgeworth closure, dense legs for
+sources of age ≤ 4 and a shared rank-384 (nested rank-224) basis for older sources. Public score 5.40e-9.</li>
+<li>Our changes (graded): Strassen block-size and first-call trims (util 0.254 → 0.244; 5.418e-9 → 5.195e-9); the spherical
+input reparameterisation (section 2; raw −1.1%, 5.137e-9); the feedback constant 1.25 and adaptive-lambda exponent 1.2 chosen on
+100 local networks (5.128e-9).</li>
+</ul>
+
+<h2>2. An exact identity: the spherical input</h2>
+<p class="claim">Write the Gaussian input as X = (R/√n) Y with Y uniform on the sphere of radius √n and R ~ χ<sub>n</sub>
+independent of Y. A bias-free ReLU network h is positively homogeneous of degree 1, so E[h(X)] = a<sub>1</sub> E[h(Y)] with
+a<sub>1</sub> = E[R]/√n = 0.99975589 at n = 1024. Y has covariance I, zero odd cumulants and a small negative, exactly known
+fourth cumulant (c = −2/(n+2) per Sym(I⊗I) pair), which we inject at layer 0. Propagating Y instead of X removes the radial
+fluctuation from every layer's input statistics.</p>
+<ul>
+<li>Result: raw final MSE −1.1% on the grader (5.195e-9 → 5.137e-9), zero extra FLOPs.</li>
+<li>Credit: the idea of an angular input appears in barnobarno666's public repository; the derivation of the layer-0 fourth
+cumulant and its injection into the K3 chain are ours.</li>
+</ul>
+<div class="todo">Hand-check: the constant c and the layer-0 core g = −6/(n+2) in the estimator.</div>
+
+<h2>3. Where the FLOPs go</h2>
+<table>
+<tr><th>part (metered ledger, per network)</th><th>u (1 u = 2<sup>31</sup> FLOPs)</th></tr>
+<tr><td>young sources (age ≤ 4): transport of the two dense legs</td><td>54.5</td></tr>
+<tr><td>young sources: (2,1)-slice contractions</td><td>50.5</td></tr>
+<tr><td>joining a source to the shared basis</td><td>41-46</td></tr>
+<tr><td>old sources in the shared basis</td><td>41</td></tr>
+<tr><td>thin feedback legs</td><td>15</td></tr>
+<tr><td>covariance, closure, Strassen additions</td><td>~20</td></tr>
+<tr><td><b>total</b></td><td><b>~249</b></td></tr>
+</table>
+<ul>
+<li>The young tier is 193 dense square products (39 propagator transports, 54 second-leg transports, 100 slice contractions).
+An exact contraction-order search (forward, reverse mode, mixed, interval maps, on-demand legs, batching) finds the same 193 in
+every order: the elementwise (Hadamard) hyperedge must be materialised before each n<sup>3</sup> contraction.</li>
+<li>Every knob inside the chain (age gates, basis ranks, range-finder passes, feedback rank) trades about 1% cost for 1% accuracy
+on a 100-network paired harness: the chain sits at its own score optimum.</li>
+</ul>
+
+<h2>4. Where the error is made</h2>
+<h3>4.1 The closures are exact; the inputs are not</h3>
+<ul>
+<li>Teacher-forced closure (all inputs from a 6x10<sup>7</sup>-sample Monte-Carlo teacher at one layer): the post-ReLU covariance
+error falls to the teacher's noise.</li>
+<li>Channel oracles (teacher value injected at every layer, final MSE ratio): variance x0.53, fourth-cumulant diagonal x0.70,
+third-cumulant diagonal x0.87, all three x0.057.</li>
+<li>A perfect third-cumulant input, the (2,1) slice κ<sub>3</sub>(z<sub>i</sub>, z<sub>i</sub>, z<sub>j</sub>) plus its diagonal:
+x0.608 (MLP #0) / x0.715 (a second, synthetic network). The slice alone: x0.758; the slice fed only to the chain's feedback
+legs: x0.9999.</li>
+<li>Forcing the true mean at every layer: 2.24e-8 → 4.2e-9. About 80% of the final error is mean error inherited from earlier
+layers.</li>
+</ul>
+<h3>4.2 By layer</h3>
+<table>
+<tr><th>perfect κ<sub>3</sub> input at layers</th><th>all</th><th>≥ 8</th><th>≥ 12</th><th>≥ 14</th><th>≤ 11 only</th></tr>
+<tr><td>MLP #0</td><td>0.608</td><td>0.637</td><td>0.704</td><td>0.848</td><td>0.884</td></tr>
+<tr><td>synthetic network</td><td>0.715</td><td>0.754</td><td>0.863</td><td>0.903</td><td>0.837</td></tr>
+</table>
+<p>The windows compose multiplicatively (0.884 x 0.704 ≈ 0.62). The value is spread over layers 8-16.</p>
+<h3>4.3 The chain's own channel errors</h3>
+<table>
+<tr><th>layer</th><th>variance</th><th>C off-diagonal</th><th>κ<sub>3</sub> diagonal</th><th>κ<sub>4</sub> diagonal</th><th>(2,1) slice off-diagonal</th></tr>
+<tr><td>7</td><td>0.04%</td><td>0.39%</td><td>3.2%</td><td>15%</td><td>4.6%</td></tr>
+<tr><td>15</td><td>0.14%</td><td>0.73%</td><td>4.6%</td><td>32%</td><td>6.6%</td></tr>
+</table>
+<p>The κ<sub>4</sub> diagonal has the right level (ratio ≈ 1.0) but the wrong per-neuron pattern (correlation 0.26-0.34 with the
+teacher on the neurons the mean closure is sensitive to).</p>
+
+<h2>5. The error is carried memory, and it is odd</h2>
+<h3>5.1 Memory horizon</h3>
+<table>
+<tr><th>history kept (layers)</th><th>1</th><th>2</th><th>3</th><th>4</th><th>6</th><th>all (linear carry)</th></tr>
+<tr><td>deep κ<sub>4</sub> level recovered, L12</td><td>2%</td><td>6%</td><td>12%</td><td>18%</td><td>35%</td><td>83%</td></tr>
+<tr><td>deep κ<sub>4</sub> level recovered, L16</td><td>3%</td><td>2%</td><td>5%</td><td>9%</td><td>20%</td><td>86%</td></tr>
+<tr><td>pattern correlation with teacher, L16</td><td>0.20</td><td>0.41</td><td>0.59</td><td>0.65</td><td>0.77</td><td>0.80</td></tr>
+</table>
+<ul>
+<li>Method: at layer L−h, replace the pre-activation by a Gaussian with the true mean and covariance, run the true network h steps,
+compare the κ<sub>4</sub> diagonal with the teacher; "all" carries the true κ<sub>4</sub> of layer L−1 linearly. Fresh ReLU physics
+from a Gaussian input gives 1-4% of the deep level.</li>
+<li>Third cumulant: keeping only sources of the last 2 layers leaves 84% of the (2,1) slice at layer 15, the last 10 layers still
+16%. One age mode carries ~88% of the old content (it is coherent), but six modes still leave 8.5% (it is not low-rank in age);
+the total κ<sub>3</sub> is transported exactly by one linear map, so the difficulty is spatial, not temporal.</li>
+<li>The next layer's κ<sub>3</sub> diagonal is fed 90-99% by off-diagonal κ<sub>3</sub>, and the next κ<sub>4</sub> diagonal ~90% by
+the (2,2) pair term; even the exact repeated-index slices miss 22-29% (κ<sub>3</sub> diagonal) and 36-40% (slice) one step ahead:
+the missing part is the all-distinct content.</li>
+</ul>
+<h3>5.2 Parity</h3>
+<p class="claim">The contributions of old sources to the next slice are odd functions of the later layer weights. Their conditional
+expectation given any statistic that is even in those weights is zero. Consequences, each confirmed by measurement: per-neuron
+features correlate ≤ 0.04 with the residual (102,400 neurons); marginal (copula) corrections with Gaussian dependence are worse
+than none; ensemble / mean-field closures cannot see the content; the fitted relation κ<sub>4,off</sub> ≈ λ<sub>l</sub> C<sub>off</sub>
+captures level but not pattern.</p>
+<div class="todo">Write out the proof (two independent derivations exist in our consultation logs) and the floor √(6/(r+8)) for
+expectation-only replacements; hand-check.</div>
+
+<h2>6. What does not work, and why</h2>
+<table>
+<tr><th>family</th><th>measured</th><th>mechanism</th></tr>
+<tr><td>low-rank / Tucker / TT / CP / sketches of source legs or their products</td><td>products need 700 of 1024 directions for 99%</td><td>Khatri-Rao rank r<sup>2</sup>, flat spectrum</td></tr>
+<tr><td>any linear compressed state closed under the layer maps</td><td>(argument)</td><td>Sym<sup>3</sup> is irreducible under GL(n)</td></tr>
+<tr><td>aggregate rank-k CP of old κ<sub>3</sub></td><td>unfolding rank ~250 for 2%</td><td>lower bound on CP rank</td></tr>
+<tr><td>short horizons, age modes, shift-stable carriers</td><td>16% left at h = 10; 8.5% at 6 modes; 2.9%</td><td>long, coherent but not low-rank memory</td></tr>
+<tr><td>diagonal-only κ<sub>3</sub>/κ<sub>4</sub> transport, rank-1 κ<sub>3</sub>, low-rank covariance</td><td>next d3 83-99% wrong; rank-1 35-49%; r = 64 still 12-33%</td><td>diagonal fed by off-diagonal content</td></tr>
+<tr><td>slice-state recursions (carry the slice + a response matrix)</td><td>36% even in sample</td><td>all-distinct memory not in the slice</td></tr>
+<tr><td>deterministic particles (moment-matched designs)</td><td>variance 3%, slice 74% at L15</td><td>no better than random after one ReLU</td></tr>
+<tr><td>young κ<sub>4</sub> carrier</td><td>G4 error 0.210 → 0.203 at h = 2 (out of sample)</td><td>κ<sub>4</sub> memory is long</td></tr>
+<tr><td>refitting the online mean correction</td><td>in-sample R<sup>2</sup> 0.02 at depth</td><td>fresh error unpredictable from local features</td></tr>
+<tr><td>layer-dependent rank reallocation</td><td>no-compression chain only −3.9% for +19% cost</td><td>error is intrinsic to births, not compression</td></tr>
+<tr><td>sampling / control variates at this budget</td><td>156 u for 1.4%</td><td>MC noise floor ≫ chain bias</td></tr>
+</table>
+
+<h2>7. Open problem</h2>
+<p>A method one rung more accurate than this chain must represent the all-distinct third- and fourth-order content born at every
+ReLU and carried across ≥ 6 layers, without the elementwise products of per-source legs. Our measurements say what such a state
+must reproduce (section 4), how long it must remember (section 5.1), and that no statistic even in the weights can stand in for it
+(section 5.2).</p>
+
+<h2>8. Reproducibility and LLM disclosure</h2>
+<ul>
+<li>Code: the submitted estimator (#332110) and every probe script are in our repository; each number above names its script in
+our findings log.</li>
+<li>LLM use: estimator changes, probes and this draft were written with Claude (Anthropic) in sessions directed by the participant,
+who chose directions, ran every experiment and checked every number. Outside consultations: Fable 5, Opus 5.5 and Sonnet 5
+subagents (Anthropic), GPT-5.6 Sol and Astra 6 (OpenAI) and other assistants for ideas; their proposals were tested, and most are in
+section 6 as negative results. Derivations marked "hand-check" are not yet independently verified.</li>
+</ul>
+<div class="todo">Before submission: freeze the submission ID (currently #332110), add figures, cut to ≤ 10 pages, human edit,
+post publicly on the forum or email arc-whestbench@aicrowd.com.</div>
+</body></html>
