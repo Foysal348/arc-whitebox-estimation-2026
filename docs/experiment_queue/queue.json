@@ -591,14 +591,14 @@
   {
    "id": "Q20",
    "priority": "P1",
-   "status": "running",
+   "status": "open",
    "source": "Forum audit 25 Sep (Phase 1 teams SOX 18106, baltsat 18149, ely2sh 18176: skip work on inactive neurons)",
    "title": "Drop dead neurons from the source machinery (compaction)",
    "what": "Neurons with Phi ~ 0 contribute nothing to the next transport (their w1 column is ~0) and their own kappa3 rows barely affect the closure. Step 1 (accuracy oracle): set w1 := 0 for Phi < thr (experiments/variants/estimator_q20dead.py, knob Q20_DEAD_THR) and measure final MSE on the two teacher networks. Step 2 (only if step 1 is flat): compact the legs and products to the live neurons per layer (Strassen-compatible sizes), dropping dead rows on input and output.",
-   "evidence": "Teacher statistics on MLP #0: Phi < 1e-3 for 6% (L8), 12% (L12), 17% (L16) of neurons; Phi > 1 - 1e-4 for 2% / 7% / 13%. Potential saving ~2 x dead fraction on each transport / contraction at deep layers, ~8-10% of the total (estimate, not measured).",
+   "evidence": "Teacher statistics on MLP #0: Phi < 1e-3 for 6% (L8), 12% (L12), 17% (L16) of neurons; Phi > 1 - 1e-4 for 2% / 7% / 13%. Potential saving ~2 x dead fraction on each transport / contraction at deep layers, ~8-10% of the total (estimate, not measured). | Step 1 results (paired, MLP #0 / synthetic; experiments/variants/estimator_q20dead.py, Q20_DEAD_MODE bitmask): next-transport input only (w1 := 0) at Phi < 1e-4 / 1e-3 / 1e-2: -0.20% / +0.45%, -0.06% / +0.21%, -0.25% / -0.66%. Zeroing the dead neurons' OWN d3: x1.79 / x1.62 (catastrophic: their tiny means are tail-dominated, set by kappa3); zeroing their D21 rows/cols (d3 kept): +1.65% / +2.59% (not free). Dead birth columns (w2 := 0) + w1 at 1e-2: -0.37% / -0.59% (SAFE); at 3e-2: +8.5% / +7.9%. Adding always-on birth columns (Phi > 0.99): +0.77% / -0.79% (mixed); at 3e-2: +11% / +13%. Safe set: threshold Phi < 1e-2, drop dead neurons from the next-transport input rows and from newborn birth columns; keep d3 and D21 rows. Estimated young-tier saving (teacher dead fractions 0.05-0.25 at layers 5-16): 10 u (birth columns) to 16 u (+ transport rows) of 249 u, i.e. 4-6%; old tier / join could add a few u (not estimated).",
    "cost": "step 1: 0 u, ~20 min local",
    "gate": "step 1: final MSE change <= +0.3% on both networks at thr >= 1e-3",
-   "next": "read step 1 results",
+   "next": "Decide after the direction review and the Q16 Kaggle results: implement packed live-column legs in the young tier (then old tier).",
    "files": "experiments/variants/estimator_q20dead.py"
   }
  ]

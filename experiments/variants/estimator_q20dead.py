@@ -424,7 +424,8 @@ def _term_prog(mode: int):
 # ---- V26 (F79): Strassen-Winograd block products on pooled buffers ----------------
 ANGULAR = _os.environ.get("V31_ANGULAR", "1") == "1"   # V31: spherical-input reparameterization (kappa4 injection at layer 0)
 ANG_A1 = _os.environ.get("V31_A1", "1") == "1"
-DEAD_THR = float(_os.environ.get("Q20_DEAD_THR", "0"))   # Q20 (25 Sep): neurons with Phi < DEAD_THR are dropped from the source machinery (w1 := 0); accuracy oracle for a compaction (0 = off = v40fb)          # V31: output rescaling by a1 = E[R/sqrt n]
+DEAD_THR = float(_os.environ.get("Q20_DEAD_THR", "0"))
+DEAD_MODE = int(_os.environ.get("Q20_DEAD_MODE", "1"))   # bitmask: 1 w1 := 0 (next-transport input), 2 D21 rows/cols zeroed, 4 D3 zeroed, 8 dead birth columns (w2 := 0), 16 always-on birth columns (w2 := 0)   # 1: w1 := 0 only; 2: + D21 rows/cols and D3 of dead neurons zeroed at their own layer; 3: + birth columns (w2 := 0)   # Q20 (25 Sep): neurons with Phi < DEAD_THR are dropped from the source machinery (w1 := 0); accuracy oracle for a compaction (0 = off = v40fb)          # V31: output rescaling by a1 = E[R/sqrt n]
 import math as _math
 STRASSEN_LEVELS = int(_os.environ.get("V26_STRASSEN", "5"))   # V28 ladder (suite harness, C/B | residual): L3 0.3107 | 0.170 s, L4 0.2973 | 0.187, L5 0.2872 | 0.205, L5 + shared basis 0.2680 | 0.242   # dump-0 ladder: 1/2/3 -> C/B 0.344/0.327/0.3125; mini residual at L3 = 0.356 s mean with a 0.42 s tail (7/100 failed) -> ship L1 until the base residual is cut
 STRASSEN_HUB = int(_os.environ.get("V26_STRASSEN_HUB", str(STRASSEN_LEVELS)))
@@ -1159,6 +1160,12 @@ class Estimator(BaseEstimator):
             alpha = mu / sigma
             phi = flops.stats.norm.pdf(alpha).astype(f32)
             Phi = flops.stats.norm.cdf(alpha).astype(f32)
+            if DEAD_THR > 0.0 and (DEAD_MODE & 6) and mode == 1 and D21 is not None:
+                _m = fnp.where(Phi < DEAD_THR, 0.0, 1.0).astype(f32)
+                if DEAD_MODE & 2:
+                    D21 = D21 * _m[:, None] * _m[None, :]
+                if DEAD_MODE & 4:
+                    D3 = D3 * _m
             a2 = alpha * alpha
             a3 = a2 * alpha
             a4 = a3 * alpha
@@ -1265,9 +1272,13 @@ class Estimator(BaseEstimator):
 
             # ---- wick old blocks + dslice scalings ----
             w1 = W_all[:, self._i11]
-            if DEAD_THR > 0.0:
+            if DEAD_THR > 0.0 and (DEAD_MODE & 1):
                 w1 = fnp.where(Phi < DEAD_THR, 0.0, w1).astype(f32)
             w2 = W_all[:, self._i21]
+            if DEAD_THR > 0.0 and (DEAD_MODE & 8):
+                w2 = fnp.where(Phi < DEAD_THR, 0.0, w2).astype(f32)
+            if DEAD_THR > 0.0 and (DEAD_MODE & 16):
+                w2 = fnp.where(Phi > 1.0 - DEAD_THR, 0.0, w2).astype(f32)   # always-on birth columns
             w1col = (w1)[:, None]
             w1_prev = w1  # thin stacks / basis pick up this wick via WD at the next linear
             if mode == 1 and ka < A_st.shape[0]:
