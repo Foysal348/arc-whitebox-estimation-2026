@@ -738,11 +738,24 @@
    "source": "FLOP profile of v48 (experiments/probes/flop_profile.py, 26 Sep)",
    "title": "Strassen on the basis-side products + aliased Grams",
    "what": "The shared-basis side still ran plain dense products: join projections Qn^T [A, P] (r x n_live x n), rotations Tq FAP and T2 FAP2, Qc = W D Qc / W Qn (n x n_live x r), the D21 lift inner Qc^T (n x r x n), the nested projections Un^T FA1; and the joiner Grams X d X^T (r x n x r). Route the products through the existing Strassen helper (rectangular families; rank 384 reaches L5, 224 L4) and bill the Grams as aliased einsums (Y Y^T with Y = X sqrt(d), d > 0).",
-   "evidence": "Width 512 exactness 6.2e-7 relative. Teacher pair vs v48: MSE +0.05% / +0.11% (rounding), util 0.2230 -> 0.2133 / 0.2227 -> 0.2131 (-4.3%). GRADED #332401: adjusted 4.4157e-9 (v48 4.6294e-9, -4.6%), raw 2.1463e-8 (v48 2.1462e-8). Live LB rank 27 (26 Sep). Re-sweep of R_OLD / R_OLD2 / AGE_OLD / AGE_OLD2 on v49 (teacher score = MSE x util): 448 1.020/1.016, 320 0.993/1.005, R_OLD2 256 1.015/0.998, 192 1.000/1.002, AGE_OLD 4 1.047/0.983, 6 1.042/1.019, AGE_OLD2 8 1.020/0.996 - constants stay at the optimum; R_OLD 320 submitted as a coin flip (#332402).",
+   "evidence": "Width 512 exactness 6.2e-7 relative. Teacher pair vs v48: MSE +0.05% / +0.11% (rounding), util 0.2230 -> 0.2133 / 0.2227 -> 0.2131 (-4.3%). GRADED #332401: adjusted 4.4157e-9 (v48 4.6294e-9, -4.6%), raw 2.1463e-8 (v48 2.1462e-8). Live LB rank 27 (26 Sep). Re-sweep of R_OLD / R_OLD2 / AGE_OLD / AGE_OLD2 on v49 (teacher score = MSE x util): 448 1.020/1.016, 320 0.993/1.005, R_OLD2 256 1.015/0.998, 192 1.000/1.002, AGE_OLD 4 1.047/0.983, 6 1.042/1.019, AGE_OLD2 8 1.020/0.996 - constants stay at the optimum; R_OLD 320 submitted as a coin flip (#332402). | R_OLD 320 submission #332402 graded 0.0434 (= raw, i.e. the grader run failed wholesale) although the same file runs locally (mlp0 2.2237e-8, util 0.2063): under diagnosis with whest run --runner subprocess.",
    "cost": "0 u (saves ~9.9 u)",
    "gate": "exact to rounding; util saving",
    "next": "Remaining dense non-Strassen products < 4 u (rf first join, Sg rotations, QU).",
    "files": "experiments/variants/v49_strassen2.py, submissions/v49sb2"
+  },
+  {
+   "id": "Q29",
+   "priority": "P1",
+   "status": "done (shipped: #332404 new best 4.2512e-9)",
+   "source": "Q20 follow-up oracles on v49 (experiments/variants/v49_d21dead.py), 26 Sep",
+   "title": "Drop the D21 columns of dead neurons (live-column dslice contractions)",
+   "what": "Oracle: zero the D21 rows (V49_D21DEAD=r) or columns (=c) of this layer's dead neurons (Phi < 1e-2). The column side is nearly free, so every D21 term (young hub, old-tier lift, thin feedback, R Yk, PPL Z) is computed on the live columns only (right factors' rows gathered, width padded to 32) and expanded to n x n with zero dead columns by one gather through an inverse index (flopscope has no scatter).",
+   "evidence": "Oracle vs v49: rows +1.1% / +1.7% (dead); columns +0.06% / +0.9%. Also dead: zeroing the dead off-diagonal covariances of the transported C with the variances kept (v50_cdiag.py) x1.21 / x1.15. v50 (experiments/variants/v50_d21col.py = submissions/v50d21c) teacher pair: MSE 2.1601e-8 / 1.8567e-8 (-0.2% / +0.7% vs v49), util 0.2133 -> 0.2054 / 0.2045; score ratio 0.961 / 0.966. GRADED #332404: adjusted 4.2512e-9 (v49 4.4157e-9, -3.7%), raw 2.1537e-8 (+0.35%). Live LB rank 26 (tied 4.3e-9 with bgrubbs1984; 4.2e-9 group at #24).",
+   "cost": "0 u (saves ~8 u)",
+   "gate": "score",
+   "next": "Separate D21-column threshold sweep (V50_D21_THR 0.02 / 0.03 / 0.05).",
+   "files": "experiments/variants/v50_d21col.py, submissions/v50d21c"
   }
  ]
 }
