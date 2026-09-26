@@ -747,14 +747,14 @@
   {
    "id": "Q29",
    "priority": "P1",
-   "status": "done (shipped: #332404 new best 4.2512e-9)",
+   "status": "done (shipped: #332418 new best 4.1081e-9)",
    "source": "Q20 follow-up oracles on v49 (experiments/variants/v49_d21dead.py), 26 Sep",
    "title": "Drop the D21 columns of dead neurons (live-column dslice contractions)",
    "what": "Oracle: zero the D21 rows (V49_D21DEAD=r) or columns (=c) of this layer's dead neurons (Phi < 1e-2). The column side is nearly free, so every D21 term (young hub, old-tier lift, thin feedback, R Yk, PPL Z) is computed on the live columns only (right factors' rows gathered, width padded to 32) and expanded to n x n with zero dead columns by one gather through an inverse index (flopscope has no scatter).",
-   "evidence": "Oracle vs v49: rows +1.1% / +1.7% (dead); columns +0.06% / +0.9%. Also dead: zeroing the dead off-diagonal covariances of the transported C with the variances kept (v50_cdiag.py) x1.21 / x1.15. v50 (experiments/variants/v50_d21col.py = submissions/v50d21c) teacher pair: MSE 2.1601e-8 / 1.8567e-8 (-0.2% / +0.7% vs v49), util 0.2133 -> 0.2054 / 0.2045; score ratio 0.961 / 0.966. GRADED #332404: adjusted 4.2512e-9 (v49 4.4157e-9, -3.7%), raw 2.1537e-8 (+0.35%). Live LB rank 26 (tied 4.3e-9 with bgrubbs1984; 4.2e-9 group at #24).",
+   "evidence": "Oracle vs v49: rows +1.1% / +1.7% (dead); columns +0.06% / +0.9%. Also dead: zeroing the dead off-diagonal covariances of the transported C with the variances kept (v50_cdiag.py) x1.21 / x1.15. v50 (experiments/variants/v50_d21col.py = submissions/v50d21c) teacher pair: MSE 2.1601e-8 / 1.8567e-8 (-0.2% / +0.7% vs v49), util 0.2133 -> 0.2054 / 0.2045; score ratio 0.961 / 0.966. GRADED #332404: adjusted 4.2512e-9 (v49 4.4157e-9, -3.7%), raw 2.1537e-8 (+0.35%). Live LB rank 26 (tied 4.3e-9 with bgrubbs1984; 4.2e-9 group at #24). | Threshold sweeps on v50 (teacher score ratio vs v50): D21-column threshold 0.02 1.004/0.995, 0.03 1.016/0.989, 0.05 1.058/1.002 (keep 0.01). ROWS of VERY dead neurons are free: oracle Phi < 1e-3 MSE -0.13% / -0.06% (1e-4 same). v51 (experiments/variants/v51_d21rc.py) computes the D21 rows too on the live set (left factors' rows gathered; young hub, old-tier hubs, lift, thin terms), score ratio: row thr 1e-3 0.981/0.981, 3e-3 0.972/0.973, 5e-3 0.971/0.970, 7e-3 0.973/0.961, 1e-2 0.969/0.968 (plateau 5e-3..1e-2; the old full-row oracle at 1e-2 on v49 was +1.1% / +1.7% MSE). Submitted 3e-3 (#332418, submissions/v51rc3) and 7e-3 (#332420, submissions/v51rc7). Peak commit of v50 5.51 GiB over consecutive predict() calls (cap 8 GB); #332402's wholesale failure is not memory (also 5.51 GiB) - treated as infrastructure. | GRADED #332418 (v51, row thr 3e-3): adjusted 4.1081e-9 (-3.4% vs #332404), raw 2.1545e-8; live LB rank 24.",
    "cost": "0 u (saves ~8 u)",
    "gate": "score",
-   "next": "Separate D21-column threshold sweep (V50_D21_THR 0.02 / 0.03 / 0.05).",
+   "next": "Grades of #332418 / #332420.",
    "files": "experiments/variants/v50_d21col.py, submissions/v50d21c"
   }
  ]
