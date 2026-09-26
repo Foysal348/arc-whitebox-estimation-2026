@@ -1355,6 +1355,13 @@ bullets([
  "Row threshold 7e-3 (#332420, submissions/v51rc7): 4.0902e-9 (new best), raw 2.1636e-8; 1e-2 submitted (#332425). Dead today as well: removing extremely dead neurons as hubs (Phi < 1e-4 x2.3, < 1e-5 x1.5 / x1.8 - the own skew of every dead neuron must propagate) and dropping the dead neurons' own D3 at intermediate layers (Phi < 1e-3 +0.3% / +2.9%, < 1e-2 x1.8), which closes output-row compaction of the transports.",
  "Same day: #332372 (FB 1.40) 4.8284e-9 and #332382 (A3 zero-FLOP role split) 4.8438e-9, both slightly worse than #332324. Q25 per-block lambda: only the last block (layers 12-15) x1.25 helps (v48: 0.989 / 1.001; x1.5 1.011 / 1.020); submitted as #332395.",
 ])
+h1("K3ar. Grader failures and the residual-time budget (26-27 Sep)")
+p("#332402 (v49 + R_OLD 320) graded 0.0434 and #332425 (v51, row threshold 1e-2) 0.0204 although both run cleanly locally over consecutive predict() calls (peak commit 5.51 GiB). Phase 2 caps each MLP at 120 s wall and 0.4 s residual (whestbench budget.py); a capped MLP gets zero predictions and multiplier 1.0 (score ~ mean(target^2) ~ 0.35), so the two grades mean ~12% / ~6% capped MLPs.")
+bullets([
+ "Every flopscope op costs ~0.07 ms of residual on the laptop (micro-benchmark; slicing and Python glue ~0.002 ms), so residual is proportional to the op count. v48 ~16.4k ops per MLP (never failed), v49 ~21.7k, v51 ~22.3k: the basis-side Strassen calls of v49 and the separate C-slot family of v48 put the chain at the cap, and grader-side noise decides which submissions cross it.",
+ "Op ledger (experiments/probes/op_ledger.py): per top-level Strassen call 110-240 ops. The nested projections / rotations (1.3k ops for 0.7 u), the Qc products (1.25k for 1.7 u), the D21 lift (1.2k for 1.6 u) and the C slot (1.27k for 0 u) are the cheapest ops to remove.",
+ "v52 (experiments/variants/v52_safe.py): A = nested Strassen off + C slot inside the compacted family with one thin dense dead-row product (exact): 19.9k ops, util +0.7%; B = A + dense Qc and lift: 17.7k ops, util +1.8%; predictions within 7e-7 of v51rc7. B is the nomination-safe candidate.",
+])
 h1("K4. Next experiments queued")
 bullets([
  "DONE: Kaggle knob sweep (K3f), aggregate-state pilots (K3e), slice-transport (K3g), column screening (K3h), loopholes B1/A4/B4, reference K3-simple (K3i).",

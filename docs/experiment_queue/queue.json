@@ -756,6 +756,19 @@
    "gate": "score",
    "next": "Grade of #332425 (1e-2); nominate the best row threshold.",
    "files": "experiments/variants/v50_d21col.py, submissions/v50d21c"
+  },
+  {
+   "id": "Q30",
+   "priority": "P0",
+   "status": "in progress (fix built; submits at 06:00 BST 27 Sep)",
+   "source": "Grader failures #332402 (0.0434) and #332425 (0.0204), 26 Sep",
+   "title": "Residual-time budget: keep the flopscope op count well below the grader's 0.4 s residual cap",
+   "what": "Phase 2 per-MLP caps (whestbench budget.py): wall 120 s, residual 0.4 s (lambda 0). A capped MLP gets zero predictions and multiplier 1.0 (per-MLP score = mean(target^2) ~ 0.35), so 0.0204 / 0.0434 mean ~6% / ~12% of the MLPs hit a cap. Every flopscope op costs ~0.07 ms of residual on the laptop (micro-benchmark: add 0.064 ms, add on slices 0.081 ms; slicing and Python glue 0.002 ms), so residual ~ op count.",
+   "evidence": "Warm-call op counts: v48 ~16.4k (no failure), v49 ~21.7k, v51rc7 ~22.3k. Laptop residual (steady calls): v48 1.26-1.30 s, v49 1.67-1.92 s, v51rc7 1.83-2.10 s. Grader: v49 #332401 pass, v49+R_OLD 320 #332402 12% capped, v51 3e-3/7e-3 pass, v51 1e-2 #332425 6% capped -> v49+ sit at the cap. Op ledger (experiments/probes/op_ledger.py): the v49 basis-side Strassen calls and v48's separate C-slot family cost ~6.6k ops for ~8.6 u. v52 (experiments/variants/v52_safe.py): A = no Strassen for the nested projections/rotations + C slot inside the compacted family with one thin dense dead-row product (exact): 19.9k ops, util 0.1926 (+0.7%); B = A + dense Qc and D21 lift: 17.7k ops, util 0.1948 (+1.8%); drift vs v51rc7 7e-7. Kaggle CPU residual (100 MLPs): v45 mean 0.918 p90 0.952 max 1.291; v48 mean 0.949 p90 0.982 max 1.089.",
+   "cost": "+0.7% (A) / +1.8% (B) util",
+   "gate": "0 capped MLPs on the grader; residual well under the cap",
+   "next": "Auto-submit v52safeB then v52safeA at 06:00 BST 27 Sep; Kaggle 100-MLP residual distributions of v49r320 / v51rc10 / v51rc7, then v52safeB / v52safeA; nominate only variants with margin.",
+   "files": "experiments/variants/v52_safe.py, submissions/v52safeA, submissions/v52safeB, experiments/probes/{residual_probe,op_ledger,kaggle_resid_summary}.py"
   }
  ]
 }
