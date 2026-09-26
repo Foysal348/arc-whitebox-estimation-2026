@@ -1340,7 +1340,7 @@ bullets([
  "ACCURACY: J2W gained in single steps at FIXED cost on 17 Sep: raw 1.79e-8 -> 1.694e-8 -> 1.655e-8 at util 0.135 (a discrete mechanism, ~8% then ~2.5%), then small steps to 1.590e-8 at 0.127 (25 Sep). marius_binner: 1.734e-8 (8 Sep) -> 1.679e-8 (16 Sep) at ~0.15.",
  "Used in the Round 13 prompt (consultations/prompts/ROUND13_prompt_carried_kappa4.md) as evidence that a cheap accuracy mechanism exists.",
 ])
-h1("K3aq. Input-row compaction of dead neurons: new best #332391 (26 Sep)")
+h1("K3aq. Input-row compaction (#332391) and basis-side Strassen (#332401): new best 4.4157e-9 (26 Sep)")
 p("Q20 step 2 (experiments/variants/v48_rowcompact.py = submissions/v48rc). Neurons with Phi < 1e-2 get w1 := 0 at their wick; every leg row they feed into the next transport is then an exact zero, so the next layer contracts over the live rows only. The compacted width is rounded up to a multiple of 32 so Strassen L5 still applies to the rectangular (n, n_live, n) family.")
 bullets([
  "Compacted products: the young-leg family (+ the newborn's A leg), Qc = W D Qc, the Z / Zf thin stacks, and at a transport join the carried basis (QR of the live rows of Qp) with the joiner's projections. The covariance C in the newborn's P slot keeps the full width.",
@@ -1349,6 +1349,7 @@ bullets([
  "Teacher pair vs v45: MSE -1.35% / -0.40% (the w1 := 0 part alone -1.0% / -0.4%), util 0.2308 -> 0.2230 / 0.2227 (-3.4%).",
  "GRADED #332391: adjusted 4.6294e-9 (was 4.8066e-9, -3.7%), raw 2.1462e-8. Live LB rank 31 (26 Sep).",
  "Dead (v48_coldrop.py oracles): removing the birth layer's dead neurons as hubs (P columns := 0 remove every D3 / D21 term of the hub) x6.40 / x6.74 - their tail-dominated own kappa3 must propagate; zeroing dead rows / cols of the transported C x1.59 / x1.46. Only the input-row side is compactable.",
+ "V49 (same day, experiments/variants/v49_strassen2.py = submissions/v49sb2): a FLOP profile of v48 showed the basis side still on plain dense products; the join projections, factor rotations, Qc, the D21 lift and the nested projections now go through the Strassen helper (rank 384 at L5, 224 at L4) and the joiner Grams X d X^T are billed as aliased einsums Y Y^T (Y = X sqrt(d), d > 0). Exact to rounding; util 0.2230 -> 0.2133 (-4.3%). GRADED #332401: 4.4157e-9 (-4.6%), raw 2.1463e-8, live LB rank 27. Re-sweeping R_OLD / R_OLD2 / AGE_OLD / AGE_OLD2 on v49 leaves the constants at the optimum.",
  "Same day: #332372 (FB 1.40) 4.8284e-9 and #332382 (A3 zero-FLOP role split) 4.8438e-9, both slightly worse than #332324. Q25 per-block lambda: only the last block (layers 12-15) x1.25 helps (v48: 0.989 / 1.001; x1.5 1.011 / 1.020); submitted as #332395.",
 ])
 h1("K4. Next experiments queued")

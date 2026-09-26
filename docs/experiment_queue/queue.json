@@ -730,6 +730,19 @@
    "gate": "-",
    "next": "-",
    "files": "experiments/probes/archA_*.py; experiments/variants/archA_rsr.py; results/summaries/archA_*.json"
+  },
+  {
+   "id": "Q28",
+   "priority": "P1",
+   "status": "done (shipped: #332401 new best 4.4157e-9)",
+   "source": "FLOP profile of v48 (experiments/probes/flop_profile.py, 26 Sep)",
+   "title": "Strassen on the basis-side products + aliased Grams",
+   "what": "The shared-basis side still ran plain dense products: join projections Qn^T [A, P] (r x n_live x n), rotations Tq FAP and T2 FAP2, Qc = W D Qc / W Qn (n x n_live x r), the D21 lift inner Qc^T (n x r x n), the nested projections Un^T FA1; and the joiner Grams X d X^T (r x n x r). Route the products through the existing Strassen helper (rectangular families; rank 384 reaches L5, 224 L4) and bill the Grams as aliased einsums (Y Y^T with Y = X sqrt(d), d > 0).",
+   "evidence": "Width 512 exactness 6.2e-7 relative. Teacher pair vs v48: MSE +0.05% / +0.11% (rounding), util 0.2230 -> 0.2133 / 0.2227 -> 0.2131 (-4.3%). GRADED #332401: adjusted 4.4157e-9 (v48 4.6294e-9, -4.6%), raw 2.1463e-8 (v48 2.1462e-8). Live LB rank 27 (26 Sep). Re-sweep of R_OLD / R_OLD2 / AGE_OLD / AGE_OLD2 on v49 (teacher score = MSE x util): 448 1.020/1.016, 320 0.993/1.005, R_OLD2 256 1.015/0.998, 192 1.000/1.002, AGE_OLD 4 1.047/0.983, 6 1.042/1.019, AGE_OLD2 8 1.020/0.996 - constants stay at the optimum; R_OLD 320 submitted as a coin flip (#332402).",
+   "cost": "0 u (saves ~9.9 u)",
+   "gate": "exact to rounding; util saving",
+   "next": "Remaining dense non-Strassen products < 4 u (rf first join, Sg rotations, QU).",
+   "files": "experiments/variants/v49_strassen2.py, submissions/v49sb2"
   }
  ]
 }
