@@ -17,8 +17,8 @@ ul, ol { margin: 4px 0 6px 0; } li { margin-bottom: 3px; }
 
 <h1>Where the error of a cumulant chain lives in a deep random ReLU network</h1>
 <div class="meta">ARC White-Box Estimation Challenge 2026, Phase 2 · Algorithmic contribution write-up · team foyshal_sk ·
-submission <b>#332110</b> (adjusted 5.128e-9, raw final-layer MSE 2.105e-8, utilisation 0.244, 0 failed MLPs) ·
-DRAFT of 25 Sep 2026 · deadline 24 Oct 2026 23:59 UTC</div>
+submission <b>#332420</b> (adjusted 4.090e-9, raw final-layer MSE 2.164e-8, utilisation 0.189, 0 failed MLPs) ·
+DRAFT of 26 Sep 2026 · deadline 24 Oct 2026 23:59 UTC</div>
 
 <div class="todo">Master full text: writeup/WRITEUP_DRAFT_v3.md (parity proof, measurement sections A-E, engineering, knob map); this file is the condensed deliverable. Draft status: the structure, the claims and the numbers are in place; every number is from a script in the
 repository (listed in section 8). Still to do: figures (error map by layer, memory horizon, cost ledger), a human editing pass,
@@ -27,8 +27,10 @@ and hand-checking each derivation. Target length ≤ 10 pages.</div>
 <h2>0. Summary</h2>
 <p>We start from the public factorised third-order cumulant chain of team 504aldo (MIT), which propagates the mean, the
 covariance and the third cumulant (as a sum over "sources" born at each ReLU) through a 1024-wide, 16-layer bias-free ReLU
-network. We add one exact identity (a spherical-input reparameterisation, section 2) and some cost engineering. Most of this
-report is a <b>measured map of where the remaining error comes from, and why it resists every cheap fix we and others tried</b>:</p>
+network. We add one exact identity (a spherical-input reparameterisation, section 2) and cost engineering that removes 23% of
+the metered FLOPs for +2.8% raw MSE, mostly by exploiting the network's inactive ("dead") neurons (section 3.1): graded
+score 5.40e-9 (public chain) → 4.09e-9. Most of this report is a <b>measured map of where the remaining error comes from, and why
+it resists every cheap fix we and others tried</b>:</p>
 <ol>
 <li>The closures are essentially exact given true inputs. The error is made by the inputs: a perfect third-cumulant input
 (slice + diagonal) removes 39% of the final MSE (x0.61 on one network, x0.71 on a second), a perfect fourth-cumulant diagonal 30%,
@@ -52,7 +54,7 @@ Wu et al. (arXiv:2605.05179) with a memoryless, regenerated fourth cumulant, a b
 sources of age ≤ 4 and a shared rank-384 (nested rank-224) basis for older sources. Public score 5.40e-9.</li>
 <li>Our changes (graded): Strassen block-size and first-call trims (util 0.254 → 0.244; 5.418e-9 → 5.195e-9); the spherical
 input reparameterisation (section 2; raw −1.1%, 5.137e-9); the feedback constant 1.25 and adaptive-lambda exponent 1.2 chosen on
-100 local networks (5.128e-9).</li>
+100 local networks (5.128e-9); then the structural cost trims of section 3.1 (5.128e-9 → 4.090e-9).</li>
 </ul>
 
 <h2>2. An exact identity: the spherical input</h2>
@@ -70,7 +72,7 @@ cumulant and its injection into the K3 chain are ours.</li>
 
 <h2>3. Where the FLOPs go</h2>
 <table>
-<tr><th>part (metered ledger, per network)</th><th>u (1 u = 2<sup>31</sup> FLOPs)</th></tr>
+<tr><th>part (metered ledger of the public V29 chain, per network)</th><th>u (1 u = 2<sup>31</sup> FLOPs)</th></tr>
 <tr><td>young sources (age ≤ 4): transport of the two dense legs</td><td>54.5</td></tr>
 <tr><td>young sources: (2,1)-slice contractions</td><td>50.5</td></tr>
 <tr><td>joining a source to the shared basis</td><td>41-46</td></tr>
@@ -84,7 +86,34 @@ cumulant and its injection into the K3 chain are ours.</li>
 An exact contraction-order search (forward, reverse mode, mixed, interval maps, on-demand legs, batching) finds the same 193 in
 every order: the elementwise (Hadamard) hyperedge must be materialised before each n<sup>3</sup> contraction.</li>
 <li>Every knob inside the chain (age gates, basis ranks, range-finder passes, feedback rank) trades about 1% cost for 1% accuracy
-on a 100-network paired harness: the chain sits at its own score optimum.</li>
+on a 100-network paired harness: the chain sits at its own score optimum. What the knobs cannot see is the structure of the
+network (inactive neurons) and of the meter (rectangular Strassen families, Gram products billed at half); section 3.1 removes 23%
+of the cost through those two.</li>
+</ul>
+
+<h3>3.1 Structural cost trims (graded)</h3>
+<table>
+<tr><th>change</th><th>local evidence (paired)</th><th>graded adjusted (raw)</th></tr>
+<tr><td>join a source to the shared basis by carrying the previous basis (no range finder)</td><td>100 networks: score x0.959, 92/100 better</td><td>4.952e-9 (#332257)</td></tr>
+<tr><td>one more dense young age (5); feedback rank 16 → 4</td><td>score x0.990; x0.957 / x0.956 on two teacher networks</td><td>4.807e-9 (#332324)</td></tr>
+<tr><td>drop inactive neurons from the next transport (below)</td><td>MSE −1.35% / −0.40%, util −3.4%</td><td>4.629e-9 (2.146e-8, #332391)</td></tr>
+<tr><td>Strassen on the shared-basis products; Grams X d X<sup>T</sup> as aliased Y Y<sup>T</sup>, Y = X√d</td><td>exact to rounding, util −4.3%</td><td>4.416e-9 (2.146e-8, #332401)</td></tr>
+<tr><td>(2,1) slice computed on active columns only</td><td>score x0.961 / x0.966</td><td>4.251e-9 (2.154e-8, #332404)</td></tr>
+<tr><td>... and on the rows of neurons with Φ ≥ 7·10<sup>−3</sup></td><td>score x0.973 / x0.961</td><td>4.090e-9 (2.164e-8, #332420)</td></tr>
+</table>
+<p class="claim">Inactive neurons. A neuron with Φ(μ/σ) &lt; 10<sup>−2</sup> (5–25% of every layer from layer 5 on) passes almost
+nothing forward linearly, yet its own third cumulant is essential. Measured on two teacher networks (final-MSE ratio): removing it
+from the next transport (w<sub>1</sub> := 0) 0.990 / 0.996; zeroing its (2,1)-slice column 1.0006 / 1.009; its row 1.011 / 1.017
+at Φ &lt; 10<sup>−2</sup>, but free at Φ &lt; 10<sup>−3</sup> (0.999 / 0.999) and nearly free at 7·10<sup>−3</sup>; removing it as a hub
+of the newborn source x6.4–6.7 (still x1.5–1.8 at Φ &lt; 10<sup>−5</sup>); zeroing its own κ<sub>3</sub> diagonal at intermediate layers
+x1.6–1.8 (+0.3% / +2.9% at Φ &lt; 10<sup>−3</sup>); zeroing its covariance in the transported C x1.5–1.6 (off-diagonal only
+x1.15–1.2). Its mean is tail-dominated and its skew keeps propagating, so only the linear pass-through and the slice entries can go.</p>
+<ul>
+<li>The admissible drops are implemented as compaction of the contraction dimensions: live widths padded to a multiple of 32 so the
+rectangular families keep Strassen level 5; flopscope has no scatter, so a compacted result is expanded by one gather through an
+inverse index; Strassen scratch lives in one flat buffer per (role, level), so variable widths add no memory (peak commit 5.5 GiB).</li>
+<li>Exactness: the transport compaction agrees with the same w<sub>1</sub> := 0 without compaction to 10<sup>−5</sup> relative at the
+final layer; the basis-side Strassen to rounding. Raw MSE moved 2.105e-8 → 2.164e-8 (+2.8%) while utilisation fell 0.244 → 0.189.</li>
 </ul>
 
 <h2>4. Where the error is made</h2>
@@ -158,6 +187,9 @@ expectation-only replacements; hand-check.</div>
 <tr><td>refitting the online mean correction</td><td>in-sample R<sup>2</sup> 0.02 at depth</td><td>fresh error unpredictable from local features</td></tr>
 <tr><td>layer-dependent rank reallocation</td><td>no-compression chain only −3.9% for +19% cost</td><td>error is intrinsic to births, not compression</td></tr>
 <tr><td>sampling / control variates at this budget</td><td>156 u for 1.4%</td><td>MC noise floor ≫ chain bias</td></tr>
+<tr><td>dropping inactive neurons as hubs, from the transported covariance, or their own κ<sub>3</sub> diagonal</td><td>x6.4 / x1.6 / x1.8 at Φ &lt; 10<sup>−2</sup> (section 3.1)</td><td>tail-dominated means; their skew propagates</td></tr>
+<tr><td>higher inactivity thresholds for the transport drop</td><td>Φ &lt; 2–5·10<sup>−2</sup>: MSE +1.5–10% for util −1–2%</td><td>marginal neurons still pass signal</td></tr>
+<tr><td>per-depth-block multipliers of the κ<sub>4</sub> constant λ</td><td>best block −1.1% locally, +1.0% graded</td><td>constant already at its optimum</td></tr>
 </table>
 
 <h2>7. Open problem</h2>
@@ -168,13 +200,15 @@ must reproduce (section 4), how long it must remember (section 5.1), and that no
 
 <h2>8. Reproducibility and LLM disclosure</h2>
 <ul>
-<li>Code: the submitted estimator (#332110) and every probe script are in our repository; each number above names its script in
-our findings log.</li>
+<li>Code: the submitted estimator (#332420, submissions/v51rc7) and every probe script are in our repository; each number above
+names its script in our findings log. Section 3.1 variants: experiments/variants/v48_rowcompact.py, v49_strassen2.py,
+v50_d21col.py, v51_d21rc.py; oracles v48_coldrop*.py, v49_d21dead.py, v50_cdiag.py, v51_d3mid.py; FLOP profiler
+experiments/probes/flop_profile.py.</li>
 <li>LLM use: estimator changes, probes and this draft were written with Claude (Anthropic) in sessions directed by the participant,
 who chose directions, ran every experiment and checked every number. Outside consultations: Fable 5, Opus 5.5 and Sonnet 5
 subagents (Anthropic), GPT-5.6 Sol and Astra 6 (OpenAI) and other assistants for ideas; their proposals were tested, and most are in
 section 6 as negative results. Derivations marked "hand-check" are not yet independently verified.</li>
 </ul>
-<div class="todo">Before submission: freeze the submission ID (currently #332110), add figures, cut to ≤ 10 pages, human edit,
+<div class="todo">Before submission: freeze the submission ID (currently #332420; #332425 with row threshold 10<sup>−2</sup> is grading), add figures, cut to ≤ 10 pages, human edit,
 post publicly on the forum or email arc-whestbench@aicrowd.com.</div>
 </body></html>
