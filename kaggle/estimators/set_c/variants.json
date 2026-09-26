@@ -1,4 +1,3 @@
 {
- "tr_age5_r448": {"file": "v42tr.py", "env": {"V21_AGE_OLD": 5, "V21_R_OLD": 448}},
- "tr_age6": {"file": "v42tr.py", "env": {"V21_AGE_OLD": 6}}
+ "v51rc7": {"file": "v51rc7.py", "env": {}}
 }
