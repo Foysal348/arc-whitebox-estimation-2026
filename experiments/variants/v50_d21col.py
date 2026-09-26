@@ -438,7 +438,8 @@ ROWC = _os.environ.get("V48_ROWC", "1") == "1"               # V48: ... and are 
 ROWC_Q = int(_os.environ.get("V48_ROWC_Q", "32"))
 SB2 = _os.environ.get("V49_SB2", "1") == "1"
 D21COL = _os.environ.get("V50_D21COL", "1") == "1"
-D21_THR = float(_os.environ.get("V50_D21_THR", "0.01"))   # V50: Phi threshold of the dropped D21 columns   # V50: D21 columns of dead neurons (Phi < thr) := 0 and never computed (teacher oracle +0.06% / +0.9%)   # V49: Strassen for the basis-side products (join projections, rotations, Qc, D21 lift) + aliased Grams            # V48: compacted width quantum (Strassen L5 needs a multiple of 32)          # V31: output rescaling by a1 = E[R/sqrt n]
+D21_THR = float(_os.environ.get("V50_D21_THR", "0.01"))
+D21ROW_THR = float(_os.environ.get("V50_D21ROW_THR", "0"))   # V50 oracle: D21 ROWS of very dead neurons (Phi < thr) := 0   # V50: Phi threshold of the dropped D21 columns   # V50: D21 columns of dead neurons (Phi < thr) := 0 and never computed (teacher oracle +0.06% / +0.9%)   # V49: Strassen for the basis-side products (join projections, rotations, Qc, D21 lift) + aliased Grams            # V48: compacted width quantum (Strassen L5 needs a multiple of 32)          # V31: output rescaling by a1 = E[R/sqrt n]
 import math as _math
 STRASSEN_LEVELS = int(_os.environ.get("V26_STRASSEN", "5"))   # V28 ladder (suite harness, C/B | residual): L3 0.3107 | 0.170 s, L4 0.2973 | 0.187, L5 0.2872 | 0.205, L5 + shared basis 0.2680 | 0.242   # dump-0 ladder: 1/2/3 -> C/B 0.344/0.327/0.3125; mini residual at L3 = 0.356 s mean with a 0.42 s tail (7/100 failed) -> ship L1 until the base residual is cut
 STRASSEN_HUB = int(_os.environ.get("V26_STRASSEN_HUB", str(STRASSEN_LEVELS)))
@@ -1316,6 +1317,8 @@ class Estimator(BaseEstimator):
             alpha = mu / sigma
             phi = flops.stats.norm.pdf(alpha).astype(f32)
             Phi = flops.stats.norm.cdf(alpha).astype(f32)
+            if D21ROW_THR > 0.0 and mode == 1 and D21 is not None:
+                D21 = D21 * fnp.where(Phi < D21ROW_THR, 0.0, 1.0).astype(f32)[:, None]
             a2 = alpha * alpha
             a3 = a2 * alpha
             a4 = a3 * alpha
