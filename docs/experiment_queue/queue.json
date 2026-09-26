@@ -1,6 +1,6 @@
 {
- "updated": "2026-09-26 (#332322 R_FB 8 = 4.860e-9 new best; Q24 rows-only compaction dead)",
- "baseline": "Best graded: #332322 (v44rfb8 = transport join + R_FB 8) adjusted 4.8603e-9, raw 2.2100e-8, util 0.2199 (26 Sep 2026). Previous: #332318 4.9057e-9, #332257 4.9519e-9, #332110 5.1284e-9.",
+ "updated": "2026-09-26 (#332324 = 4.807e-9 new best; LAM/AGE_OLD2 variants on top are worse)",
+ "baseline": "Best graded: #332324 (v45a5rfb4 = transport join + AGE_OLD 5 + R_FB 4) adjusted 4.8066e-9, raw 2.1371e-8, util 0.2249 (26 Sep 2026). Previous: #332322 4.8603e-9, #332318 4.9057e-9, #332257 4.9519e-9, #332110 5.1284e-9.",
  "headroom": "Channel oracle (true values fed into mean closure): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, all three combined -94%. Q5: closure is near-exact; the error is the fresh kappa3/kappa4 error at each layer, which accumulates through mean and covariance. Horizon oracle: kappa3 memory is very long — even keeping 10 ages, layer 15 still has 16% error; age contributions are roughly equal and orthogonal.",
  "items": [
   {
@@ -712,7 +712,7 @@
    "source": "Own (26 Sep)",
    "title": "Feedback thin-leg rank R_FB 16 -> 8 / 4 (on top of transport)",
    "what": "The D21 feedback thin legs cost ~15 u; lower rank after the transport change.",
-   "evidence": "Teacher pair (MLP #0 / synthetic), score vs transport: R_FB 8 x0.973 / x0.956; R_FB 4 x0.957 / x0.956; feedback off x1.029 / x0.988. Submitted: #332322 (transport + R_FB 8), #332324 (AGE_OLD 5 + R_FB 4), #332325 (AGE_OLD 5 + R_FB 8), #332326 (transport + R_FB 4). | GRADED: #332322 (transport + R_FB 8) 4.8603e-9 (raw 2.2100e-8, util 0.2199) = NEW BEST.",
+   "evidence": "Teacher pair (MLP #0 / synthetic), score vs transport: R_FB 8 x0.973 / x0.956; R_FB 4 x0.957 / x0.956; feedback off x1.029 / x0.988. Submitted: #332322 (transport + R_FB 8), #332324 (AGE_OLD 5 + R_FB 4), #332325 (AGE_OLD 5 + R_FB 8), #332326 (transport + R_FB 4). | GRADED: #332322 (transport + R_FB 8) 4.8603e-9 (raw 2.2100e-8, util 0.2199) = NEW BEST. | GRADED 26 Sep: #332324 (transport + AGE_OLD 5 + R_FB 4) 4.8066e-9 (raw 2.1371e-8, util 0.2249) = NEW BEST; #332325 (AGE_OLD 5 + R_FB 8) 4.8230e-9; #332326 (transport + R_FB 4) 4.8342e-9; on top of #332324: #332330 LAM 0.90 4.8147e-9, #332329 AGE_OLD2 8 4.8164e-9, #332328 AGE_OLD2 6 4.8815e-9 (all worse). #332372 (FB 1.40) submitted 09:05 BST after the PC slept 03:05-09:01.",
    "cost": "negative (saves ~2-4% util)",
    "gate": "grader",
    "next": "read the grades",
