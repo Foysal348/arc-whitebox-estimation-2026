@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-26 (#332324 = 4.807e-9 new best; LAM/AGE_OLD2 variants on top are worse)",
+ "updated": "2026-09-26 (Phase A: no new architecture passed; A3 zero-FLOP role split submitted #332382)",
  "baseline": "Best graded: #332324 (v45a5rfb4 = transport join + AGE_OLD 5 + R_FB 4) adjusted 4.8066e-9, raw 2.1371e-8, util 0.2249 (26 Sep 2026). Previous: #332322 4.8603e-9, #332318 4.9057e-9, #332257 4.9519e-9, #332110 5.1284e-9.",
  "headroom": "Channel oracle (true values fed into mean closure): variance -47%, kappa4 diagonal -30%, kappa3 diagonal -14%, all three combined -94%. Q5: closure is near-exact; the error is the fresh kappa3/kappa4 error at each layer, which accumulates through mean and covariance. Horizon oracle: kappa3 memory is very long — even keeping 10 ages, layer 15 still has 16% error; age contributions are roughly equal and orthogonal.",
  "items": [
@@ -643,11 +643,11 @@
   {
    "id": "Q22",
    "priority": "P3",
-   "status": "open",
+   "status": "dead",
    "source": "Round 13 external answer: 'Carried pair innovations'",
    "title": "Carried kappa4 via two vectors (gamma, eta) per kappa3 source, read through the source's own P leg",
    "what": "Tensor per source: sum_j gamma_j S6(p_j p_j^T, P P^T) + eta_j p_j^(x4); readout q = 6 (Z gamma) o rowsum(Z) + (Z o Z) eta, Z = P o P (no extra dense products); birth: row-additive fit of the modelled K22 innovation.",
-   "evidence": "Untested. An oracle fit like D26 needs one n^3 product per source per LSQR matvec (the 4 G_ab sum_j gamma_j P_aj P_bj term): ~1.5-2 h CPU. The proposal's own falsifier is a free-history replay through all layers with the chain's P buffers (needs a new dump of per-layer legs).",
+   "evidence": "Untested. An oracle fit like D26 needs one n^3 product per source per LSQR matvec (the 4 G_ab sum_j gamma_j P_aj P_bj term): ~1.5-2 h CPU. The proposal's own falsifier is a free-history replay through all layers with the chain's P buffers (needs a new dump of per-layer legs). | Phase A 26 Sep: killed (A4 / A1 drift corrector).",
    "cost": "~0.35 u (proposal)",
    "gate": "pattern corr >= 0.70 at L12-16",
    "next": "Only if time allows; D26 failing suggests the source-coupled family is weak.",
@@ -695,11 +695,11 @@
   {
    "id": "Q26",
    "priority": "P3",
-   "status": "open",
+   "status": "dead",
    "source": "Moonshot-ideas audit 26 Sep",
    "title": "Neighbour-feature drift corrector (Q19 used linear per-neuron features only)",
    "what": "Add features aggregated over each neuron's incoming weights (e.g. W^T of the previous layer's residual proxies) to the teacher-forced drift regression.",
-   "evidence": "Untested.",
+   "evidence": "Untested. | Phase A 26 Sep: killed (A4 / A1 drift corrector).",
    "cost": "~0 u",
    "gate": "cross-network R^2 >= 0.10 (kill < 0.05)",
    "next": "-",
@@ -717,6 +717,19 @@
    "gate": "grader",
    "next": "read the grades",
    "files": "submissions/v44rfb8, v45a5rfb4, v45a5rfb8, v45trrfb4"
+  },
+  {
+   "id": "D28",
+   "priority": "-",
+   "status": "dead",
+   "source": "New-architecture programme, Phase A (26 Sep; docs/architecture_research/PHASE_A_REPORT.md)",
+   "title": "Four new architectures: Puffi stack at 1024x16, carried pair-form kappa4 paid by a smaller old tier, kappa4 on the kappa3 source legs, role-split regeneration",
+   "what": "Each candidate costed at n = 1024 and gated on stored data (gates written into the scripts before the runs).",
+   "evidence": "A1 Puffi stack (+36-44 u): SSC kappa4 on top of the chain x1.01-1.02 error at L8-16, one-step memory x1.014; 31-feature neighbour drift corrector held-out R2 0.004 (gate 0.10) - KILL. A2 carried pair-form kappa4: best of 105 teacher-forced constructions cuts the kappa4 error only 1-3% out of sample - KILL. A4 kappa4 on the kappa3 legs (Q22): in-sample x0.92, out-of-sample x1.05 - KILL. A3 role-split regeneration (zero FLOPs): feed lambda x0.7 + diagonal lambda x1.25 -> MSE x0.971 (MLP #0) / x0.998 (synthetic), gate x0.97 on both - FAIL but submitted as #332382 (v47a3). Programme stopped under its kill rule.",
+   "cost": "-",
+   "gate": "-",
+   "next": "-",
+   "files": "experiments/probes/archA_*.py; experiments/variants/archA_rsr.py; results/summaries/archA_*.json"
   }
  ]
 }

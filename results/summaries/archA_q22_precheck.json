@@ -1,0 +1,37 @@
+{
+ "L14": {
+  "n_sources": 13,
+  "chain": {
+   "errG4": 0.20502733690862562,
+   "dec_corr": 0.2981607776716129
+  },
+  "in_sample_26": {
+   "errG4": 0.18834065775211412,
+   "dec_corr": 0.4091096286277099
+  },
+  "neuron_split_errG4_ratio": 1.053124980345527,
+  "neuron_split_dec_corr": 0.3008228856279894,
+  "neuron_split_dec_corr_chain": 0.3046927593098937,
+  "q_alone_dec_corr_with_residual": 0.26559871999818013
+ },
+ "L15": {
+  "n_sources": 14,
+  "chain": {
+   "errG4": 0.19853606393645473,
+   "dec_corr": 0.2642570497540268
+  },
+  "in_sample_26": {
+   "errG4": 0.18246407379922722,
+   "dec_corr": 0.33774068899525206
+  },
+  "neuron_split_errG4_ratio": 1.0558033454334643,
+  "neuron_split_dec_corr": 0.2078306312425935,
+  "neuron_split_dec_corr_chain": 0.2451153812341666,
+  "q_alone_dec_corr_with_residual": 0.21652036214217316
+ },
+ "gate": {
+  "best_in_sample_corr": 0.4091096286277099,
+  "best_in_sample_errG4_ratio": 0.9186124181871989,
+  "verdict": "FAIL"
+ }
+}
