@@ -51,7 +51,10 @@ with flops.BudgetContext(flop_budget=int(1e14), quiet=True) as ctx:
 tot = sum(count.values())
 print(f"total ops {tot} (op_log {len(ctx.op_log)}), u {ctx.flops_used / 2**31:.2f}")
 print(f"{'ops':>6s} {'u':>7s} {'S':1s} line  function          source / op names")
-for key, c in count.most_common(TOP):
+SORT_U = os.environ.get("SORT_U") == "1"
+order = sorted(count, key=lambda k: -ucost[k])[:TOP] if SORT_U else [k for k, _ in count.most_common(TOP)]
+for key in order:
+    c = count[key]
     (ln, fn), st = (key[0] or (0, "?")), key[1]
     src = lines[ln - 1].strip()[:70] if ln else ""
     top_ops = ",".join(f"{k}:{v}" for k, v in names[key].most_common(3))

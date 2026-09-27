@@ -782,6 +782,19 @@
    "gate": "score, paired vs v52safeB, <= ~18k ops",
    "next": "Base for further work: submissions/v52Br352 (17.7k ops).",
    "files": "docs/architecture_research/KILL_AUDIT.md, experiments/variants/v52_onhub.py, submissions/v52Br352"
+  },
+  {
+   "id": "Q32",
+   "priority": "P1",
+   "status": "submitted (#332625 v53, #332626 v53rfb2)",
+   "source": "FLOP ranking by source line (experiments/probes/op_sites.py, SORT_U=1) on v52Br352, 27 Sep",
+   "title": "Free exact trim: the join rotation Tq = Qn^T Qp is the R factor of Qp = Qn R; feedback rank R_FB 2",
+   "what": "Reuse the QR's R factor instead of the (r x n_live x r) product (0.81 u per network, -8 ops). R_FB env knob (V18_R_FB).",
+   "evidence": "Teacher pair vs v52Br352: Tq = R: MSE +0.02% / -0.03% (rounding), util 0.1982 -> 0.1974 / 0.1961 -> 0.1953 (-0.4%); + R_FB 2: MSE -0.16% / +0.77%, util -1.3%, score 0.985 / 0.995; + R_FB 0: MSE +12% / +5.9% (dead). A-variant + R_OLD 352 (19.9k ops, leaderboard attempt) submitted as #332621.",
+   "cost": "0 ops",
+   "gate": "exact / score",
+   "next": "Grades of #332625 / #332626; other micro-trims (Cholesky-QR, cheaper first-join range finder, op headroom via loop vectorisation) are 0.3-0.5% each.",
+   "files": "experiments/variants/v53_tqr.py, submissions/v53tqr, submissions/v53rfb2, submissions/v52Ar352"
   }
  ]
 }
