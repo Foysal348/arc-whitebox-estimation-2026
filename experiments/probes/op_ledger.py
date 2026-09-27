@@ -40,6 +40,7 @@ def wrap(name):
         finally:
             state["depth"] -= 1
             if top:
+                state.setdefault("ranges", []).append((o0, len(ctx.op_log)))
                 shp = (name, tuple(X.shape[-2:]), tuple(Y.shape[-2:]), int(X.shape[0]) if name == "hub" else int(Y.shape[0]), lev, caller)
                 e = led[shp]; e[0] += 1; e[1] += len(ctx.op_log) - o0; e[2] += (ctx.flops_used - f0) / 2**31
     setattr(S, name, w)
@@ -51,6 +52,7 @@ if WARM:
     with flops.BudgetContext(flop_budget=int(1e14), quiet=True) as c0:
         state["ctx"] = c0; est.predict(mlp, 2**41)
     led.clear()
+    state["ranges"] = []
 with flops.BudgetContext(flop_budget=int(1e14), quiet=True) as ctx:
     state["ctx"] = ctx
     est.predict(mlp, 2**41)
@@ -66,3 +68,18 @@ for k, (c, o, u) in led.items():
 print("\nby caller:")
 for k, (c, o, u) in sorted(by_caller.items(), key=lambda kv: -kv[1][1]):
     print(f"  {k:28s} calls {c:4d} ops {o:6d} u {u:7.2f}")
+
+# ops outside the top-level Strassen calls, by op name and first-operand shape
+inside = set()
+for a, b in state.get("ranges", []):
+    inside.update(range(a, b))
+outside = collections.Counter(); ou = collections.Counter()
+for i, r in enumerate(ctx.op_log):
+    if i in inside: continue
+    shp = r.shapes[0] if r.shapes else ()
+    key = (r.op_name, str(tuple(shp))[:40])
+    outside[key] += 1; ou[key] += r.flop_cost
+print()
+print(f"ops outside Strassen: {tot_ops - len(inside)}")
+for k, c in outside.most_common(30):
+    print(f"  {c:5d}  {ou[k] / 2**31:6.2f} u  {k[0]:14s} {k[1]}")

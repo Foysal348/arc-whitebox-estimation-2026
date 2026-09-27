@@ -769,6 +769,19 @@
    "gate": "0 capped MLPs on the grader; residual well under the cap",
    "next": "Build further trims on v52safeB with an op budget (<= ~18k warm-call ops); nominate B-class variants.",
    "files": "experiments/variants/v52_safe.py, submissions/v52safeA, submissions/v52safeB, experiments/probes/{residual_probe,op_ledger,kaggle_resid_summary}.py"
+  },
+  {
+   "id": "Q31",
+   "priority": "P2",
+   "status": "partly done",
+   "source": "Kill audit 27 Sep (docs/architecture_research/KILL_AUDIT.md: 74 kills -> 58 dead, 6 parked, 2 unclear, 8 revived; all revived kills were cost/knob levers)",
+   "title": "Re-tests of the audit's parked cost levers + knob moves on the safe base",
+   "what": "Audit shortlist #1 (always-on neurons as hubs) and #2 (own D3 of very dead neurons at intermediate layers, enabling output-row compaction) as oracles on v52safeB (experiments/variants/v52_onhub.py); shared-basis / tier-2 knobs on v52safeB.",
+   "evidence": "Always-on hub drop: Phi > 1-1e-2 x10.0 / x8.0, 1-3e-3 x5.0 / x5.3, 1-1e-3 x3.8 / x3.7 (DEAD, worse than dead hubs). Own-D3 drop at intermediate layers: Phi < 1e-4 +0.37% / +0.52%, < 1e-5 +0.02% / +0.10% (nearly free) but only 0-18 neurons per layer below 1e-5 up to layer 9 and 33-96 at layers 10-15 (MLP #0) -> ~1.5 u (0.7% util) after 32-padding, and the dead set is known only after C_pre while v52 transports C inside the young family: PARKED (low value). Knobs on v52safeB (teacher score ratio): AGE_OLD 4 1.057 / 0.999, R_OLD 320 0.992 / 1.003, R_OLD 352 0.996 / 0.992 (-> GRADED #332571 4.1219e-9, raw 2.1799e-8, util 0.1891, -1.1% vs v52safeB, same ops); on R_OLD 352: AGE_OLD2 6 0.995 / 1.037, R_OLD2 192 0.988 / 1.005, R_OLD2 256 1.010 / 0.997. Kaggle 100-MLP runs of R_OLD 352 / 320 / AGE_OLD 4 running.",
+   "cost": "-",
+   "gate": "score, paired vs v52safeB, <= ~18k ops",
+   "next": "Kaggle 100-MLP results; audit items #3-#5 are accuracy-side with small or low-prior upside.",
+   "files": "docs/architecture_research/KILL_AUDIT.md, experiments/variants/v52_onhub.py, submissions/v52Br352"
   }
  ]
 }
