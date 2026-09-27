@@ -1360,6 +1360,7 @@ p("#332402 (v49 + R_OLD 320) graded 0.0434 and #332425 (v51, row threshold 1e-2)
 bullets([
  "Every flopscope op costs ~0.07 ms of residual on the laptop (micro-benchmark; slicing and Python glue ~0.002 ms), so residual is proportional to the op count. v48 ~16.4k ops per MLP (never failed), v49 ~21.7k, v51 ~22.3k: the basis-side Strassen calls of v49 and the separate C-slot family of v48 put the chain at the cap, and grader-side noise decides which submissions cross it.",
  "Op ledger (experiments/probes/op_ledger.py): per top-level Strassen call 110-240 ops. The nested projections / rotations (1.3k ops for 0.7 u), the Qc products (1.25k for 1.7 u), the D21 lift (1.2k for 1.6 u) and the C slot (1.27k for 0 u) are the cheapest ops to remove.",
+ "Kaggle 100-MLP runs (27 Sep): residual per op is the same for every variant once machine speed is divided out (0.053-0.059 ms on a v48-speed machine); relative to v48: v52safeB +4%, v52safeA +24%, v49r320 +22% (failed on the grader), v51rc7 / rc10 +31% / +33%. GRADED: #332566 v52safeB 4.1696e-9 and #332567 v52safeA 4.1228e-9, both without capped MLPs, raw identical to #332420.",
  "v52 (experiments/variants/v52_safe.py): A = nested Strassen off + C slot inside the compacted family with one thin dense dead-row product (exact): 19.9k ops, util +0.7%; B = A + dense Qc and lift: 17.7k ops, util +1.8%; predictions within 7e-7 of v51rc7. B is the nomination-safe candidate.",
 ])
 h1("K4. Next experiments queued")
