@@ -1363,6 +1363,23 @@ bullets([
  "Kaggle 100-MLP runs (27 Sep): residual per op is the same for every variant once machine speed is divided out (0.053-0.059 ms on a v48-speed machine); relative to v48: v52safeB +4%, v52safeA +24%, v49r320 +22% (failed on the grader), v51rc7 / rc10 +31% / +33%. GRADED: #332566 v52safeB 4.1696e-9 and #332567 v52safeA 4.1228e-9, both without capped MLPs, raw identical to #332420.",
  "v52 (experiments/variants/v52_safe.py): A = nested Strassen off + C slot inside the compacted family with one thin dense dead-row product (exact): 19.9k ops, util +0.7%; B = A + dense Qc and lift: 17.7k ops, util +1.8%; predictions within 7e-7 of v51rc7. B is the nomination-safe candidate.",
 ])
+h1("K3as. 27-28 Sep: safe-variant tuning, kill audit and Round 14 (three verdicts, one positive finding)")
+p("Safe base after the residual-cap fix: v52safeB (17.7k ops). Everything below keeps the warm-call op count <= ~18k unless stated.")
+table([
+ ["change / test", "evidence", "graded / verdict"],
+ ["R_OLD 352 on v52safeB", "teacher 0.996 / 0.992; Kaggle 100-MLP paired x0.9930 +- 0.0013 (68/100); R_OLD 320 x0.9988, AGE_OLD 4 x1.0110", "#332571 4.1219e-9 (-1.1%)"],
+ ["FB 1.15 / 1.35, LAM 0.90 / 1.00, AGE_OLD2 6, R_OLD2 192 / 256 on R_OLD 352", "all within +-0.2% MSE or mixed", "constants at the optimum"],
+ ["Join rotation Tq = Qn^T Qp replaced by the QR R factor (Qp = Qn R)", "exact (MSE +0.02% / -0.03%), util -0.4%, 0 extra ops", "#332625 4.1082e-9 (-0.33%)"],
+ ["Feedback rank R_FB 4 -> 2 / 1 (R_FB 0: +12% / +5.9% MSE)", "teacher 0.985 / 0.995 (R_FB 2), 0.993 / 0.988 (R_FB 1)", "#332626 4.0995e-9 = best safe; #332627 4.1030e-9"],
+ ["v52safeA + R_OLD 352 (19.9k ops, leaderboard attempt)", "no capped MLP", "#332621 4.0784e-9 = overall best"],
+ ["Kill audit (docs/architecture_research/KILL_AUDIT.md)", "74 kills: 58 dead, 6 parked, 2 unclear, 8 revived; every revived kill was a cost/knob lever judged on MSE only, on a mixed population or at one setting; architecture kills held (5-50x from their gates)", "method note"],
+ ["Audit re-tests: always-on neurons as hubs of the newborn source", "Phi > 1-1e-2 / 3e-3 / 1e-3: x10.0 / x5.0 / x3.8 (MLP #0)", "dead"],
+ ["Audit re-tests: own D3 of very dead neurons at intermediate layers", "Phi < 1e-4 +0.37% / +0.52%, < 1e-5 +0.02% / +0.10%; only 33-96 such neurons per layer at L10-15 -> ~0.7% util after 32-padding", "parked (low value)"],
+ ["Round 14 #1 RCMP (use each kappa3 source once, carry only m and C)", "its mechanism = the measured keep-last-1 chain: +4.85e-7 vs the full chain (23x its error); old sources act through their per-neuron kappa3 diagonal", "dead (ceiling)"],
+ ["Round 14 #2 Exchange Vertex Closure (kappa4 diag ~ 3 Y C^-1 Y^T)", "teacher-input pattern corr at L12-16: -0.07 ... -0.23 on both nets at tau 1e-3 / 1e-2 / 1e-1; level 10x the truth (cancelled by the vertex term); error 26-95x the chain's", "dead (component)"],
+ ["Round 14 follow-up: joint oracle, cheap kappa3 chain x true kappa4 diagonal (coupled from layer 1, MLP #0)", "full 2.29e-8 -> 1.61e-8 (x0.70); AGE_OLD 2 5.24e-8 -> 4.59e-8 (x0.88); + R_OLD 256/128 1.29e-7 -> 1.24e-7 (x0.97); AGE_OLD 1 + 192/96 6.51e-7 -> 6.67e-7 (x1.02)", "'cut kappa3, recover with kappa4' closed"],
+], widths=[4.8*cm, 8.2*cm, 4.0*cm], fs=7.0)
+note("Positive finding: the FULL chain with the true kappa4 diagonal reaches raw 1.61e-8 - the leaders' raw MSE (1.54-1.61e-8). The leaders' accuracy gap is accounted for by a better kappa4 diagonal on an unchanged kappa3 carrier; at our engineered cost (~193 u) that would score ~3.0e-9. The research target narrows to a kappa4 diagonal estimator worth the oracle's x0.70 for <= ~20-30 u (the deep kappa4 pattern is carried memory: horizon >= 6 layers, linear carry of the true kappa4 gives pattern corr 0.77-0.80; not an even statistic; not the exchange term).")
 h1("K4. Next experiments queued")
 bullets([
  "DONE: Kaggle knob sweep (K3f), aggregate-state pilots (K3e), slice-transport (K3g), column screening (K3h), loopholes B1/A4/B4, reference K3-simple (K3i).",
