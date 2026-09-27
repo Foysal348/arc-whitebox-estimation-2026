@@ -31,3 +31,32 @@ old tier. Claimed cost 91 dense products (util ~0.09), projected raw 1.65–1.85
 > each neuron's own κ₃ diagonal in the mean closure (removing only the old diagonal at layer 14 adds 7.8e-8). Any successor
 > must carry the old sources' per-neuron κ₃ diagonal (which itself needs their off-diagonal content) at every later layer.
 > Given this, what representation would carry that diagonal cheaply?
+
+## 2. "Exchange Vertex Closure (EVC)" — `Architecture Analysis/Round_14_Exchange_Vertex_Closure_and_Cost_Gap.pdf` (27-28 Sep 2026)
+
+**Proposal.** Replace the κ₄ diagonal fed to the mean closure (on the most sensitive neurons) by the exchange term of the
+connected 4-point function, κ₄ᵢᵢᵢᵢ ≈ 3 Σ_ab Yᵢₐ (C⁻¹)ₐb Yᵢb (Y = the κ₃ (2,1) slice incl. its diagonal), level-matched to the
+chain; hypothesis: the independent vertex residual has little pattern. ~+15 u. The model itself did not claim it explains
+the leaders.
+
+**Verdict: DEAD (component test with teacher inputs, the proposal's own pre-registered gate, three regularisations).**
+`experiments/probes/r14_exchange_oracle.py` (results/summaries/r14_exchange_oracle_tau*.json): with the TEACHER's C and Y,
+centred pattern correlation with the teacher's standardised κ₄ diagonal on the decisive neurons (|μ/σ| < 1.5), layers 12-16:
+
+| τ | MLP #0 | synthetic | G4-weighted error vs the chain (MLP #0) |
+|---|---|---|---|
+| 1e-3 (proposed) | −0.12 … −0.20 | −0.13 … −0.23 | ×69 … ×95 |
+| 1e-2 | −0.11 … −0.19 | −0.11 … −0.22 | ×54 … ×75 |
+| 1e-1 | −0.07 … −0.14 | −0.06 … −0.19 | ×26 … ×36 |
+
+Gate: ≥ +0.7 and ≤ 0.5× the chain's error; the chain itself has +0.26 … +0.34. The exchange level is ~10× the true
+standardised κ₄ (0.5-0.6 vs 0.05-0.06 at L12-16), i.e. it is almost cancelled by the independent vertex term, whose
+pattern is therefore not negligible. Only at layers 4-5 is the correlation positive (+0.2 … +0.47).
+
+**Reply to the model (optional):**
+
+> We ran your falsifier exactly as specified (teacher C and Y, τ = 1e-3, no fitting) and with τ = 1e-2 and 1e-1. At
+> layers 12-16 the exchange readout's pattern correlation with the true κ₄ diagonal is negative on both networks
+> (−0.07 … −0.23), and its standardised level is ~10× the truth (0.5-0.6 vs 0.05-0.06): the exchange term is large and
+> almost cancelled by the independent vertex, so the residual is the pattern. The sensitivity-weighted error is 26-95× the
+> chain's. Closed. Thank you for the clean gate.
