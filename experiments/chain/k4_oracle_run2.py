@@ -59,8 +59,8 @@ for m in sys.argv[1:]:
     with flops.BudgetContext(flop_budget=int(1e14), quiet=True) as ctx:
         p = np.asarray(est.predict(mlp, 2**41), dtype=np.float64)
     per = [float(np.mean((p[k] - ALM[k]) ** 2)) for k in range(16)]
-    res[m] = {"final": per[-1], "per_layer": per}
-    print(f"[{m}] final-layer MSE {per[-1]:.4e}  (L8 {per[7]:.3e}, L12 {per[11]:.3e})  ({time.time()-t0:.0f}s)", flush=True)
+    res[m] = {"final": per[-1], "per_layer": per, "util": ctx.flops_used / 2**41}
+    print(f"[{m}] util {ctx.flops_used / 2**41:.4f} final-layer MSE {per[-1]:.4e}  (L8 {per[7]:.3e}, L12 {per[11]:.3e})  ({time.time()-t0:.0f}s)", flush=True)
 b = res.get("none", {}).get("final")
 if b:
     for m in res: print(f"  {m:8s} ratio to none {res[m]['final']/b:.4f}")

@@ -60,3 +60,34 @@ pattern is therefore not negligible. Only at layers 4-5 is the correlation posit
 > (−0.07 … −0.23), and its standardised level is ~10× the truth (0.5-0.6 vs 0.05-0.06): the exchange term is large and
 > almost cancelled by the independent vertex, so the residual is the pattern. The sensitivity-weighted error is 26-95× the
 > chain's. Closed. Thank you for the clean gate.
+
+## 3. Follow-up proposal: joint oracle "cheap κ₃ chain × teacher κ₄ diagonal" (28 Sep 2026)
+
+**Proposal (decision test, not an estimator).** Coupled rollouts from layer 1 on MLP #0: {full chain, previously tested
+cheaper κ₃ chains} × {own κ₄, teacher κ₄ diagonal}. Close the path "cut κ₃, recover with κ₄" unless the optimistic score
+(oracle cost zero, cheap chain's cost) reaches 2.1e-9 (e.g. raw ≤ 1.65e-8 at 130 u, ≤ 1.48e-8 at 145 u).
+
+**Result** (`experiments/chain/k4_oracle_run2.py`, plain Gaussian chain, κ₄ diagonal injected 1:1; results/summaries/k4oracle2_joint_*.json):
+
+| κ₃ configuration | util (unengineered) | own κ₄ | teacher κ₄ diagonal | recovery |
+|---|---|---|---|---|
+| full chain | 0.2476 | 2.290e-8 | **1.609e-8** | ×0.702 |
+| AGE_OLD 2 | 0.2303 | 5.240e-8 | 4.590e-8 | ×0.876 |
+| AGE_OLD 2, R_OLD 256, R_OLD2 128 | 0.1784 | 1.288e-7 | 1.244e-7 | ×0.966 |
+| AGE_OLD 1, R_OLD 192, R_OLD2 96 | 0.1381 | 6.511e-7 | 6.665e-7 | ×1.024 |
+
+**Verdict: the path "cheap κ₃ + κ₄ recovery" is CLOSED** — the κ₄ oracle helps less the cheaper κ₃ gets, and even the
+optimistic scores are 3-40× short of the target. **Positive finding:** the FULL chain with the true κ₄ diagonal reaches raw
+1.61e-8, the leaders' raw MSE (1.54-1.61e-8); at our engineered cost (~193 u) that would score ~3.0e-9. The leaders'
+accuracy gap is fully accounted for by a better κ₄ diagonal on an unchanged κ₃ carrier.
+
+**Reply to the model (optional):**
+
+> We ran the joint oracle on MLP #0 (coupled from layer 1, κ₄ diagonal injected 1:1). Full chain: 2.29e-8 → 1.61e-8 with
+> the true κ₄ diagonal (×0.70). Cheaper κ₃ chains: AGE_OLD 2 (util −7%) 5.24e-8 → 4.59e-8 (×0.88); + R_OLD 256 / R_OLD2 128
+> (util −28%) 1.29e-7 → 1.24e-7 (×0.97); AGE_OLD 1 + 192 / 96 (util −44%) 6.51e-7 → 6.67e-7 (×1.02). So κ₄ does not buy
+> back κ₃ cuts; that path is closed. But the full chain plus the true κ₄ diagonal lands exactly at the leaders' raw MSE
+> (1.61e-8). The question therefore narrows to: a κ₄ diagonal estimator that reaches the true diagonal's benefit on the
+> FULL κ₃ chain for ≤ ~20-30 u, given that the deep κ₄ pattern is carried memory (horizon ≥ 6 layers, linear carry of the
+> true κ₄ gives pattern corr 0.77-0.80), is not a function of even statistics, and is not the exchange term K C⁻¹ K
+> (measured: corr −0.07 … −0.23 at L12-16). What would you carry?
