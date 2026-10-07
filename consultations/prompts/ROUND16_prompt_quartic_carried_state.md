@@ -95,7 +95,7 @@ If no state can meet the cost, give the cheapest one that meets the CEILING (cor
 ## Stored data you can use (same project paths as in Round 15)
 
 - **Teachers, MLP #0, all 16 layers:** mean, C, D21 slice, K22, K31 and the κ₄ diagonal (`data/kaggle_out/kaggle_out_k4pub/k4teach/layer{l}_seed0.npz`) and the weights (`weights_seed*.npz`).
-- **Synthetic second network:** the same teachers at layers 6, 8, 10, 12, 14 and 15 (`data/kaggle_out/kaggle_out_k4/k4teach`).
+- **Synthetic second network:** the same teachers at layers 2, 4, 6, 8, 10, 12, 14 and 15 (`data/kaggle_out/kaggle_out_k4/k4teach`).
 - **Post-ReLU teachers** at layers 3/7/11/14/15.
 - **Dense captures of the chain's κ₃ sources** at ALL layers 1-16: `data/dumps/r7_cap_L{1..16}.npz`. The factor reconstruction is `blocks_of_source` in `experiments/probes/r7_srcgain.py`, as you used in Round 15.
 - **The chain's own κ₄ diagonal per layer:** `data/dumps/errbudget_v29plain.npz` (`L{l}_ck4`).
