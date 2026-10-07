@@ -68,7 +68,7 @@ Leaderboard reference:
 
 **Cost envelope (derived break-even)**
 
-A carrier worth 74% of the oracle gain multiplies raw MSE by ≈ 0.78. At +30 u on ≈ 192 u the score improves ≈ 10%; at +60 u it breaks even. So it must cost ≤ ~30 u, ≤ ~1,000 extra metered operations, and fit 8 GB of memory.
+A carrier worth 74% of the oracle gain multiplies raw MSE by ≈ 0.78. At +30 u on ≈ 192 u the score improves ≈ 10%; at +60 u it is already ≈ 2% worse. So it must cost ≤ ~30 u, ≤ ~1,000 extra metered operations, and fit 8 GB of memory.
 
 If nothing meets the cost, give the cheapest carrier that meets the CEILING (exact, untruncated) and its cost.
 
