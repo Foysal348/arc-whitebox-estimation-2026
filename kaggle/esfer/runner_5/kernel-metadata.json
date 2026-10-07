@@ -1,0 +1,15 @@
+{
+ "id": "esfersami50/whest-runner-v55-5",
+ "title": "whest-runner-v55-5",
+ "code_file": "whest-runner.ipynb",
+ "language": "python",
+ "kernel_type": "notebook",
+ "is_private": true,
+ "enable_gpu": false,
+ "enable_internet": true,
+ "dataset_sources": [
+  "esfersami50/whest-estimators-v55-5"
+ ],
+ "competition_sources": [],
+ "kernel_sources": []
+}

@@ -1,0 +1,14 @@
+{
+ "v55_l4ref": {
+  "file": "v55k4c.py",
+  "env": {
+   "V55_K4C_LMIN": 4
+  }
+ },
+ "v55_l3": {
+  "file": "v55k4c.py",
+  "env": {
+   "V55_K4C_LMIN": 3
+  }
+ }
+}
