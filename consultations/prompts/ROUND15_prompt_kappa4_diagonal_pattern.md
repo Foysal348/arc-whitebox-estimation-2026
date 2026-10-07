@@ -42,6 +42,29 @@ three quarters of the gain; layers ≥ 8 carry 86%. The full gain would put us a
   all-distinct (2,1,1) and (1,1,1,1) sectors.
 - Parity: the pattern is not predictable from statistics even in the weights (per-neuron features: corr ≤ 0.04).
 
+## Measured on 7 Oct: what the chain's OWN per-layer features already give (our baseline for your answer)
+
+A linear map from per-neuron features the chain already has at the layer, namely
+- s3sq = (κ3_ii/v^1.5)²,
+- the row and column energy of the standardised D21,
+- the correlation-row energy Σ_j C_pre,ij²/(v_i v_j),
+- |μ/σ|,
+- the chain's own κ4/v², and
+- 1,
+
+fitted on pooled layers ≥ 6 (decisive neurons), rescaled to the chain's layer-mean level and fed to the mean closure only, gives:
+
+- Pattern corr 0.41-0.56 at L6-15. The chain's own pattern corr is 0.24-0.41. The fit transfers across networks: fitted on the synthetic net, it gives 0.43-0.56 on MLP #0.
+- End to end, with zero FLOPs and +310 metered ops:
+  - MLP #0: raw 2.196e-8 → 2.038e-8 (−7.2%).
+  - Held-out synthetic net: 1.886e-8 → 1.834e-8 (−2.7%).
+  - Submitted to the grader.
+- These additions do NOT help (≤ +0.03 corr in sample, 0 or negative held out):
+  - squares, pairwise products and the log of these features;
+  - the previous layer's same features carried by (W∘W)ᵀ, unweighted or weighted by Φ(α), Φ², Φ⁴.
+- So per-layer chain features saturate at corr ~0.5. Going to ≥ 0.7 needs NEW carried information (a state that is not one
+  of these per-neuron summaries). Your estimator must beat this 0.5 baseline on the same decisive neurons.
+
 ## Measured dead (do not propose)
 
 Scale-mixture / Sym(C⊗C) κ₄ predictors (corr ≤ 0.09); learned per-neuron or 13-feature regressions across networks;

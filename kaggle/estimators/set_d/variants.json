@@ -1,3 +1,4 @@
 {
- "v52safeB": {"file": "v52safeB.py", "env": {}}
+ "v55lean_l4": {"file": "v55lean.py", "env": {"V55_K4C_LMIN": 4}},
+ "v55lean_b12": {"file": "v55lean.py", "env": {"V55_K4C_BLEND": 1.2}}
 }

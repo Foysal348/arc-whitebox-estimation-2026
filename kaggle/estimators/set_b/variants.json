@@ -1,3 +1,4 @@
 {
- "v51rc10": {"file": "v51rc10.py", "env": {}}
+ "v55lean": {"file": "v55lean.py", "env": {}},
+ "v55lean_l8": {"file": "v55lean.py", "env": {"V55_K4C_LMIN": 8}}
 }
