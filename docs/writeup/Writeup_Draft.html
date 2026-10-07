@@ -29,7 +29,7 @@ and hand-checking each derivation. Target length ≤ 10 pages.</div>
 covariance and the third cumulant (as a sum over "sources" born at each ReLU) through a 1024-wide, 16-layer bias-free ReLU
 network. We add one exact identity (a spherical-input reparameterisation, section 2) and cost engineering that removes 23% of
 the metered FLOPs for +2.8% raw MSE, mostly by exploiting the network's inactive ("dead") neurons (section 3.1): graded
-score 5.40e-9 (public chain) → 4.09e-9. Most of this report is a <b>measured map of where the remaining error comes from, and why
+score 5.40e-9 (public chain) → 4.08e-9; a per-layer readout of the fourth-cumulant diagonal's pattern then takes it to <b>3.86e-9</b> (section 4.4). Most of this report is a <b>measured map of where the remaining error comes from, and why
 it resists every cheap fix we and others tried</b>:</p>
 <ol>
 <li>The closures are essentially exact given true inputs. The error is made by the inputs: a perfect third-cumulant input
@@ -100,6 +100,9 @@ of the cost through those two.</li>
 <tr><td>Strassen on the shared-basis products; Grams X d X<sup>T</sup> as aliased Y Y<sup>T</sup>, Y = X√d</td><td>exact to rounding, util −4.3%</td><td>4.416e-9 (2.146e-8, #332401)</td></tr>
 <tr><td>(2,1) slice computed on active columns only</td><td>score x0.961 / x0.966</td><td>4.251e-9 (2.154e-8, #332404)</td></tr>
 <tr><td>... and on the rows of neurons with Φ ≥ 7·10<sup>−3</sup></td><td>score x0.973 / x0.961</td><td>4.090e-9 (2.164e-8, #332420)</td></tr>
+<tr><td>operation budget ≤ 18k metered ops per network (grader cap of 0.4 s outside metered work); join rotation taken from the
+QR's R factor; feedback rank 4 → 2</td><td>exact / teacher score x0.985 / x0.995</td><td>4.0995e-9 (2.197e-8, #332626)</td></tr>
+<tr><td>same, shared-basis rank 352 (19.9k ops)</td><td>Kaggle 100 networks x0.993</td><td>4.0784e-9 (#332621)</td></tr>
 </table>
 <p class="claim">Inactive neurons. A neuron with Φ(μ/σ) &lt; 10<sup>−2</sup> (5–25% of every layer from layer 5 on) passes almost
 nothing forward linearly, yet its own third cumulant is essential. Measured on two teacher networks (final-MSE ratio): removing it
@@ -144,6 +147,31 @@ layers.</li>
 </table>
 <p>The κ<sub>4</sub> diagonal has the right level (ratio ≈ 1.0) but the wrong per-neuron pattern (correlation 0.26-0.34 with the
 teacher on the neurons the mean closure is sensitive to).</p>
+
+<h3>4.4 A first piece of the fourth-cumulant pattern (graded)</h3>
+<p>Feeding the teacher's fourth-cumulant diagonal into the mean closure, coupled from layer 1 on public MLP #0, takes the full
+chain from raw 2.29e-8 to 1.61e-8. The leaders' raw MSE is 1.54–1.61e-8. The gain is the per-neuron <b>pattern</b> of the diagonal,
+not its level: the teacher's pattern rescaled to the chain's per-layer mean gives 1.55e-8 (108% of the gain), and a 50% blend gives
+74% of it.</p>
+<p>At every layer ≥ 6 we read the pattern linearly from quantities the chain already holds:</p>
+<ul>
+<li>the squared standardised skew (κ<sub>3,iii</sub>/v<sub>i</sub><sup>1.5</sup>)²;</li>
+<li>the row energy of the standardised (2,1) slice;</li>
+<li>the correlation-row energy Σ<sub>j</sub> C<sub>ij</sub>²/(v<sub>i</sub>v<sub>j</sub>);</li>
+<li>the chain's own κ<sub>4,iiii</sub>/v<sub>i</sub>²;</li>
+<li>a constant.</li>
+</ul>
+<p>We rescale the readout to the chain's layer mean and use it in the mean closure only.</p>
+<table>
+<tr><th>result</th><th>value</th></tr>
+<tr><td>pattern correlation with the teacher (layers 6–15, decisive neurons)</td><td>0.41–0.56 (chain alone 0.24–0.41); the coefficients transfer between networks</td></tr>
+<tr><td>cost</td><td>0 FLOPs, +310 metered ops</td></tr>
+<tr><td>teacher pair, raw MSE</td><td>−7.2% (fit network), −2.7% (held-out network)</td></tr>
+<tr><td>graded</td><td><b>3.876e-9</b> (#334588, ≤ 18k ops) and <b>3.858e-9</b> (#334591, rank 352); −5.4% each</td></tr>
+</table>
+<p>Squares, products and logarithms of these features add nothing out of sample. The previous layer's features carried by
+(W∘W)<sup>T</sup> add nothing either. Per-layer summaries saturate at correlation ≈ 0.5, consistent with section 5: the rest of the
+pattern is carried memory.</p>
 
 <h2>5. The error is carried memory, and it is odd</h2>
 <h3>5.1 Memory horizon</h3>
@@ -196,7 +224,7 @@ expectation-only replacements; hand-check.</div>
 <p>A method one rung more accurate than this chain must represent the all-distinct third- and fourth-order content born at every
 ReLU and carried across ≥ 6 layers, without the elementwise products of per-source legs. Our measurements say what such a state
 must reproduce (section 4), how long it must remember (section 5.1), and that no statistic even in the weights can stand in for it
-(section 5.2).</p>
+(section 5.2). For the fourth-cumulant diagonal the target is concrete. Per-layer summaries reach pattern correlation ≈ 0.5 (section 4.4), and the oracle says ≈ 0.7 would be worth a further 20–25% of raw MSE at no change to the third-cumulant carrier.</p>
 
 <h2>8. Reproducibility and LLM disclosure</h2>
 <ul>

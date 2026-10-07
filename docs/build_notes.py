@@ -1380,6 +1380,21 @@ table([
  ["Round 14 follow-up: joint oracle, cheap kappa3 chain x true kappa4 diagonal (coupled from layer 1, MLP #0)", "full 2.29e-8 -> 1.61e-8 (x0.70); AGE_OLD 2 5.24e-8 -> 4.59e-8 (x0.88); + R_OLD 256/128 1.29e-7 -> 1.24e-7 (x0.97); AGE_OLD 1 + 192/96 6.51e-7 -> 6.67e-7 (x1.02)", "'cut kappa3, recover with kappa4' closed"],
 ], widths=[4.8*cm, 8.2*cm, 4.0*cm], fs=7.0)
 note("Positive finding: the FULL chain with the true kappa4 diagonal reaches raw 1.61e-8 - the leaders' raw MSE (1.54-1.61e-8). The leaders' accuracy gap is accounted for by a better kappa4 diagonal on an unchanged kappa3 carrier; at our engineered cost (~193 u) that would score ~3.0e-9. The research target narrows to a kappa4 diagonal estimator worth the oracle's x0.70 for <= ~20-30 u (the deep kappa4 pattern is carried memory: horizon >= 6 layers, linear carry of the true kappa4 gives pattern corr 0.77-0.80; not an even statistic; not the exchange term).")
+h1("K3at. 7 Oct: the kappa4-diagonal PATTERN corrector (V55) - first graded gain from the kappa4 oracle")
+p("Target map (MLP #0, coupled from layer 1, teacher kappa4 diagonal fed to the mean closure): the teacher PATTERN rescaled to the chain's per-layer level gives 1.551e-8 (108% of the full gain), a 50% blend 74%, layers >= 8 only 86%. So the chain's level is right and only the per-neuron pattern is missing.")
+table([
+ ["step / test", "evidence", "verdict"],
+ ["Features the chain already holds per layer: s3sq = (D3/v^1.5)^2, row/col energy of the standardised D21, correlation-row energy of C_pre, |mu/sigma|, chain kappa4/v^2, 1", "linear fit on MLP #0 (layers >= 6, decisive |mu/sigma| < 1.5): pattern corr 0.41-0.56 (chain 0.24-0.41); synthetic net held out 0.41-0.52 (chain 0.25-0.35); fit on synth -> MLP #0 0.43-0.56 (transfers)", "built (V55)"],
+ ["V55: rescaled to the chain's layer mean, mean closure only, LMIN 6, blend 1", "teacher pair: MLP #0 2.1962e-8 -> 2.0381e-8 (-7.2%), synth 1.8856e-8 -> 1.8343e-8 (-2.7%); util unchanged; +310 ops (17,961)", "submitted"],
+ ["GRADED v55k4c (safe class, on v53rfb2)", "#334588 3.8762e-9, raw 2.077e-8, no capped MLP", "-5.4% vs #332626; best safe"],
+ ["GRADED v55Ak4c (rank-352 class, on v52Ar352; teacher -7.0% / -2.7%)", "#334591 3.8582e-9, raw 2.061e-8, no capped MLP", "-5.4% vs #332621; overall best; LB #41 (team Hack2Publish)"],
+ ["Blend 1.5 / 2; LMIN 4 / 8", "1.5: 2.0242e-8 / 1.8659e-8 (mixed); 2: worse on both; LMIN 4: 2.0318e-8 / 1.8275e-8 (both -0.3%); LMIN 8 ~ LMIN 6", "blend 1; LMIN 4 to Kaggle"],
+ ["Extra features: squares, products, log", "+0.02-0.03 corr in sample, ~0 held out", "dead"],
+ ["Previous layer's features carried by (W*W)^T (unweighted, Phi, Phi^2, Phi^4)", "held out 0.37-0.46 vs base 0.41-0.49", "dead"],
+ ["Ablation", "y21T and |mu/sigma| droppable (0 change); dropping y21, c2 or chain costs 0.05-0.08 corr", "lean set: s3sq, y21, c2, chain, 1"],
+ ["Lever-weighted fit, weight |sigma phi(a)(a^2-1)| (the kappa4 lever on the mean closure)", "lever-weighted pattern error vs the chain: 0.72 / 0.74 (decisive-neuron fit 0.77 / 0.82); same coefficients from either net", "V55lean on Kaggle"],
+], widths=[5.2*cm, 8.6*cm, 3.2*cm], fs=7.0)
+note("Per-layer chain features saturate at pattern corr ~0.5; the oracle says ~0.7 (a 50-75% blend-equivalent) is worth roughly another 20-25% raw. That needs carried information that is not a per-neuron summary of the current layer: Round 15 (consultations/prompts/ROUND15_prompt_kappa4_diagonal_pattern.md) now states this 0.5 baseline. Kaggle 100-MLP paired runs A-E (base pairs for both classes, lean, LMIN 4/8, blend 1.2, A-class lean) are compared with experiments/probes/kaggle_pair_compare.py.")
 h1("K4. Next experiments queued")
 bullets([
  "DONE: Kaggle knob sweep (K3f), aggregate-state pilots (K3e), slice-transport (K3g), column screening (K3h), loopholes B1/A4/B4, reference K3-simple (K3i).",
