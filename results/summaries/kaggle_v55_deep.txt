@@ -1,0 +1,68 @@
+tags: {'base_v53rfb2': 'v55_a', 'v55k4c': 'v55_a', 'v55lean': 'v55_b', 'v55lean_l8': 'v55_b', 'base_v52Ar352': 'v55_c', 'v55Ak4c': 'v55_c', 'v55lean_l4': 'v55_d', 'v55lean_b12': 'v55_d', 'v55Alean': 'v55_e'}
+
+(1) paired vs base
+  v55Ak4c        vs base_v52Ar352  n 100 geo 0.9455 [0.9411, 0.9498] wins  97/100 | raw 2.1265e-08 util 0.1859 failed 0 | score ratio 0.9455 -> projected graded 3.8562e-09 (actual 3.8582e-09, ratio 0.9460)
+  v55Alean       vs base_v52Ar352  n 100 geo 0.9495 [0.9446, 0.9544] wins  95/100 | raw 2.1363e-08 util 0.1859 failed 0 | score ratio 0.9498 -> projected graded 3.8737e-09
+  v55k4c         vs base_v53rfb2   n 100 geo 0.9455 [0.9410, 0.9498] wins  97/100 | raw 2.1406e-08 util 0.1855 failed 0 | score ratio 0.9456 -> projected graded 3.8764e-09 (actual 3.8762e-09, ratio 0.9455)
+  v55lean        vs base_v53rfb2   n 100 geo 0.9496 [0.9447, 0.9545] wins  95/100 | raw 2.1505e-08 util 0.1855 failed 0 | score ratio 0.9498 -> projected graded 3.8939e-09
+  v55lean_b12    vs base_v53rfb2   n 100 geo 0.9489 [0.9433, 0.9550] wins  90/100 | raw 2.1491e-08 util 0.1855 failed 0 | score ratio 0.9492 -> projected graded 3.8914e-09
+  v55lean_l4     vs base_v53rfb2   n 100 geo 0.9482 [0.9434, 0.9530] wins  95/100 | raw 2.1474e-08 util 0.1855 failed 0 | score ratio 0.9485 -> projected graded 3.8884e-09
+  v55lean_l8     vs base_v53rfb2   n 100 geo 0.9517 [0.9468, 0.9566] wins  94/100 | raw 2.1553e-08 util 0.1855 failed 0 | score ratio 0.9520 -> projected graded 3.9026e-09
+
+(2)+(3) per-MLP gain distribution and dependence on network hardness
+  v55Ak4c        ratio q05 0.905 q25 0.927 med 0.942 q75 0.963 q95 0.993 | >1.02: 0 MLPs | corr(log ratio, log base MSE) -0.13, vs base util -0.02 | worst [('michelle-kramer', 1.002), ('debra-jones', 1.008), ('monica-duncan', 1.008)]
+      easy tercile: geo 0.9492 (n 34)
+      mid  tercile: geo 0.9442 (n 33)
+      hard tercile: geo 0.9428 (n 33)
+  v55Alean       ratio q05 0.902 q25 0.929 med 0.949 q75 0.970 q95 0.999 | >1.02: 1 MLPs | corr(log ratio, log base MSE) -0.06, vs base util +0.08 | worst [('daniel-vasquez', 1.018), ('daniel-smith', 1.02), ('debra-jones', 1.02)]
+      easy tercile: geo 0.9538 (n 34)
+      mid  tercile: geo 0.9462 (n 33)
+      hard tercile: geo 0.9484 (n 33)
+  v55k4c         ratio q05 0.905 q25 0.927 med 0.943 q75 0.963 q95 0.993 | >1.02: 0 MLPs | corr(log ratio, log base MSE) -0.14, vs base util -0.03 | worst [('michelle-kramer', 1.002), ('monica-duncan', 1.007), ('debra-jones', 1.011)]
+      easy tercile: geo 0.9491 (n 34)
+      mid  tercile: geo 0.9482 (n 33)
+      hard tercile: geo 0.9393 (n 33)
+  v55lean        ratio q05 0.903 q25 0.929 med 0.949 q75 0.970 q95 1.000 | >1.02: 1 MLPs | corr(log ratio, log base MSE) -0.08, vs base util +0.08 | worst [('daniel-smith', 1.018), ('john-koch', 1.018), ('debra-jones', 1.024)]
+      easy tercile: geo 0.9538 (n 34)
+      mid  tercile: geo 0.9505 (n 33)
+      hard tercile: geo 0.9443 (n 33)
+  v55lean_b12    ratio q05 0.893 q25 0.924 med 0.949 q75 0.974 q95 1.009 | >1.02: 4 MLPs | corr(log ratio, log base MSE) -0.10, vs base util +0.08 | worst [('daniel-smith', 1.031), ('daniel-vasquez', 1.033), ('debra-jones', 1.039)]
+      easy tercile: geo 0.9548 (n 34)
+      mid  tercile: geo 0.9500 (n 33)
+      hard tercile: geo 0.9418 (n 33)
+  v55lean_l4     ratio q05 0.898 q25 0.928 med 0.949 q75 0.967 q95 0.999 | >1.02: 1 MLPs | corr(log ratio, log base MSE) -0.08, vs base util +0.09 | worst [('debra-jones', 1.018), ('john-koch', 1.019), ('daniel-smith', 1.02)]
+      easy tercile: geo 0.9518 (n 34)
+      mid  tercile: geo 0.9497 (n 33)
+      hard tercile: geo 0.9432 (n 33)
+  v55lean_l8     ratio q05 0.910 q25 0.929 med 0.952 q75 0.974 q95 1.008 | >1.02: 1 MLPs | corr(log ratio, log base MSE) -0.07, vs base util +0.05 | worst [('john-koch', 1.016), ('daniel-smith', 1.018), ('debra-jones', 1.023)]
+      easy tercile: geo 0.9561 (n 34)
+      mid  tercile: geo 0.9514 (n 33)
+      hard tercile: geo 0.9476 (n 33)
+
+(4) head-to-head between corrector variants (same class)
+  v55Ak4c        vs v55Alean       geo 0.9957 [0.9931, 0.9985] wins 64/100
+  v55k4c         vs v55lean        geo 0.9957 [0.9931, 0.9985] wins 65/100
+  v55k4c         vs v55lean_b12    geo 0.9964 [0.9933, 0.9997] wins 62/100
+  v55k4c         vs v55lean_l4     geo 0.9971 [0.9944, 0.9999] wins 62/100
+  v55k4c         vs v55lean_l8     geo 0.9935 [0.9906, 0.9965] wins 64/100
+  v55lean        vs v55lean_b12    geo 1.0007 [0.9997, 1.0017] wins 42/100
+  v55lean        vs v55lean_l4     geo 1.0014 [1.0008, 1.0020] wins 36/100
+  v55lean        vs v55lean_l8     geo 0.9978 [0.9967, 0.9988] wins 67/100
+  v55lean_b12    vs v55lean_l4     geo 1.0007 [0.9995, 1.0020] wins 47/100
+  v55lean_b12    vs v55lean_l8     geo 0.9971 [0.9954, 0.9986] wins 70/100
+  v55lean_l4     vs v55lean_l8     geo 0.9964 [0.9951, 0.9976] wins 69/100
+
+(5) residual / wall per runner session (seconds; Kaggle CPU, no residual cap)
+  [v55_a         ] base_v53rfb2   resid p50 0.967 p90 1.005 max 1.168 | wall p50 112 max 129 | elapsed 3.42 h
+  [v55_a         ] v55k4c         resid p50 0.993 p90 1.051 max 1.121 | wall p50 114 max 124 | elapsed 3.50 h
+      same-session residual ratio base_v53rfb2/v55k4c: median 0.971 (q10 0.928, q90 1.012)
+  [v55_b         ] v55lean        resid p50 1.044 p90 1.105 max 1.242 | wall p50 119 max 134 | elapsed 3.67 h
+  [v55_b         ] v55lean_l8     resid p50 1.094 p90 1.180 max 1.413 | wall p50 123 max 154 | elapsed 3.77 h
+      same-session residual ratio v55lean/v55lean_l8: median 0.958 (q10 0.872, q90 1.027)
+  [v55_c         ] base_v52Ar352  resid p50 1.165 p90 1.244 max 1.338 | wall p50 118 max 132 | elapsed 3.62 h
+  [v55_c         ] v55Ak4c        resid p50 1.246 p90 1.442 max 1.955 | wall p50 120 max 168 | elapsed 3.71 h
+      same-session residual ratio base_v52Ar352/v55Ak4c: median 0.945 (q10 0.812, q90 1.024)
+  [v55_d         ] v55lean_l4     resid p50 1.132 p90 1.191 max 1.269 | wall p50 135 max 151 | elapsed 4.10 h
+  [v55_d         ] v55lean_b12    resid p50 1.186 p90 1.244 max 1.379 | wall p50 135 max 153 | elapsed 4.10 h
+      same-session residual ratio v55lean_l4/v55lean_b12: median 0.957 (q10 0.899, q90 1.012)
+  [v55_e         ] v55Alean       resid p50 0.742 p90 0.759 max 0.868 | wall p50 78 max 87 | elapsed 2.37 h
