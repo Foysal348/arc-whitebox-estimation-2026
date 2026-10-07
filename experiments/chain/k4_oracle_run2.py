@@ -38,7 +38,19 @@ def _K4_ORACLE(li, n, var, C_off, g4row, wk4m, wk431, trim):
         np.fill_diagonal(K22, 0.0); np.fill_diagonal(K31, 0.0)
         CACHE.clear(); CACHE[l] = (np.asarray(z["K4d"], np.float32), K22, K31)
     K4d, K22, K31 = CACHE[l]
-    if m in ("diag", "all"): g4row = fnp.asarray(K4d)
+    if m in ("diag", "all"):
+        # K4O_LMIN / K4O_LMAX: inject only at layers in [lmin, lmax]; K4O_BLEND: (1-b) chain + b teacher;
+        # K4O_PART: "pattern" = teacher pattern at the chain's layer-mean level, "level" = chain pattern at the teacher's level
+        lmin = int(os.environ.get("K4O_LMIN", "1")); lmax = int(os.environ.get("K4O_LMAX", "16"))
+        if lmin <= l <= lmax:
+            ch = np.asarray(g4row, np.float64); tt = np.asarray(K4d, np.float64)
+            part = os.environ.get("K4O_PART", "")
+            if part == "pattern":
+                tt = tt * (ch.mean() / tt.mean())
+            elif part == "level":
+                tt = ch * (tt.mean() / ch.mean())
+            b = float(os.environ.get("K4O_BLEND", "1"))
+            g4row = fnp.asarray(((1 - b) * ch + b * tt).astype(np.float32))
     if m == "allfit": g4row = g4row * float(K4T[min(li, 15)])
     if m in ("k22", "k22k31", "all", "allfit") and wk4m is not None: wk4m = fnp.asarray(K22)
     if m in ("k31", "k22k31", "all", "allfit") and wk431 is not None: wk431 = fnp.asarray(K31)
