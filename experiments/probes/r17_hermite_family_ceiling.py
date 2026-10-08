@@ -79,7 +79,10 @@ def run(target, mode, gen):
         else:
             z = torch.randn(m, n, device=dev, generator=gen) @ Wt[0]; l0 = 1
         for l in range(l0, target):
-            Kl = K if (kind == "gauss" or l >= start) else 0
+            if isinstance(K, dict):
+                Kl = K.get(target - l, (0, 1))           # set C: Hermite orders per age (age = target - l); default linear
+            else:
+                Kl = K if (kind == "gauss" or l >= start) else 0
             z = act(z, l, Kl) @ Wt[l]
         zz = z.double()
         for p in range(4):
@@ -94,7 +97,18 @@ MODES_A = {"relu": ("true", 0, 0), "gauss_h6_relu": ("gauss", 6, 0), "gauss_h6_K
 MODES_B = {"gauss_h6_K013": ("gauss", 6, (0, 1, 3)), "gauss_h6_K4": ("gauss", 6, 4), "gauss_h4_K3": ("gauss", 4, 3),
            "gauss_h3_K3": ("gauss", 3, 3), "gauss_h4_relu": ("gauss", 4, 0), "gauss_h3_relu": ("gauss", 3, 0),
            "gauss_h2_K3": ("gauss", 2, 3), "gauss_h2_relu": ("gauss", 2, 0)}
-MODES = MODES_B if os.environ.get("R17_SET", "A") == "B" else MODES_A
+# set C (9 Oct): which AGES must carry births? Gaussian restart 6 back; full cubic response (orders 0-3) only at the listed
+# ages (age = target layer - layer of the ReLU), the plain linear response Phi u at the others (no births there)
+FULL = (0, 1, 2, 3)
+MODES_C = {"gauss_h6_K3_all": ("gauss", 6, {a: FULL for a in range(1, 7)}),
+           "births_age1": ("gauss", 6, {1: FULL}),
+           "births_age12": ("gauss", 6, {1: FULL, 2: FULL}),
+           "births_age123": ("gauss", 6, {1: FULL, 2: FULL, 3: FULL}),
+           "births_age1234": ("gauss", 6, {a: FULL for a in range(1, 5)}),
+           "births_age456": ("gauss", 6, {4: FULL, 5: FULL, 6: FULL}),
+           "births_age23456": ("gauss", 6, {a: FULL for a in range(2, 7)}),
+           "births_age6": ("gauss", 6, {6: FULL})}
+MODES = {"A": MODES_A, "B": MODES_B, "C": MODES_C}[os.environ.get("R17_SET", "A")]
 TARGETS = [int(x) for x in os.environ.get("R17_TARGETS", "12,15,16").split(",")]
 res = {"N": N, "device": str(dev)}; save = {}
 t0 = time.time()
