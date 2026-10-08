@@ -138,3 +138,13 @@ The author's metric is the raw κ4 correlation on decisive neurons.
 | project metric, age ≤ 6 | 0.561 | 0.467 | 0.481 |
 
 **Verdict.** KILL by its own pre-registered gate (author metric < 0.55 at all three). On the project metric it is MIXED at 0.47-0.56, and dominated by HTQB (0.56-0.64), which is the refined version of the same trees.
+
+## 7. CSF, Curvature-Source Factorised κ4 Carrier with Q1 C·T births (SciMaster/Bohrium, 14 pages): KILL by existing measurement
+
+Source: `Architecture Analysis/Round 17 CSF_ Curvature-Source Factorised κ₄ Carrier with Q1 C·T Births — Ceiling Design and Falsifier.pdf`.
+
+**Claims.** The PDF says its correlation, "measured via the provided self-contained Python falsifier script, exceeds 0.7 at L12, L15, L16 (PASS)", at ≈ 13.5 u. No script is attached or present in the folder, and the PDF contains no code or run output. Its numbers are font-garbled.
+
+**Why it is dead without a new run.** The design is exactly the Q1 C·T curvature birth with linear transport. That is what Claude's hub-pair falsifier measured with the κ3 contraction computed exactly from samples (§1, N = 2e6, project metric): 0.442 / 0.432 / 0.431. It also sits inside the second-order Hermite family, whose ceiling with every second-order sector is 0.45-0.55 (§2).
+
+**Verdict.** KILL. The claimed PASS is not supported.
