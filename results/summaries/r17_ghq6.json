@@ -1,0 +1,20 @@
+{
+ "12": {
+  "author_raw_all_history": -0.11934921403675464,
+  "author_raw_age6": -0.11335589338385411,
+  "project_all_history": 0.5585226238833096,
+  "project_age6": 0.561228371474126
+ },
+ "15": {
+  "author_raw_all_history": -0.19263783181274052,
+  "author_raw_age6": -0.19095049125442617,
+  "project_all_history": 0.47051755417094293,
+  "project_age6": 0.4669871816643519
+ },
+ "16": {
+  "author_raw_all_history": -0.030654069441421336,
+  "author_raw_age6": -0.050102041936384366,
+  "project_all_history": 0.4993902655968419,
+  "project_age6": 0.48129826547745913
+ }
+}

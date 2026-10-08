@@ -118,3 +118,23 @@ Source: `Architecture Analysis/Round 17 A Factorised Curvature-Birth κ₄ Carri
 Addendum (8 Oct): we stored the authors' full script verbatim at `experiments/probes/r17_scimaster/falsifier_ceiling_k4_carrier.py`.
 - As written it does not run: `KeyError: 'D21'`, because the teacher key is Y21, as the prompt stated; `np.math` is also gone in NumPy 2. So it was never executed by its authors.
 - With only those two names fixed (`falsifier_ceiling_k4_carrier_minfix.py`), the script's OWN output is L12 −0.2572, L15 −0.2202, L16 −0.3156, `[GATE] KILL` (`results/summaries/r17_scimaster_minfix_run.txt`). This reproduces our re-implementation exactly.
+
+## 6. GHQ-6, Gaussian Hypertree Quartic Bank (Round 17)
+
+Source: `Architecture Analysis/Round 17 - Gaussian Hypertree Quartic Bank.pdf` and `round17_ghq6_falsifier.py`, run unmodified via `experiments/probes/r17_ghq6/run_ghq6_project_metric.py`; results in `results/summaries/r17_ghq6.json`.
+
+**Design.** The same Gaussian-tree family as HTQB:
+- star 4 Σ c_r P A³;
+- path 12 xᵀ H x, with H = diag(r2) C0 diag(r2);
+- legs P and A carried by the linearised map, births at every layer.
+
+The author's metric is the raw κ4 correlation on decisive neurons.
+
+| | L12 | L15 | L16 |
+|---|---|---|---|
+| author metric, all history | −0.119 | −0.193 | −0.031 |
+| author metric, age ≤ 6 | −0.113 | −0.191 | −0.050 |
+| project metric, all history | 0.559 | 0.471 | 0.499 |
+| project metric, age ≤ 6 | 0.561 | 0.467 | 0.481 |
+
+**Verdict.** KILL by its own pre-registered gate (author metric < 0.55 at all three). On the project metric it is MIXED at 0.47-0.56, and dominated by HTQB (0.56-0.64), which is the refined version of the same trees.
