@@ -84,3 +84,33 @@ Findings:
 | κ(u_a³, …) identity | 8.1e-16 |
 | He3 form | 6.3e-16 |
 | Gaussian-star readout 24 Σ_a c_a W_ai ((C U)_ai)³ | 9.0e-15 |
+
+## 5. SciMaster/Bohrium "Factorised Curvature-Birth κ4 Carrier" PDF (25 pages, "AI Generated"): claims unsupported, KILL
+
+Source: `Architecture Analysis/Round 17 A Factorised Curvature-Birth κ₄ Carrier ... ≤ 30 u Overhead.pdf`.
+
+**Claims.** The script "confirms ≥ 0.70 at L12/15/16 and passes the gate", at a total cost of ~0.023 u (61 ops). The PDF contains no measured correlations, no run log and no attachments.
+
+**Design problems**
+- The births are second-order only: the PDF itself writes h − E h = Φ z̃ + (φ/σ)(z̃² − σ²)/2 + O(z̃³). By the family ceiling (§2-3) any such carrier is capped near 0.5.
+- Term A, (φ/σ)_a ⊗ u_s ⊗ C_post, does not have the derived Q1 structure g_a C_ab T_acd: the curvature index is decoupled from the κ3 tensor.
+- Term C has a coefficient η fitted to the teacher.
+- The 0.023 u cost ignores the dense n × n post-ReLU slices (K22, K31, C) its own birth uses.
+
+**Script problems**
+- The Monte Carlo κ4 it accumulates is never used.
+- The "carrier" is the TEACHER's slices transported. Where no post-ReLU teacher exists, it uses PRE-activation arrays as the post-ReLU birth.
+- It sums births at every layer 1..L, which double counts.
+- The (2,2) contraction is diag(U2 K22 U2ᵀ), i.e. the wrong orientation.
+- U_chain[l−1] = diag(Φ_l) W[l−1] puts Φ on the wrong side.
+- It scores raw κ4 on all neurons.
+
+**Measured** (`experiments/probes/r17_scimaster_check.py`, `results/summaries/r17_scimaster_check.json`):
+
+| | L12 | L15 | L16 |
+|---|---|---|---|
+| script as written, its own metric | −0.257 | −0.220 | −0.316 |
+| script as written, project metric | 0.182 | 0.061 | 0.250 |
+| orientation fixed, true post-ReLU births only, project metric | 0.392 | 0.321 | 0.397 |
+
+**Verdict.** KILL. The fixed version sits at the known "true slices carried" level of 0.30-0.45.

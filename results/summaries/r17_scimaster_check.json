@@ -1,0 +1,32 @@
+{
+ "12": {
+  "as_written": {
+   "script_metric_raw_all": -0.25715400153548007,
+   "project_metric": 0.18204003474845018
+  },
+  "fixed_post_births": {
+   "script_metric_raw_all": 0.5137676177796099,
+   "project_metric": 0.3919110199625984
+  }
+ },
+ "15": {
+  "as_written": {
+   "script_metric_raw_all": -0.22022714469434027,
+   "project_metric": 0.06095903220300678
+  },
+  "fixed_post_births": {
+   "script_metric_raw_all": 0.4282787243154943,
+   "project_metric": 0.32149395758181537
+  }
+ },
+ "16": {
+  "as_written": {
+   "script_metric_raw_all": -0.31556154801019154,
+   "project_metric": 0.24951899190330662
+  },
+  "fixed_post_births": {
+   "script_metric_raw_all": 0.37651835913606396,
+   "project_metric": 0.39699588503461886
+  }
+ }
+}
