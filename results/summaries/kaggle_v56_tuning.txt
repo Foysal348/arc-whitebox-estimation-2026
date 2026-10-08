@@ -1,0 +1,11 @@
+reference v56_ref: raw 2.0409e-08 util 0.1857 score 3.7900e-09
+v56_age6         [v56t_2                ] n 100 raw 1.9953e-08 util 0.1926 failed 0 | geo ratio 0.9782 (90% 0.9749-0.9814) wins 89/100 | score ratio 1.0138 | resid p50 0.661 max 0.752
+v56_fit_synth    [v56t_e                ] n 100 raw 2.0336e-08 util 0.1857 failed 0 | geo ratio 0.9965 (90% 0.9950-0.9982) wins 66/100 | score ratio 0.9964 | resid p50 1.158 max 1.389
+v56_star125      [v56t_d                ] n 100 raw 2.0352e-08 util 0.1857 failed 0 | geo ratio 0.9975 (90% 0.9957-0.9993) wins 64/100 | score ratio 0.9972 | resid p50 0.992 max 1.119
+v56_bl125        [v56t_d                ] n 100 raw 2.0407e-08 util 0.1857 failed 0 | geo ratio 0.9999 (90% 0.9995-1.0003) wins 50/100 | score ratio 0.9999 | resid p50 0.967 max 1.139
+v56_ref          [v56t_1                ] n 100 raw 2.0409e-08 util 0.1857 failed 0 | geo ratio 1.0000 (90% 1.0000-1.0000) wins 0/100 | score ratio 1.0000 | resid p50 1.098 max 1.209
+v56_s3x110       [v56t_c                ] n 100 raw 2.0467e-08 util 0.1857 failed 0 | geo ratio 1.0028 (90% 1.0022-1.0035) wins 24/100 | score ratio 1.0028 | resid p50 1.278 max 2.002
+v56_ages4        [v56t_e                ] n 100 raw 2.0504e-08 util 0.1857 failed 0 | geo ratio 1.0045 (90% 1.0036-1.0055) wins 22/100 | score ratio 1.0045 | resid p50 1.078 max 1.292
+v56_s3x125       [v56t_c                ] n 100 raw 2.0600e-08 util 0.1857 failed 0 | geo ratio 1.0094 (90% 1.0077-1.0110) wins 17/100 | score ratio 1.0093 | resid p50 1.145 max 1.333
+v56_star075      [v56t_1                ] n 100 raw 2.0633e-08 util 0.1857 failed 0 | geo ratio 1.0107 (90% 1.0093-1.0122) wins 11/100 | score ratio 1.0110 | resid p50 1.162 max 1.350
+v56_star150      [v56t_2                ] n 100 raw 2.0635e-08 util 0.1857 failed 0 | geo ratio 1.0117 (90% 1.0078-1.0158) wins 28/100 | score ratio 1.0111 | resid p50 0.672 max 0.813
