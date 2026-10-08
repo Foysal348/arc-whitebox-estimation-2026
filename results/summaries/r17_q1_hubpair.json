@@ -1,0 +1,116 @@
+{
+ "n": 1024,
+ "N": 2000000,
+ "pairs": 18,
+ "configs": {
+  "ceiling Q1 (H=6, r=n)": {
+   "L12": {
+    "corr_project": 0.4423648021791851,
+    "corr_author_raw_top128": 0.8695304710265467,
+    "level_ratio_project": 0.8726729029522616
+   },
+   "L15": {
+    "corr_project": 0.4321602599442804,
+    "corr_author_raw_top128": 0.865981587738909,
+    "level_ratio_project": 0.9247715188978514
+   },
+   "L16": {
+    "corr_project": 0.4306330746417264,
+    "corr_author_raw_top128": 0.8042178291235641,
+    "level_ratio_project": 0.8410932988673364
+   }
+  },
+  "Q1+path (H=6, r=n)": {
+   "L12": {
+    "corr_project": 0.40104409981850075,
+    "corr_author_raw_top128": 0.8920283956353252,
+    "level_ratio_project": 1.9453201159841689
+   },
+   "L15": {
+    "corr_project": 0.3856733221563846,
+    "corr_author_raw_top128": 0.8672739385807734,
+    "level_ratio_project": 1.8877515930139315
+   },
+   "L16": {
+    "corr_project": 0.4278574901052429,
+    "corr_author_raw_top128": 0.8611023432228934,
+    "level_ratio_project": 1.76717199781493
+   }
+  },
+  "Q1 (H=4, r=n)": {
+   "L12": {
+    "corr_project": 0.47307748674822037,
+    "corr_author_raw_top128": 0.8503092916247696,
+    "level_ratio_project": 0.6802780601157915
+   },
+   "L15": {
+    "corr_project": 0.44725151343340125,
+    "corr_author_raw_top128": 0.8311079744238626,
+    "level_ratio_project": 0.6924136645800949
+   },
+   "L16": {
+    "corr_project": 0.454467076186613,
+    "corr_author_raw_top128": 0.7540216277075639,
+    "level_ratio_project": 0.6201457117555185
+   }
+  },
+  "Q1 (H=2, r=n)": {
+   "L12": {
+    "corr_project": 0.41986574033961205,
+    "corr_author_raw_top128": 0.756094134632424,
+    "level_ratio_project": 0.4084735160805182
+   },
+   "L15": {
+    "corr_project": 0.3924090207081563,
+    "corr_author_raw_top128": 0.7685898209783288,
+    "level_ratio_project": 0.38262791332267865
+   },
+   "L16": {
+    "corr_project": 0.4391906416067522,
+    "corr_author_raw_top128": 0.5707176258972739,
+    "level_ratio_project": 0.3229266710832528
+   }
+  },
+  "Q1 (H=6, r=64)": {
+   "L12": {
+    "corr_project": 0.25544031729363625,
+    "corr_author_raw_top128": 0.16702527366301315,
+    "level_ratio_project": 0.022047687265538116
+   },
+   "L15": {
+    "corr_project": 0.2029027340613425,
+    "corr_author_raw_top128": 0.17895748282787255,
+    "level_ratio_project": 0.007614733434935631
+   },
+   "L16": {
+    "corr_project": 0.36096184530035685,
+    "corr_author_raw_top128": 0.034903683725018834,
+    "level_ratio_project": -0.00320599359805815
+   }
+  },
+  "Q1 (H=4, r=32)": {
+   "L12": {
+    "corr_project": 0.09648927962105681,
+    "corr_author_raw_top128": 0.15751579981998576,
+    "level_ratio_project": 0.003603219721168222
+   },
+   "L15": {
+    "corr_project": 0.12565176978547438,
+    "corr_author_raw_top128": 0.08181141121999946,
+    "level_ratio_project": -0.001863038638781516
+   },
+   "L16": {
+    "corr_project": 0.25546668870056194,
+    "corr_author_raw_top128": 0.010040545718219081,
+    "level_ratio_project": -0.007157230681348008
+   }
+  }
+ },
+ "teacher_source": "stored 6e7 teacher (packed npz)",
+ "mc_sanity": {
+  "L12": 0.9364956063729745,
+  "L15": 0.959536969472064,
+  "L16": 0.9636225098683491
+ },
+ "gate": "KILL"
+}
