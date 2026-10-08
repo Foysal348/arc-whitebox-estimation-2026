@@ -1409,9 +1409,17 @@ class Estimator(BaseEstimator):
                         kk = A_st.shape[0]
                         j0 = max(ka, kk - K4S_AGES)
                         if kk > j0:
+                            # V56b: in place in the dslices scratch stacks (free after _dslices): no new (k, n, n) arrays;
+                            # the grader's 8 GB limit was hit by the temporaries (Kaggle repro of the smoke failure, 8 Oct)
+                            m_ = kk - j0
                             Py = P_st[j0:kk]
-                            Xs = A_st[j0:kk] + Py * fnp.stack(k4s_dv[j0:kk], axis=0)[:, None, :]
-                            k4star = fnp.sum(Xs * Xs * Xs * Py * fnp.stack(k4s_c[j0:kk], axis=0)[:, None, :], axis=(0, 2)) * 24.0 / v2
+                            Xs = fnp.multiply(Py, fnp.stack(k4s_dv[j0:kk], axis=0)[:, None, :], out=bufs["pp"][:m_])
+                            fnp.add(Xs, A_st[j0:kk], out=Xs)
+                            Ts = fnp.multiply(Xs, Xs, out=bufs["t"][:m_])
+                            fnp.multiply(Ts, Xs, out=Ts)
+                            fnp.multiply(Ts, Py, out=Ts)
+                            fnp.multiply(Ts, fnp.stack(k4s_c[j0:kk], axis=0)[:, None, :], out=Ts)
+                            k4star = fnp.sum(Ts, axis=(0, 2)) * 24.0 / v2
                         else:
                             k4star = ones_n * 0.0
                         X = fnp.stack([s3sq, fnp.sum(Z2, axis=1), fnp.sum(Z2, axis=0), fnp.sum(rc * rc, axis=1), absa, ch, k4star, ones_n], axis=0)
