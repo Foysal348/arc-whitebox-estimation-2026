@@ -1,0 +1,13 @@
+reference v55_l4ref: raw 2.1390e-08 util 0.1855 score 3.9681e-09
+v55_l4_s3x125    [sw_c                  ] n 100 raw 2.1325e-08 util 0.1855 failed 0 | geo ratio 0.9968 (90% 0.9947-0.9988) wins 62/100 | score ratio 0.9969 | resid p50 0.973 max 1.072
+v55_l2           [sw_2                  ] n 100 raw 2.1385e-08 util 0.1855 failed 0 | geo ratio 0.9998 (90% 0.9994-1.0002) wins 56/100 | score ratio 0.9998 | resid p50 1.097 max 1.288
+v55_l3           [sw_1                  ] n 100 raw 2.1385e-08 util 0.1855 failed 0 | geo ratio 0.9998 (90% 0.9995-1.0001) wins 54/100 | score ratio 0.9998 | resid p50 1.296 max 1.776
+v55_l4ref        [sw_1                  ] n 100 raw 2.1390e-08 util 0.1855 failed 0 | geo ratio 1.0000 (90% 1.0000-1.0000) wins 0/100 | score ratio 1.0000 | resid p50 1.265 max 1.441
+v55k4c           [v55_a                 ] n 100 raw 2.1406e-08 util 0.1855 failed 0 | geo ratio 1.0007 (90% 1.0000-1.0014) wins 40/100 | score ratio 1.0007 | resid p50 0.993 max 1.121
+v55_l4_y21x067   [sw_d                  ] n 100 raw 2.1432e-08 util 0.1855 failed 0 | geo ratio 1.0020 (90% 1.0009-1.0030) wins 40/100 | score ratio 1.0020 | resid p50 1.134 max 1.290
+v55_l4_y21x150   [sw_d                  ] n 100 raw 2.1472e-08 util 0.1855 failed 0 | geo ratio 1.0037 (90% 1.0022-1.0052) wins 31/100 | score ratio 1.0038 | resid p50 0.951 max 1.129
+v55_l4_lastoff   [sw_2                  ] n 100 raw 2.1635e-08 util 0.1855 failed 0 | geo ratio 1.0116 (90% 1.0105-1.0126) wins 2/100 | score ratio 1.0114 | resid p50 1.130 max 1.486
+v55_l4_s3x080    [sw_c                  ] n 100 raw 2.1651e-08 util 0.1855 failed 0 | geo ratio 1.0124 (90% 1.0102-1.0145) wins 17/100 | score ratio 1.0122 | resid p50 1.046 max 1.193
+v55_l4_c2x0      [sw_e                  ] n 100 raw 2.1685e-08 util 0.1855 failed 0 | geo ratio 1.0131 (90% 1.0083-1.0174) wins 26/100 | score ratio 1.0138 | resid p50 1.099 max 1.345
+v55_l4_c2x150    [sw_e                  ] n 100 raw 2.2582e-08 util 0.1855 failed 0 | geo ratio 1.0563 (90% 1.0484-1.0646) wins 3/100 | score ratio 1.0557 | resid p50 1.079 max 1.391
+base_v53rfb2     [v55_a                 ] n 100 raw 2.2643e-08 util 0.1855 failed 0 | geo ratio 1.0584 (90% 1.0535-1.0632) wins 3/100 | score ratio 1.0583 | resid p50 0.967 max 1.168
