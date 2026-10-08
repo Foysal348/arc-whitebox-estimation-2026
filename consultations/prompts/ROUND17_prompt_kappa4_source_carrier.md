@@ -49,6 +49,14 @@ Leaderboard reference:
 - Scale-mixture / Sym(C ⊗ C) predictors (correlation ≤ 0.09).
 - A carried pair-response mode; SSC response closure.
 
+**Carriers whose births hold only (4) + (2,2) content (Round 16b, Astra ran it, we reproduced it)**
+- A dense pair-innovation core per ReLU, carried by exact source transport:
+  - diagonal Δ4, off-diagonal 3 Δ22 of post- vs linearised pre-ReLU slices;
+  - readout Σ_b ((P∘P) G_b ∘ (P∘P)) row sums.
+
+  Its ceiling is 0.37-0.44 at L12-16, for a six-age window and for all births alike, even though transport gives it all-distinct entries.
+- So the BIRTH must contain the newborn (3,1), (2,1,1) and (1,1,1,1) content. Long memory of a (4)+(2,2) birth is not enough.
+
 **Readouts of cubic history**
 - Round 15 source-resolved skew energy: +0.004 correlation at a per-layer oracle. The signed cubic history does not predict κ₄.
 - κ₄ riding the κ₃ source legs (×1.05 out of sample).

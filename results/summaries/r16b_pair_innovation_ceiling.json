@@ -1,0 +1,231 @@
+{
+  "model": "full pair-innovation core at every ReLU; exact dense transport; selected age window",
+  "network": "public MLP #0",
+  "precision": "float64 (stored K22/wk4m originate in float32)",
+  "horizon": 6,
+  "threshold": 0.7,
+  "layers": {
+    "8": {
+      "decisive_neurons": 595,
+      "births": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "corr_standardized": 0.44300681883935206,
+      "corr_chain_standardized": 0.3651367845948397,
+      "corr_raw": 0.7173973179139056,
+      "corr_chain_raw": 0.7179920417607311,
+      "normalization": 1.0441042909575822,
+      "raw_mean": 0.005430450327594227,
+      "chain_mean": 0.00566995648887314,
+      "teacher_mean": 0.005857107846463074,
+      "mean_closure_weighted_error_ratio": 1.0227945591931422
+    },
+    "9": {
+      "decisive_neurons": 507,
+      "births": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "corr_standardized": 0.4321402572945481,
+      "corr_chain_standardized": 0.35857798416059694,
+      "corr_raw": 0.7297279804328887,
+      "corr_chain_raw": 0.7593838788477667,
+      "normalization": 1.0992388342350508,
+      "raw_mean": 0.0035917556274318715,
+      "chain_mean": 0.0039481972687553935,
+      "teacher_mean": 0.004150375641122216,
+      "mean_closure_weighted_error_ratio": 1.1092766952332462
+    },
+    "10": {
+      "decisive_neurons": 490,
+      "births": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "corr_standardized": 0.4421368366115615,
+      "corr_chain_standardized": 0.39996535581966486,
+      "corr_raw": 0.7064940653109978,
+      "corr_chain_raw": 0.7472972602175868,
+      "normalization": 1.1553395820233032,
+      "raw_mean": 0.002782519388055714,
+      "chain_mean": 0.003214754786768026,
+      "teacher_mean": 0.0033929603605948573,
+      "mean_closure_weighted_error_ratio": 1.124601811832896
+    },
+    "11": {
+      "decisive_neurons": 503,
+      "births": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "corr_standardized": 0.37935195795032933,
+      "corr_chain_standardized": 0.3086053661310039,
+      "corr_raw": 0.7290492812053265,
+      "corr_chain_raw": 0.7657732014950368,
+      "normalization": 1.2310786161098235,
+      "raw_mean": 0.0024393207358135906,
+      "chain_mean": 0.003002995595693392,
+      "teacher_mean": 0.0031805004569896095,
+      "mean_closure_weighted_error_ratio": 1.1618950877269039
+    },
+    "12": {
+      "decisive_neurons": 442,
+      "births": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "corr_standardized": 0.43538351294023225,
+      "corr_chain_standardized": 0.3387364849151743,
+      "corr_raw": 0.6938183506482939,
+      "corr_chain_raw": 0.7198974440964016,
+      "normalization": 1.2948256959635662,
+      "raw_mean": 0.0020765888633093605,
+      "chain_mean": 0.0026888206201647336,
+      "teacher_mean": 0.0028944386034506905,
+      "mean_closure_weighted_error_ratio": 1.1192359408109365
+    },
+    "13": {
+      "decisive_neurons": 406,
+      "births": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "corr_standardized": 0.3910396471143002,
+      "corr_chain_standardized": 0.2811451756756105,
+      "corr_raw": 0.6487308849939636,
+      "corr_chain_raw": 0.7058814618169456,
+      "normalization": 1.358952053585241,
+      "raw_mean": 0.001652050866587043,
+      "chain_mean": 0.002245057917775739,
+      "teacher_mean": 0.002484194834484057,
+      "mean_closure_weighted_error_ratio": 1.2786354303750949
+    },
+    "14": {
+      "decisive_neurons": 357,
+      "births": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "corr_standardized": 0.4012914084444949,
+      "corr_chain_standardized": 0.2981607776716129,
+      "corr_raw": 0.6637830699877738,
+      "corr_chain_raw": 0.7249161345671019,
+      "normalization": 1.4376807811447694,
+      "raw_mean": 0.0014331313665654757,
+      "chain_mean": 0.002060385422566924,
+      "teacher_mean": 0.0023288658011320082,
+      "mean_closure_weighted_error_ratio": 1.276193834854101
+    },
+    "15": {
+      "decisive_neurons": 375,
+      "births": [
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "corr_standardized": 0.3691640140590795,
+      "corr_chain_standardized": 0.2642570497540268,
+      "corr_raw": 0.6331394750921621,
+      "corr_chain_raw": 0.7327990240970911,
+      "normalization": 1.5897382519684338,
+      "raw_mean": 0.0011987361924339394,
+      "chain_mean": 0.0019056767791312268,
+      "teacher_mean": 0.0021745822837855285,
+      "mean_closure_weighted_error_ratio": 1.3758410806794001
+    },
+    "16": {
+      "decisive_neurons": 323,
+      "births": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "corr_standardized": 0.42608574508088787,
+      "corr_chain_standardized": 0.32358257226486115,
+      "corr_raw": 0.6145889095089855,
+      "corr_chain_raw": 0.699333169953311,
+      "normalization": 1.660314735057758,
+      "raw_mean": 0.0009844476596040555,
+      "chain_mean": 0.0016344929551337373,
+      "teacher_mean": 0.0018895923684729681,
+      "mean_closure_weighted_error_ratio": 1.4272220136942657
+    }
+  },
+  "checks": {
+    "max_wick_phi_error": 4.777592876870074e-08,
+    "small_tensor_relative_error": 1.514833392761615e-16,
+    "P_relative_errors_L3": {
+      "1": 2.95375359069003e-07,
+      "2": 0.0
+    },
+    "P_relative_errors_L7": {
+      "1": 6.582900697401667e-07,
+      "2": 5.882892772243864e-07,
+      "3": 5.0772887177324e-07,
+      "4": 4.1427402939734265e-07,
+      "5": 2.9091805126769707e-07,
+      "6": 0.0
+    },
+    "P_relative_errors_L11": {
+      "5": 6.531265609631599e-07,
+      "6": 5.862982401513488e-07,
+      "7": 5.080349303514843e-07,
+      "8": 4.1378611437111535e-07,
+      "9": 2.9280944682652293e-07,
+      "10": 0.0
+    },
+    "P_relative_errors_L14": {
+      "8": 6.513814468683201e-07,
+      "9": 5.82979215659043e-07,
+      "10": 5.031465510660586e-07,
+      "11": 4.0885263043298537e-07,
+      "12": 2.861867343564185e-07,
+      "13": 0.0
+    },
+    "P_relative_errors_L15": {
+      "9": 6.50944297905166e-07,
+      "10": 5.802553763944771e-07,
+      "11": 5.003677541112528e-07,
+      "12": 4.047112117240443e-07,
+      "13": 2.8597193835420213e-07,
+      "14": 0.0
+    }
+  },
+  "pass_all_L12_16": false,
+  "elapsed_seconds": 23.638254404067993
+}
