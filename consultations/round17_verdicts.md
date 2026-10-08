@@ -53,3 +53,34 @@ Two notes:
 - Set B (running) asks two further questions:
   - is the quadratic term needed at all (orders 0, 1, 3)?
   - how short can the horizon be (h = 4, 3, 2)?
+
+## 3. Family ceiling, set B: which orders and which horizon? (N = 4e6)
+
+| mode (Gaussian restart h back) | L12 | L15 | L16 |
+|---|---|---|---|
+| h = 6, orders 0, 1, 3 (no quadratic) | 0.511 | 0.498 | 0.469 (level negative) |
+| h = 6, K = 4 | 0.865 | 0.816 | 0.822 |
+| h = 4, K = 3 | 0.749 | 0.687 | 0.711 |
+| h = 4, true ReLU | 0.753 | 0.702 | 0.710 |
+| h = 3, K = 3 | 0.652 | 0.588 | 0.643 |
+| h = 3, true ReLU | 0.663 | 0.600 | 0.647 |
+| h = 2, K = 3 | 0.517 | 0.436 | 0.485 |
+| h = 2, true ReLU | 0.525 | 0.434 | 0.494 |
+
+Findings:
+- Both the quadratic and the cubic Hermite pieces are needed.
+- K = 3 is sufficient: K = 4 adds ≤ 0.02.
+- K = 3 tracks the true ReLU at every horizon.
+- The 0.70 gate needs a horizon of about 5-6 layers: 4 is borderline (L15 0.687) and 3 fails.
+
+## 4. Cubic-piece identities (verified exactly, `experiments/probes/r17_curvature_identities.py`)
+
+    κ(u_a³, u_b, u_c, u_d) = κ6_aaabcd + 3 v_a K_abcd + 3 (C_ab K_aacd + C_ac K_aabd + C_ad K_aabc)
+                             + 3 (T_abc T_aad + T_abd T_aac + T_acd T_aab) + 6 C_ab C_ac C_ad
+    κ(u_a³ − 3 v_a u_a, u_b, u_c, u_d) = same without the 3 v_a K_abcd term
+
+| check | max relative error |
+|---|---|
+| κ(u_a³, …) identity | 8.1e-16 |
+| He3 form | 6.3e-16 |
+| Gaussian-star readout 24 Σ_a c_a W_ai ((C U)_ai)³ | 9.0e-15 |

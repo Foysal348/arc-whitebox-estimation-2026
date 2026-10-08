@@ -50,7 +50,7 @@ C = np.array([[cum(a, b) for b in range(n)] for a in range(n)])
 T = np.zeros((n,) * 3)
 for a, b, c in itertools.product(range(n), repeat=3):
     T[a, b, c] = cum(a, b, c)
-res = {"identity_Q1": [], "identity_Q2": []}
+res = {"identity_Q1": [], "identity_Q2": [], "identity_Cu1": [], "identity_Cu1_He3": []}
 tuples = [(0, 1, 2, 3), (2, 4, 1, 5), (0, 0, 1, 2), (1, 2, 2, 3), (3, 1, 3, 1), (4, 4, 4, 0)]
 for a, b, c, d in tuples:
     lhs = joint_cum([u[:, a] ** 2, u[:, b], u[:, c], u[:, d]])
@@ -64,6 +64,17 @@ for a, b, c, d in tuples:
             + 4 * T[a, b, c] * T[a, b, d] + 2 * T[a, a, b] * T[b, c, d] + 2 * T[a, b, b] * T[a, c, d]
             + 4 * C[a, b] * (C[a, c] * C[b, d] + C[a, d] * C[b, c]))
     res["identity_Q2"].append(dict(idx=[a, b, c, d], lhs=lhs2, rhs=rhs2, rel=abs(lhs2 - rhs2) / max(abs(lhs2), 1e-300)))
+    # cubic piece (8 Oct): k(u_a^3, u_b, u_c, u_d) and the He3 form k(u_a^3 - 3 v_a u_a, u_b, u_c, u_d)
+    va = C[a, a]
+    lhs3 = joint_cum([u[:, a] ** 3, u[:, b], u[:, c], u[:, d]])
+    star = 6 * C[a, b] * C[a, c] * C[a, d]
+    ck = 3 * (C[a, b] * K(a, a, c, d) + C[a, c] * K(a, a, b, d) + C[a, d] * K(a, a, b, c))
+    tt = 3 * (T[a, b, c] * T[a, a, d] + T[a, b, d] * T[a, a, c] + T[a, c, d] * T[a, a, b])
+    rhs3 = cum(a, a, a, b, c, d) + 3 * va * K(a, b, c, d) + ck + tt + star
+    res["identity_Cu1"].append(dict(idx=[a, b, c, d], lhs=lhs3, rhs=rhs3, rel=abs(lhs3 - rhs3) / max(abs(lhs3), 1e-300)))
+    lhs4 = joint_cum([u[:, a] ** 3 - 3 * va * u[:, a], u[:, b], u[:, c], u[:, d]])
+    rhs4 = cum(a, a, a, b, c, d) + ck + tt + star          # the -3 v_a u_a part cancels the 3 v_a K_abcd term exactly
+    res["identity_Cu1_He3"].append(dict(idx=[a, b, c, d], lhs=lhs4, rhs=rhs4, rel=abs(lhs4 - rhs4) / max(abs(lhs4), 1e-300)))
 
 # (3) readout factors on a full tensor
 W = rng.standard_normal((n, n)) / np.sqrt(n)
@@ -87,9 +98,17 @@ for pos in itertools.combinations(range(4), 2):                # positions holdi
 lhs4 = np.einsum("ai,bi,ci,di,abcd->i", W, W, W, W, Q2)
 V = g[:, None] * W * CU
 rhs4 = 48 * np.einsum("ai,ab,bi->i", V, C, V)
+cst = rng.uniform(-0.3, 0.3, n)
+star_t = 6 * np.einsum("ab,ac,ad->abcd", C, C, C)
+qs = np.einsum("a,b,c,d,abcd->abcd", cst, Phi, Phi, Phi, star_t)
+QS = sum(np.transpose(qs, perm) for perm in [(0, 1, 2, 3), (1, 0, 2, 3), (1, 2, 0, 3), (1, 2, 3, 0)])
+lhs5 = np.einsum("ai,bi,ci,di,abcd->i", W, W, W, W, QS)
+rhs5 = 24 * np.einsum("a,ai,ai->i", cst, W, CU ** 3)
+res["readout_star_24"] = dict(max_rel=float(np.max(np.abs(lhs5 - rhs5) / np.abs(lhs5))))
+print("readout Gaussian star factor 24: max rel err", res["readout_star_24"]["max_rel"])
 res["readout_CT_24"] = dict(max_rel=float(np.max(np.abs(lhs3 - rhs3) / np.abs(lhs3))))
 res["readout_path_48"] = dict(max_rel=float(np.max(np.abs(lhs4 - rhs4) / np.abs(lhs4))))
-for k in ("identity_Q1", "identity_Q2"):
+for k in ("identity_Q1", "identity_Q2", "identity_Cu1", "identity_Cu1_He3"):
     print(k, "max rel err", max(r["rel"] for r in res[k]), [f"{r['lhs']:.4e}" for r in res[k]])
 print("readout C.T factor 24: max rel err", res["readout_CT_24"]["max_rel"])
 print("readout Gaussian path factor 48: max rel err", res["readout_path_48"]["max_rel"])
