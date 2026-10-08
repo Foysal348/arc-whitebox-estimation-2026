@@ -31,9 +31,10 @@ for t, r in rows.items():
 # leave-one-layer-out linear fits (standardised design), on decisive neurons
 def design(r, kind):
     cols = {"v55": [r["v55"]], "v55+star": [r["v55"], r["star"]], "v55+star+path": [r["v55"], r["star"], r["path"]],
-            "feat+star+path": list(r["X"][:6]) + [r["star"], r["path"]], "v55+star+path3": [r["v55"], r["star"], r["path3"]]}[kind]
+            "feat+star+path": list(r["X"][:6]) + [r["star"], r["path"]], "v55+star+path3": [r["v55"], r["star"], r["path3"]],
+            "feat+star": list(r["X"][:6]) + [r["star"]], "feat+star+path3": list(r["X"][:6]) + [r["star"], r["path3"]], "feat": list(r["X"][:6])}[kind]
     return np.stack(cols + [np.ones_like(r["y"])], 1)
-for kind in ("v55+star", "v55+star+path", "v55+star+path3", "feat+star+path"):
+for kind in ("feat", "v55+star", "feat+star", "v55+star+path", "v55+star+path3", "feat+star+path3", "feat+star+path"):
     for t in rows:
         A = np.vstack([design(rows[s], kind)[rows[s]["dec"]] for s in rows if s != t and s >= 8])
         b = np.concatenate([rows[s]["y"][rows[s]["dec"]] for s in rows if s != t and s >= 8])
