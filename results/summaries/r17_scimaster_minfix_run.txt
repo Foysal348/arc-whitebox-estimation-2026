@@ -1,0 +1,14 @@
+
+[FALSIFIER] Decisive‑neuron pattern correlation:
+Layer     Correlation       Gate
+--------------------------------
+L12         -0.257154          —
+L15         -0.220227          —
+L16         -0.315562          —
+
+[GATE] ========================================
+[GATE] KILL — correlation < 0.55 at all three layers
+[GATE] L12=-0.2572  L15=-0.2202  L16=-0.3156
+[GATE] ========================================
+
+[FALSIFIER] Total wall‑clock time: 59.0 s

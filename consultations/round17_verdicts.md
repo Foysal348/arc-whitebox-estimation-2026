@@ -114,3 +114,7 @@ Source: `Architecture Analysis/Round 17 A Factorised Curvature-Birth κ₄ Carri
 | orientation fixed, true post-ReLU births only, project metric | 0.392 | 0.321 | 0.397 |
 
 **Verdict.** KILL. The fixed version sits at the known "true slices carried" level of 0.30-0.45.
+
+Addendum (8 Oct): we stored the authors' full script verbatim at `experiments/probes/r17_scimaster/falsifier_ceiling_k4_carrier.py`.
+- As written it does not run: `KeyError: 'D21'`, because the teacher key is Y21, as the prompt stated; `np.math` is also gone in NumPy 2. So it was never executed by its authors.
+- With only those two names fixed (`falsifier_ceiling_k4_carrier_minfix.py`), the script's OWN output is L12 −0.2572, L15 −0.2202, L16 −0.3156, `[GATE] KILL` (`results/summaries/r17_scimaster_minfix_run.txt`). This reproduces our re-implementation exactly.
