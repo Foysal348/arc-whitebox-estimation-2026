@@ -46,7 +46,22 @@ The raw prediction cannot be injected directly: its level is 1–4 % of the teac
   | eig64, L11–16 | ×0.912 |
   | eig64, L13–16 | ×0.952 |
 
-- **Round 3: cheaper source sets** [ROUND3_E2E_PLACEHOLDER].
+- **Round 3: cheaper sketches and source sets**, E2E, layers 7–16 [`data/kaggle_out/acds_e2e3`, `acds3_ct_probe.json`]:
+
+  | variant | MSE ratio | extra cost (thin GEMMs only, derived) |
+  |---|---|---|
+  | rsi r = 64 (randomized subspace iteration, q = 2) | ×0.864 | ≈ eig64 ≈ 28–40 u |
+  | eig r = 48 | ×0.877 | ≈ 28 u |
+  | eig r = 32 | ×0.874 | ≈ 18 u |
+  | eig r = 64, top-6 sources by norm | ×0.907 | ≈ 22 u |
+  | eig r = 32, top-6 sources | ×0.913 | ≈ 11 u |
+  | eig r = 64, young (in-window) sources only | ×0.902 | — |
+
+  Score arithmetic against V56's ~190 u, oracle map: eig32 gives 0.874 × 208/190 ≈ 0.96, about 4 % better.
+  - This is on the plain chain. V56 already ships the star and a V55 map, so the real gain will be smaller.
+  - G_m is assumed read from the young legs, as V56's star does: X = A + P·diag(w1 var).
+  - Op count is the open risk: about 20 elementwise and thin ops per source per target, roughly 3k ops.
+  - We are implementing this (V57) ourselves.
 
 **Verdict so far.** Break-even against the ~190 u V56 is about +30 u for ×0.865. C·T is real, but at its present cost it is score-neutral. We continue the cost work ourselves; you may comment on it (§4, Q3), but it is NOT your main task.
 
@@ -127,7 +142,7 @@ Hints from the evidence, not constraints:
 3. The all-distinct post-ReLU entries are the dominant wrong part.
 
 **Secondary (κ₄ cost; answer briefly):**
-- Q3. Given §1, is there a cheaper exact or near-exact C·T route for sources anchored inside the window? Young sources alone keep the signal [ROUND3_E2E_PLACEHOLDER].
+- Q3. Given §1, is there a cheaper exact or near-exact C·T route for sources anchored inside the window? Young sources alone lose some signal (×0.902 vs ×0.865 for all sources at r = 64).
 - Q4. Is C·T for L11–16 only the right cost cut?
 
 ## 5. Deliverable
