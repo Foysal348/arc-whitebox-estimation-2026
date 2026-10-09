@@ -1,0 +1,17 @@
+{
+ "id": "foysalemonshanto/k3feed-cpu-3",
+ "title": "k3feed-cpu-3",
+ "code_file": "run.py",
+ "language": "python",
+ "kernel_type": "script",
+ "is_private": true,
+ "enable_gpu": false,
+ "enable_internet": false,
+ "dataset_sources": [
+  "foysalemonshanto/k3feed-code",
+  "foysalemonshanto/r17-ceiling-data",
+  "foysalemonshanto/r20-joint-oracle-data"
+ ],
+ "competition_sources": [],
+ "kernel_sources": []
+}

@@ -1,0 +1,8 @@
+{
+ "naive_200": {
+  "file": "v56_fbg.py",
+  "env": {
+   "R7_FB_SCALE": "2.0"
+  }
+ }
+}
