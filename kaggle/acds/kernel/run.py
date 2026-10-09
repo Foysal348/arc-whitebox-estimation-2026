@@ -6,9 +6,16 @@ for f in glob.glob(f"{_src}/*.npz"):
     b = os.path.basename(f)
     dst = f"teach/{b.split('__', 1)[1]}" if b.startswith("teach__") else f"data/dumps/{b}"
     if not os.path.exists(dst): os.symlink(f, dst)
-sys.argv = ["acds_ct_probe.py", "--targets", "12,15,16", "--ranks", "32,64,128,256", "--teacher", "teach",
-            "--ceiling", "data/dumps/fable_ceiling_all.npz", "--out", "results/summaries/acds_ct_probe.json"]
-"""ACDS probe (9 Oct 2026): Age-Collapsed Dual Sketch for the Fable C.T readout, on the chain's own r7 captures.
+for f in glob.glob("/kaggle/input/**/tv__layer*_seed0.npz", recursive=True):
+    dst = f"teach/{os.path.basename(f).split('__', 1)[1]}"
+    if os.path.lexists(dst): os.remove(dst)
+    os.symlink(f, dst)
+sys.argv = ["acds2_ct_probe.py", "--targets", "7,8,9,10,11,12,13,14,15,16", "--ranks", "64,96,128", "--save", "results/summaries/acds2_feats.npz", "--teacher", "teach",
+            "--ceiling", "data/dumps/fable_ceiling_all.npz", "--out", "results/summaries/acds2_ct_probe.json"]
+"""ACDS round 2 (10 Oct 2026): Astra's grouped A/P evaluation and direct-Gamma sketches (gamA: per-anchor
+orthonormal basis of Gamma_a Omega; gamAw: same with the target-aware column weights omega; gam1/gam1w: one basis at the window start,
+transported like a leg; eig: top-r eigenvectors of C, the round-1 reference). Round-1 header follows.
+ACDS probe (9 Oct 2026): Age-Collapsed Dual Sketch for the Fable C.T readout, on the chain's own r7 captures.
 
 Proposal (external, Architecture Analysis/fable_ct_agecollapsed_rank64.py), re-implemented in the conventions of
 experiments/probes/fable_component_2026-10-09.py (w1 transport, blocks_of_source with rres/rfb, legs [neuron, hub]):
@@ -30,12 +37,14 @@ from math import erf, sqrt, pi
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--targets", default="12,15,16")
-ap.add_argument("--ranks", default="64,128")
+ap.add_argument("--ranks", default="64,80,96,128")
 ap.add_argument("--h", type=int, default=6)
 ap.add_argument("--cap", default="data/dumps")
 ap.add_argument("--teacher", default="data/kaggle_out/kaggle_out_k4pub/k4teach")
 ap.add_argument("--ceiling", default="data/kaggle_out/fable_ceiling_all/fable_ceiling_all.npz")
-ap.add_argument("--out", default="results/summaries/acds_ct_probe.json")
+ap.add_argument("--out", default="results/summaries/acds2_ct_probe.json")
+ap.add_argument("--save", default="", help="npz with star / ct variants per target (for E2E fits)")
+ap.add_argument("--first-stack", type=int, default=3, help="window start is clipped to the first stack layer")
 args = ap.parse_args()
 f32 = lambda x: np.asarray(x, np.float32); f64 = lambda x: np.asarray(x, np.float64)
 pdf = lambda x: np.exp(-x * x / 2) / sqrt(2 * pi)
@@ -79,14 +88,14 @@ def corr(a, b):
     return float((a * b).sum() / d) if d > 0 else float("nan")
 
 
-res = {}
+res = {}; SAVE = {}
 LAY = {l: Cap(os.path.join(args.cap, f"r7_cap_L{l}.npz")) for l in range(1, 17) if os.path.exists(os.path.join(args.cap, f"r7_cap_L{l}.npz"))}
 STACKS = [l for l in sorted(LAY) if "A_st" in LAY[l].z.files]
 TRK = ("A_st", "P_st", "Z_st", "Zf_st")                                   # neuron legs: transported, leg <- Ystep^T leg
 STK = ("L_st", "R1T_st", "R2T_st", "w2b", "s_b", "e_b", "c1_b", "c2_b")   # hub side / per-source scalars: static
 print("stack layers", STACKS, {l: LAY[l]["A_st"].shape[0] for l in STACKS}, flush=True)
 for t in [int(x) for x in args.targets.split(",")]:
-    m0 = max(1, t - args.h); win = list(range(m0, t))
+    m0 = max(args.first_stack, t - args.h); win = list(range(m0, t))
     l0 = max(l for l in STACKS if l <= m0)
     rres, rfb = int(LAY[l0]["rres"]), int(LAY[l0]["rfb"])
     w1 = {l: f32(LAY[l]["W_all"][:, 4]) for l in range(l0, t)}
@@ -134,30 +143,67 @@ for t in [int(x) for x in args.targets.split(",")]:
         for A, H in roles(blocks_of_source(states[a], s, rres, rfb), bt[s]):
             ct_col += 8.0 * f64(((A.T @ Gam[a]) * H.T).sum(0)); nterms += 1     # (A^T Gamma)[h, i] H[i, h]
     print(f"[L{t}] age-collapsed exact done, {nterms} source-role terms ({time.time() - t0:.0f}s)", flush=True)
-    # 3) ACDS sketches
-    sk = {}
-    Cm0 = f64(LAY[m0]["C_off"]) + np.diag(f64(LAY[m0]["var"]))
-    ev, V = np.linalg.eigh(Cm0)
+    # 3) Astra round 2: grouped A/P evaluation (exact identity check) + direct-Gamma sketches
+    parts = {}
+    for s_, a in anchor.items():
+        sa, stt = states[a], states[t]
+        A = f32(sa["A_st"][s_]); P = f32(sa["P_st"][s_]); Z = f32(sa["Z_st"][s_]); Zf = f32(sa["Zf_st"][s_])
+        L = f32(sa["L_st"][s_]); w2b, sb, eb, c1, c2 = (f32(sa[k][s_])[None, :] for k in ("w2b", "s_b", "e_b", "c1_b", "c2_b"))
+        (X1t, Pt, Y1t), (Mt, _, _), (X3t, _, Y3t) = bt[s_]
+        HA = 3 * (Pt * Y1t) + (X1t * Pt) * w2b + 3 * (Pt * Pt) * eb + (Pt * Y3t) * c1
+        HP = X1t * Y1t + (Pt * Pt) * sb + 2 * (Mt * Pt) + (Pt * Y3t) * c2 + X3t * Y3t
+        low = [(Z, (Pt * Pt) @ L), (Z[:, rres + 1:rres + 2], (X3t * Pt).sum(1, keepdims=True))]
+        if rfb > 0:
+            low += [(Zf[:, :rfb], (Pt * Y1t) @ f32(sa["R1T_st"][s_])), (Zf[:, rfb:], (X1t * Pt) @ f32(sa["R2T_st"][s_]))]
+        lowc = sum(f64(((Za.T @ Gam[a]).T * HR).sum(1)) for Za, HR in low)      # exact: Z^T Gamma is thin
+        parts[s_] = (a, A, P, HA, HP, lowc)
+    ct_grp = np.zeros(n)
+    for s_, (a, A, P, HA, HP, lowc) in parts.items():
+        ct_grp += 8.0 * (f64(((A.T @ Gam[a]).T * HA).sum(1)) + f64(((P.T @ Gam[a]).T * HP).sum(1)) + lowc)
+    print(f"[L{t}] grouped exact vs per-age: rel err {np.linalg.norm(ct_grp - ct_age) / np.linalg.norm(ct_age):.2e} ({time.time() - t0:.0f}s)", flush=True)
+    # target-aware weights (chain's own mu / var at t): omega_i = dec_i sqrt(lambda_i) / v_i^2
+    vt = f64(LAY[t]["var"]); dct = np.abs(f64(LAY[t]["mu"]) / np.sqrt(vt)) < 1.5
+    lam = np.zeros(n)
+    for s_, (a, A, P, HA, HP, lowc) in parts.items():
+        lam += f64((HA ** 2) @ (A ** 2).sum(0)) + f64((HP ** 2) @ (P ** 2).sum(0))
+    omg = f32(dct * np.sqrt(lam) / (vt ** 2 + 1e-6 * np.median(vt ** 2)))
+    anchors = sorted(set(a for a, *_ in parts.values()))
+
+    def evaluate(Sb):
+        """Sb: {anchor: basis n x r}; Pi_a = S_a^T Gamma_a (= sum_m S_m^T G_m with S transported); S~ = S (S^T S)^-1."""
+        ct = np.zeros(n)
+        for a in anchors:
+            S = Sb[a]; M = f64(S.T @ S); Sti = f32(f64(S) @ np.linalg.inv(M + 1e-10 * np.trace(M) / S.shape[1] * np.eye(S.shape[1])))
+            Pi = S.T @ Gam[a]
+            for s_, (aa, A, P, HA, HP, lowc) in parts.items():
+                if aa != a: continue
+                Zs = HA @ (A.T @ Sti) + HP @ (P.T @ Sti)
+                ct += 8.0 * (f64((Zs * Pi.T).sum(1)) + lowc)
+        return ct
+
+    def transported(S0):
+        S = {m0: S0}
+        for m in win[:-1]:
+            S[m + 1] = Ystep[m].T @ S[m]
+        return S
+    sk = {}; cost = {}
+    nsrc = len(parts); u = lambda nprod, r: nprod * r / n
+    Cm0 = f64(LAY[m0]["C_off"]) + np.diag(f64(LAY[m0]["var"])); ev, V = np.linalg.eigh(Cm0)
     for r in [int(x) for x in args.ranks.split(",")]:
-        rng = np.random.default_rng(1709 + t)
-        for kind, S0 in (("rad", Cm0 @ (rng.choice([-1.0, 1.0], size=(n, r)) / np.sqrt(r))), ("eig", V[:, -r:])):
-            S = {m0: f32(S0)}
-            for m in win[:-1]:
-                S[m + 1] = Ystep[m].T @ S[m]
-            Pi = {}; run = None
-            for a in reversed(win):
-                x = S[a].T @ G[a]; run = x if run is None else run + x; Pi[a] = run
-            Sti = {}
-            for a in win:
-                M = f64(S[a].T @ S[a]); Sti[a] = f32(f64(S[a]) @ np.linalg.inv(M + 1e-10 * np.trace(M) / r * np.eye(r)))
-            ct = np.zeros(n)
-            for s, a in anchor.items():
-                for A, H in roles(blocks_of_source(states[a], s, rres, rfb), bt[s]):
-                    B = A.T @ Sti[a]; ct += 8.0 * f64(((H @ B) * Pi[a].T).sum(1))
-            sk[f"{kind}{r}"] = ct
-        print(f"[L{t}] rank {r} done ({time.time() - t0:.0f}s)", flush=True)
+        Om = f32(np.random.default_rng(1709 + t).choice([-1.0, 1.0], size=(n, r)))
+        orth = lambda R: f32(np.linalg.qr(f64(R))[0])
+        sk[f"gamA{r}"] = evaluate({a: orth(Gam[a] @ Om) for a in anchors})
+        sk[f"gamAw{r}"] = evaluate({a: orth(Gam[a] @ (omg[:, None] * Om)) for a in anchors})
+        sk[f"gamAp{r}"] = evaluate({a: orth(Gam[a] @ (Gam[a].T @ orth(Gam[a] @ Om))) for a in anchors})       # one power step
+        sk[f"gamAwp{r}"] = evaluate({a: orth(Gam[a] @ (Gam[a].T @ orth(Gam[a] @ (omg[:, None] * Om)))) for a in anchors})
+        sk[f"gam1{r}"] = evaluate(transported(orth(Gam[m0] @ Om)))
+        sk[f"gam1w{r}"] = evaluate(transported(orth(Gam[m0] @ (omg[:, None] * Om))))
+        sk[f"eig{r}"] = evaluate(transported(f32(V[:, -r:])))
+        src = 4 * nsrc
+        cost[r] = {"gamA": u(src + 11 + sum(2 * (t - a) - 1 for a in anchors), r), "gamAp": u(src + 33 + sum(2 * (t - a) - 1 for a in anchors), r), "gam1": u(src + 22, r), "eig": u(src + 11, r)}
+        print(f"[L{t}] rank {r} done; per-target thin-GEMM cost u: {cost[r]} ({time.time() - t0:.0f}s)", flush=True)
     # scores
-    T = np.load(os.path.join(args.teacher, f"layer{t}_seed0.npz")); v = np.diag(f64(T["C"])); K4 = f64(T["K4d"])
+    T = np.load(os.path.join(args.teacher, f"layer{t}_seed0.npz")); v = f64(T["var"]) if "var" in T.files else np.diag(f64(T["C"])); K4 = f64(T["K4d"])
     dec = np.abs(f64(T["mean"]) / np.sqrt(v)) < 1.5
     exact = sum(f64(ceil[f"L{t}_j{j}_ct"]) for j in range(1, t - m0 + 1))
     exstar = sum(f64(ceil[f"L{t}_j{j}_star"]) for j in range(1, t - m0 + 1))
@@ -166,18 +212,21 @@ for t in [int(x) for x in args.targets.split(",")]:
     def feat(cols):
         X = np.stack([c / v ** 2 for c in cols] + [np.ones(n)], 1); y = K4 / v ** 2
         b = np.linalg.lstsq(X, y, rcond=None)[0]; return corr((X @ b)[dec], y[dec])
-    cands = {"ct_age": ct_age, "ct_collapsed": ct_col, **sk}
-    row = {"identity_rel_err": float(np.linalg.norm(ct_col - ct_age) / np.linalg.norm(ct_age)),
+    cands = {"ct_age": ct_age, "ct_grouped": ct_grp, **sk}
+    row = {"identity_rel_err": float(np.linalg.norm(ct_col - ct_age) / np.linalg.norm(ct_age)), "grouped_rel_err": float(np.linalg.norm(ct_grp - ct_age) / np.linalg.norm(ct_age)),
+           "cost_u_per_target": cost, "n_sources": nsrc, "anchors": anchors,
            "star_fidelity": corr(star[dec], exstar[dec]),
            "fidelity_vs_ceiling": {k: corr(x[dec], exact[dec]) for k, x in cands.items()},
            "fidelity_vs_chain": {k: corr(x[dec], ct_age[dec]) for k, x in cands.items()},
            "teacher_affine": {"chain": feat([ck]), "ceil_star_ct": feat([ck, exstar + exact]),
                               **{k: feat([ck, star + x]) for k, x in cands.items()}}}
     res[t] = row
+    SAVE.update({f'L{t}_star': star, **{f'L{t}_{k}': x for k, x in cands.items()}})
     print(f"[L{t}] identity err {row['identity_rel_err']:.2e} | fidelity vs ceiling " +
           " ".join(f"{k} {x:.3f}" for k, x in row["fidelity_vs_ceiling"].items()) + " | vs chain " +
           " ".join(f"{k} {x:.3f}" for k, x in row["fidelity_vs_chain"].items()) + " | teacher affine " +
           " ".join(f"{k} {x:.3f}" for k, x in row["teacher_affine"].items()), flush=True)
-    del states, G, bt, Gam
+    del states, G, bt, Gam, parts
 json.dump(res, open(args.out, "w"), indent=1)
+if args.save: np.savez(args.save, **SAVE)
 print(f"wrote {args.out} ({time.time() - t0:.0f}s)")

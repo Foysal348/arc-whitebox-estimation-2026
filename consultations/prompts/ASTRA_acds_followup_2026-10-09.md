@@ -75,3 +75,34 @@ We believe they stay elementwise, so the grouping is exact, but we want a second
 
 Please answer with formulas and FLOP/op counts. Do not report fidelity numbers as measured unless you ran them; we
 will run the measurements on our side.
+
+## 5. Addendum: full measurement (Kaggle, public MLP #0, targets L12 / L15 / L16, 6-age window)
+Consistent source subset: legs are transported from the stack layers 3, 7, 11, 14 and 15, giving 90, 117 and 126
+source-role terms. Fidelity is measured on decisive neurons.
+
+| quantity | L12 | L15 | L16 |
+|---|---|---|---|
+| age-collapse identity, relative error | 3.0e-7 | 2.9e-7 | 3.0e-7 |
+| subset chain C.T vs sample-exact ceiling C.T | 0.927 | 0.956 | 0.962 |
+| sketch vs chain C.T: rad64 / eig64 | 0.889 / 0.926 | 0.921 / 0.944 | 0.929 / 0.932 |
+| sketch vs chain C.T: rad128 / eig128 | 0.939 / 0.953 | 0.958 / 0.967 | 0.950 / 0.954 |
+| sketch vs chain C.T: rad256 / eig256 | 0.975 / 0.976 | 0.980 / 0.978 | 0.970 / 0.970 |
+| teacher metric, affine(chain ck4, star + X): X = exact chain C.T | 0.725 | 0.760 | 0.778 |
+| same, X = rad64 / eig64 | 0.595 / 0.628 | 0.613 / 0.627 | 0.596 / 0.598 |
+| same, X = rad128 / eig128 | 0.652 / 0.669 | 0.657 / 0.669 | 0.656 / 0.666 |
+| same, X = rad256 / eig256 | 0.701 / 0.707 | 0.704 / 0.711 | 0.715 / 0.712 |
+| same, X = sample-exact ceiling star + C.T | 0.859 | 0.858 | 0.843 |
+
+Reading:
+- A sketch fidelity of 0.93 still costs 0.13-0.18 of teacher corr. The sketch error is not noise-like; it removes
+  exactly the part of C.T that predicts kappa4.
+- With the anchor grouping, the cost is about 40 u at r = 64, about 80 u at r = 128 and about 160 u at r = 256.
+  Only r = 256 keeps about 93% of the exact-C.T teacher corr, and that is too expensive.
+- New question 4: we need a representation of A^T Gamma (or of Q = sum_s A_s H_s^T) that keeps the
+  kappa4-predictive part at about 40 u. Which directions does the sketch lose? Candidates:
+  - a sketch aligned to the anchors' range (pooled A_s, P_s at a) instead of C;
+  - an error-aware sketch, e.g. weighting S by g o Ybar, the hub functional that multiplies Q in ct;
+  - a 2-sided sketch (neuron side and hub side);
+  - exploiting the structure of A itself (A = transported w1 C_off at birth, so its range is C-like at birth but
+    rotates under transport).
+  Please give formulas, costs in u, and why each would keep the predictive part.
