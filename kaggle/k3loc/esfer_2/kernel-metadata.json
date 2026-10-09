@@ -1,0 +1,15 @@
+{
+ "id": "esfersami50/k3loc-2",
+ "title": "k3loc-2",
+ "code_file": "run.py",
+ "language": "python",
+ "kernel_type": "script",
+ "is_private": true,
+ "enable_gpu": false,
+ "enable_internet": true,
+ "dataset_sources": [
+  "esfersami50/r20-joint-oracle-data"
+ ],
+ "competition_sources": [],
+ "kernel_sources": []
+}

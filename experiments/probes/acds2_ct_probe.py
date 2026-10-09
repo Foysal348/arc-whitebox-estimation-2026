@@ -29,6 +29,7 @@ ap.add_argument("--cap", default="data/dumps")
 ap.add_argument("--teacher", default="data/kaggle_out/kaggle_out_k4pub/k4teach")
 ap.add_argument("--ceiling", default="data/kaggle_out/fable_ceiling_all/fable_ceiling_all.npz")
 ap.add_argument("--out", default="results/summaries/acds2_ct_probe.json")
+ap.add_argument("--lite", type=int, default=0, help="1: eig / rsi / source-subset variants only (round 3)")
 ap.add_argument("--save", default="", help="npz with star / ct variants per target (for E2E fits)")
 ap.add_argument("--first-stack", type=int, default=3, help="window start is clipped to the first stack layer")
 args = ap.parse_args()
@@ -155,14 +156,14 @@ for t in [int(x) for x in args.targets.split(",")]:
     omg = f32(dct * np.sqrt(lam) / (vt ** 2 + 1e-6 * np.median(vt ** 2)))
     anchors = sorted(set(a for a, *_ in parts.values()))
 
-    def evaluate(Sb):
+    def evaluate(Sb, keep=None):
         """Sb: {anchor: basis n x r}; Pi_a = S_a^T Gamma_a (= sum_m S_m^T G_m with S transported); S~ = S (S^T S)^-1."""
         ct = np.zeros(n)
         for a in anchors:
             S = Sb[a]; M = f64(S.T @ S); Sti = f32(f64(S) @ np.linalg.inv(M + 1e-10 * np.trace(M) / S.shape[1] * np.eye(S.shape[1])))
             Pi = S.T @ Gam[a]
             for s_, (aa, A, P, HA, HP, lowc) in parts.items():
-                if aa != a: continue
+                if aa != a or (keep is not None and s_ not in keep): continue
                 Zs = HA @ (A.T @ Sti) + HP @ (P.T @ Sti)
                 ct += 8.0 * (f64((Zs * Pi.T).sum(1)) + lowc)
         return ct
@@ -177,6 +178,19 @@ for t in [int(x) for x in args.targets.split(",")]:
     Cm0 = f64(LAY[m0]["C_off"]) + np.diag(f64(LAY[m0]["var"])); ev, V = np.linalg.eigh(Cm0)
     for r in [int(x) for x in args.ranks.split(",")]:
         Om = f32(np.random.default_rng(1709 + t).choice([-1.0, 1.0], size=(n, r)))
+        if args.lite:
+            Se = transported(f32(V[:, -r:]))
+            Q = np.linalg.qr(Cm0 @ np.random.default_rng(7 + t).standard_normal((n, r)))[0]
+            for _ in range(2): Q = np.linalg.qr(Cm0 @ Q)[0]                  # randomized subspace iteration, q = 2 (3 thin C products)
+            imp = {s_: float(np.linalg.norm(A) * np.linalg.norm(HA) + np.linalg.norm(P) * np.linalg.norm(HP)) for s_, (a, A, P, HA, HP, lowc) in parts.items()}
+            top = set(sorted(imp, key=imp.get)[-6:])
+            sk[f"eig{r}"] = evaluate(Se); sk[f"rsi{r}"] = evaluate(transported(f32(Q)))
+            sk[f"eig{r}_old"] = evaluate(Se, {s_ for s_, v in parts.items() if v[0] == m0})
+            sk[f"eig{r}_young"] = evaluate(Se, {s_ for s_, v in parts.items() if v[0] > m0})
+            sk[f"eig{r}_top6"] = evaluate(Se, top)
+            cost[r] = {"eig": u(4 * nsrc + 11, r), "top6": u(4 * min(6, nsrc) + 11, r), "rsi_extra": u(3, r)}
+            print(f"[L{t}] rank {r} done (lite); n_old {sum(v[0] == m0 for v in parts.values())} n_young {sum(v[0] > m0 for v in parts.values())}; cost u {cost[r]} ({time.time() - t0:.0f}s)", flush=True)
+            continue
         orth = lambda R: f32(np.linalg.qr(f64(R))[0])
         sk[f"gamA{r}"] = evaluate({a: orth(Gam[a] @ Om) for a in anchors})
         sk[f"gamAw{r}"] = evaluate({a: orth(Gam[a] @ (omg[:, None] * Om)) for a in anchors})

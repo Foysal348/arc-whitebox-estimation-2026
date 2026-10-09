@@ -1,0 +1,22 @@
+{
+ "2": {
+  "teacher_noise_rel_D21": 0.05306560399464858,
+  "teacher_noise_rel_d3": 0.05356880422776793
+ },
+ "4": {
+  "teacher_noise_rel_D21": 0.025473241202170902,
+  "teacher_noise_rel_d3": 0.02201306674959919
+ },
+ "8": {
+  "teacher_noise_rel_D21": 0.011573865955412588,
+  "teacher_noise_rel_d3": 0.00936867741038761
+ },
+ "12": {
+  "teacher_noise_rel_D21": 0.006950998833356493,
+  "teacher_noise_rel_d3": 0.005560785368478092
+ },
+ "16": {
+  "teacher_noise_rel_D21": 0.004785479238105253,
+  "teacher_noise_rel_d3": 0.0038040625657679585
+ }
+}
