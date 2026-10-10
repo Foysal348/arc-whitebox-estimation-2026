@@ -358,7 +358,7 @@ REF_R = [6.58815e-03, 8.18414e-03, 8.53136e-03, 8.38859e-03, 8.10153e-03, 7.7428
 BETA = float(_os.environ.get("V25_BETA", "1.2"))
 # STUDENT TEACHER DUMP (11 Oct 2026): per-layer chain quantities for distilling the Round-20 pair-memory student.
 # STUDENT_DUMP=1 enables; STUDENT_ROWS = number of sampled rows of the n x n slices (D21, C_pre, K21); STUDENT_FULL=1 keeps
-# the full matrices; STUDENT_SEED = network seed (row choice is deterministic in (seed, layer)). Read via DUMP_STORE.
+# the full matrices (C is dumped with the chain's zeroed diagonal: put var back); STUDENT_SEED = network seed (row choice is deterministic in (seed, layer)). Read via DUMP_STORE.
 STUDENT_DUMP = _os.environ.get("STUDENT_DUMP", "0") == "1"
 DUMP_STORE = {}  # foyshal_sk 24 Sep: 1.0 -> 1.2 (100-MLP paired, see FB_SCALE)
 DEBUG = []  # parity_v17.py: per-layer dict of diagnostics when V17_DEBUG=1
@@ -739,12 +739,12 @@ def _student_dump(layer, n, mu, var, D3, D21, C_pre, g4row, g4mean, K1v, K2v, K3
     rows_k = int(_os.environ.get("STUDENT_ROWS", "32")); full = _os.environ.get("STUDENT_FULL", "0") == "1"
     seed = int(_os.environ.get("STUDENT_SEED", "0"))
     idx = _npd.sort(_npd.random.default_rng(seed * 1000 + layer).choice(n, size=min(rows_k, n), replace=False))
-    a = lambda x: None if x is None else _npd.asarray(x, dtype=_npd.float32)
+    a = lambda x: None if x is None else _npd.array(x, dtype=_npd.float32, copy=True)   # copies: the chain reuses pooled buffers
     d = dict(mu_pre=a(mu), var=a(var), d3=a(D3), g4row=a(g4row), g4mean=a(g4mean), post_mean=a(K1v), post_var=a(K2v),
              post_d3=a(K3v), post_k4=a(K4v), lam=_npd.float32(float(lam)), rows=idx.astype(_npd.int32))
     for nm, M in (("D21", D21), ("C", C_pre), ("K21", K21), ("K22", K22)):
         if M is not None:
-            Mn = _npd.asarray(M, dtype=_npd.float32)
+            Mn = _npd.array(M, dtype=_npd.float32, copy=True)
             d[nm + "_rows"] = Mn[idx]
             if full: d[nm] = Mn
     DUMP_STORE[layer] = {k: v for k, v in d.items() if v is not None}
