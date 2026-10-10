@@ -186,6 +186,7 @@ def _or_load(name, layer1):
     return _OR_CACHE[key]
 
 _CBA_MODE = _os_or.environ.get("CBA_MODE", "none")   # none | zero (closures + births) | zero_closure (births keep the true D21)
+_CBA_D3S = float(_os_or.environ.get("CBA_D3S", "1.0")); _CBA_D21S = float(_os_or.environ.get("CBA_D21S", "1.0"))
 _CBA_LMIN = int(_os_or.environ.get("CBA_LMIN", "1")); _CBA_LMAX = int(_os_or.environ.get("CBA_LMAX", "0")); _CBA_USED = []
 _R20_K4 = _os_or.environ.get("R20_K4", "none")
 _R20_LMIN = int(_os_or.environ.get("R20_K4_LMIN", "1")); _R20_LMAX = int(_os_or.environ.get("R20_K4_LMAX", "99"))
@@ -1162,7 +1163,14 @@ class Estimator(BaseEstimator):
                 # CBA falsifier (10 Oct 2026, Astra CBA-13): inside the window the closures (and, in mode "zero", the births'
                 # feedback / repeated-index inputs too) see a cheap kappa3 (here: zero) while the source bank keeps evolving
                 # exactly, i.e. it is "rematerialised" for free after the window. Measures the trajectory damage of cheap early kappa3.
-                if _CBA_MODE != "none" and _CBA_LMIN <= li + 1 <= _CBA_LMAX:
+                if _CBA_MODE == "scale" and _CBA_LMIN <= li + 1 <= _CBA_LMAX:
+                    # 10 Oct: zero-FLOP kappa3 level test: d3 and/or the D21 slice multiplied by fixed factors in the window
+                    _CBA_USED.append(li + 1)
+                    if D3 is not None and _CBA_D3S != 1.0:
+                        D3 = D3 * _CBA_D3S
+                    if D21 is not None and _CBA_D21S != 1.0:
+                        D21 = D21 * _CBA_D21S
+                elif _CBA_MODE != "none" and _CBA_LMIN <= li + 1 <= _CBA_LMAX:
                     _CBA_USED.append(li + 1)
                     D3 = D3 * 0.0 if D3 is not None else D3
                     if D21 is not None:
