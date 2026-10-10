@@ -6,19 +6,20 @@ you specified it:
 2. the trajectory-distillation falsifier, with free-running rollouts and held-out networks;
 3. only if both pass, the scale-up.
 
-Please write the plan so that we (an AI coding assistant plus two Kaggle accounts) can execute it step by step without
-further design decisions. Below are our real constraints and assets. Where the plan depends on something we have not
+Please write the plan so that we (an AI coding assistant plus two Kaggle accounts with GPU) can execute it step by step
+without further design decisions. Aim for the version with the best chance of passing; size it to the resources below. Below are our real constraints and assets. Where the plan depends on something we have not
 told you, state the assumption explicitly.
 
 ## Time and compute
-- **Time.** Submissions close 18 Oct 2026, 05:59 Bangladesh time (17 Oct 23:59 UTC). Today is 11 Oct. We can give this
-  test at most about 3 days before deciding to stop or implement.
+- **Time.** Submissions close 18 Oct 2026, 05:59 Bangladesh time (17 Oct 23:59 UTC). Today is 11 Oct. We give this test
+  4 full days, 11–14 Oct, so that a passing student can be exported, validated and submitted on 15–17 Oct.
 - **Compute.**
-  - No GPU quota.
-  - Kaggle CPU kernels, about 4 cores and 30 GB RAM each: up to 5 concurrent per account, 2 accounts, 12 h maximum per
-    kernel.
-  - The laptop has about 1–3 GB free RAM: light work only.
-  - PyTorch is available on Kaggle CPU.
+  - Kaggle GPU: 50+ GPU-hours across our two accounts, and about 30 more can be added if needed. Plan the training on
+    GPU (P100 / T4 class).
+  - Kaggle CPU kernels (4 cores, 30 GB RAM, 12 h each, up to 5 concurrent per account, 2 accounts) for teacher-label
+    generation and evaluation.
+  - PyTorch is available on Kaggle.
+  - The laptop is for light work only.
 - **Grader limits (deployment).**
   - 120 s wall per network;
   - 0.4 s residual Python time per network, which scales with the number of flopscope ops (keep about ≤ 18–20k ops per
@@ -63,12 +64,12 @@ told you, state the assumption explicitly.
      float32 is 4 MB; 16 layers × several matrices × N networks).
    - Whether to log full matrices or sampled entries.
    - Whether to use public-mini networks (with truth) or self-generated ones.
-4. **Training procedure on CPU.**
+4. **Training procedure (GPU).**
    - Loss terms and weights (final mean, per-layer channels, normalisation).
    - Optimiser and learning rate.
-   - BPTT through 16 layers of n = 1024 dense products: memory per rollout, use of checkpointing, minibatching over
-     networks, and the expected wall time per epoch on a 4-core CPU (each rollout is about 128 dense 1024³ products
-     forward).
+   - BPTT through 16 layers of n = 1024 dense products on GPU: memory per rollout, checkpointing, minibatching over
+     networks, and the expected wall time per epoch (each rollout is about 128 dense 1024³ products forward).
+   - How to split the 50+ GPU-hours across runs and seeds.
    - Whether we should train at a smaller width first (e.g. n = 256) and transfer, given your parameters are shared
      and width-independent.
 5. **Free-running evaluation protocol.**
@@ -77,7 +78,7 @@ told you, state the assumption explicitly.
    - Seeds, how many runs.
    - What counts as a stop.
 6. **Ablations, if cheap:** without H2; without the odd readout O; without g.
-7. **Day-by-day schedule** for ≤ 3 days with explicit stop points.
+7. **Day-by-day schedule** for 11–14 Oct, with the go/no-go point for export on 15 Oct.
 8. **Inference export** (only if everything passes): how the trained heads become flopscope ops within the op budget,
    and how to validate on our 100-network harness before any grader submission.
 
