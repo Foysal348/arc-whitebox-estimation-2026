@@ -1,0 +1,2613 @@
+{
+ "total_u": 193.83374127792194,
+ "by_function": {
+  "prod": 59.60553433559835,
+  "_predict_core": 109.41308308159932,
+  "_sym_product": 6.200338006019592,
+  "_d21_live": 10.1578400246799,
+  "_dslices": 7.498539925552905,
+  "_hub2": 0.5640907287597656,
+  "<lambda>": 0.33769887685775757,
+  "_zero_diag": 7.867813110351562e-05,
+  "ab": 1.430511474609375e-05
+ },
+ "by_region": {
+  "[prod]": [
+   59.60553433559835,
+   630
+  ],
+  "L931: linear": [
+   104.4360033092089,
+   7255
+  ],
+  "[_sym_product]": [
+   6.200338006019592,
+   1729
+  ],
+  "[_d21_live]": [
+   10.1578400246799,
+   4077
+  ],
+  "L1383: nonlin terms (fused)": [
+   3.2307758857496083,
+   1734
+  ],
+  "[_dslices]": [
+   7.498539925552905,
+   1184
+  ],
+  "[_hub2]": [
+   0.5640907287597656,
+   330
+  ],
+  "[<lambda>]": [
+   0.33769887685775757,
+   49
+  ],
+  "L1692: assemble": [
+   1.0401559202000499,
+   825
+  ],
+  "L1548: new source (V1.6, struct-free Y1 = a_b * D(w2))": [
+   0.4536322131752968,
+   737
+  ],
+  "L1513: wick old blocks + dslice scalings": [
+   0.07305441983044147,
+   173
+  ],
+  "L1244: WK slices": [
+   0.053795923944562674,
+   565
+  ],
+  "L1356: wick matrix": [
+   0.00777435302734375,
+   384
+  ],
+  "L1635: pK -> K (per-entry; d=1 outputs are vector ops, d=2 few entries)": [
+   0.11739492416381836,
+   675
+  ],
+  "L806: ": [
+   0.0004961322993040085,
+   44
+  ],
+  "[_zero_diag]": [
+   7.867813110351562e-05,
+   165
+  ],
+  "[ab]": [
+   1.430511474609375e-05,
+   30
+  ]
+ },
+ "lines": [
+  [
+   "prod",
+   678,
+   58.83840927388519,
+   420,
+   "fnp.matmul(L_, fnp.swapaxes(R_, -1, -2), out=T)"
+  ],
+  [
+   "_predict_core",
+   1180,
+   52.87191718816757,
+   1263,
+   "smm.mm(Wl[None, None], fnp.take(legs4[\"AP0\"][2 * ka:hi + 1], cidx, axis=2),"
+  ],
+  [
+   "_predict_core",
+   1193,
+   10.134308338165283,
+   366,
+   "smm.mm(W[None, None], legs4[\"AP0\"][2 * ka:2 * k + extra],"
+  ],
+  [
+   "_predict_core",
+   1164,
+   9.560743689537048,
+   730,
+   "smm.mm(QU[None, None], fap24[:2 * kb], legs4[\"AP1\"][:2 * kb],"
+  ],
+  [
+   "_predict_core",
+   1159,
+   7.409926652908325,
+   1130,
+   "smm.mm(Qc[None, None], fap4[2 * fa_off:2 * (fa_off + m1)],"
+  ],
+  [
+   "_sym_product",
+   1801,
+   6.172994256019592,
+   1589,
+   "self._smm.mm(X3, Y3, O3, self._smm.level(h, n, h, lev))"
+  ],
+  [
+   "_d21_live",
+   1819,
+   3.7943367771804333,
+   1213,
+   "smm.hub(rows(lap4[2 * ka:2 * k], 2), fnp.take(apb4[2 * ka:2 * k], oidx, axis=2), Dc,"
+  ],
+  [
+   "_predict_core",
+   1040,
+   3.155983207281679,
+   1065,
+   "smm.mm(Qn_c.T[None, None], fnp.take(legs[\"AP0\"][j], cidx, axis=1)[:, None],"
+  ],
+  [
+   "_predict_core",
+   1478,
+   2.5391573905944824,
+   15,
+   "PK2 = fnp.einsum(\"tij,ti,tj,tg->gij\", ABstack, WL2, WR2, fpm[\"IND2\"])"
+  ],
+  [
+   "_predict_core",
+   1057,
+   2.1434535272419453,
+   919,
+   "smm.mm(Tq[None, None], fap4[2 * fa_off:2 * (fa_off + m1)], fap4_new[:2 * m1],"
+  ],
+  [
+   "_dslices",
+   1890,
+   2.05078125,
+   30,
+   "MP = fnp.matmul(Z_st, fnp.swapaxes(L_st, -1, -2), out=bufs[\"mp\"][:k])   # V27: BLAS path"
+  ],
+  [
+   "_predict_core",
+   1116,
+   2.005279541015625,
+   6,
+   "fnp.matmul(T2[None, None], FAP2, out=fap2_new[:kb])"
+  ],
+  [
+   "_d21_live",
+   1846,
+   1.739384651184082,
+   11,
+   "PPL = fnp.matmul(PP, L_st, out=bufs[\"ppl\"][:k])"
+  ],
+  [
+   "_predict_core",
+   1133,
+   1.6134050614200532,
+   1048,
+   "smm.mm(Wl[None, None], Qn_c[None, None], Qc[None, None], smm.level(n, nlc, r_old, s_sb))"
+  ],
+  [
+   "_predict_core",
+   1197,
+   1.4741935729980469,
+   22,
+   "Z_st = fnp.matmul(WDl[None], fnp.take(Z_st, cidx, axis=1),"
+  ],
+  [
+   "_predict_core",
+   1182,
+   1.47161865234375,
+   33,
+   "fnp.add(legs[\"AP1\"][k, 1], fnp.matmul(fnp.take(W, didx_prev, axis=1),"
+  ],
+  [
+   "_d21_live",
+   1839,
+   1.452560167759657,
+   1111,
+   "smm.mm(inner[None, None], fnp.take(Qc, oidx, axis=0).T[None, None], Tl[None, None],"
+  ],
+  [
+   "_predict_core",
+   989,
+   1.4007364958524704,
+   8,
+   "Qn_c, _ = fnp.linalg.qr(Qp_c)  # V48: dead rows of Qp are zero"
+  ],
+  [
+   "_d21_live",
+   1847,
+   1.2855205535888672,
+   44,
+   "fnp.add(Dc, fnp.einsum(\"kiq,kcq->ic\", rows(PPL, 1), fnp.take(Z_st, oidx, axis=1)) * (1.0 / 3.0), out=Dc)"
+  ],
+  [
+   "_predict_core",
+   1215,
+   1.1465187072753906,
+   125,
+   "smm.mm(W[None, None], legs4[\"AP0\"][0:2], legs4[\"AP1\"][0:2],"
+  ],
+  [
+   "_predict_core",
+   1075,
+   1.0662374272942543,
+   27,
+   "Sj = fnp.einsum(\"ai,bi->ab\", _ya, _ya) + fnp.einsum(\"ai,bi->ab\", _yp, _yp)"
+  ],
+  [
+   "_predict_core",
+   1095,
+   0.82929577678442,
+   21,
+   "S_s = fnp.einsum(\"ai,bi->ab\", _ya, _ya) + fnp.einsum(\"ai,bi->ab\", _yp, _yp)"
+  ],
+  [
+   "_predict_core",
+   1054,
+   0.8082237243652344,
+   8,
+   "Tq = (Qn_c.T @ Qp_c) if use_c else (Qn.T @ Qp)   # (r, r) rotation of the old factors"
+  ],
+  [
+   "prod",
+   679,
+   0.7671250617131591,
+   210,
+   "fnp.sum(T, axis=0, out=dst)"
+  ],
+  [
+   "_predict_core",
+   1101,
+   0.7242377642542124,
+   28,
+   "Un, _ = fnp.linalg.qr(G2 @ Om2)"
+  ],
+  [
+   "_d21_live",
+   1829,
+   0.6809500977396965,
+   954,
+   "smm.hub(rows(lap4[2 * kb:2 * ka], 2), sb1, inner, smm.level(nr, n, r1, s_sb))"
+  ],
+  [
+   "_predict_core",
+   1200,
+   0.6551971435546875,
+   22,
+   "Zf_st = fnp.matmul(WDl[None], fnp.take(Zf_st, cidx, axis=1),"
+  ],
+  [
+   "_predict_core",
+   1061,
+   0.6489791870117188,
+   16,
+   "Sg = Tq @ (Sg @ Tq.T)"
+  ],
+  [
+   "_d21_live",
+   1834,
+   0.6242292039096355,
+   600,
+   "smm.hub(rows(lap4[:2 * kb], 2), sb2, inner2, smm.level(nr, n, r2_, s_sb))"
+  ],
+  [
+   "_predict_core",
+   1163,
+   0.6007080078125,
+   8,
+   "QU = fnp.matmul(Qc, U, out=pool.get(\"qu\", (n, r2)))"
+  ],
+  [
+   "_hub2",
+   1860,
+   0.5640907287597656,
+   330,
+   "self._smm.hub(bufs[\"lap4\"][2 * k0:2 * k], apb4[2 * k0:2 * k], out[None],"
+  ],
+  [
+   "_predict_core",
+   1110,
+   0.5256195068359375,
+   7,
+   "fnp.matmul(Un.T, FP1, out=fap2_new[kb, 1])"
+  ],
+  [
+   "_predict_core",
+   1109,
+   0.5256195068359375,
+   7,
+   "fnp.matmul(Un.T, FA1, out=fap2_new[kb, 0])"
+  ],
+  [
+   "_predict_core",
+   940,
+   0.5002439022064209,
+   1,
+   "C_pre = fnp.einsum(\"ia,ib->ab\", w32, w32)"
+  ],
+  [
+   "_dslices",
+   1917,
+   0.46875,
+   15,
+   "Yt = fnp.einsum(\"kiq,kjq->kij\", F2, R2T_st, out=bufs[\"yt\"][:k])"
+  ],
+  [
+   "_dslices",
+   1916,
+   0.46875,
+   15,
+   "Xt = fnp.einsum(\"kiq,kjq->kij\", F1, R1T_st, out=bufs[\"xt\"][:k])"
+  ],
+  [
+   "_d21_live",
+   1835,
+   0.44782018661499023,
+   7,
+   "lift = fnp.matmul(inner2[0], U2.T, out=self._pool.get((\"lift\", nr), (nr, U2.shape[0])))"
+  ],
+  [
+   "_dslices",
+   1954,
+   0.4099559783935547,
+   14,
+   "GXR = fnp.matmul(T, R1T_st, out=bufs[\"gxr\"][:k])"
+  ],
+  [
+   "_dslices",
+   1943,
+   0.4099559783935547,
+   14,
+   "GYR = fnp.matmul(T, R2T_st, out=bufs[\"gyr\"][:k])"
+  ],
+  [
+   "_predict_core",
+   1015,
+   0.3435821533203125,
+   1,
+   "fnp.matmul(Pj, Yq1, out=Yq2)"
+  ],
+  [
+   "_predict_core",
+   1013,
+   0.3435821533203125,
+   1,
+   "fnp.matmul(Pj.T, Om, out=Yq1)"
+  ],
+  [
+   "_predict_core",
+   1012,
+   0.3435821533203125,
+   1,
+   "fnp.matmul(Aj, Yq1, out=Yq)"
+  ],
+  [
+   "_predict_core",
+   1010,
+   0.3435821533203125,
+   1,
+   "fnp.matmul(Aj.T, Om, out=Yq1)"
+  ],
+  [
+   "<lambda>",
+   1815,
+   0.33769887685775757,
+   49,
+   "rows = (lambda X, ax: X) if ridx is None else (lambda X, ax: fnp.take(X, ridx, axis=ax))"
+  ],
+  [
+   "_predict_core",
+   1121,
+   0.29566097259521484,
+   14,
+   "S2 = Un.T @ (G2 @ Un)"
+  ],
+  [
+   "_dslices",
+   1957,
+   0.28475379943847656,
+   55,
+   "D21_fb = D21_fb + fnp.sum(fnp.matmul(_gxr, fnp.swapaxes(fnp.take(F1, oidx, axis=1), -1, -2)), axis=0)"
+  ],
+  [
+   "_dslices",
+   1947,
+   0.2806253433227539,
+   44,
+   "D21_fb = fnp.sum(fnp.matmul(_gyr, fnp.swapaxes(fnp.take(F2, oidx, axis=1), -1, -2)), axis=0)"
+  ],
+  [
+   "_predict_core",
+   1474,
+   0.26513671875,
+   543,
+   "fnp.multiply(b2[a_], b2[b_], out=abbuf[t_])"
+  ],
+  [
+   "_predict_core",
+   1233,
+   0.26354312896728516,
+   15,
+   "fnp.matmul(W, Rr, out=zb[k])"
+  ],
+  [
+   "_predict_core",
+   1098,
+   0.25356388092041016,
+   18,
+   "G2 = S_s if kb == 0 else S_s + U @ (S2 @ U.T)"
+  ],
+  [
+   "_dslices",
+   1973,
+   0.23431777954101562,
+   45,
+   "R = fnp.einsum(\"kij,kj->ki\", AP, C1) + fnp.einsum(\"kij,kj->ki\", PP, C2)"
+  ],
+  [
+   "_predict_core",
+   1723,
+   0.23426055908203125,
+   15,
+   "Bm = fnp.matmul(Q.T, Rres, out=pool.get(\"bm\", (r, n)))   # Rres ~= Q @ Bm"
+  ],
+  [
+   "_predict_core",
+   1721,
+   0.23426055908203125,
+   15,
+   "Y = fnp.matmul(Rres, Y2, out=Y)"
+  ],
+  [
+   "_predict_core",
+   1720,
+   0.23426055908203125,
+   15,
+   "Y2 = fnp.matmul(Rres.T, Q, out=pool.get(\"y2\", (n, r)))"
+  ],
+  [
+   "_predict_core",
+   1718,
+   0.23426055908203125,
+   15,
+   "Y = fnp.matmul(Rres, Om, out=pool.get(\"y\", (n, r)))"
+  ],
+  [
+   "_predict_core",
+   1022,
+   0.20924886129796505,
+   1,
+   "Qn, _ = fnp.linalg.qr(Yq)           # (n, r) orthonormal"
+  ],
+  [
+   "_dslices",
+   1909,
+   0.17578840255737305,
+   45,
+   "D3 = (fnp.einsum(\"kij,kij,kij->i\", A_st, A_st, T) * 3.0"
+  ],
+  [
+   "_predict_core",
+   1146,
+   0.158443761523813,
+   114,
+   "smm.mm(WDl[None, None], fnp.take(Qc, cidx, axis=0)[None, None], Qc_new[None, None],"
+  ],
+  [
+   "_predict_core",
+   1065,
+   0.15487003326416016,
+   6,
+   "U = Tq @ U                      # V24: the sub-basis rides along"
+  ],
+  [
+   "_dslices",
+   1927,
+   0.11719465255737305,
+   45,
+   "D3 = D3 + fnp.einsum(\"kij,kij->i\", P_st, T) * 3.0"
+  ],
+  [
+   "_dslices",
+   1910,
+   0.11718034744262695,
+   15,
+   "+ fnp.einsum(\"kij,kij->i\", MP, P_st))"
+  ],
+  [
+   "_predict_core",
+   1238,
+   0.11713027954101562,
+   15,
+   "fnp.matmul(W, Ff, out=zfb[k])"
+  ],
+  [
+   "_predict_core",
+   1570,
+   0.10932159423828125,
+   28,
+   "Yf = D21 @ (D21.T @ Qf)"
+  ],
+  [
+   "_predict_core",
+   1203,
+   0.10541725158691406,
+   3,
+   "Z_st = fnp.matmul(WDb, Z_st, out=pool.get((\"z\", z_side), (L - 1, n, r + 2))[:k])"
+  ],
+  [
+   "_dslices",
+   2035,
+   0.10541725158691406,
+   3,
+   "PPL = fnp.matmul(PP, L_st, out=bufs[\"ppl\"][:k])   # V27: BLAS path (1.2 s -> 8 ms)"
+  ],
+  [
+   "_dslices",
+   2036,
+   0.10400390625,
+   3,
+   "t1 = fnp.einsum(\"kiq,kcq->ic\", PPL, Z_st)"
+  ],
+  [
+   "_predict_core",
+   1112,
+   0.09855365753173828,
+   6,
+   "T2 = Un.T @ U                                       # (r2, r2)"
+  ],
+  [
+   "_d21_live",
+   1845,
+   0.07515716552734375,
+   33,
+   "fnp.add(Dc, fnp.matmul(rows(R, 1).T, Ykc) * (1.0 / 3.0), out=Dc)"
+  ],
+  [
+   "_dslices",
+   1922,
+   0.058650970458984375,
+   30,
+   "fnp.multiply(U, W2B * (1.0 / 3.0), out=U)"
+  ],
+  [
+   "_dslices",
+   1894,
+   0.058650970458984375,
+   30,
+   "fnp.multiply(AP, Eb * 3.0, out=T)"
+  ],
+  [
+   "_dslices",
+   1926,
+   0.05859375,
+   15,
+   "fnp.add(T, U, out=T)"
+  ],
+  [
+   "_dslices",
+   1925,
+   0.05859375,
+   15,
+   "fnp.multiply(U, 1.0 / 3.0, out=U)"
+  ],
+  [
+   "_dslices",
+   1924,
+   0.05859375,
+   15,
+   "fnp.multiply(Xt, Yt, out=U)"
+  ],
+  [
+   "_dslices",
+   1923,
+   0.05859375,
+   15,
+   "fnp.add(T, U, out=T)"
+  ],
+  [
+   "_dslices",
+   1921,
+   0.05859375,
+   15,
+   "fnp.multiply(Xt, A_st, out=U)"
+  ],
+  [
+   "_dslices",
+   1920,
+   0.05859375,
+   15,
+   "fnp.multiply(A_st, Yt, out=T)"
+  ],
+  [
+   "_dslices",
+   1908,
+   0.05859375,
+   15,
+   "fnp.multiply(P_st, W2B, out=T)"
+  ],
+  [
+   "_dslices",
+   1895,
+   0.05859375,
+   15,
+   "fnp.add(MP, T, out=MP)"
+  ],
+  [
+   "_dslices",
+   1893,
+   0.05859375,
+   15,
+   "fnp.add(MP, T, out=MP)"
+  ],
+  [
+   "_dslices",
+   1892,
+   0.05859375,
+   15,
+   "fnp.multiply(PP, Sb, out=T)"
+  ],
+  [
+   "_dslices",
+   1891,
+   0.05859375,
+   15,
+   "fnp.multiply(MP, P_st, out=MP)"
+  ],
+  [
+   "_dslices",
+   1887,
+   0.05859375,
+   15,
+   "PP = fnp.multiply(P_st, P_st, out=bufs[\"pp\"][:k])"
+  ],
+  [
+   "_dslices",
+   1886,
+   0.05859375,
+   15,
+   "AP = fnp.multiply(A_st, P_st, out=bufs[\"ap\"][:k])"
+  ],
+  [
+   "_predict_core",
+   1538,
+   0.05859375,
+   14,
+   "fnp.multiply(legs4[\"AP0\"][2 * ka:2 * kk], w1col[None, None],"
+  ],
+  [
+   "_predict_core",
+   1417,
+   0.0556640625,
+   114,
+   "k4star = k4star + fnp.matmul(Tj, k4s_c[jj])"
+  ],
+  [
+   "_predict_core",
+   1572,
+   0.054660797119140625,
+   14,
+   "Bf = Qf.T @ D21                       # D21 ~= Qf @ Bf"
+  ],
+  [
+   "_predict_core",
+   1568,
+   0.054660797119140625,
+   14,
+   "Yf = D21 @ Omf"
+  ],
+  [
+   "_dslices",
+   1980,
+   0.05131959915161133,
+   28,
+   "fnp.multiply(T, (Yk * (2.0 / 3.0))[:, :, None], out=T)"
+  ],
+  [
+   "_dslices",
+   1932,
+   0.05131959915161133,
+   28,
+   "fnp.multiply(T, W2B * (1.0 / 3.0), out=T)"
+  ],
+  [
+   "_dslices",
+   1904,
+   0.05131959915161133,
+   28,
+   "fnp.multiply(PP, Sb * (1.0 / 3.0), out=T)"
+  ],
+  [
+   "_dslices",
+   1898,
+   0.05131959915161133,
+   28,
+   "LA = fnp.multiply(AP, W2B * 2.0, out=bufs[\"lap\"][:k, 0])"
+  ],
+  [
+   "_predict_core",
+   1470,
+   0.05126953125,
+   105,
+   "fnp.copyto(abbuf[t_], b2[b_])"
+  ],
+  [
+   "_dslices",
+   1981,
+   0.05126953125,
+   14,
+   "fnp.add(LP, T, out=LP)"
+  ],
+  [
+   "_dslices",
+   1979,
+   0.05126953125,
+   14,
+   "fnp.add(T, MP, out=T)"
+  ],
+  [
+   "_dslices",
+   1978,
+   0.05126953125,
+   14,
+   "fnp.multiply(A_st, C1[:, None, :], out=T)"
+  ],
+  [
+   "_dslices",
+   1977,
+   0.05126953125,
+   14,
+   "fnp.multiply(P_st, C2[:, None, :], out=MP)"
+  ],
+  [
+   "_dslices",
+   1953,
+   0.05126953125,
+   14,
+   "fnp.multiply(T, 1.0 / 3.0, out=T)     # GX"
+  ],
+  [
+   "_dslices",
+   1952,
+   0.05126953125,
+   14,
+   "fnp.add(T, U, out=T)                  # AP*w2 + P*Yt   (U holds P*Yt)"
+  ],
+  [
+   "_dslices",
+   1951,
+   0.05126953125,
+   14,
+   "fnp.multiply(AP, W2B, out=T)"
+  ],
+  [
+   "_dslices",
+   1940,
+   0.05126953125,
+   14,
+   "fnp.add(T, AP, out=T)                 # GY"
+  ],
+  [
+   "_dslices",
+   1939,
+   0.05126953125,
+   14,
+   "fnp.multiply(T, 1.0 / 3.0, out=T)"
+  ],
+  [
+   "_dslices",
+   1938,
+   0.05126953125,
+   14,
+   "fnp.multiply(Xt, P_st, out=T)"
+  ],
+  [
+   "_dslices",
+   1935,
+   0.05126953125,
+   14,
+   "fnp.add(LA, U, out=LA)"
+  ],
+  [
+   "_dslices",
+   1934,
+   0.05126953125,
+   14,
+   "fnp.multiply(P_st, Yt, out=U)"
+  ],
+  [
+   "_dslices",
+   1933,
+   0.05126953125,
+   14,
+   "fnp.add(LA, T, out=LA)"
+  ],
+  [
+   "_dslices",
+   1931,
+   0.05126953125,
+   14,
+   "fnp.multiply(Xt, P_st, out=T)"
+  ],
+  [
+   "_dslices",
+   1929,
+   0.05126953125,
+   14,
+   "fnp.add(LP, T, out=LP)"
+  ],
+  [
+   "_dslices",
+   1907,
+   0.05126953125,
+   14,
+   "fnp.add(LP, T, out=LP)"
+  ],
+  [
+   "_dslices",
+   1906,
+   0.05126953125,
+   14,
+   "fnp.multiply(MP, 2.0 / 3.0, out=T)"
+  ],
+  [
+   "_dslices",
+   1905,
+   0.05126953125,
+   14,
+   "fnp.add(LP, T, out=LP)"
+  ],
+  [
+   "_dslices",
+   1903,
+   0.05126953125,
+   14,
+   "fnp.multiply(LP, W2B, out=LP)"
+  ],
+  [
+   "_dslices",
+   1902,
+   0.05126953125,
+   14,
+   "LP = fnp.multiply(A_st, A_st, out=bufs[\"lap\"][:k, 1])"
+  ],
+  [
+   "_dslices",
+   1900,
+   0.05126953125,
+   14,
+   "fnp.add(LA, T, out=LA)"
+  ],
+  [
+   "_dslices",
+   1899,
+   0.05126953125,
+   14,
+   "fnp.multiply(PP, Eb, out=T)"
+  ],
+  [
+   "_predict_core",
+   1472,
+   0.04931640625,
+   101,
+   "fnp.copyto(abbuf[t_], b2[a_])"
+  ],
+  [
+   "_predict_core",
+   1578,
+   0.0478515625,
+   14,
+   "Yt_b = fnp.matmul(F2_b, R2T_b.T, out=NN(\"ytb\"))"
+  ],
+  [
+   "_predict_core",
+   1577,
+   0.0478515625,
+   14,
+   "Xt_b = fnp.matmul(F1_b, R1T_b.T, out=NN(\"xtb\"))"
+  ],
+  [
+   "_predict_core",
+   1205,
+   0.04685211181640625,
+   3,
+   "Zf_st = fnp.matmul(WDb, Zf_st, out=pool.get((\"zf\", z_side), (L - 1, n, 2 * rfb))[:k])"
+  ],
+  [
+   "_predict_core",
+   1416,
+   0.02783203125,
+   57,
+   "fnp.multiply(Tj, Pj, out=Tj)"
+  ],
+  [
+   "_predict_core",
+   1415,
+   0.02783203125,
+   57,
+   "fnp.multiply(Tj, Xj, out=Tj)"
+  ],
+  [
+   "_predict_core",
+   1414,
+   0.02783203125,
+   57,
+   "Tj = fnp.multiply(Xj, Xj, out=bufs[\"t\"][0])"
+  ],
+  [
+   "_predict_core",
+   1413,
+   0.02783203125,
+   57,
+   "fnp.add(Xj, A_st[jj], out=Xj)"
+  ],
+  [
+   "_predict_core",
+   1412,
+   0.02783203125,
+   57,
+   "Xj = fnp.multiply(Pj, k4s_dv[jj][None, :], out=bufs[\"pp\"][0])"
+  ],
+  [
+   "_d21_live",
+   1852,
+   0.026235103607177734,
+   33,
+   "D21 = fnp.take(fnp.concatenate([D21, fnp.zeros((1, n), dtype=Dc.dtype)], axis=0), rinv, axis=0)"
+  ],
+  [
+   "_predict_core",
+   1421,
+   0.023466110229492188,
+   60,
+   "X = fnp.stack([s3sq, fnp.sum(Z2, axis=1), fnp.sum(Z2, axis=0), fnp.sum(rc * rc, axis=1), absa, ch, k4star, ones_n], axis=0)"
+  ],
+  [
+   "_d21_live",
+   1850,
+   0.023115023970603943,
+   33,
+   "D21 = fnp.take(fnp.concatenate([Dc, fnp.zeros((nr, 1), dtype=Dc.dtype)], axis=1), oinv, axis=1)"
+  ],
+  [
+   "_dslices",
+   1959,
+   0.0205078125,
+   6,
+   "fnp.matmul(GXR, fnp.swapaxes(F1, -1, -2), out=Xt)"
+  ],
+  [
+   "_dslices",
+   1949,
+   0.0205078125,
+   6,
+   "fnp.matmul(GYR, fnp.swapaxes(F2, -1, -2), out=Xt)"
+  ],
+  [
+   "_predict_core",
+   963,
+   0.01861572265625,
+   11,
+   "WDl = fnp.take(WD, cidx, axis=1)"
+  ],
+  [
+   "_predict_core",
+   962,
+   0.01861572265625,
+   11,
+   "Wl = fnp.take(W, cidx, axis=1)"
+  ],
+  [
+   "_predict_core",
+   932,
+   0.01561737060546875,
+   16,
+   "mu = W @ mu"
+  ],
+  [
+   "_predict_core",
+   1777,
+   0.0146484375,
+   30,
+   "+ (K22 @ ones_n) * float(st[\"k4_c22\"])) * float(n * st[\"P2\"])"
+  ],
+  [
+   "_predict_core",
+   1313,
+   0.0146484375,
+   30,
+   "t_v = var - WW @ var_prev"
+  ],
+  [
+   "_predict_core",
+   1477,
+   0.014643192291259766,
+   15,
+   "WR2 = fpm[\"SR2\"] @ WT"
+  ],
+  [
+   "_predict_core",
+   1476,
+   0.014643192291259766,
+   15,
+   "WL2 = fpm[\"SL2\"] @ WT"
+  ],
+  [
+   "_predict_core",
+   1766,
+   0.014641284942626953,
+   15,
+   "k22row = K22 @ ones_n"
+  ],
+  [
+   "_predict_core",
+   1312,
+   0.014641284942626953,
+   15,
+   "t_g = WW @ g_prev"
+  ],
+  [
+   "_predict_core",
+   1401,
+   0.01171875,
+   24,
+   "rc = C_pre / (s_[:, None] * s_[None, :])"
+  ],
+  [
+   "_predict_core",
+   1399,
+   0.01171875,
+   24,
+   "Zs = D21 / (var[:, None] * s_[None, :])"
+  ],
+  [
+   "_sym_product",
+   1800,
+   0.01025390625,
+   42,
+   "fnp.copyto(Y3[0, 0], Y[:, :h]); fnp.copyto(Y3[1, 0], Y[:, h:]); fnp.copyto(Y3[2, 0], Y[:, h:])"
+  ],
+  [
+   "_sym_product",
+   1799,
+   0.01025390625,
+   42,
+   "fnp.copyto(X3[0, 0], X[:h]); fnp.copyto(X3[1, 0], X[:h]); fnp.copyto(X3[2, 0], X[h:])"
+  ],
+  [
+   "_predict_core",
+   1380,
+   0.00753021240234375,
+   112,
+   "W_all = ((APOW @ C1) * phic + (APOW @ C2) * Phic) * (SB @ SELC)"
+  ],
+  [
+   "_predict_core",
+   1772,
+   0.00732421875,
+   30,
+   "+ fnp.sum(K22) * float(st[\"k4_c22\"])) * float(st[\"P2\"])"
+  ],
+  [
+   "_predict_core",
+   1715,
+   0.00732421875,
+   15,
+   "Rres = fnp.subtract(S21, S_sep, out=S21)"
+  ],
+  [
+   "_predict_core",
+   1714,
+   0.00732421875,
+   15,
+   "S_sep = _zero_diag(fnp.multiply(S_sep, (w1)[None, :], out=S_sep))"
+  ],
+  [
+   "_predict_core",
+   1713,
+   0.00732421875,
+   15,
+   "S_sep = fnp.multiply((e_b)[:, None], C_off, out=NN(\"ssep\"))"
+  ],
+  [
+   "_predict_core",
+   1707,
+   0.00732421875,
+   15,
+   "S21 = _zero_diag(fnp.subtract(K21, rep21, out=NN(\"s21\")))"
+  ],
+  [
+   "_predict_core",
+   1703,
+   0.00732421875,
+   15,
+   "fnp.copyto(legs[\"AP0\"][k_b, 1], C)"
+  ],
+  [
+   "_predict_core",
+   1697,
+   0.00732421875,
+   15,
+   "fnp.multiply(C, 0.5, out=C)"
+  ],
+  [
+   "_predict_core",
+   1696,
+   0.00732421875,
+   15,
+   "C = fnp.add(K11, K11.T, out=NN(\"c\"))"
+  ],
+  [
+   "_predict_core",
+   1686,
+   0.00732421875,
+   15,
+   "fnp.add(K22, pk22, out=K22)"
+  ],
+  [
+   "_predict_core",
+   1685,
+   0.00732421875,
+   15,
+   "fnp.add(K22, T1, out=K22)"
+  ],
+  [
+   "_predict_core",
+   1684,
+   0.00732421875,
+   15,
+   "fnp.multiply(T1, -2.0, out=T1)"
+  ],
+  [
+   "_predict_core",
+   1683,
+   0.00732421875,
+   15,
+   "fnp.multiply(pk11, pk11, out=T1)"
+  ],
+  [
+   "_predict_core",
+   1682,
+   0.00732421875,
+   15,
+   "fnp.add(K22, T1, out=K22)"
+  ],
+  [
+   "_predict_core",
+   1681,
+   0.00732421875,
+   15,
+   "fnp.multiply(T1, -2.0, out=T1)"
+  ],
+  [
+   "_predict_core",
+   1680,
+   0.00732421875,
+   15,
+   "fnp.multiply(pk1c, pk21.T, out=T1)"
+  ],
+  [
+   "_predict_core",
+   1679,
+   0.00732421875,
+   15,
+   "fnp.add(K22, T1, out=K22)"
+  ],
+  [
+   "_predict_core",
+   1678,
+   0.00732421875,
+   15,
+   "fnp.multiply(T1, -2.0, out=T1)"
+  ],
+  [
+   "_predict_core",
+   1677,
+   0.00732421875,
+   15,
+   "fnp.multiply(pk1r, pk21, out=T1)"
+  ],
+  [
+   "_predict_core",
+   1676,
+   0.00732421875,
+   15,
+   "fnp.multiply(K22, 4.0, out=K22)"
+  ],
+  [
+   "_predict_core",
+   1675,
+   0.00732421875,
+   15,
+   "fnp.multiply(K22, pk11, out=K22)"
+  ],
+  [
+   "_predict_core",
+   1674,
+   0.00732421875,
+   15,
+   "K22 = fnp.multiply(pk1r, pk1c, out=NN(\"k22\"))"
+  ],
+  [
+   "_predict_core",
+   1673,
+   0.00732421875,
+   15,
+   "fnp.add(K21, pk21, out=K21)"
+  ],
+  [
+   "_predict_core",
+   1672,
+   0.00732421875,
+   15,
+   "fnp.multiply(K21, -2.0, out=K21)"
+  ],
+  [
+   "_predict_core",
+   1671,
+   0.00732421875,
+   15,
+   "K21 = fnp.multiply(pk1c, pk11, out=NN(\"k21\"))"
+  ],
+  [
+   "_predict_core",
+   1558,
+   0.00732421875,
+   15,
+   "a_b = fnp.multiply(w1col, C_off, out=legs[\"AP0\"][k_b, 0])"
+  ],
+  [
+   "_predict_core",
+   1488,
+   0.00732421875,
+   15,
+   "pk22 = _zero_diag(fnp.multiply(pk22, 0.5, out=pk22))"
+  ],
+  [
+   "_predict_core",
+   1487,
+   0.00732421875,
+   15,
+   "pk22 = fnp.add(PK2[2], PK2[2].T, out=NN(\"pk22\"))"
+  ],
+  [
+   "_predict_core",
+   1485,
+   0.00732421875,
+   15,
+   "pk11 = _zero_diag(fnp.multiply(pk11, 0.5, out=pk11))"
+  ],
+  [
+   "_predict_core",
+   1484,
+   0.00732421875,
+   15,
+   "pk11 = fnp.add(PK2[0], PK2[0].T, out=NN(\"pk11\"))"
+  ],
+  [
+   "_predict_core",
+   1324,
+   0.00732421875,
+   15,
+   "wk4m = _zero_diag(fnp.add(g22c, g22c.T, out=NN(\"wk4m\")))"
+  ],
+  [
+   "_predict_core",
+   1309,
+   0.00732421875,
+   15,
+   "WW = fnp.multiply(W, W, out=NN(\"ww\"))"
+  ],
+  [
+   "_predict_core",
+   1226,
+   0.00732421875,
+   15,
+   "fnp.copyto(legs[\"AP0\"][k, 1], W)"
+  ],
+  [
+   "_predict_core",
+   1722,
+   0.007286081090569496,
+   15,
+   "Q, _ = fnp.linalg.qr(Y)"
+  ],
+  [
+   "_predict_core",
+   1719,
+   0.007286081090569496,
+   15,
+   "Q, _ = fnp.linalg.qr(Y)"
+  ],
+  [
+   "_predict_core",
+   1622,
+   0.006842613220214844,
+   28,
+   "fnp.multiply((w1sq)[:, None], (u_b * (1.0 / 3.0))[None, :], out=T1)"
+  ],
+  [
+   "_predict_core",
+   1620,
+   0.006842613220214844,
+   28,
+   "fnp.multiply((y_b * (2.0 / 3.0))[:, None], T1, out=T1)"
+  ],
+  [
+   "_predict_core",
+   1542,
+   0.006842613220214844,
+   28,
+   "D21_w = fnp.multiply(w1col * w1col, D21, out=NN(\"d21w\"))"
+  ],
+  [
+   "_predict_core",
+   1325,
+   0.006835944019258022,
+   28,
+   "wk431 = None if trim else fnp.multiply(C_off, (0.5 * METRIC_C * lam_prev), out=NN(\"wk431\"))"
+  ],
+  [
+   "_predict_core",
+   1632,
+   0.0068359375,
+   14,
+   "rep21 = D21_new if D21_w is None else fnp.add(D21_w, D21_new, out=NN(\"rep21\"))"
+  ],
+  [
+   "_predict_core",
+   1623,
+   0.0068359375,
+   14,
+   "fnp.add(D21_new, T1, out=D21_new)"
+  ],
+  [
+   "_predict_core",
+   1621,
+   0.0068359375,
+   14,
+   "fnp.add(D21_new, T1, out=D21_new)"
+  ],
+  [
+   "_predict_core",
+   1619,
+   0.0068359375,
+   14,
+   "fnp.multiply(a_b, (c1_b)[None, :], out=T1)"
+  ],
+  [
+   "_predict_core",
+   1618,
+   0.0068359375,
+   14,
+   "fnp.add(D21_new, T1, out=D21_new)"
+  ],
+  [
+   "_predict_core",
+   1617,
+   0.0068359375,
+   14,
+   "fnp.multiply(T1, 1.0 / 3.0, out=T1)"
+  ],
+  [
+   "_predict_core",
+   1616,
+   0.0068359375,
+   14,
+   "fnp.multiply((dgw)[:, None], (y_b)[None, :], out=T1)"
+  ],
+  [
+   "_predict_core",
+   1592,
+   0.0068359375,
+   14,
+   "fnp.multiply(D21_new, 1.0 / 3.0, out=D21_new)"
+  ],
+  [
+   "_predict_core",
+   1591,
+   0.0068359375,
+   14,
+   "fnp.add(D21_new, T1, out=D21_new)"
+  ],
+  [
+   "_predict_core",
+   1590,
+   0.0068359375,
+   14,
+   "fnp.multiply((yd)[:, None], X1_b.T, out=T1)"
+  ],
+  [
+   "_predict_core",
+   1589,
+   0.0068359375,
+   14,
+   "fnp.add(D21_new, T1, out=D21_new)"
+  ],
+  [
+   "_predict_core",
+   1588,
+   0.0068359375,
+   14,
+   "fnp.multiply(X1_b, Y1_b, out=T1)"
+  ],
+  [
+   "_predict_core",
+   1587,
+   0.0068359375,
+   14,
+   "D21_new = fnp.multiply((xd)[:, None], Y1_b.T, out=NN(\"d21new\"))"
+  ],
+  [
+   "_predict_core",
+   1582,
+   0.0068359375,
+   14,
+   "fnp.add(Y1_b, Yt_b, out=Y1_b)"
+  ],
+  [
+   "_predict_core",
+   1581,
+   0.0068359375,
+   14,
+   "Y1_b = fnp.multiply(a_b, (w2)[None, :], out=NN(\"y1b\"))"
+  ],
+  [
+   "_predict_core",
+   1580,
+   0.0068359375,
+   14,
+   "fnp.add(X1_b, Xt_b, out=X1_b)"
+  ],
+  [
+   "_predict_core",
+   1579,
+   0.0068359375,
+   14,
+   "X1_b = fnp.multiply(a_b, 3.0, out=NN(\"x1b\"))"
+  ],
+  [
+   "_predict_core",
+   1543,
+   0.0068359375,
+   14,
+   "fnp.multiply(D21_w, (w1)[None, :], out=D21_w)"
+  ],
+  [
+   "_predict_core",
+   1440,
+   0.0068359375,
+   14,
+   "g4col = fnp.multiply((g4row)[:, None], ones_row, out=NN(\"g4col\"))"
+  ],
+  [
+   "_predict_core",
+   1439,
+   0.0068359375,
+   14,
+   "d3col = fnp.multiply((D3)[:, None], ones_row, out=NN(\"d3col\"))"
+  ],
+  [
+   "_predict_core",
+   956,
+   0.0068359375,
+   14,
+   "WD = fnp.multiply(W, (w1_prev)[None, :], out=NN(\"wd\"))"
+  ],
+  [
+   "_predict_core",
+   1400,
+   0.005859375,
+   12,
+   "Z2 = Zs * Zs"
+  ],
+  [
+   "_predict_core",
+   988,
+   0.0045948028564453125,
+   8,
+   "Qp_c = fnp.take(Qp, cidx, axis=0)"
+  ],
+  [
+   "_dslices",
+   2028,
+   0.00439453125,
+   3,
+   "fnp.matmul(R.T, Yk, out=bufs[\"t1\"])"
+  ],
+  [
+   "_predict_core",
+   1480,
+   0.004261970520019531,
+   16,
+   "WL1 = fpm[\"SL1\"] @ WT"
+  ],
+  [
+   "_d21_live",
+   1849,
+   0.004128456115722656,
+   11,
+   "fnp.add(Dc, D21_fb, out=Dc)"
+  ],
+  [
+   "_sym_product",
+   1803,
+   0.00341796875,
+   28,
+   "fnp.copyto(out[h:, h:], O3[2, 0]); fnp.copyto(out[h:, :h], O3[1, 0].T)"
+  ],
+  [
+   "_sym_product",
+   1802,
+   0.00341796875,
+   28,
+   "fnp.copyto(out[:h, :h], O3[0, 0]); fnp.copyto(out[:h, h:], O3[1, 0])"
+  ],
+  [
+   "_d21_live",
+   1843,
+   0.0032410621643066406,
+   9,
+   "fnp.add(Dc, Tl, out=Dc)"
+  ],
+  [
+   "_predict_core",
+   1183,
+   0.00286865234375,
+   11,
+   "fnp.take(legs[\"AP0\"][k, 1], didx_prev, axis=0)),"
+  ],
+  [
+   "_predict_core",
+   1074,
+   0.0015149116516113281,
+   18,
+   "_yp = fnp.multiply(FPj, fnp.sqrt(dP_list[j])[None, :])"
+  ],
+  [
+   "_predict_core",
+   1073,
+   0.0015149116516113281,
+   18,
+   "_ya = fnp.multiply(FAj, fnp.sqrt(dA_list[j])[None, :])"
+  ],
+  [
+   "_predict_core",
+   978,
+   0.0015106201171875,
+   9,
+   "fnp.copyto(Om, w32[:, :r_old])"
+  ],
+  [
+   "_dslices",
+   1960,
+   0.0014648442156612873,
+   3,
+   "fnp.sum(Xt, axis=0, out=bufs[\"t1\"])"
+  ],
+  [
+   "_dslices",
+   1950,
+   0.0014648442156612873,
+   3,
+   "D21_fb = fnp.sum(Xt, axis=0, out=bufs[\"d21fb\"])"
+  ],
+  [
+   "_dslices",
+   2040,
+   0.00146484375,
+   3,
+   "fnp.add(D21, D21_fb, out=D21)"
+  ],
+  [
+   "_dslices",
+   2038,
+   0.00146484375,
+   3,
+   "D21 = fnp.add(D21, t1, out=bufs[\"d21\"])   # in place, or hub/dense result -> d21"
+  ],
+  [
+   "_dslices",
+   2037,
+   0.00146484375,
+   3,
+   "fnp.multiply(t1, 1.0 / 3.0, out=t1)"
+  ],
+  [
+   "_dslices",
+   2030,
+   0.00146484375,
+   3,
+   "fnp.add(D21, bufs[\"t1\"], out=D21)"
+  ],
+  [
+   "_dslices",
+   2029,
+   0.00146484375,
+   3,
+   "fnp.multiply(bufs[\"t1\"], 1.0 / 3.0, out=bufs[\"t1\"])"
+  ],
+  [
+   "_dslices",
+   1961,
+   0.00146484375,
+   3,
+   "fnp.add(D21_fb, bufs[\"t1\"], out=D21_fb)"
+  ],
+  [
+   "_predict_core",
+   979,
+   0.0013427734375,
+   8,
+   "Qp = fnp.multiply(w1c, Qc, out=pool.get(\"qp\", (n, r_old))) if ka > 0 else None"
+  ],
+  [
+   "_predict_core",
+   1094,
+   0.0011782646179199219,
+   14,
+   "_yp = fnp.multiply(FP1, fnp.sqrt(dP_list[jb])[None, :])"
+  ],
+  [
+   "_predict_core",
+   1093,
+   0.0011782646179199219,
+   14,
+   "_ya = fnp.multiply(FA1, fnp.sqrt(dA_list[jb])[None, :])"
+  ],
+  [
+   "_d21_live",
+   1836,
+   0.0010018348693847656,
+   7,
+   "inner = lift if inner is None else fnp.add(inner, lift, out=inner)"
+  ],
+  [
+   "_predict_core",
+   1223,
+   0.0009765625,
+   3,
+   "var = fnp.maximum(fnp.sum(fnp.multiply(WC, W, out=T1), axis=1), 1e-10)"
+  ],
+  [
+   "_predict_core",
+   1481,
+   0.0009050369262695312,
+   16,
+   "PK1 = fnp.einsum(\"ti,ti,tg->gi\", B1stack, WL1, fpm[\"IND1\"])"
+  ],
+  [
+   "_dslices",
+   1956,
+   0.0006535053253173828,
+   11,
+   "_gxr = GXR if ridx is None else fnp.take(GXR, ridx, axis=1)"
+  ],
+  [
+   "_dslices",
+   1946,
+   0.0006535053253173828,
+   11,
+   "_gyr = GYR if ridx is None else fnp.take(GYR, ridx, axis=1)"
+  ],
+  [
+   "_predict_core",
+   1285,
+   0.000629425048828125,
+   22,
+   "_rk = fnp.argsort(fnp.argsort(_ph))          # ascending rank of Phi"
+  ],
+  [
+   "_predict_core",
+   1036,
+   0.000629425048828125,
+   1,
+   "Qn_c = fnp.take(Qn, cidx, axis=0)"
+  ],
+  [
+   "_predict_core",
+   1294,
+   0.0005805492401123047,
+   22,
+   "ridx = fnp.sort(fnp.argsort(_ph)[n - _nr:])"
+  ],
+  [
+   "_predict_core",
+   1287,
+   0.0005733966827392578,
+   22,
+   "oidx = fnp.sort(fnp.argsort(_ph)[n - _nl:])"
+  ],
+  [
+   "_predict_core",
+   1598,
+   0.00048828125,
+   1,
+   "fnp.multiply(D21_new, (w2)[None, :], out=D21_new)"
+  ],
+  [
+   "_predict_core",
+   1597,
+   0.00048828125,
+   1,
+   "D21_new = fnp.multiply(a_b, a_b, out=NN(\"d21new\"))"
+  ],
+  [
+   "_predict_core",
+   1448,
+   0.00048828125,
+   1,
+   "g4col = fnp.multiply((g4row)[:, None], ones_row, out=NN(\"g4col\"))"
+  ],
+  [
+   "_predict_core",
+   1354,
+   0.00048828125,
+   1,
+   "wk431 = fnp.multiply(C_off, (0.5 * METRIC_C * ang_g), out=NN(\"wk431\"))"
+  ],
+  [
+   "_predict_core",
+   1353,
+   0.00048828125,
+   1,
+   "wk4m = _zero_diag(fnp.add(g22c, g22c.T, out=NN(\"wk4m\")))"
+  ],
+  [
+   "_predict_core",
+   841,
+   0.00048828125,
+   1,
+   "ones2 = ones_col * ones_row"
+  ],
+  [
+   "_predict_core",
+   1078,
+   0.000461578369140625,
+   8,
+   "Sg = Sj if Sg is None else Sg + Sj"
+  ],
+  [
+   "_predict_core",
+   1571,
+   0.0004266984760761261,
+   14,
+   "Qf, _ = fnp.linalg.qr(Yf)"
+  ],
+  [
+   "_predict_core",
+   1569,
+   0.0004266984760761261,
+   14,
+   "Qf, _ = fnp.linalg.qr(Yf)"
+  ],
+  [
+   "_predict_core",
+   1127,
+   0.0004038810729980469,
+   7,
+   "Sg = Sg - S_s"
+  ],
+  [
+   "_predict_core",
+   1527,
+   0.0003635883331298828,
+   11,
+   "lidx = fnp.sort(_ord[n - max(nl, 8 * ROWC_Q):])"
+  ],
+  [
+   "_predict_core",
+   1099,
+   0.0002570152282714844,
+   7,
+   "Om2 = fnp.copy(w32[:r_old, :r2])                        # sketch (r1, r2)"
+  ],
+  [
+   "_predict_core",
+   1526,
+   0.000209808349609375,
+   11,
+   "_ord = fnp.argsort(Phi)"
+  ],
+  [
+   "_predict_core",
+   1016,
+   0.0001678466796875,
+   1,
+   "fnp.add(Yq, Yq2, out=Yq)"
+  ],
+  [
+   "_predict_core",
+   1014,
+   0.0001678466796875,
+   1,
+   "fnp.multiply(dPj, Yq1, out=Yq1)"
+  ],
+  [
+   "_predict_core",
+   1011,
+   0.0001678466796875,
+   1,
+   "fnp.multiply(dAj, Yq1, out=Yq1)"
+  ],
+  [
+   "_d21_live",
+   1844,
+   0.00015974044799804688,
+   11,
+   "Ykc = fnp.take(Yk, oidx, axis=1)"
+  ],
+  [
+   "_dslices",
+   1974,
+   0.00011444091796875,
+   30,
+   "D3 = D3 + fnp.einsum(\"ki,ki->i\", R, Yk)"
+  ],
+  [
+   "_predict_core",
+   1741,
+   0.00011444091796875,
+   15,
+   "fnp.copyto(lb[k_b, :, :r], Q)"
+  ],
+  [
+   "_predict_core",
+   1734,
+   0.00011444091796875,
+   15,
+   "fnp.multiply(Bm.T, 3.0, out=Rr_full[:, :r])"
+  ],
+  [
+   "_predict_core",
+   1717,
+   0.00011444091796875,
+   15,
+   "fnp.copyto(Om, w32[:, :r])"
+  ],
+  [
+   "_predict_core",
+   1541,
+   0.00011348724365234375,
+   28,
+   "D3_w = D3 * w1 ** 3"
+  ],
+  [
+   "_predict_core",
+   1396,
+   0.00011157989501953125,
+   39,
+   "s3sq = (D3 / (var * s_)) ** 2"
+  ],
+  [
+   "_predict_core",
+   1479,
+   0.00010395050048828125,
+   16,
+   "B1stack = fnp.stack([ab(p, b1) for p in prog[\"B1\"]], axis=0)"
+  ],
+  [
+   "_predict_core",
+   1431,
+   8.921511471271515e-05,
+   39,
+   "that = fnp.asarray(fnp.array(bt, dtype=f32)) @ X"
+  ],
+  [
+   "_predict_core",
+   1377,
+   8.392333984375e-05,
+   16,
+   "SB = fnp.stack([i6, i5, i4, i3, i2, inv, ones_n, sigma, s2, s3, s4], axis=1)"
+  ],
+  [
+   "_zero_diag",
+   386,
+   7.867813110351562e-05,
+   165,
+   "fnp.fill_diagonal(A, 0.0)"
+  ],
+  [
+   "_predict_core",
+   1659,
+   7.867813110351562e-05,
+   165,
+   "contrib = prod * coef"
+  ],
+  [
+   "_predict_core",
+   1658,
+   7.867813110351562e-05,
+   165,
+   "prod = fct if prod is None else prod * fct"
+  ],
+  [
+   "_predict_core",
+   1295,
+   6.293226033449173e-05,
+   33,
+   "rinv = fnp.where(_selr, fnp.cumsum(_selr) - 1, _nr)"
+  ],
+  [
+   "_predict_core",
+   1288,
+   6.293226033449173e-05,
+   33,
+   "oinv = fnp.where(_sel, fnp.cumsum(_sel) - 1, _nl)"
+  ],
+  [
+   "_predict_core",
+   1747,
+   5.7220458984375e-05,
+   15,
+   "Ff_b = fnp.concatenate([F1_b, F2_b], axis=1) if rfb > 0 else None"
+  ],
+  [
+   "_dslices",
+   1971,
+   5.7220458984375e-05,
+   15,
+   "C2 = fnp.stack(c2_list, axis=0)"
+  ],
+  [
+   "_dslices",
+   1970,
+   5.7220458984375e-05,
+   15,
+   "C1 = fnp.stack(c1_list, axis=0)                 # (k, n) static column scalings"
+  ],
+  [
+   "_dslices",
+   1885,
+   5.7220458984375e-05,
+   15,
+   "Eb = fnp.stack(e_list, axis=0)[:, None, :]"
+  ],
+  [
+   "_dslices",
+   1884,
+   5.7220458984375e-05,
+   15,
+   "Sb = fnp.stack(s_list, axis=0)[:, None, :]"
+  ],
+  [
+   "_dslices",
+   1883,
+   5.7220458984375e-05,
+   15,
+   "W2B = fnp.stack(w2b_list, axis=0)[:, None, :]"
+  ],
+  [
+   "_predict_core",
+   1660,
+   5.0067901611328125e-05,
+   105,
+   "acc2 = contrib if acc2 is None else acc2 + contrib"
+  ],
+  [
+   "_predict_core",
+   1367,
+   4.57763671875e-05,
+   16,
+   "APOW = fnp.stack([ones_n, alpha, a2, a3, a4, a5], axis=1)"
+  ],
+  [
+   "_predict_core",
+   1528,
+   4.184246063232422e-05,
+   11,
+   "didx = fnp.sort(_ord[:n - max(nl, 8 * ROWC_Q)])   # V52: the complement (dead rows)"
+  ],
+  [
+   "_predict_core",
+   1759,
+   3.5762786865234375e-05,
+   75,
+   "dA_list.append(9.0 + w2 * w2 + 9.0 * e_b * e_b)"
+  ],
+  [
+   "_predict_core",
+   1576,
+   3.337860107421875e-05,
+   28,
+   "R2T_b = Qf * (w3 * (0.5 * FB_SCALE))[:, None]     # R7: idem"
+  ],
+  [
+   "_predict_core",
+   1522,
+   3.337860107421875e-05,
+   28,
+   "w1 = fnp.where(Phi < ROWC_THR, 0.0, w1).astype(f32)"
+  ],
+  [
+   "_predict_core",
+   1753,
+   2.86102294921875e-05,
+   15,
+   "fnp.copyto(r2b[k_b], R2T_b)"
+  ],
+  [
+   "_predict_core",
+   1752,
+   2.86102294921875e-05,
+   15,
+   "fnp.copyto(r1b[k_b], R1T_b)"
+  ],
+  [
+   "_predict_core",
+   1625,
+   2.6702880859375e-05,
+   56,
+   "else D3_new + dgw * y_b + u_b * w1sq)"
+  ],
+  [
+   "_predict_core",
+   1575,
+   2.6702880859375e-05,
+   14,
+   "F2_b = w1col * Bf.T                             # Yt = F2 R2, R2 = 0.5 Qf^T d(w3)"
+  ],
+  [
+   "_predict_core",
+   1574,
+   2.6702880859375e-05,
+   14,
+   "R1T_b = Bf.T * (1.5 * FB_SCALE)                 # R7: Edgeworth coefficient of the K x C cross terms (2.0 = full)"
+  ],
+  [
+   "_predict_core",
+   1573,
+   2.6702880859375e-05,
+   14,
+   "F1_b = (w2)[:, None] * Qf            # Xt = F1 R1, R1 = 1.5 Bf"
+  ],
+  [
+   "_predict_core",
+   1567,
+   2.6702880859375e-05,
+   14,
+   "fnp.copyto(Omf, w32[:, :rfb])"
+  ],
+  [
+   "_predict_core",
+   1776,
+   2.1457672119140625e-05,
+   45,
+   "K4_vec = (K4v * float(st[\"k4_c4\"])"
+  ],
+  [
+   "_predict_core",
+   1767,
+   2.1457672119140625e-05,
+   45,
+   "g_prev = ((K4v + k22row) * float(st[\"cA\"])"
+  ],
+  [
+   "_predict_core",
+   1712,
+   2.1457672119140625e-05,
+   45,
+   "e_b = W_all[:, self._i12] - 2.0 * pk1v * w1"
+  ],
+  [
+   "_predict_core",
+   1560,
+   2.1457672119140625e-05,
+   45,
+   "k4s_c.append(alpha * phi * (-1.0 / 6.0) / var)"
+  ],
+  [
+   "_predict_core",
+   1524,
+   2.0014122128486633e-05,
+   28,
+   "nl = -(-int(fnp.sum(Phi >= ROWC_THR)) // ROWC_Q) * ROWC_Q"
+  ],
+  [
+   "_predict_core",
+   1282,
+   2.0014122128486633e-05,
+   28,
+   "_nl = -(-int(fnp.sum(_ph >= D21_THR)) // ROWC_Q) * ROWC_Q"
+  ],
+  [
+   "_predict_core",
+   1433,
+   1.8602702766656876e-05,
+   52,
+   "g4new = g4new * (fnp.mean(g4row) / fnp.mean(g4new))"
+  ],
+  [
+   "_predict_core",
+   1434,
+   1.8596649169921875e-05,
+   39,
+   "g4mean = g4row + K4C_BLEND * (g4new - g4row)"
+  ],
+  [
+   "_predict_core",
+   1291,
+   1.5725381672382355e-05,
+   22,
+   "_nr = max(-(-int(fnp.sum(_ph >= D21ROWC_THR)) // ROWC_Q) * ROWC_Q, 8 * ROWC_Q)"
+  ],
+  [
+   "_predict_core",
+   1315,
+   1.4312099665403366e-05,
+   45,
+   "rr = fnp.mean(dG0) / fnp.mean(var)"
+  ],
+  [
+   "_predict_core",
+   1768,
+   1.430511474609375e-05,
+   60,
+   "+ (fnp.sum(K4v) + fnp.sum(k22row)) * float(st[\"cI\"]))"
+  ],
+  [
+   "ab",
+   1462,
+   1.430511474609375e-05,
+   30,
+   "val = tbl[a] * tbl[b]"
+  ],
+  [
+   "_predict_core",
+   1760,
+   1.430511474609375e-05,
+   30,
+   "dP_list.append(1.0 + S3c * S3c)"
+  ],
+  [
+   "_predict_core",
+   1319,
+   1.430511474609375e-05,
+   30,
+   "dG = t_g + t_v * lam_prev                 # var == diag(C_pre)"
+  ],
+  [
+   "_predict_core",
+   1314,
+   1.430511474609375e-05,
+   30,
+   "dG0 = t_g + t_v * lam_prev                # table value first"
+  ],
+  [
+   "_predict_core",
+   1281,
+   1.33514404296875e-05,
+   28,
+   "_ph = flops.stats.norm.cdf(mu / fnp.sqrt(var)).astype(f32)"
+  ],
+  [
+   "_predict_core",
+   1397,
+   1.239776611328125e-05,
+   26,
+   "absa = fnp.abs(mu / s_)"
+  ],
+  [
+   "_predict_core",
+   1418,
+   1.1444091796875e-05,
+   24,
+   "k4star = k4star * 24.0 / v2"
+  ],
+  [
+   "_predict_core",
+   1293,
+   1.049041748046875e-05,
+   11,
+   "_selr = _rk >= n - _nr"
+  ],
+  [
+   "_predict_core",
+   1286,
+   1.049041748046875e-05,
+   11,
+   "_sel = _rk >= n - _nl"
+  ],
+  [
+   "_predict_core",
+   1376,
+   7.62939453125e-06,
+   16,
+   "s4 = s3 * sigma"
+  ],
+  [
+   "_predict_core",
+   1375,
+   7.62939453125e-06,
+   16,
+   "s3 = s2 * sigma"
+  ],
+  [
+   "_predict_core",
+   1374,
+   7.62939453125e-06,
+   16,
+   "s2 = sigma * sigma"
+  ],
+  [
+   "_predict_core",
+   1373,
+   7.62939453125e-06,
+   16,
+   "i6 = i5 * inv"
+  ],
+  [
+   "_predict_core",
+   1372,
+   7.62939453125e-06,
+   16,
+   "i5 = i4 * inv"
+  ],
+  [
+   "_predict_core",
+   1371,
+   7.62939453125e-06,
+   16,
+   "i4 = i3 * inv"
+  ],
+  [
+   "_predict_core",
+   1370,
+   7.62939453125e-06,
+   16,
+   "i3 = i2 * inv"
+  ],
+  [
+   "_predict_core",
+   1369,
+   7.62939453125e-06,
+   16,
+   "i2 = inv * inv"
+  ],
+  [
+   "_predict_core",
+   1368,
+   7.62939453125e-06,
+   16,
+   "inv = 1.0 / sigma"
+  ],
+  [
+   "_predict_core",
+   1366,
+   7.62939453125e-06,
+   16,
+   "a5 = a4 * alpha"
+  ],
+  [
+   "_predict_core",
+   1365,
+   7.62939453125e-06,
+   16,
+   "a4 = a3 * alpha"
+  ],
+  [
+   "_predict_core",
+   1364,
+   7.62939453125e-06,
+   16,
+   "a3 = a2 * alpha"
+  ],
+  [
+   "_predict_core",
+   1363,
+   7.62939453125e-06,
+   16,
+   "a2 = alpha * alpha"
+  ],
+  [
+   "_predict_core",
+   1358,
+   7.62939453125e-06,
+   16,
+   "alpha = mu / sigma"
+  ],
+  [
+   "_predict_core",
+   1357,
+   7.62939453125e-06,
+   16,
+   "sigma = fnp.sqrt(var)"
+  ],
+  [
+   "_predict_core",
+   1783,
+   7.62939453125e-06,
+   1,
+   "out = out * float(a1)"
+  ],
+  [
+   "_predict_core",
+   1780,
+   7.62939453125e-06,
+   1,
+   "out = fnp.stack(rows, axis=0)"
+  ],
+  [
+   "_predict_core",
+   1771,
+   7.166527211666107e-06,
+   60,
+   "K4_sigma = (fnp.sum(K4v) * float(st[\"k4_c4\"])"
+  ],
+  [
+   "_predict_core",
+   1248,
+   7.152557373046875e-06,
+   30,
+   "var = fnp.maximum(fnp.diag(C_pre), 1e-10)"
+  ],
+  [
+   "_predict_core",
+   1743,
+   7.152557373046875e-06,
+   15,
+   "fnp.copyto(lb[k_b, :, r + 1], zeros_n)"
+  ],
+  [
+   "_predict_core",
+   1742,
+   7.152557373046875e-06,
+   15,
+   "fnp.copyto(lb[k_b, :, r], w1sq)"
+  ],
+  [
+   "_predict_core",
+   1736,
+   7.152557373046875e-06,
+   15,
+   "fnp.copyto(Rr_full[:, r + 1], y_b)"
+  ],
+  [
+   "_predict_core",
+   1735,
+   7.152557373046875e-06,
+   15,
+   "fnp.copyto(Rr_full[:, r], u_b)"
+  ],
+  [
+   "_predict_core",
+   1698,
+   7.152557373046875e-06,
+   15,
+   "fnp.fill_diagonal(C, K2v)"
+  ],
+  [
+   "_predict_core",
+   1561,
+   7.152557373046875e-06,
+   15,
+   "k4s_dv.append(w1 * var)"
+  ],
+  [
+   "_predict_core",
+   1323,
+   7.152557373046875e-06,
+   15,
+   "g22c = (dG * (METRIC_C / 6.0))[:, None]"
+  ],
+  [
+   "_predict_core",
+   1322,
+   7.152557373046875e-06,
+   15,
+   "g4row = dG * METRIC_C"
+  ],
+  [
+   "_predict_core",
+   1706,
+   6.67572021484375e-06,
+   14,
+   "S3c = S3c - D3_new"
+  ],
+  [
+   "_predict_core",
+   1704,
+   6.67572021484375e-06,
+   14,
+   "S3c = K3v - D3_w if D3_w is not None else K3v"
+  ],
+  [
+   "_predict_core",
+   1614,
+   6.67572021484375e-06,
+   14,
+   "c1_b = w1 * lam_prev"
+  ],
+  [
+   "_predict_core",
+   1613,
+   6.67572021484375e-06,
+   14,
+   "u_b = y_b * dG"
+  ],
+  [
+   "_predict_core",
+   1612,
+   6.67572021484375e-06,
+   14,
+   "dgw = w1sq * dG"
+  ],
+  [
+   "_predict_core",
+   1611,
+   6.67572021484375e-06,
+   14,
+   "y_b = w2 * (0.25 * METRIC_C)"
+  ],
+  [
+   "_predict_core",
+   1610,
+   6.67572021484375e-06,
+   14,
+   "w1sq = w1 * w1"
+  ],
+  [
+   "_predict_core",
+   1593,
+   6.67572021484375e-06,
+   14,
+   "D3_new = xd * yd"
+  ],
+  [
+   "_predict_core",
+   835,
+   6.253831088542938e-06,
+   20,
+   "FP[mode] = {k: fnp.asarray(v, dtype=f32)"
+  ],
+  [
+   "_predict_core",
+   1432,
+   6.198883056640625e-06,
+   13,
+   "g4new = that * v2"
+  ],
+  [
+   "_predict_core",
+   1395,
+   6.198883056640625e-06,
+   13,
+   "ch = g4row / v2"
+  ],
+  [
+   "_predict_core",
+   1394,
+   6.198883056640625e-06,
+   13,
+   "v2 = var * var"
+  ],
+  [
+   "_predict_core",
+   1393,
+   6.198883056640625e-06,
+   13,
+   "s_ = fnp.sqrt(var)"
+  ],
+  [
+   "_predict_core",
+   1409,
+   5.7220458984375e-06,
+   12,
+   "k4star = ones_n * 0.0"
+  ],
+  [
+   "_predict_core",
+   1427,
+   1.9073486328125e-06,
+   1,
+   "X = fnp.stack([s3sq, absa, ch, ones_n], axis=0)"
+  ],
+  [
+   "_predict_core",
+   1352,
+   4.76837158203125e-07,
+   1,
+   "g22c = (dG * (METRIC_C / 6.0))[:, None]"
+  ],
+  [
+   "_predict_core",
+   1351,
+   4.76837158203125e-07,
+   1,
+   "g4row = dG * METRIC_C"
+  ],
+  [
+   "_predict_core",
+   1350,
+   4.76837158203125e-07,
+   1,
+   "dG = var * ang_g"
+  ],
+  [
+   "_predict_core",
+   858,
+   4.76837158203125e-07,
+   1,
+   "C = flops.as_symmetric(fnp.eye(n, dtype=f32), symmetry=(0, 1))"
+  ],
+  [
+   "_predict_core",
+   837,
+   4.76837158203125e-07,
+   1,
+   "ones_n = fnp.ones(n, dtype=f32)"
+  ],
+  [
+   "_predict_core",
+   832,
+   2.1513551473617554e-07,
+   1,
+   "SELC = fnp.asarray(SELCl, dtype=f32)"
+  ],
+  [
+   "_predict_core",
+   842,
+   1.9371509552001953e-07,
+   16,
+   "beta_rows = [fnp.asarray(b, dtype=f32) for b in CORR_BETA]"
+  ],
+  [
+   "_predict_core",
+   1318,
+   1.3969838619232178e-07,
+   60,
+   "lam_prev = lam_prev * fnp.power(fnp.clip(rr / ref, 0.5, 2.0), BETA)"
+  ],
+  [
+   "_predict_core",
+   831,
+   1.1734664440155029e-07,
+   1,
+   "C2 = fnp.asarray(C2l, dtype=f32)"
+  ],
+  [
+   "_predict_core",
+   830,
+   1.1734664440155029e-07,
+   1,
+   "C1 = fnp.asarray(C1l, dtype=f32)"
+  ],
+  [
+   "_predict_core",
+   1584,
+   0.0,
+   14,
+   "yd = fnp.diag(Yt_b)"
+  ],
+  [
+   "_predict_core",
+   1583,
+   0.0,
+   14,
+   "xd = fnp.diag(Xt_b)"
+  ],
+  [
+   "_predict_core",
+   1627,
+   0.0,
+   1,
+   "y_b = fnp.zeros(n, dtype=f32)"
+  ],
+  [
+   "_predict_core",
+   1601,
+   0.0,
+   1,
+   "F1_b = fnp.zeros((n, rfb), dtype=f32)"
+  ],
+  [
+   "_predict_core",
+   857,
+   0.0,
+   1,
+   "mu = fnp.zeros(n, dtype=f32)"
+  ],
+  [
+   "_predict_core",
+   838,
+   0.0,
+   1,
+   "zeros_n = fnp.zeros(n, dtype=f32)"
+  ]
+ ]
+}
