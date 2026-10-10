@@ -71,10 +71,12 @@ def loss_fn(out, traj, lab, parts=False):
         t = lab[l]; sg = torch.sqrt(t["var"]); w = 0.25 if l <= 8 else 1.0
         Lmu = (((rec["mu_pre"] - t["mu_pre"]) / (sg + eps)) ** 2).mean()
         idx = t["rows"].long()
-        C_s = rec["C_pre"][idx]; Ct = t["C_rows"]; offm = torch.ones_like(Ct); offm[torch.arange(len(idx)), idx] = 0
-        LC = ((((C_s - Ct) * offm) / (sg[idx][:, None] * sg[None, :] + eps)) ** 2).mean()
-        term = Lmu + 0.25 * LC
-        if l > 1 and "D21" in rec and t["D21_rows"] is not None:
+        offm = torch.ones(len(idx), n, device=dev); offm[torch.arange(len(idx)), idx] = 0
+        term = Lmu
+        if t["C_rows"] is not None and "C_pre" in rec:
+            C_s = rec["C_pre"][idx]; Ct = t["C_rows"]
+            term = term + 0.25 * ((((C_s - Ct) * offm) / (sg[idx][:, None] * sg[None, :] + eps)) ** 2).mean()
+        if l > 1 and "D21" in rec and t["D21_rows"] is not None and t["d3"] is not None:
             Ds = rec["D21"][idx]; Dt = t["D21_rows"]
             sc = (sg[idx] ** 2)[:, None] * sg[None, :]
             LD = ((((Ds - Dt) * offm) / (sc + eps)) ** 2).mean()
