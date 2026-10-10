@@ -4,7 +4,7 @@ import torch; torch.set_num_threads(os.cpu_count() or 4); print("threads", torch
 src = os.path.dirname(glob.glob("/kaggle/input/**/fable_k3feed_ceiling_2026-10-10.py", recursive=True)[0])
 data = glob.glob("/kaggle/input/**/r17_data.npz", recursive=True)[0]
 teach = "/kaggle/working/teach"; os.makedirs(teach, exist_ok=True)
-for f in glob.glob("/kaggle/input/**/mlp0__layer*_seed0.npz", recursive=True):
+for f in glob.glob("/kaggle/input/**/k3t__layer*_seed0.npz", recursive=True):
     t = os.path.join(teach, os.path.basename(f).split("__", 1)[1])
     if not os.path.exists(t): os.symlink(f, t)
 cmd = [sys.executable, f"{src}/fable_k3feed_ceiling_2026-10-10.py", "1e6", "cpu", "--targets", "9,10", "--J", "4,6", "--ct-targets", "none",

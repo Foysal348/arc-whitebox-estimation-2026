@@ -10,7 +10,7 @@
  "dataset_sources": [
   "foysalemonshanto/k3feed-code",
   "foysalemonshanto/r17-ceiling-data",
-  "foysalemonshanto/r20-joint-oracle-data"
+  "foysalemonshanto/k3feed-teach"
  ],
  "competition_sources": [],
  "kernel_sources": []
