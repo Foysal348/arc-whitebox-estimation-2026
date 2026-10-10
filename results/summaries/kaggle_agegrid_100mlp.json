@@ -1,0 +1,77 @@
+{
+ "age4_r448": {
+  "adjusted_final_layer_score": 3.856854291962565e-09,
+  "final_layer_mse": 2.0089830448100088e-08,
+  "all_layers_mse": 7.774400359039647e-09,
+  "mean_compute_utilization": 0.19198412104654836,
+  "n_failed_mlps": 0,
+  "failure_breakdown": {
+   "budget_exhausted": 0,
+   "time_exhausted": 0,
+   "residual_wall_time_exhausted": 0,
+   "combined_budget_exhausted": 0,
+   "error": 0
+  },
+  "elapsed_s": 12732.846185207367
+ },
+ "age3_r512": {
+  "adjusted_final_layer_score": 4.088915376982354e-09,
+  "final_layer_mse": 2.0568830763068036e-08,
+  "all_layers_mse": 7.988780219569946e-09,
+  "mean_compute_utilization": 0.19878776329439007,
+  "n_failed_mlps": 0,
+  "failure_breakdown": {
+   "budget_exhausted": 0,
+   "time_exhausted": 0,
+   "residual_wall_time_exhausted": 0,
+   "combined_budget_exhausted": 0,
+   "error": 0
+  },
+  "elapsed_s": 13911.199908971786
+ },
+ "age4_r352": {
+  "adjusted_final_layer_score": 3.96664759887124e-09,
+  "final_layer_mse": 2.2270978519145502e-08,
+  "all_layers_mse": 8.406285876283448e-09,
+  "mean_compute_utilization": 0.17810428866039274,
+  "n_failed_mlps": 0,
+  "failure_breakdown": {
+   "budget_exhausted": 0,
+   "time_exhausted": 0,
+   "residual_wall_time_exhausted": 0,
+   "combined_budget_exhausted": 0,
+   "error": 0
+  },
+  "elapsed_s": 13212.896075248718
+ },
+ "age3_r448": {
+  "adjusted_final_layer_score": 4.1478635576631605e-09,
+  "final_layer_mse": 2.226814267203281e-08,
+  "all_layers_mse": 8.610554607102473e-09,
+  "mean_compute_utilization": 0.18627333804477075,
+  "n_failed_mlps": 0,
+  "failure_breakdown": {
+   "budget_exhausted": 0,
+   "time_exhausted": 0,
+   "residual_wall_time_exhausted": 0,
+   "combined_budget_exhausted": 0,
+   "error": 0
+  },
+  "elapsed_s": 15694.796813249588
+ },
+ "age4_r512": {
+  "adjusted_final_layer_score": 4.011119135474279e-09,
+  "final_layer_mse": 1.984928827525323e-08,
+  "all_layers_mse": 7.698616766305122e-09,
+  "mean_compute_utilization": 0.20208154450539495,
+  "n_failed_mlps": 0,
+  "failure_breakdown": {
+   "budget_exhausted": 0,
+   "time_exhausted": 0,
+   "residual_wall_time_exhausted": 0,
+   "combined_budget_exhausted": 0,
+   "error": 0
+  },
+  "elapsed_s": 14222.335376262665
+ }
+}
