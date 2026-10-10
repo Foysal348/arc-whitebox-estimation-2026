@@ -28,7 +28,11 @@ We start from the public, MIT-licensed factorised third-cumulant chain of team 5
 10. **The κ₃ input and the κ₃-dressed C·T channel (9–10 Oct, oracle and component level; not graded).**
     - A joint oracle shows that the teacher's κ₃ input is the larger single lever: ×0.607 against ×0.686 for the κ₄ diagonal on MLP #0, and ×0.716 against ×0.885 on the synthetic net. Together the two give ×0.272.
     - A C·T readout built from the chain's own κ₃ legs, ct_i = 24 Σ_a g_a Ȳ_ai X_ai Q_ai, lifts the star's ceiling from 0.47–0.52 to 0.82–0.85. Used as a feature in a teacher-fitted (oracle) affine map, it takes the plain chain to ×0.773, which is about 75 % of the perfect-κ₄ gain.
-    - An exact age-collapse identity, Γ_a = G_a + Ystep_a Γ_{a+1}, together with grouping into dense A/P anchors plus exact low-rank anchors, cuts the source contraction to two dense products per source and target, plus one shared backward recursion. Low-rank sketches keep only ×0.843–0.885. At an estimated 40 u this is about score-neutral, so the channel is real but not yet affordable.
+    - An exact age-collapse identity, Γ_a = G_a + Ystep_a Γ_{a+1}, together with grouping into dense A/P anchors plus exact low-rank anchors, cuts the source contraction to two dense products per source and target, plus one shared backward recursion. Low-rank sketches keep only ×0.843–0.885. At an estimated 40 u this is about score-neutral, so the channel is real but not yet affordable. A rank-32 eigen-sketch (10 Oct) keeps ×0.874 at half the rank-64 thin-product count, an estimated 3–4 % score gain on the plain chain under the same oracle map (untested on V56).
+11. **Where the κ₃ error is, and three mechanisms killed (10 Oct; oracle and component level; not graded).**
+    - Measured against an estimate of the teacher's own sampling noise, the chain's early-layer κ₃ "error" is mostly teacher noise. The real (2,1)-slice error grows from about 3 % at L4 to about 7 % at L16, and the d3 level shrinks by 1.4 % at L16. The teacher's κ₃ helps only at L9–16 (§4.10).
+    - A missing cubic-response C×κ₃ term, a feedback-scale confound and the κ₄→κ₃ feed channel were each tested and killed. The last kill holds only for the tested sample size, N = 10⁶ (§6.5).
+    - Local corrections of one channel repeatedly make the final mean worse; only joint input oracles give large gains (§7.5).
 
 ---
 
@@ -164,7 +168,7 @@ Restoring the missing families fully does not help, but a partial restoration do
 | Full (S = 2) | +3.4 % / +3.1 % (worse) |
 | Quarter (S = 1.25) | −0.8 % / −0.35 % |
 
-The fix is zero-FLOP. It was shipped together with an adaptive-λ exponent of 1.2. On the 100-MLP harness this scored ×0.9946 ± 0.0007, and it graded 5.1284e-9 (#332110). Why the full fix hurts the final mean even though it improves the slice at layers 4–10 is an open paradox **[OPEN]**.
+The fix is zero-FLOP. It was shipped together with an adaptive-λ exponent of 1.2. On the 100-MLP harness this scored ×0.9946 ± 0.0007, and it graded 5.1284e-9 (#332110). Why the full fix hurts the final mean even though it improves the slice at layers 4–10 is an open paradox **[OPEN]**. A 10 Oct test removed one explanation: the quadratic feedback cross term that also grows with the scale is inert, and the linear restoration itself is what hurts (§6.5).
 
 ### 2.5 Cubic curvature-birth cumulant identities (derived; numerically verified)
 
@@ -397,6 +401,8 @@ The chain's κ₃(i,i,j) slice has slope 1.00 and R² 0.996–0.998, but a rando
 - it is not truncation: with no confinement the slice error stays at 6.6 % and the final MSE moves only −3.9 %, for +19 % cost;
 - about 55 % of it is unexplained even at second order in K, since the twelve K×K terms have RMS 3e-6 to 2e-5 against an error of 2.2e-4.
 
+*Refinement (10 Oct, §4.10).* These percentages are measured against the 6·10⁷-sample teacher and include its sampling noise. A Gaussian estimate puts that noise at 2.5 % (L4) to 5.3 % (L2) on the slice, so most of the 4.1 % at L3 is teacher noise. Net of noise, the chain's slice error is about 3 % at L4 and grows to about 7 % at L16.
+
 **Perfect κ₃ oracle.** A perfect κ₃ input (slice + d3) is worth ×0.6075 on MLP #0 (1.382e-8 vs 2.275e-8) and ×0.715 on the synthetic net. The synthetic figure is partial: 8 of 14 layers. Applied in layer windows on MLP #0 / synthetic:
 
 | Window | Ratio |
@@ -498,6 +504,48 @@ Findings:
 1. **κ₃ needs at least the cubic response.** With quadratic births (K = 2), the one-step D21 and d3 errors are 10–21 %, against a D21 tolerance of about 2 % (§1.2). K = 3 reaches 2.1–2.7 % only at L12–L15 and is 7–9 % at L2–L4. K = 4 is 1.3–4.6 %.
 2. **The covariance needs at least the quadratic response.** The linear step alone leaves 6–13 % of the off-diagonal covariance.
 3. **One κ₄ step is easy; compounding is not.** K = 2 gets the one-step κ₄ pattern to 0.85–0.90 but overshoots the level by 1.4–1.9×. Compounded over six layers, the same truncation falls to 0.45–0.55 (§5.4, set A), while K = 3 holds.
+
+### 4.10 Where the κ₃ error is real, and where its gain lives (measured 10 Oct)
+
+**Error profile against teacher noise.** `chain_k3_error_profile.json` compares the plain chain's κ₃ (the captures used in §5.8) with the 6·10⁷-sample teacher at every layer. `teacher_k3_noise_estimate.json` gives a Gaussian approximation of the teacher's own sampling noise on the same quantities (an estimate). The "net" columns subtract that noise in quadrature, √(error² − noise²). This step is derived and assumes the noise is independent of the chain's error.
+
+| Layer | D21 off-diagonal error | Teacher noise (est.) | Net D21 error | d3 error | d3 noise (est.) | Net d3 error | d3 norm ratio, chain/teacher |
+|---|---|---|---|---|---|---|---|
+| 2 | 4.4 % | 5.3 % | ≈ 0 | 3.3 % | 5.4 % | ≈ 0 | 1.002 |
+| 4 | 4.2 % | 2.5 % | 3.4 % | 2.9 % | 2.2 % | 1.9 % | 0.998 |
+| 8 | 4.9 % | 1.2 % | 4.8 % | 3.1 % | 0.9 % | 3.0 % | 0.996 |
+| 12 | 5.9 % | 0.7 % | 5.9 % | 3.8 % | 0.6 % | 3.8 % | 0.993 |
+| 16 | 6.9 % | 0.5 % | 6.9 % | 4.6 % | 0.4 % | 4.6 % | 0.986 |
+
+Errors are relative Frobenius errors against the teacher.
+
+Reading the table:
+- **The early "error" is mostly teacher noise.** At L2 the estimated noise exceeds the measured difference on both the slice and d3.
+- **The real slice error is carried and grows with depth**, from about 3 % at L4 to about 7 % at L16. At L7, L11 and L15 the profile gives 4.6 / 5.7 / 6.6 %, the same values as §4.3.
+- **d3 has a level bias, not only scatter.** Its decisive-neuron correlation stays at 0.9965–0.9994, but its norm ratio falls steadily from 1.002 (L2) to 0.986 (L16), a 1.4 % shrink.
+
+**Where the κ₃ gain lives** (`results/summaries/oct10/k3loc_{1,2,3}.json`). The teacher's κ₃ is injected only in a layer window, with the oracle of §4.8, on MLP #0. "Slice" is the off-diagonal (2,1) slice, "d3" the diagonal; "feedback legs" injects the slice into the feedback legs only. The base is the plain chain of §4.8 (2.2732e-8).
+
+| Teacher κ₃ injected | Window | Final MSE | Ratio |
+|---|---|---|---|
+| Slice + d3 (§4.8) | L1–16 | 1.380e-8 | 0.607 |
+| Slice + d3 | L1–4 | 2.282e-8 | 1.004 |
+| Slice + d3 | L5–8 | 2.141e-8 | 0.942 |
+| Slice + d3 | L9–12 | 1.949e-8 | 0.857 |
+| Slice + d3 | L13–16 | 1.832e-8 | 0.806 |
+| Slice only | L1–8 | 2.129e-8 | 0.937 |
+| Slice only | L9–16 | 1.897e-8 | 0.834 |
+| d3 only | L1–8 | 2.300e-8 | 1.012 |
+| d3 only | L9–16 | 1.938e-8 | 0.853 |
+| Feedback legs only | L1–16 | 2.276e-8 | 1.001 |
+
+Reading the table:
+- **The gain is in L9–16.** The product of the four slice + d3 windows is 0.653 (derived), against 0.607 when every layer is injected at once. L9–16 alone would give about 0.857 × 0.806 ≈ 0.69 (derived; not run as one window).
+- **Early injection does not help.** Slice + d3 at L1–4 gives ×1.004, and d3 alone at L1–8 gives ×1.012. This fits the profile above: at L2–L4 the teacher's κ₃ is about as noisy as the chain's is wrong.
+- **At depth, the slice and d3 matter about equally**: ×0.834 and ×0.853 at L9–16.
+- **The feedback legs are not the lever**: ×1.001 (compare ×0.9999 in §6.3).
+
+A κ₃ fix must therefore remove a carried late-layer error: 5–7 % in the slice and a 1.4 % shrink of the d3 level at L16. The three candidate mechanisms tested on 10 Oct are reported in §6.5.
 
 ---
 
@@ -864,7 +912,50 @@ Two lessons:
 
 The gap from ×0.773 to ×0.819 is at least partly the capture subset, since the full-source component fidelity is 0.993–0.996. That share has not been measured separately.
 
+**Layer windows** (10 Oct, `results/summaries/oct10/ctwin_{1,2}.json`). The same oracle affine feature is injected only at the target layers of a window. Elsewhere the chain keeps its own κ₄. The base is 2.2732e-8.
+
+| C·T input to the affine feature | Window | Final MSE | Ratio |
+|---|---|---|---|
+| Sample-exact (ceiling, above) | L7–16 | 1.758e-8 | 0.773 |
+| Sample-exact | L11–16 | 1.811e-8 | 0.797 |
+| Sample-exact | L13–16 | 1.951e-8 | 0.858 |
+| Sample-exact | L15–16 | 2.135e-8 | 0.939 |
+| Sample-exact | L7–10 | 2.235e-8 | 0.983 |
+| Eigen-sketch, r = 64 (above) | L7–16 | 1.966e-8 | 0.865 |
+| Eigen-sketch, r = 64 | L11–16 | 2.074e-8 | 0.912 |
+| Eigen-sketch, r = 64 | L13–16 | 2.164e-8 | 0.952 |
+
+L11–16 carries (1 − 0.797)/(1 − 0.773) ≈ 89 % of the ceiling's gain, and L7–10 alone is nearly worthless (×0.983). With the r = 64 sketch, however, L11–16 keeps only (1 − 0.912)/(1 − 0.865) ≈ 65 % of the gain, while it holds 72 % of the probe's thin-product count (derived from `acds3_ct_probe.json`; the later targets hold more sources). Cutting target layers therefore saves less than it loses. Cutting rank is the better cut (round 3, below).
+
+**Round 3: cheaper bases and source subsets** (10 Oct, `acds3_ct_probe.json`, `acds_e2e3.json`). The captures, protocol and oracle map are those of round 2. The new variants are:
+- "rsi": a randomized subspace iteration on C at the window start (q = 2, three thin products with C), transported like the eigen-basis;
+- "top-6": only the six sources with the largest ‖A_s‖‖H_A,s‖ + ‖P_s‖‖H_P,s‖ are kept, and the others are dropped;
+- "young only" / "old only": only the sources anchored after / at the window start are kept.
+
+The cost column is the probe's thin-product count summed over targets 7–16. It excludes forming G_m and Γ.
+
+| C·T variant | Thin-product count | Teacher-metric corr of affine(chain, star + C·T), L12 / L15 / L16 | Final MSE | Ratio |
+|---|---|---|---|---|
+| Eig, r = 64 (round 2) | 27.6 u | 0.659 / 0.665 / 0.674 | 1.966e-8 | 0.865 |
+| rsi, r = 64 | 27.6 + 1.9 u | 0.659 / 0.654 / 0.668 | 1.965e-8 | 0.864 |
+| Eig, r = 48 | 20.7 u | 0.643 / 0.661 / 0.659 | 1.993e-8 | 0.877 |
+| **Eig, r = 32** | **13.8 u** | 0.620 / 0.629 / 0.637 | **1.987e-8** | **0.874** |
+| Eig, r = 64, top-6 sources | 20.9 u | 0.665 / 0.625 / 0.642 | 2.063e-8 | 0.907 |
+| Eig, r = 32, top-6 sources | 10.4 u | 0.631 / 0.613 / 0.610 | 2.076e-8 | 0.913 |
+| Eig, r = 64, young sources only | — | 0.675 / 0.660 / 0.694 | 2.051e-8 | 0.902 |
+| Eig, r = 64, old sources only | — | 0.503 / 0.474 / 0.391 | — | — |
+
+On every target the age-collapse and grouping identities again hold to 2.6–3.9e-7.
+
+Reading the table:
+- **Rank is cheap to cut.** r = 32 keeps ×0.874 against ×0.865 at r = 64, for half the thin-product count. r = 48 is no better than r = 32 (×0.877).
+- **rsi ties the eigen-basis** (×0.864) and adds 1.9 u.
+- **Dropping sources costs more than dropping rank.** Top-6 gives ×0.907–0.913 and young-only ×0.902. The old-anchored sources carry signal that no cheap subset keeps.
+- **The three-layer teacher metric does not rank sketches end to end.** Young-only has the highest correlation at L12 / L15 / L16 (0.66–0.69) but ends at ×0.902, behind eig r = 32 (0.62–0.64, ×0.874). Sketch choices must be made on the end-to-end mean.
+
 **Cost and verdict.** The score is MSE × max(0.1, FLOPs/2⁴¹). V56 uses about 190 u (util 0.186), and our estimate for a deployable eigen-sketch C·T at r = 64 is about 40 u (estimate). Adding 40 u multiplies util by about 1.21, so a raw gain of ×0.865 gives a score of about ×1.05, i.e. roughly neutral. Break-even at ×0.865 needs less than about 30 u (estimate). The probe's count of thin sketch products alone already sums to 27.6 u over targets 7–16 at r = 64, before G_m and Γ are formed.
+
+Round 3 changes this arithmetic. Scaling the 40 u estimate by the probe's thin-product counts (13.8 against 27.6 u) puts eig r = 32 at about 18–20 u (estimate). Util then rises by a factor of about 1.09–1.11, and the score ratio is about 0.874 × 1.10 ≈ 0.96–0.97, i.e. a gain of 3–4 % (estimate). The open risk is the metered op count, which no prototype has measured yet.
 
 Moreover, every ratio in this subsection was measured:
 - on one network;
@@ -873,7 +964,7 @@ Moreover, every ratio in this subsection was measured:
 
 The increment on V56 with an offline-fitted map is **(untested)**.
 
-**Conclusion.** The κ₄ C·T channel is real. Its ceiling is 0.82–0.85 together with the star, it is worth ×0.773 under an oracle map, and the chain's own legs reproduce it at 0.993–0.996. It is **not yet affordable**: no sketch we measured is both cheap enough and faithful enough. Per the joint oracle (§4.8), κ₃ is the larger lever: ×0.607 against ×0.686 on MLP #0, and ×0.716 against ×0.885 on the synthetic net.
+**Conclusion.** The κ₄ C·T channel is real. Its ceiling is 0.82–0.85 together with the star, it is worth ×0.773 under an oracle map, and the chain's own legs reproduce it at 0.993–0.996. At r = 64 it is **not affordable**. At r = 32 (round 3) it is at the edge of affordability, at an estimated 3–4 % score gain, with every caveat above still applying. Per the joint oracle (§4.8), κ₃ is the larger lever: ×0.607 against ×0.686 on MLP #0, and ×0.716 against ×0.885 on the synthetic net.
 
 ---
 
@@ -934,7 +1025,7 @@ The kill types are:
 | Augmented dense κ₄ core (504aldo F105) | 2.04e-8 vs 2.23e-8 at +3 dense units per source-layer | C (cost) |
 | T·T: κ₃ squared at a cubic vertex (§5.8) | Alone −0.16 to −0.06; adds ≤ 0.006 to star + C·T; oracle E2E ×0.792 against ×0.773 without it | C/E |
 | LKV readouts injected as the raw κ₄ diagonal | Level ratio of the ages 1–6 sum −0.02 to 0.00 (§5.8); usable only as a feature | C |
-| Low-rank C·T sketches, r = 32–256 (eig, Rademacher, direct-Γ) | Teacher-metric corr 0.60–0.63 at r = 64 against 0.73–0.78 exact (round 1); oracle E2E ×0.843–0.885 against ×0.773; ≈ 40 u (estimate) against a ~30 u break-even | E (parked, cost) |
+| Low-rank C·T sketches, r = 32–256 (eig, Rademacher, direct-Γ) | Teacher-metric corr 0.60–0.63 at r = 64 against 0.73–0.78 exact (round 1); oracle E2E ×0.843–0.885 against ×0.773; ≈ 40 u (estimate) against a ~30 u break-even. Round 3 reopens it: eig r = 32 gives ×0.874 at an estimated 18–20 u (§5.8) | E (parked, cost; r = 32 reopened) |
 
 ### 6.3 Correctors and non-cumulant families
 
@@ -988,6 +1079,111 @@ Two patterns stand out:
 
 Including the kill list and the project metric in every prompt is what filtered these out.
 
+### 6.5 Hypotheses killed on 10 Oct
+
+§4.10 places the remaining κ₃ error in the carried late-layer slice and in the d3 level. Three mechanisms for it, and for the FB 1.25 paradox of §2.4, were tested on 10 Oct. Each is killed as measured.
+
+**(a) A missing cubic-response C×κ₃ term ("RLL"; P).** The hypothesis, from a 10 Oct outside-AI audit, was that the chain misses half of the term with one cubic and two linear Hermite vertices, at first order in the pre-activation κ₃ T.
+
+*Derivation (derived).* With the K = 3 response h − E h = l u + q (u² − v) + r (u³ − 3vu) (§5.8), the connected partitions give
+
+  κ(R_i, L_j, L_k) = r_i l_j l_k [3 C_ij T_iik + 3 C_ik T_iij]  (+ κ₅, dropped).
+
+The proposal also contained a C_jk T_iii term. That partition is disconnected, because the block {i, i, i} does not meet {j, k}, so it does not belong in the joint cumulant. We tested both the connected form and the form as proposed.
+
+*Test* (`astra_rll_test.py`). With the teacher's inputs at layer l, we map the term to its image dD on the (2,1) slice at l + 1. We compare dD with the chain's residual E = teacher − chain at l + 1 (the captures of §4.10), off the diagonal and on d3 separately. We report:
+- β = ⟨E, dD⟩/|dD|²;
+- ρ = corr(E, dD);
+- r_half = |E − dD/2| / |E|, the residual left after adding half of the term.
+
+The pre-registered kill was β ≈ 0 or negative, or ρ < 0.1 at L ≥ 9. Values are given for the transitions l → l + 1, l = 2–15, with l ≥ 9 in brackets:
+
+| Form | Part | Size relative to the teacher's slice | ρ | r_half |
+|---|---|---|---|---|
+| Connected | Off-diagonal | 4.1–9.5 % | −0.04 to +0.07 (−0.04 to +0.02) | 1.08–1.42 (1.15–1.31) |
+| Connected | d3 | 4.5–10.0 % | −0.24 to +0.07 (−0.24 to −0.12) | 1.23–2.03 |
+| As proposed | Off-diagonal | 8.5–13.7 % | −0.06 to +0.02 | 1.23–1.89 |
+| As proposed | d3 | 8.9–15.1 % | −0.23 to +0.01 | 1.54–2.95 |
+
+*Verdict: KILL.*
+- The connected term is comparable in size to the residual itself (4–10 % of the slice, against a residual of 4–7 %), yet it is uncorrelated with the off-diagonal residual (ρ ≈ 0, β −0.04 to +0.02 at l ≥ 9).
+- On d3 it is anti-correlated at depth.
+- Adding half of it makes the off-diagonal slice residual worse, by 15–42 % from L3 on (8 % at L2 → 3), and makes the d3 residual worse by 23–103 %.
+
+This is consistent with the chain already carrying the term in its feedback legs.
+
+**(b) A feedback-scale confound ("γ-patch"; E).** The same audit proposed the following explanation for the paradox of §2.4. The FB scale multiplies not only the linear K×C coefficient but also a quadratic Sym(Xt, P, Yt) cross term of the thin feedback legs, which grows as FB². FB 2.0 would then restore the linear term correctly but overshoot the quadratic one.
+
+The patch (`experiments/variants/v56_fbg.py`) sets the linear coefficient to FB and multiplies only the Xt·Yt contributions by γ = (FB_base/FB)², which holds them at FB_base². We ran it on the 100-MLP harness (§8.2) on top of the V56 A-class estimator (v56As_fs, FB 1.25). No MLP failed in any run. Paired ratios are against the base:
+
+| Variant | Linear FB | Quadratic Xt·Yt term held at | Raw MSE | Score | Paired geo-mean ratio (90 % CI) | Wins |
+|---|---|---|---|---|---|---|
+| base (V56 A, shipped) | 1.25 | 1.25² | 2.0194e-8 | 3.7586e-9 | 1 | — |
+| Unpatched FB 2.0 | 2.0 | 2.0² | 2.0689e-8 | 3.8508e-9 | ×1.0244 (1.0211–1.0277) | 11/100 |
+| γ-patch, FB 2.0 | 2.0 | 1.25² | 2.0686e-8 | 3.8522e-9 | ×1.0243 (1.0209–1.0273) | 10/100 |
+| γ-patch, FB 2.0 | 2.0 | 1.0² | 2.0686e-8 | 3.8522e-9 | ×1.0243 (1.0212–1.0274) | 11/100 |
+| γ-patch, FB 1.75 | 1.75 | 1.25² | 2.0403e-8 | 3.7995e-9 | ×1.0103 (1.0080–1.0124) | 25/100 |
+
+*Verdict: KILL.*
+- Holding the quadratic term at 1.25², at 1.0², or letting it grow to 2.0² gives the same result (×1.0243–1.0244), so the quadratic cross term is inert.
+- The loss follows the linear coefficient: ×1.0103 at 1.75 and ×1.0243 at 2.0. The linear K×C restoration itself hurts the final mean.
+
+The paradox of §2.4 remains open, with this explanation removed.
+
+**(c) The κ₄→κ₃ feed channel (C/E).** A 10 Oct consultation (`consultations/fable_2026-10-10_k3_design.md`) proposed the following. Among the first-order terms of the all-distinct post-ReLU κ₃, the only one whose input the chain lacks is the feed g_c Φ_i Φ_j κ₄(z_m)_ccij from the pre-activation κ₄ at a quadratic vertex c (derived in the design note). According to the design note's reading of the code, the chain computes this feed from its memoryless κ₄ model (§1.2), whose only pattern is C and which does not depend on the vertex neuron c. The design would replace it with a carried cubic κ₄ (star + C·T, §5.8) in thin legs.
+
+*Ceiling* (`fable_k3feed_ceiling_2026-10-10.py`; Kaggle CPU in five parts; N = 10⁶ exact samples of MLP #0; targets L9–16; `k3feed_mlp0_part{1..5}.json`). The script forms several versions of the feed read on the (2,1) slice at t:
+- **exact:** the exact feed of every vertex;
+- **bornJ4 / bornJ6:** only the κ₄ born within J layers, which is the ceiling of any carrier with J-layer births;
+- **star_J4 / star_J6:** the Gaussian-star-fed feed in closed form.
+
+The sampled C·T part of the design's representable feed was not run. As a check, the feed from the Gaussian layer z_1 sits at its own noise level (0.13–0.18 against noise 0.14–0.20).
+
+| Quantity, L9–16 | Value |
+|---|---|
+| Exact feed size, off-diagonal, relative to \|Y21\| | 22.5–24.2 % |
+| Exact feed size, diagonal, relative to \|d3\| | 23.3–23.6 % |
+| Split-half reliability of the exact feed, off-diagonal / diagonal | 0.871–0.966 / 0.939–0.981 |
+| Sampling noise of the exact feed, relative to \|Y21\| (derived) | 3.3–6.0 % |
+| bornJ6 against exact, cross-half corr, off-diagonal / diagonal | 0.871–0.960 / 0.938–0.976 |
+| bornJ4 against exact, same | 0.861–0.949 / 0.932–0.969 |
+| star_J6 against bornJ6, same | −0.871 to −0.921 / −0.927 to −0.956 |
+| star_J6 size relative to \|Y21\| | 12.9–15.9 % |
+
+The pre-registered validity sub-gate, a split-half reliability of at least 0.90 at every target, is not met at L9 (0.871) or L10 (0.894).
+
+*End to end* (`experiments/variants/r20_feed_oracle.py`). The variant removes the chain's own feed at the slice readout in a window and adds a feed read from file. It runs on the plain chain of §4.8, MLP #0. Hook validity: the plain configuration reproduces 2.2732e-8 exactly (`teacher_eval_feedor1.json`). The util of these runs is not comparable with the chain's, because the hook adds a second readout.
+
+| Feed in the window | Window | Final MSE | Ratio |
+|---|---|---|---|
+| None (chain feed removed) | L9–16 | 1.715e-7 | 7.54 |
+| None | L1–16 | 2.724e-7 | 11.98 |
+| Exact (sampled) | L9–16 | 2.535e-8 | 1.115 |
+| bornJ6 | L9–16 | 2.955e-8 | 1.300 |
+| bornJ4 | L9–16 | 4.409e-8 | 1.940 |
+| star_J6 | L9–16 | 4.783e-7 | 21.0 |
+| star_J6, sign flipped | L9–16 | 4.255e-8 | 1.872 |
+| Chain's own feed × 0.80 / 0.90 / 0.95 | L9–16 | 2.777 / 2.371 / 2.284e-8 | 1.222 / 1.043 / 1.0045 |
+| Chain's own feed × 1.00 (dumped and re-injected) | L9–16 | 2.2725e-8 | 0.9997 |
+| Chain's own feed × 1.10 / 1.20 | L9–16 | 2.487 / 3.011e-8 | 1.094 / 1.324 |
+
+The removal runs are in `teacher_eval_feedor2.json` and the injections in `results/summaries/oct10/feedorE2E_{3,4,5,6}.json`. The pre-registered gates were: exact ≤ 0.80 PASS and > 0.92 KILL; bornJ6 ≤ 0.85 PASS and > 0.95 KILL. For reference, the teacher's κ₃ in L9–16 is worth about ×0.69 (§4.10).
+
+*Slice-level attribution (measured; `results/summaries/k3feed/feed_attribution.json`, script `experiments/probes/k3_error_profile.py`).*
+- At L9–L15, the chain's own feed correlates +0.95 to +0.97 with the exact feed. The exact feed is 12–26 % larger.
+- The correction (exact − chain feed) correlates +0.41 to +0.59 with the chain's slice residual.
+- Yet replacing the chain's feed with the exact one still increases the slice residual: from 5.2–6.2 % to 6.0–6.8 % of |Y21|.
+- The best scalar rescaling of the chain's feed (β = +0.03 to +0.08) lowers the slice residual by only 0.5–3 %.
+
+Reading:
+- **The feed is large, and the chain needs it.** It is 22–24 % of |Y21|, and removing it costs ×7.5 (L9–16) or ×12 (all layers).
+- **The chain's feed has the right shape and the wrong size**, and the correction points along the residual.
+- **Every injection is nevertheless worse than the base, the exact feed included** (×1.115, KILL by its own gate). The chain's feed sits at a sharp optimum at scale 1.0: −5 % costs 0.45 % and ±10 % costs 4.3 % / 9.4 %. Scaling it up by 10 % hurts, although the exact feed is 14–24 % larger.
+- **The sampled feed is noisy at the level that matters.** Its sampling noise, 3.3–6.0 % of |Y21|, is comparable to the chain's whole slice residual at L9–16 (about 5–7 %, §4.10). This would explain why the exact feed raises the slice residual although its correction is correlated with it.
+- **The Gaussian star has the opposite sign to the sampled born feed** (corr −0.87 to −0.92). We have not established whether this is a sign-convention error in the closed form or a physical sign **[OPEN]**. Neither sign helps: ×21.0 as computed and ×1.872 flipped.
+
+*Verdict: KILL as measured.* The experiment is decisive about the N = 10⁶ estimate of the exact feed, not about the true feed. The ceiling is noise-limited: reliability is 0.87–0.97, and the validity sub-gate failed at L9–10. Bringing the feed noise well below the residual would need about 10× more samples. With noise ∝ 1/√N, that would put it at about 1.0–1.9 % of |Y21| (estimate). A definitive ceiling, and the sampled C·T part, remain **[OPEN]**.
+
 ---
 
 ## 7. What a better method must satisfy
@@ -1009,6 +1205,7 @@ Including the kill list and the project metric in every prompt is what filtered 
 4. **Improve the κ₃ input first.**
    - The teacher's κ₃ slice and d3 are worth more than the κ₄ diagonal on both networks (×0.607 against ×0.686, and ×0.716 against ×0.885), and the two together give ×0.272 (§4.8).
    - A new κ₃ representation needs at least the cubic response of each ReLU: quadratic births make 10–21 % D21 and d3 error in one step, against a 2 % tolerance (§4.9).
+   - The target is the carried late-layer error: net of teacher noise, 5–7 % in the slice at L8–16 and a 1.4 % shrink of the d3 level at L16. Teacher κ₃ helps only at L9–16 (§4.10). A missing C×κ₃ term, the feedback scale and the κ₄→κ₃ feed (at N = 10⁶) are ruled out as the cause (§6.5).
 
 ### 7.2 Budget constraints
 
@@ -1045,14 +1242,35 @@ Its ceiling is 0.80–0.85 (set C, ages 1–6) and 0.68–0.74 for ages 1–4. T
 
 The missing piece is cost:
 - the eigen-sketch at r = 64 keeps ×0.865 at about 40 u (estimate), which is roughly score-neutral on V56's ≈ 190 u; at r = 128 it keeps ×0.843, with twice the probe's thin-product count (55.3 u against 27.6 u over targets 7–16);
-- break-even needs ≤ ~30 u at that accuracy, or more accuracy at the same cost.
+- break-even needs ≤ ~30 u at that accuracy, or more accuracy at the same cost;
+- round 3 (§5.8) found such a point: eig r = 32 keeps ×0.874 at an estimated 18–20 u, about a 3–4 % score gain (estimate), with the metered op count still unmeasured.
 
-No estimator implementation exists yet, and the increment on top of V56, with a map fitted offline and transferred, is untested. In parallel, the joint oracle (§4.8) makes a better κ₃ input the larger open lever.
+No estimator implementation exists yet, and the increment on top of V56, with a map fitted offline and transferred, is untested. In parallel, the joint oracle (§4.8) makes a better κ₃ input the larger open lever. Its first candidate mechanism, the κ₄→κ₃ feed, is killed at N = 10⁶ but is not ruled out at larger N (§6.5).
 
 Smaller open items:
 - the cheap K₃×C term on the synthetic network (−4.2 % on MLP #0 at ≈ 13 u, unfinished);
 - the HTQB path term end to end (+0.04–0.06 leave-one-layer-out, untested in the chain);
 - the quartic kernel re-tuned jointly with λ and FB.
+
+### 7.5 A lesson: local corrections against coupled errors
+
+Again and again in this project, a change that makes one channel locally more correct made the final mean worse. All of the following were measured:
+- **Full FB restoration** (§2.4) brings the slice closer to the derivation at L4–10, but the final mean gets 3.4 % / 3.1 % worse on the teacher pair. FB 2.0 is ×1.024 on 100 MLPs (§6.5).
+- **The γ-patch** (§6.5), which keeps the linear restoration and removes its quadratic side effect, is no better (×1.0243).
+- **Scaling the chain's κ₄→κ₃ feed** (§6.5) by ±5–10 % in either direction costs 0.45–9.4 %. This holds even upward, toward the exact feed, which is 12–26 % larger and whose correction correlates with the residual. Injecting the sampled exact feed gives ×1.115.
+- **The analytic RLL term** (§6.5), of the right order and comparable size, makes the slice residual 15–42 % worse when half of it is added.
+- **Single κ₄ inputs:** injected alone, the off-diagonal κ₄ slices give ×1.03–1.22 (§4.2), and the chain's κ₄ pattern at the teacher's level gives +21.5 % (§5.1).
+
+Only **joint** input oracles give large gains. The teacher's κ₃ and κ₄ together give ×0.272, against ×0.607 and ×0.686 alone (§4.8), and adding the variance takes the ratio to the noise floor (×0.057, §4.2).
+
+The pattern is consistent with the chain's channel errors partly cancelling in the mean closure: correcting one channel uncovers the errors it was offsetting in the others. We have not measured this cancellation directly **[OPEN]**. In the feed case, Monte-Carlo noise in the injected quantity is a competing explanation.
+
+The practical lesson for moment-chain estimators is narrower, and it rests only on the measurements above:
+- a local test (a slice residual, a one-step error, a pattern correlation) is a necessary gate, but it is not a sufficient one;
+- candidates must be promoted on the end-to-end mean;
+- a single-channel correction should be expected to need joint re-tuning of the channels it is coupled to (λ, the FB scale, the feed scale).
+
+FB 1.25 is the only correction in this list that gained (§2.4), and it did so at a quarter of the derived restoration.
 
 ---
 
@@ -1101,13 +1319,17 @@ Result files are in `results/summaries/` unless a path is given.
 | §4 error map | Teacher scripts in `kaggle/k4/` (pre- and post-ReLU teachers), the error-map probes listed in `docs/build_notes.py`, and `opus12_errmap.py` |
 | §4.8 joint oracle | `experiments/variants/r20_joint_oracle.py` → `r20_joint_oracle.json` |
 | §4.9 one-step channels | `experiments/probes/r20_onestep_channels.py` → `r20_onestep_channels.json` |
+| §4.10 κ₃ error profile and windows | `experiments/probes/k3_error_profile.py` → `chain_k3_error_profile.json`, `teacher_k3_noise_estimate.json` (and the §6.5 (c) slice attribution `k3feed/feed_attribution.json`); κ₃ windows through `r20_joint_oracle.py` (Kaggle wrappers `kaggle/k3loc/esfer_{1,2,3}/run.py`) → `oct10/k3loc_{1,2,3}.json` |
 | §5.1 oracles | `experiments/chain/k4_oracle_run2.py` → `k4oracle2.json`, `k4oracle2_joint_*.json`, `k4oracle2_target_*.json` |
 | §5.2 memory | `opus12_k4_carry.py`, `q18_k4_horizon.py`, `opus12_q18_noise.py` |
 | §5.3 V55 | `experiments/variants/v55_k4c.py`, `experiments/probes/k4_pattern_features.py` → `k4c_fit.json`, `k4_pattern_features*.json`, `teacher_eval_v55_k4c.json`, `kaggle_v55_deep.txt`, `kaggle_v55_sweep1.txt`, `kaggle_v55_sweep2.txt` |
 | §5.4 ceilings | `r16_sbqm_ceiling.py`, `r16b_astra/`, `experiments/probes/r17_hermite_family_ceiling.py` → `data/kaggle_out/r17_ceiling/r17_hermite_family_ceiling.json`, `r17_hermite_family_ceiling_B.json`, `data/kaggle_out/r17_ceiling_c/r17_hermite_family_ceiling_C.json` |
 | §5.5 HTQB and V56 | `r18_htqb/`, `r18_htqb_combo.py` → `round18_htqb.json`, `r18_htqb_combo.json`; `experiments/variants/v56_star.py` → `k4s_fit.json`, `kaggle_v56_tuning.txt` |
 | §5.6 tree test | `r19_tree_ceiling.py`, `r19_tree_rescale.py` → `r19_tree_ceiling.json`, `r19_tree_rescale.json` |
-| §5.8 C·T channel | `fable_ceiling_2026-10-09.py` → `fable_ceiling_2026-10-09.json`; oracle affine fits and E2E through `r20_joint_oracle.py` (Kaggle wrapper `kaggle/fable_e2e2/kernel/run.py`) → `fable_affine_fits.json`, `fable_affine_e2e.json`; `fable_component_2026-10-09.py` → `fable_component_2026-10-09.json`; `acds_ct_probe.py`, `acds2_ct_probe.py` → `acds_ct_probe.json`, `acds2_ct_probe.json`, `acds_e2e.json` |
+| §5.8 C·T channel | `fable_ceiling_2026-10-09.py` → `fable_ceiling_2026-10-09.json`; oracle affine fits and E2E through `r20_joint_oracle.py` (Kaggle wrapper `kaggle/fable_e2e2/kernel/run.py`) → `fable_affine_fits.json`, `fable_affine_e2e.json`; `fable_component_2026-10-09.py` → `fable_component_2026-10-09.json`; `acds_ct_probe.py`, `acds2_ct_probe.py` → `acds_ct_probe.json`, `acds2_ct_probe.json`, `acds_e2e.json`; layer windows (Kaggle wrappers `kaggle/acds/ctwin_{1,2}/run.py`) → `oct10/ctwin_{1,2}.json`; round 3: `acds2_ct_probe.py --lite 1 --ranks 32,48,64` (wrapper `kaggle/acds/kernel/run.py`) → `acds3_ct_probe.json`, E2E (wrapper `kaggle/acds/e2e3_kernel/run.py`) → `acds_e2e3.json` |
+| §6.5 (a) RLL | `experiments/probes/astra_rll_test.py` → `astra_rll_test.json` |
+| §6.5 (b) γ-patch | `experiments/variants/v56_fbg.py` (runner sets `kaggle/fbg/set_{1..5}`) → `kaggle_fbg_100mlp.json`; per-MLP outputs `data/kaggle_out/fbg_{1..5}/`, compared with `kaggle_pair_compare.py --ref base_fbg` |
+| §6.5 (c) κ₄→κ₃ feed | Design `consultations/fable_2026-10-10_k3_design.md`; ceiling `experiments/probes/fable_k3feed_ceiling_2026-10-10.py` (CPU wrappers `kaggle/k3feed/cpu_{1..5}/`) → `k3feed/k3feed_mlp0_part{1..5}.json`; E2E `experiments/variants/r20_feed_oracle.py` (wrappers `kaggle/feedor/k1`–`k6`) → `k3feed/teacher_eval_feedor1.json` (hook validity), `k3feed/teacher_eval_feedor2.json` (removal), `oct10/feedorE2E_{3,4,5,6}.json` (injections) |
 
 The kill register is `docs/architecture_research/KILL_AUDIT.md` (27 Sep, 74 entries). The round verdicts are `consultations/round14_verdicts.md` through `round18_verdicts.md` and `consultations/new_architecture_step1.md`. The experiment queue is `docs/experiment_queue/queue.json`.
 
@@ -1120,6 +1342,10 @@ Unless a path is given, probe scripts are in `experiments/probes/`. All scripts 
 - The chain's κ₄ correlation is 0.78–0.83 over all neurons but 0.26–0.34 on decisive neurons. Both figures are correct for their populations.
 - The grade of #332395 (last-block λ ×1.25) is not recorded in our files.
 - The id of the failed v54A submission (7 Oct) is not recorded in our files.
+- The chain's slice error is "6.7 % at L15" in §4.5 (base 2.290e-8) and 6.6 % at L15 in §4.10 (the §5.8 captures). Its d3 error is 3.2 / 3.8 / 4.6 / 4.7 % at L7 / L11 / L15 / L16 in §4.3 and 3.0 / 3.6 / 4.4 / 4.6 % in `chain_k3_error_profile.json`. The two come from different chain runs; both include teacher noise.
+- Our working notes priced eig r = 32 at "≈ 18 u". The probe's thin-product count is 13.8 u (`acds3_ct_probe.json`), which excludes G_m and Γ. §5.8 therefore quotes 18–20 u as an estimate, scaled from the 40 u estimate for r = 64.
+- The slice-level feed attribution of §6.5 (c) was first quoted for L10–L14 only (+0.96, 14–24 %, +0.45 to +0.58). The saved file `k3feed/feed_attribution.json` covers L9–L15: +0.95 to +0.97, 12–26 %, +0.41 to +0.59.
+- The feed-oracle runs report util 0.3108–0.3425, because the hook performs a second slice readout. These values are not comparable with the chain's 0.2476.
 
 ---
 

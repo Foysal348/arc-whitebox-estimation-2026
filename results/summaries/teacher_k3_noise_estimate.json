@@ -3,17 +3,57 @@
   "teacher_noise_rel_D21": 0.05306560399464858,
   "teacher_noise_rel_d3": 0.05356880422776793
  },
+ "3": {
+  "teacher_noise_rel_D21": 0.03411148403667673,
+  "teacher_noise_rel_d3": 0.0299138891774337
+ },
  "4": {
   "teacher_noise_rel_D21": 0.025473241202170902,
   "teacher_noise_rel_d3": 0.02201306674959919
+ },
+ "5": {
+  "teacher_noise_rel_D21": 0.019554571755417388,
+  "teacher_noise_rel_d3": 0.016337413613131912
+ },
+ "6": {
+  "teacher_noise_rel_D21": 0.016089374669756344,
+  "teacher_noise_rel_d3": 0.013266645421690305
+ },
+ "7": {
+  "teacher_noise_rel_D21": 0.013398633611864398,
+  "teacher_noise_rel_d3": 0.010786248588038049
  },
  "8": {
   "teacher_noise_rel_D21": 0.011573865955412588,
   "teacher_noise_rel_d3": 0.00936867741038761
  },
+ "9": {
+  "teacher_noise_rel_D21": 0.009920125247469602,
+  "teacher_noise_rel_d3": 0.008066756484435417
+ },
+ "10": {
+  "teacher_noise_rel_D21": 0.00884229797991678,
+  "teacher_noise_rel_d3": 0.007217779387438485
+ },
+ "11": {
+  "teacher_noise_rel_D21": 0.00792680178417701,
+  "teacher_noise_rel_d3": 0.006404351155129243
+ },
  "12": {
   "teacher_noise_rel_D21": 0.006950998833356493,
   "teacher_noise_rel_d3": 0.005560785368478092
+ },
+ "13": {
+  "teacher_noise_rel_D21": 0.005985503371993397,
+  "teacher_noise_rel_d3": 0.004795391434784448
+ },
+ "14": {
+  "teacher_noise_rel_D21": 0.005475629530263422,
+  "teacher_noise_rel_d3": 0.004311118268957176
+ },
+ "15": {
+  "teacher_noise_rel_D21": 0.005178008215237362,
+  "teacher_noise_rel_d3": 0.004109861662030636
  },
  "16": {
   "teacher_noise_rel_D21": 0.004785479238105253,
