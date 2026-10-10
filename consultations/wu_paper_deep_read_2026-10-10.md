@@ -48,3 +48,16 @@ The paper also states:
 - Non-Gaussian or correlated weights.
 - Trained networks.
 - Black-box inputs.
+
+## Follow-up checks (10 Oct, evening)
+1. **Carried κ4:** already present.
+   - The diagonal is carried with memory: dG = WW·g_prev + var·λ, with the post-ReLU K4v/K22 core g_prev.
+   - Only the off-diagonal core λ·C_off is regenerated, and its level is adapted per layer (BETA 1.2 against REF_R).
+2. **Mixed closure terms:** already present.
+   - The K3-simple TERM_SPECS tables (pruned at rel ≥ 1e-5) contain c_off×d21T, c_off×wk4m, d21×d21, d21×wk4m,
+     g4row×d21, d3row×c_off, and so on.
+   - This is a superset of the paper's k ≤ 3 frontier terms.
+3. **Trace projection of old κ3:** killed.
+   - Measured on captures L11/14/15: the old sources carry 35–57 % of |D21|.
+   - Their trace projection Sym(h1 ⊗ I) leaves 74–75 % error in the old part, i.e. 26–42 % of the total D21 (tolerance
+     2 %).
