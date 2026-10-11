@@ -1,0 +1,751 @@
+{
+  "status": "OFFLINE OUTCOME ORACLE ONLY; no routing policy trained or deployed",
+  "pilot_cost_included": false,
+  "n_networks": 100,
+  "dataset_sha256": "264fa1f416d16a40821fb5e8e94f5d2da4698a201d40da999616225b38b464f1",
+  "reference": "data/kaggle_out/v56t_1/run_v56_ref.json",
+  "reference_score": 3.789926404463502e-09,
+  "groups": {
+    "v56": {
+      "n_experts": 10,
+      "best_fixed": "data/kaggle_out/v56t_e/run_v56_fit_synth.json",
+      "best_fixed_score": 3.776390787370014e-09,
+      "oracle_score": 3.743876998516821e-09,
+      "oracle_over_reference": 0.9878495250217927,
+      "oracle_over_best_fixed": 0.9913902478096457,
+      "gain_percent_over_best_fixed": 0.8609752190354314,
+      "minimum_mean_flop_u": 190.12218789864332,
+      "winner_counts": {
+        "data/kaggle_out/v56t_e/run_v56_fit_synth.json": 33,
+        "data/kaggle_out/v56t_d/run_v56_star125.json": 21,
+        "data/kaggle_out/v56t_1/run_v56_star075.json": 2,
+        "data/kaggle_out/v56t_d/run_v56_bl125.json": 7,
+        "data/kaggle_out/v56t_2/run_v56_age6.json": 12,
+        "data/kaggle_out/v56t_c/run_v56_s3x125.json": 6,
+        "data/kaggle_out/v56t_e/run_v56_ages4.json": 3,
+        "data/kaggle_out/v56t_1/run_v56_ref.json": 3,
+        "data/kaggle_out/v56t_c/run_v56_s3x110.json": 1,
+        "data/kaggle_out/v56t_2/run_v56_star150.json": 12
+      }
+    },
+    "all": {
+      "n_experts": 86,
+      "best_fixed": "data/kaggle_out/fbg_1/run_base_fbg.json",
+      "best_fixed_score": 3.758601429628895e-09,
+      "oracle_score": 3.728479030028785e-09,
+      "oracle_over_reference": 0.983786657608351,
+      "oracle_over_best_fixed": 0.9919857425257552,
+      "gain_percent_over_best_fixed": 0.8014257474244779,
+      "minimum_mean_flop_u": 188.86018117213155,
+      "winner_counts": {
+        "data/kaggle_out/v56t_e/run_v56_fit_synth.json": 9,
+        "data/kaggle_out/fbg_1/run_base_fbg.json": 29,
+        "data/kaggle_out/v55_c/run_v55Ak4c.json": 1,
+        "data/kaggle_out/v56t_2/run_v56_age6.json": 9,
+        "data/kaggle_out/fbg_4/run_fbg_175_125.json": 17,
+        "data/kaggle_out/v56t_d/run_v56_bl125.json": 4,
+        "data/kaggle_out/v56t_c/run_v56_s3x125.json": 5,
+        "data/kaggle_out/resid_b_v51rc10/run_v51rc10.json": 1,
+        "data/kaggle_out/v56t_c/run_v56_s3x110.json": 1,
+        "data/kaggle_out/v56t_2/run_v56_star150.json": 10,
+        "data/kaggle_out/v56t_d/run_v56_star125.json": 11,
+        "data/kaggle_out/sw2_e/run_v55_s125_bl150.json": 1,
+        "data/kaggle_out/v56t_1/run_v56_star075.json": 1,
+        "data/kaggle_out/v56t_1/run_v56_ref.json": 1
+      }
+    }
+  },
+  "rejected": {
+    "unmatched_names": 46
+  },
+  "runs": [
+    {
+      "path": "data/kaggle_out/eval2_whest-runner/run_fb1.25_beta1.2.json",
+      "sha256": "915f8669b726c41151d841af5c020173e579605846e80021cce534817ee5ef65",
+      "mean_score": 5.335608302886309e-09,
+      "mean_flop_u": 249.13761505829171,
+      "mean_effective_u": 249.13761505829171,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval2_whest-runner-b/run_base_ang.json",
+      "sha256": "563079c71f9dc4da29b653ba569da9c070df8446f3eddf0666791596451af6ea",
+      "mean_score": 5.364434279042259e-09,
+      "mean_flop_u": 249.13761505829171,
+      "mean_effective_u": 249.13761505829171,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval2_whest-runner-b/run_fb1.25.json",
+      "sha256": "09e17a085f0e840bc9acbdf354c659302fbe6c9269f28f9cd3c57d4eee34c4f2",
+      "mean_score": 5.344953844561547e-09,
+      "mean_flop_u": 249.13761505829171,
+      "mean_effective_u": 249.13761505829171,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval2_whest-runner-b/run_fb1.5.json",
+      "sha256": "d9e26b304f328e4040c06ebaf9edf6db03d37f1fd2e44027969808f077f875de",
+      "mean_score": 5.3651608148117785e-09,
+      "mean_flop_u": 249.13761505829171,
+      "mean_effective_u": 249.13761505829171,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval2_whest-runner-c/run_fb1.25.json",
+      "sha256": "e39fce253b2f95eeae7f1dbfc1dc81f21d61f4345e71b80f93773463216b316b",
+      "mean_score": 5.344953844561547e-09,
+      "mean_flop_u": 249.13761505829171,
+      "mean_effective_u": 249.13761505829171,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval3_whest-runner/run_fb1.15_b1.2.json",
+      "sha256": "5b5cd832f76adc3a66185974ff73d8041917fff452c390c3598f1853858db544",
+      "mean_score": 5.340693215007815e-09,
+      "mean_flop_u": 249.13761505829171,
+      "mean_effective_u": 249.13761505829171,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval3_whest-runner/run_fb1.35_b1.2.json",
+      "sha256": "cadcfc6122572ec264d474c0b9991b2a54812248a4ae5ce1094f93b4178c375a",
+      "mean_score": 5.335907775958463e-09,
+      "mean_flop_u": 249.13761505829171,
+      "mean_effective_u": 249.13761505829171,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval3_whest-runner-b/run_fb1.25_b1.1.json",
+      "sha256": "dcd154d6156af426ab0338d14d38fb2732ef370c26741d1985cc5debb7b7c194",
+      "mean_score": 5.3380499194400825e-09,
+      "mean_flop_u": 249.13761505829171,
+      "mean_effective_u": 249.13761505829171,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval3_whest-runner-b/run_fb1.25_b1.3.json",
+      "sha256": "18bc2da452bd07c9a44f6b2c1127bd7edb572d2f0c82e1029947806793fb513f",
+      "mean_score": 5.335091951501186e-09,
+      "mean_flop_u": 249.13761505829171,
+      "mean_effective_u": 249.13761505829171,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval3_whest-runner-c/run_fb1.15_b1.3.json",
+      "sha256": "4d257372f1969ed1793b23456df7e41f3173350925c40e803b698c7b1c9c79e8",
+      "mean_score": 5.341381477430848e-09,
+      "mean_flop_u": 249.13761505829171,
+      "mean_effective_u": 249.13761505829171,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval3_whest-runner-c/run_fb1.35_b1.1.json",
+      "sha256": "57ba9f1d6957ec1d0e13d52a129e553a4bc55660884f08cad5f038a11b5843be",
+      "mean_score": 5.340358898204377e-09,
+      "mean_flop_u": 249.13761505829171,
+      "mean_effective_u": 249.13761505829171,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval4_whest-runner/run_aug64.json",
+      "sha256": "20419e7c5e68e0ad0abbdf9b7c9f5fdeb30e1581c3ace65a0a819d4ebaa449f8",
+      "mean_score": 5.333993925640116e-09,
+      "mean_flop_u": 250.4442963535525,
+      "mean_effective_u": 250.4442963535525,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval4_whest-runner-b/run_transport.json",
+      "sha256": "d71c4f9cf0525bf77a5f18f6a3f54568624f083631d960c2c6f1a4c8a6b1b05b",
+      "mean_score": 5.117579410635135e-09,
+      "mean_flop_u": 232.34264359222726,
+      "mean_effective_u": 232.34264359222726,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval5_whest-runner/run_tr_age5.json",
+      "sha256": "cb66489aa2ac8613649e690692a495eaf79353f1794b2a282dff1c6fe16c4cd6",
+      "mean_score": 5.063944911248446e-09,
+      "mean_flop_u": 241.41222833381966,
+      "mean_effective_u": 241.41222833381966,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval5_whest-runner/run_tr_age5_r2_192.json",
+      "sha256": "98da92f42f64e2bbdf1bc1737c778238eb293826145973cf338adbd4024db459",
+      "mean_score": 5.073068342383915e-09,
+      "mean_flop_u": 237.8634707541205,
+      "mean_effective_u": 237.8634707541205,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval5_whest-runner-b/run_tr_r2_192.json",
+      "sha256": "caf4108012a7feaabf0401b38994f1c7a588d78897e7732f90cf98c601ec6013",
+      "mean_score": 5.1192844157995425e-09,
+      "mean_flop_u": 228.7938860125281,
+      "mean_effective_u": 228.7938860125281,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval5_whest-runner-b/run_tr_r448.json",
+      "sha256": "93e1c49fbbd0e591902cb7f5ec8e497cdffa3e63d1c898f53ca1afaf40b28b63",
+      "mean_score": 5.175398118564077e-09,
+      "mean_flop_u": 245.8268568942137,
+      "mean_effective_u": 245.8268568942137,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval5_whest-runner-c/run_tr_age5_r448.json",
+      "sha256": "991e9e0380703594541eca32a8bbebc320daf38cebd64304c85111b5be10e320",
+      "mean_score": 5.24266281873406e-09,
+      "mean_flop_u": 252.04942093441264,
+      "mean_effective_u": 252.04942093441264,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval5_whest-runner-c/run_tr_age6.json",
+      "sha256": "c53369c199dd3e1ccf142c0e3fb21146788885d9bc3ebf8e0d8fc1e1d7ad82e3",
+      "mean_score": 5.1859877058525786e-09,
+      "mean_flop_u": 249.44282582985238,
+      "mean_effective_u": 249.44282582985238,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval6_whest-runner/run_tr_ao2_6.json",
+      "sha256": "037e0121961e3f10b0639adb09258aab545069efa49c598d45ebc270d045b746",
+      "mean_score": 5.18272587821006e-09,
+      "mean_flop_u": 229.39893764147536,
+      "mean_effective_u": 229.39893764147536,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval6_whest-runner/run_tr_ao2_8.json",
+      "sha256": "0959f83f1c66bea10f431164c15f4c0ce5a92c6b41606e4df48559070fd1ef79",
+      "mean_score": 5.124479974235617e-09,
+      "mean_flop_u": 234.80426235044376,
+      "mean_effective_u": 234.80426235044376,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval6_whest-runner-b/run_tr_fb140.json",
+      "sha256": "4202c58a02ee44f88b3b4a7a9ff565f91a2d2d7c576e9621a4a6ec0501b2d989",
+      "mean_score": 5.119816583407549e-09,
+      "mean_flop_u": 232.34264359222726,
+      "mean_effective_u": 232.34264359222726,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval6_whest-runner-b/run_tr_lam090.json",
+      "sha256": "f6fdc0e22bcdc0f6c192234e3fca19ea965ed8840fc4a4ee4bac0815cfef5f7b",
+      "mean_score": 5.120292131871789e-09,
+      "mean_flop_u": 232.34264359222726,
+      "mean_effective_u": 232.34264359222726,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval_whest-runner/run_base_ang.json",
+      "sha256": "e183877d9bb5022701ddbf01521080b018fc068ba4a5b18a6e62616cf58ee30b",
+      "mean_score": 5.364434279042259e-09,
+      "mean_flop_u": 249.13761505829171,
+      "mean_effective_u": 249.13761505829171,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval_whest-runner/run_beta1.2.json",
+      "sha256": "d154e3850e1f4fd7474ac0694b68ffd1e75625748af0ea36373f942933ed6ac5",
+      "mean_score": 5.360915918950217e-09,
+      "mean_flop_u": 249.13761505829171,
+      "mean_effective_u": 249.13761505829171,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval_whest-runner/run_lam0.9.json",
+      "sha256": "75dcfb2413b79d205fe7291279d31b1699cf4f9993e90260b2afb4ed36279134",
+      "mean_score": 5.378606250568391e-09,
+      "mean_flop_u": 249.13761505829171,
+      "mean_effective_u": 249.13761505829171,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval_whest-runner-b/run_base_ang.json",
+      "sha256": "bbc8a57a4a947af06b251a2f5a4329cf7f2feebb216a0aa86318caecf078a326",
+      "mean_score": 5.364434279042259e-09,
+      "mean_flop_u": 249.13761505829171,
+      "mean_effective_u": 249.13761505829171,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval_whest-runner-b/run_qpass2_3.json",
+      "sha256": "228fa484ac631df8e02d9bc7a2b0cad2eba4b7ffb82952a1988d3c1fc33d461c",
+      "mean_score": 5.367395016599138e-09,
+      "mean_flop_u": 249.5550389445387,
+      "mean_effective_u": 249.5550389445387,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval_whest-runner-b/run_row0.25.json",
+      "sha256": "84853676a71ba4797f65a1f531421a4e54cabe18999725b93a73880286119081",
+      "mean_score": 5.365996472133765e-09,
+      "mean_flop_u": 249.137655112613,
+      "mean_effective_u": 249.137655112613,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval_whest-runner-c/run_age2_8.json",
+      "sha256": "2add1c1d3e01c167f08d64ac2f472f438572db53f9e883386d97493120aa56b5",
+      "mean_score": 5.367611992563505e-09,
+      "mean_flop_u": 251.550567816142,
+      "mean_effective_u": 251.550567816142,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval_whest-runner-c/run_base_ang.json",
+      "sha256": "8eec49b8bdce59bdcf13d8bf48da0e7a1da7e3e28988c0863e416f5c3724f4b4",
+      "mean_score": 5.364434279042259e-09,
+      "mean_flop_u": 249.13761505829171,
+      "mean_effective_u": 249.13761505829171,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/eval_whest-runner-c/run_qpass_2.json",
+      "sha256": "d285545544043b4f2dbe0358e998b6ede53e6ead89da634ff60f5eab62789c12",
+      "mean_score": 5.755416847841973e-09,
+      "mean_flop_u": 269.8933409188874,
+      "mean_effective_u": 269.8933409188874,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/fbg_1/run_base_fbg.json",
+      "sha256": "2909413dc038e4665e0375b1b589d0f4baaf9e4bfb1941a20eb8836073877ecb",
+      "mean_score": 3.758601429628895e-09,
+      "mean_flop_u": 190.59279738617596,
+      "mean_effective_u": 190.59279738617596,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/fbg_2/run_fbg_200_125.json",
+      "sha256": "296d65aa4209a90dc308b4e0bf18d59d41c58d65a278a060cc923d93770c7dd7",
+      "mean_score": 3.852238739731898e-09,
+      "mean_flop_u": 190.69512351877987,
+      "mean_effective_u": 190.69512351877987,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/fbg_3/run_naive_200.json",
+      "sha256": "1e6c46e3219ceaf6b90c4b43949058a12ddcca36c436b6c48d04c66d6d4e44dc",
+      "mean_score": 3.850816027030067e-09,
+      "mean_flop_u": 190.59598598368467,
+      "mean_effective_u": 190.59598598368467,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/fbg_4/run_fbg_175_125.json",
+      "sha256": "0364c30a836a386612f3c8eb7b046e4030d0c916edb92960a56e0478baa908b9",
+      "mean_score": 3.799514143335372e-09,
+      "mean_flop_u": 190.69512351877987,
+      "mean_effective_u": 190.69512351877987,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/fbg_5/run_fbg_200_100.json",
+      "sha256": "5b6e422f6a548e43ba803445ca7beb6b31aa5e2da40ddfefba4da81a98f40bcc",
+      "mean_score": 3.8521832065660985e-09,
+      "mean_flop_u": 190.69512351877987,
+      "mean_effective_u": 190.69512351877987,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/knob_a_r352/run_v52B_r352.json",
+      "sha256": "fceafab4a0ac091093dd06002833c4c4b337987963ab83fa765048ea18cf61e2",
+      "mean_score": 4.2277543760974e-09,
+      "mean_flop_u": 192.46529746592046,
+      "mean_effective_u": 192.46529746592046,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/knob_b_r320/run_v52B_r320.json",
+      "sha256": "a71b5cefe589479e5e327d8de047ede8c80c345d839e23bf43ecb5935518c639",
+      "mean_score": 4.251332138701518e-09,
+      "mean_flop_u": 188.86018117213155,
+      "mean_effective_u": 188.86018117213155,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/knob_c_age4/run_v52B_age4.json",
+      "sha256": "da2f6550d9f1ef06cd43dbd01aa254785daabbd052b98d5422fee96386630bde",
+      "mean_score": 4.302057437396314e-09,
+      "mean_flop_u": 189.34655422936194,
+      "mean_effective_u": 189.34655422936194,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/resid_a_v49r320/run_v49r320.json",
+      "sha256": "a525d0ad0681e4889f51cd51c5b7d0e03d9c9c560ff867c0327e5f040668a82d",
+      "mean_score": 4.535291689343412e-09,
+      "mean_flop_u": 202.77880131508223,
+      "mean_effective_u": 202.77880131508223,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/resid_b_v51rc10/run_v51rc10.json",
+      "sha256": "9f567fc5ad5c771a6652e11f438c38036c4a1bf0aeca06635082069c66a4e7ed",
+      "mean_score": 4.1736062207474815e-09,
+      "mean_flop_u": 191.33392768675927,
+      "mean_effective_u": 191.33392768675927,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/resid_c_v51rc7/run_v51rc7.json",
+      "sha256": "94525ad1b5f98d63f8f0225483d8f67bf2636cfeb4d67d7780278d6d94be15d3",
+      "mean_score": 4.1699123532735e-09,
+      "mean_flop_u": 192.1822618714394,
+      "mean_effective_u": 192.1822618714394,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/resid_d_v52safeB/run_v52safeB.json",
+      "sha256": "c34ddaaa24373866b3cb8826373ac48e4166c67f54cd40cbc5b2fcf517b8e146",
+      "mean_score": 4.256569713996283e-09,
+      "mean_flop_u": 196.20649840767496,
+      "mean_effective_u": 196.20649840767496,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/resid_e_v52safeA/run_v52safeA.json",
+      "sha256": "4d0044b4addb912e6ac1cb9080d458277d38f9c8d31e64df9ed17dbbd8cb81d7",
+      "mean_score": 4.206464073683149e-09,
+      "mean_flop_u": 193.88101493256633,
+      "mean_effective_u": 193.88101493256633,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/runA_v45ref/run_v45_base.json",
+      "sha256": "eb079283f5565da481e464f3a73279cccc5ceaf4a16975e5ebca464eeb1cb92c",
+      "mean_score": 4.945305224738657e-09,
+      "mean_flop_u": 229.87036868797614,
+      "mean_effective_u": 229.87036868797614,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/runB_v48/run_v48rc.json",
+      "sha256": "c3cfc06be2058cb85d52bee5635e778608f47d6ba0fb76778b185fcc9b3cd140",
+      "mean_score": 4.745414332753675e-09,
+      "mean_flop_u": 220.1527818861045,
+      "mean_effective_u": 220.1527818861045,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/sw2_1/run_v55_s3x150.json",
+      "sha256": "4527f4a431e4ef13aab001703393b65c40e6e30a253ea0ff4fb5909026f12d1c",
+      "mean_score": 3.9832585875385445e-09,
+      "mean_flop_u": 189.9614804193005,
+      "mean_effective_u": 189.9614804193005,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/sw2_1/run_v55_s3x200.json",
+      "sha256": "418528b043efaa9ce2ab6fe331f404c750d076f1d1de0d9293c914cc77a48e9b",
+      "mean_score": 4.113381498435311e-09,
+      "mean_flop_u": 189.9614804193005,
+      "mean_effective_u": 189.9614804193005,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/sw2_2/run_v55_s125_chain120.json",
+      "sha256": "54187278c45f3f00f0ad4506955f889031a07f50793a3315abca73c1d306c45a",
+      "mean_score": 3.960437883576738e-09,
+      "mean_flop_u": 189.9614804193005,
+      "mean_effective_u": 189.9614804193005,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/sw2_2/run_v55_s3x175.json",
+      "sha256": "a5ad76d5e8b3938bef209803b934ae6dcef446d56acc6b2b8971a9588343f55c",
+      "mean_score": 4.038423054148847e-09,
+      "mean_flop_u": 189.9614804193005,
+      "mean_effective_u": 189.9614804193005,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/sw2_c/run_v55_s125_c2x080.json",
+      "sha256": "53f69adb9eddfcbc76f5fb60cad4044f7960b9e575adf3530f1a8cc14f928c2f",
+      "mean_score": 3.959626036114119e-09,
+      "mean_flop_u": 189.9614804193005,
+      "mean_effective_u": 189.9614804193005,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/sw2_c/run_v55_s125_c2x120.json",
+      "sha256": "ae0cdba17801349649b620d6fd930df2b91335ca133f98d25985531a8ad39735",
+      "mean_score": 3.971977239439016e-09,
+      "mean_flop_u": 189.9614804193005,
+      "mean_effective_u": 189.9614804193005,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/sw2_d/run_v55_s125_chain090.json",
+      "sha256": "09190059f4d21e856e2a700cf93e521282f1e0fd56d845ae42668993c22129cc",
+      "mean_score": 3.956135905558722e-09,
+      "mean_flop_u": 189.9614804193005,
+      "mean_effective_u": 189.9614804193005,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/sw2_d/run_v55_s125_chain110.json",
+      "sha256": "c72204f770a390351998e065e130849d8d50ba6f39d1617bc5e197b97ee67132",
+      "mean_score": 3.957757449818289e-09,
+      "mean_flop_u": 189.9614804193005,
+      "mean_effective_u": 189.9614804193005,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/sw2_e/run_v55_s125_bl125.json",
+      "sha256": "3e09ee0123cf2faf7086153c704dd4e9aebc5447332cf107c837b89a8a1cc330",
+      "mean_score": 3.9541275334307744e-09,
+      "mean_flop_u": 189.9614804193005,
+      "mean_effective_u": 189.9614804193005,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/sw2_e/run_v55_s125_bl150.json",
+      "sha256": "c433cb3df6bcea68926d0bd7d97eab70d428b795ede73f5c42839dfa3f48f812",
+      "mean_score": 3.957931125907365e-09,
+      "mean_flop_u": 189.9614804193005,
+      "mean_effective_u": 189.9614804193005,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/sw_1/run_v55_l3.json",
+      "sha256": "d230fb9fded734a7e4c1ee8b6f43bdba012a3ed4eccc1f861e418cd8c2ea5b01",
+      "mean_score": 3.967098398401718e-09,
+      "mean_flop_u": 189.96589736562223,
+      "mean_effective_u": 189.96589736562223,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/sw_1/run_v55_l4ref.json",
+      "sha256": "2321d73d77aff05aac908a2b37c43dd2a94b84d6ae37f6158a0a74da21163cc5",
+      "mean_score": 3.967944909699191e-09,
+      "mean_flop_u": 189.9614804193005,
+      "mean_effective_u": 189.9614804193005,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/sw_2/run_v55_l2.json",
+      "sha256": "2b581f052b303b6f3487d106edd0da348188f0b57c85aeb6727bbb21036534c8",
+      "mean_score": 3.967161969648538e-09,
+      "mean_flop_u": 189.97031431194395,
+      "mean_effective_u": 189.97031431194395,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/sw_2/run_v55_l4_lastoff.json",
+      "sha256": "d0a9609aded3154ec5a2fe486a5b72df3155b16c50fb89d1b325d2fd0199756b",
+      "mean_score": 4.0134362641718325e-09,
+      "mean_flop_u": 189.9614804193005,
+      "mean_effective_u": 189.9614804193005,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/sw_c/run_v55_l4_s3x080.json",
+      "sha256": "a126595d78deab2fc2c4a637d2d67336ecae8876ba0c44d7333bdbc956f2d34f",
+      "mean_score": 4.016145651118379e-09,
+      "mean_flop_u": 189.9614804193005,
+      "mean_effective_u": 189.9614804193005,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/sw_c/run_v55_l4_s3x125.json",
+      "sha256": "6e4d30e9f1c8cfc2e75307b9589bf096c8ed8a5b161ed407e7ef826d8302c90b",
+      "mean_score": 3.955926792339592e-09,
+      "mean_flop_u": 189.9614804193005,
+      "mean_effective_u": 189.9614804193005,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/sw_d/run_v55_l4_y21x067.json",
+      "sha256": "43168b8ca6ade056137add54d652c9cc3463755799665779fa8360b960e6db92",
+      "mean_score": 3.9757692847094005e-09,
+      "mean_flop_u": 189.9614804193005,
+      "mean_effective_u": 189.9614804193005,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/sw_d/run_v55_l4_y21x150.json",
+      "sha256": "8117a92c6f12ef2337477a101e42ffe28fa9950cfe3e7567a0468b8972270516",
+      "mean_score": 3.982968645079175e-09,
+      "mean_flop_u": 189.9614804193005,
+      "mean_effective_u": 189.9614804193005,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/sw_e/run_v55_l4_c2x0.json",
+      "sha256": "dd10c693b0568f82fdeb17b8c3ab2b75c794b0bc5fafb0fea00e40d11299a0ee",
+      "mean_score": 4.022607357264223e-09,
+      "mean_flop_u": 189.9614804193005,
+      "mean_effective_u": 189.9614804193005,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/sw_e/run_v55_l4_c2x150.json",
+      "sha256": "0dc15fdd69f2ed65ba0d1623c129f7be107c392c2a9f3b1a8173a555f0d54b1c",
+      "mean_score": 4.188192069978303e-09,
+      "mean_flop_u": 189.9614804193005,
+      "mean_effective_u": 189.9614804193005,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/v55_a/run_base_v53rfb2.json",
+      "sha256": "5641183ea5eab0d93f3636bbf93bb1ee2c0f9f6933000ba2b9eef019a44e1afc",
+      "mean_score": 4.199376290823642e-09,
+      "mean_flop_u": 189.91501547798515,
+      "mean_effective_u": 189.91501547798515,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/v55_a/run_v55k4c.json",
+      "sha256": "6acbeff15de313d3cdc05eca12498778b4f8d936337b88cad97f2a6ee7c8115b",
+      "mean_score": 3.97075065507214e-09,
+      "mean_flop_u": 189.95264652665705,
+      "mean_effective_u": 189.95264652665705,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/v55_b/run_v55lean.json",
+      "sha256": "970767336b3c7eb7a81b5c53b16f754a93a6a031b7e2873814082f8abaaf35e0",
+      "mean_score": 3.988855119291536e-09,
+      "mean_flop_u": 189.93789174515754,
+      "mean_effective_u": 189.93789174515754,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/v55_b/run_v55lean_l8.json",
+      "sha256": "6e2a9db6c56d6eed415ac083ff68ce32ea289bc56b639482f142c45649649fd0",
+      "mean_score": 3.9977667231878625e-09,
+      "mean_flop_u": 189.9353610602394,
+      "mean_effective_u": 189.9353610602394,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/v55_c/run_base_v52Ar352.json",
+      "sha256": "4d877d87f958b58a59c602da7d0b88ea5bcb970372f3c187389a0ae5217968ba",
+      "mean_score": 4.181368665621116e-09,
+      "mean_flop_u": 190.351393556376,
+      "mean_effective_u": 190.351393556376,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/v55_c/run_v55Ak4c.json",
+      "sha256": "9928ad2b2a09e6caae75897a061689fef3df15c082ad5d6eb6b158a16ddbebe7",
+      "mean_score": 3.953535629668297e-09,
+      "mean_flop_u": 190.3890763266897,
+      "mean_effective_u": 190.3890763266897,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/v55_d/run_v55lean_b12.json",
+      "sha256": "c079f0e80a72c7c173b09ae40460482670949b1b151677fafd4383b8a4f8359c",
+      "mean_score": 3.9863005059506454e-09,
+      "mean_flop_u": 189.93790748078376,
+      "mean_effective_u": 189.93790748078376,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/v55_d/run_v55lean_l4.json",
+      "sha256": "f0ee6b8a185e6ad093c01ca548508f6fbb14ba704ccd996ec5f4de7acdb6f6f7",
+      "mean_score": 3.983199929766788e-09,
+      "mean_flop_u": 189.9437749676034,
+      "mean_effective_u": 189.9437749676034,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/v55_e/run_v55Alean.json",
+      "sha256": "97206a897f1f3254b2a751de4ca8ce6434bc579f138ba0559d9286d9275881f3",
+      "mean_score": 3.971564568586484e-09,
+      "mean_flop_u": 190.37432154519018,
+      "mean_effective_u": 190.37432154519018,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/v56t_1/run_v56_ref.json",
+      "sha256": "298553315695550514d52bd9e169b2784933fdb92123d4649fc0de6073f7dc58",
+      "mean_score": 3.789926404463502e-09,
+      "mean_flop_u": 190.15636758614332,
+      "mean_effective_u": 190.15636758614332,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/v56t_1/run_v56_star075.json",
+      "sha256": "b219ded3afec97f8c5b7224a0b6b42fa9b8a4d3b56bb84b78283220cdab3e0c4",
+      "mean_score": 3.831430095592427e-09,
+      "mean_flop_u": 190.15636758614332,
+      "mean_effective_u": 190.15636758614332,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/v56t_2/run_v56_age6.json",
+      "sha256": "0a85973b1bd5bdb69f6d16ab8acca0ec4c7462281f98c9c530bdbc7de9bc9110",
+      "mean_score": 3.842338047999718e-09,
+      "mean_flop_u": 197.18973936516792,
+      "mean_effective_u": 197.18973936516792,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/v56t_2/run_v56_star150.json",
+      "sha256": "24ab21f712c00bf1928132f9fc453db34b593282ab4ce86a2c6d3aa337f88fa9",
+      "mean_score": 3.832005624071548e-09,
+      "mean_flop_u": 190.15636758614332,
+      "mean_effective_u": 190.15636758614332,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/v56t_c/run_v56_s3x110.json",
+      "sha256": "ce3623a0714f2b7d5258d30b6e87d8b95e08d1b8398eeb3eb9874c65a036622d",
+      "mean_score": 3.800607673555823e-09,
+      "mean_flop_u": 190.15636758614332,
+      "mean_effective_u": 190.15636758614332,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/v56t_c/run_v56_s3x125.json",
+      "sha256": "89601e57f2d6e4b629c73b5dcda99d3dac253309e2d488535029982cd80dafa7",
+      "mean_score": 3.825308270885995e-09,
+      "mean_flop_u": 190.15636758614332,
+      "mean_effective_u": 190.15636758614332,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/v56t_d/run_v56_bl125.json",
+      "sha256": "24590db50cee7ebbaaa17aef471ecf8678d655032391939974ea8d15a3f5229f",
+      "mean_score": 3.789466617054584e-09,
+      "mean_flop_u": 190.15636758614332,
+      "mean_effective_u": 190.15636758614332,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/v56t_d/run_v56_star125.json",
+      "sha256": "8c6ce7439701eace645ca3b1db962854a154e19100f29305711c8607bb821c25",
+      "mean_score": 3.779282202977259e-09,
+      "mean_flop_u": 190.15636758614332,
+      "mean_effective_u": 190.15636758614332,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/v56t_e/run_v56_ages4.json",
+      "sha256": "770cf40b670a3742cbe6f41bf80aae9186f577cfa86cbd1c95ff886172da8a3c",
+      "mean_score": 3.806855348257932e-09,
+      "mean_flop_u": 190.12218789864332,
+      "mean_effective_u": 190.12218789864332,
+      "lambda_flops_per_second": 0.0
+    },
+    {
+      "path": "data/kaggle_out/v56t_e/run_v56_fit_synth.json",
+      "sha256": "5bf37ca9f855693c4c9fad52e680853ed4827ef9573e4c0257880b884b215943",
+      "mean_score": 3.776390787370014e-09,
+      "mean_flop_u": 190.15636758614332,
+      "mean_effective_u": 190.15636758614332,
+      "lambda_flops_per_second": 0.0
+    }
+  ]
+}

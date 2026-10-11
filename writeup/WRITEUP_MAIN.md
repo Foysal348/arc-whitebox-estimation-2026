@@ -290,7 +290,7 @@ A second hidden limit appeared with V56. Two 3-D broadcast forms of the cubic st
 
 **Where our cost goes.** A V56 call-site ledger puts 193.8 u in one warm call: about 70 u in the D21 hub readout, 63 u in young-leg transport, 20 u in the old basis, and about 40 u elsewhere, which issues 11.3k of the 20.6k operations. The 133 u in the two per-source families grows with depth, and nothing we tested removes it without at least a comparable accuracy loss. For comparison, the reference algorithm of Wu et al. costs about 4,150 u at our size (derived from their cost table), about 21× V56.
 
-**Relation to the leaderboard.** On the 10 Oct board the six highest entries have raw MSE 1.14–1.65e-8 at util 0.106–0.144; we show raw 1.97e-8 at util 0.187. One entry at rank 11 has V29-level raw MSE (2.10e-8) at util 0.102. At our raw MSE, util 0.10 would score about 2.0e-9 (derived). We do not know the leaders' mechanisms. Our measurements exclude only the specific κ₃ representations in the table above as cheaper drop-in replacements inside our chain.
+**Relation to the leaderboard.** On the 10 Oct board the six highest entries have raw MSE 1.14–1.65e-8 at util 0.106–0.144; our row shows raw 1.97e-8 at util 0.187 (it links #334805, which displays the same 3.7e-9 as #334870). One entry at rank 11 has V29-level raw MSE (2.10e-8) at util 0.102. At our raw MSE, util 0.10 would score about 2.0e-9 (derived). We do not know the leaders' mechanisms. Our measurements exclude only the specific κ₃ representations in the table above as cheaper drop-in replacements inside our chain.
 
 ---
 

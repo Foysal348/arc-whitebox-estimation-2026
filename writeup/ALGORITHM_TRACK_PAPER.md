@@ -1435,7 +1435,7 @@ The 1024-wide leaders therefore pair a raw MSE 1.2–1.35× lower with a cost 1.
 
 **The 10 Oct board** (`consultations/competition_scan_2026-10-10.md`).
 - The six highest entries have raw MSE 1.14–1.65e-8 at util 0.106–0.144.
-- Our leaderboard entry shows raw 1.97e-8 at util 0.187 (rank 42). Entries ranked 11–40 have raw MSE comparable to ours (1.7–2.5e-8 among those listed).
+- Our leaderboard entry shows raw 1.97e-8 at util 0.187 (rank 42 on 10 Oct). The row links #334805, which displays the same 3.7e-9 as our best #334870 (§8.4). Entries ranked 11–40 have raw MSE comparable to ours (1.7–2.5e-8 among those listed).
 - The entry at rank 11 has V29-level raw MSE (2.10e-8) at util 0.102, the floor.
 - At our raw MSE, util 0.10 would score about 2.0e-9 and util 0.14 about 2.8e-9 (derived).
 
@@ -1597,7 +1597,7 @@ Unless a path is given, probe scripts are in `experiments/probes/`. All scripts 
 - The PM364 engineering checks of §6.7 (closure-port parity 5e-8 / 4e-6 / MSE 1.5e-11, flopscope parity 2.8e-7, 9.7k operations, 93 u extrapolated) were measured in the 11 Oct session and recorded afterwards in `results/summaries/student/pm364_engineering_checks.json`.
 - The V56 ledger counts 20,586 operations in the warm call (§3.6), against ~19.9k–20k quoted for the A class in §3.3. The ledger counts each outermost flopscope call as one operation on one network; the two counts are not from the same instrument.
 - The ledger's 193.8 u is one network; the harness mean for the same estimator is util 0.1861 (≈ 190.6 u).
-- The 10 Oct leaderboard lists our entry at raw 1.97e-8, while the grader reported 1.950e-8 for #334870. We have not established which submission or rounding the board's figure reflects.
+- The leaderboard lists our entry at raw 1.97e-8, while the grader reported 1.950e-8 for #334870. Resolved 11 Oct: the board's row links #334805 (8 Oct; score 3.6829e-9, raw 1.9706e-8, util 0.1869). #334870 (3.6521e-9, raw 1.9497e-8) is graded in the same Phase-2 round (1429), as are #334869 and #334871. All four display as 3.7e-9. Entries with equal displayed scores share a rank on the board (rank 43 on 11 Oct, tied with another 3.7e-9 entry), so the board appears to keep the earlier submission (inferred, not documented by the organisers).
 - The CBA ratios are quoted to one decimal from the files (×63.7, ×125.6, ×102.6); our working notes rounded them to ×64, ×125 and ×103.
 
 ---
