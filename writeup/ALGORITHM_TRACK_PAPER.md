@@ -1483,7 +1483,22 @@ Again and again in this project, a change that makes one channel locally more co
 
 Only **joint** input oracles give large gains. The teacher's κ₃ and κ₄ together give ×0.272, against ×0.607 and ×0.686 alone (§4.8). In the channel oracle of §4.2 (base 2.290e-8), the true variance, κ₃ diagonal and κ₄ diagonal together reach the noise floor (×0.057).
 
-The pattern is consistent with the chain's channel errors partly cancelling in the mean closure: correcting one channel uncovers the errors it was offsetting in the others. We have not measured this cancellation directly **[OPEN]**. In the feed case, Monte-Carlo noise in the injected quantity is a competing explanation.
+The pattern is consistent with the chain's channel errors partly cancelling in the mean closure: correcting one channel uncovers the errors it was offsetting in the others. In the feed case, Monte-Carlo noise in the injected quantity is a competing explanation.
+
+**Direct one-step measurement (11 Oct; `experiments/probes/channel_cancellation.py` → `channel_cancellation.json`).** Setup:
+- **Network and layers:** MLP #0, every layer L2–16, against the 6·10⁷-sample teacher.
+- **Closure:** the Edgeworth mean closure to order 4. On the teacher's own inputs it reproduces the teacher's ReLU mean to 0.8–1.5e-5 (relative), against the chain's one-step error of 2.6–2.9e-4.
+- **Chain inputs:** μ, var and d3 come from the frozen V56 chain. Its effective κ₄ diagonal is back-solved from its own post-ReLU mean, reproducing that mean to 1–4e-6; on the 5 % of neurons where κ₄ has no effect on the mean, it is set to the teacher's.
+- **Swaps:** each fresh input (var, d3, κ₄ diagonal) is replaced by the teacher's at the chain's own μ, and the change in the post-ReLU mean is that channel's error.
+
+Findings (measured):
+- **The fresh channel errors cancel.** Their norms add up to 1.9–2.6× the norm of their joint error. The cancellation ratio ‖ΣF‖² / Σ‖F‖² is 0.41–0.54 at L3–L10 and 0.62–0.83 at L11–16 (1 would mean no cancellation). The main pair is var with d3: cosine −0.40 to −0.83 at L2–L11 and −0.17 to −0.31 at L12–16. d3 with κ₄ is −0.19 to −0.28 from L5 on.
+- **Correcting one channel alone makes the step worse.** The fresh error grows when var alone is corrected at L2–L9 (×1.01–1.31), and when d3 alone is corrected at L4–L10 (×1.03–1.13). The latter matches the end-to-end cost of raising d3 (§6.6 (e)). Correcting var and d3 together always helps (×0.56–0.79). κ₄ alone helps (×0.50–0.91).
+- **Most of the one-step error is carried, not fresh.** With the true var, d3 and κ₄ at the chain's μ, 23–55 % of the error remains, and that part comes from the mean error carried in from earlier layers.
+
+Limits:
+- **Noise.** The teacher's own closure error, which bounds its sampling noise, is at most 15 % of the fresh error in norm. That moves a fix-one ratio by at most about 1 %, so all the excesses above except var at L9 (×1.01) are larger than the noise.
+- **Scope.** This is a one-step measurement at the closure. How the cancellation propagates through depth to the final mean was not measured; the end-to-end reading remains a conjecture.
 
 The practical lesson for moment-chain estimators is narrower, and it rests only on the measurements above:
 - a local test (a slice residual, a one-step error, a pattern correlation) is a necessary gate, but it is not a sufficient one;
@@ -1553,6 +1568,7 @@ Result files are in `results/summaries/` unless a path is given.
 | §3.6 V56 call-site ledger | `experiments/probes/site_ledger.py submissions/v56As_fs/estimator.py <weights.npz>` → `site_ledger_v56As_fs.json` |
 | §3.6, §6.6 (f) Wu et al. read | `consultations/wu_paper_deep_read_2026-10-10.md` (cost table, idea-by-idea check against V56, trace-projection kill; no separate result file) |
 | §6.5 (c) star sign | `experiments/probes/star_sign_check.py data/kaggle_out/fable_ceiling_all/fable_ceiling_all.npz` → `star_sign_check.json` |
+| §7.5 channel cancellation | `experiments/probes/channel_cancellation.py` → `channel_cancellation.json` |
 | §6.6 (a) single pool | `experiments/probes/pool_ceiling.py --layers 11,14,15` → `pool_ceiling.json` |
 | §6.6 (b) DEJ-4 | `pool_ceiling.py --ranks 352,448,512 --young k` (Kaggle wrapper `kaggle/dej/kernel/run.py`) → `oct10/dej_young{1..4}.json` |
 | §6.6 (c) age/rank grid | `submissions/v56As_fs/estimator.py` with `V21_AGE_OLD` / `V21_R_OLD` (runner sets `kaggle/agegrid/set_{1..5}`, `variants.json`) → `kaggle_agegrid_100mlp.json`; base `base_fbg` in `kaggle_fbg_100mlp.json` |
