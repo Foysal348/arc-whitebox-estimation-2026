@@ -12,7 +12,7 @@ We start from the public, MIT-licensed factorised third-cumulant chain of team 5
 
 **Contributions.**
 1. **Two exact identities that we ship.** A spherical-input identity turns the Gaussian input into a uniform-sphere input plus one exact scalar, a₁ = 0.99975589. It is free and graded −1.1 % raw (#331787).
-2. **A parity theorem.** It explains why every "mean-field" closure of the deep third cumulant fails.
+2. **A parity theorem** (derived, with a written proof of its floor, and verified numerically on the real chain). It explains why every "mean-field" closure of the deep third cumulant fails.
 3. **Cubic curvature-birth identities.** These come with readout factors, verified to ≤ 1e-14.
 4. **Cost engineering under a metered budget.** Our tools are dead-neuron compaction, basis-side Strassen, aliased Grams, and an operation budget derived from a residual-time grader failure. Together they remove 22 % of the metered FLOPs for +2.8 % raw (util 0.2437 → 0.189, #332110 → #332420). With the zero-cost accuracy fixes they take the score from 5.418e-9 to 4.078e-9.
 5. **An error map built from 6·10⁷-sample Monte-Carlo teachers.** The closures are exact given true inputs. The error is fresh input error that accumulates through depth. The single most valuable missing input is the **per-neuron pattern** of the κ₄ diagonal: the teacher's pattern at the chain's own level would take the raw MSE from 2.290e-8 to 1.551e-8, which is the leaders' raw range.
@@ -133,7 +133,7 @@ The estimator therefore does three things:
 
 The reparameterisation idea comes from a public Phase-2 repository (barnobarno666), surfaced in an outside-AI consultation (§9). On that repository's K3 chain it was worth −7.9 %. On V29, most of that gain is already absorbed by the fitted κ₄ regeneration.
 
-### 2.2 Parity theorem: no mean-field part of the deep κ₃ (derived)
+### 2.2 Parity theorem: no mean-field part of the deep κ₃ (derived and verified)
 
 Take a source born at layer b. At any later layer l its legs are P = Wᵀ⁽ˡ⁾ D P′ and A = P a_b, where P′, a_b and the birth coefficients do not depend on W⁽ˡ⁾.
 
@@ -149,7 +149,23 @@ Because the weight ensemble is sign-symmetric,
 2. Replacing a source by its conditional expectation given one fresh weight row has a relative-error floor of √(6/(r+8)) in the retained support dimension r. That is 12 % at r = 384 and 16 % at r = 224, an order of magnitude above the 2 % tolerance.
 3. κ₄ terms built from two κ₃ factors are even, and C⊗C is the only even invariant available. We conjecture that this is why the empirical law G_off = λ_l C_off works (not proven).
 
-The argument originated in an LLM consultation (Fable 5) and was checked by us. The floor was derived independently by two other models with the same constant. A final written hand-verification is still listed as pending in our notes **[OPEN]**.
+**Proof of the floor (written out, 11 Oct).** Absorb the gates and the fresh-row covariance square root into a symmetric 3-tensor T, so that two distinct fresh weight rows become independent g, h ~ N(0, I_r) and the source contributes y = T(g, g, h). Let τ_c = Σ_a T_aac.
+
+1. E[y | h] = Σ_abc T_abc E[g_a g_b] h_c = τ · h, so Var E[y | h] = ‖τ‖².
+2. y − E[y | h] = Σ_abc T_abc (g_a g_b − δ_ab) h_c. Using E[(g_a g_b − δ_ab)(g_a′ g_b′ − δ_a′b′)] = δ_aa′ δ_bb′ + δ_ab′ δ_ba′ and the symmetry of T, the residual variance is 2‖T‖².
+3. The map T ↦ τ is the adjoint of u ↦ sym(I⊗u): ⟨T, sym(I⊗u)⟩ = τ · u. Write T = T₀ + sym(I⊗u) with T₀ orthogonal to that range; then τ(T₀) = 0, τ(sym(I⊗u)) = (r+2)u/3 and ‖sym(I⊗u)‖² = (r+2)‖u‖²/3. Hence ‖τ‖² = (r+2)/3 · ‖sym(I⊗u)‖² ≤ (r+2)‖T‖²/3, with equality at T = sym(I⊗v).
+4. The relative error² of the replacement is 2‖T‖² / (2‖T‖² + ‖τ‖²) ≥ 2 / (2 + (r+2)/3) = 6/(r+8). ∎
+
+The floor is therefore exact for this idealised fresh-row model. The modelling step (gates and covariance absorbed into a Gaussian T) is an approximation of the real chain.
+
+**Numerical verification (11 Oct; `experiments/probes/parity_check.py`, `results/summaries/parity_check.json`).**
+- **Sign flip on the real chain.** On the frozen V56 chain (width 128, depth 16), flipping W⁽ˡ⁾ → −W⁽ˡ⁾ at l = 5 and l = 10 leaves every earlier layer bit-identical. At layer l, C and var are unchanged and μ, d3 and the full D21 flip sign, with difference exactly 0.0. The (W, −W) average of d3 and D21 is therefore exactly zero.
+- **Floor.** Monte Carlo (4·10⁵ draws, r = 8–32, random and extremal T) reproduces E[y²] = ‖τ‖² + 2‖T‖² and the residual 2‖T‖² to within sampling error (≤ 0.6 %). The extremal T attains relative errors 0.5000 (r = 16) and 0.3873 (r = 32), equal to √(6/(r+8)).
+- **Bound.** The largest eigenvalue of the trace map on the symmetric-tensor space is (r+2)/3 to six digits for r = 2, 3, 4, 6 and 8, so the bound is the exact operator norm.
+
+**Scope.** The mean μ⁽ˡ⁾ is also odd in W⁽ˡ⁾. The theorem therefore covers closures built on even statistics (C, Grams, variances, earlier state), not closures that condition on μ⁽ˡ⁾. Sources born at layer l itself, after the ReLU, are not old sources and are outside the statement.
+
+The argument originated in an LLM consultation (Fable 5). We checked it, wrote out the proof above and verified it numerically. Two other models derived the floor independently with the same constant.
 
 The learned-residual experiment in §4.7 is the data-side counterpart of this theorem.
 
@@ -1528,6 +1544,7 @@ Result files are in `results/summaries/` unless a path is given.
 | §5.8 C·T channel | `fable_ceiling_2026-10-09.py` → `fable_ceiling_2026-10-09.json`; oracle affine fits and E2E through `r20_joint_oracle.py` (Kaggle wrapper `kaggle/fable_e2e2/kernel/run.py`) → `fable_affine_fits.json`, `fable_affine_e2e.json`; `fable_component_2026-10-09.py` → `fable_component_2026-10-09.json`; `acds_ct_probe.py`, `acds2_ct_probe.py` → `acds_ct_probe.json`, `acds2_ct_probe.json`, `acds_e2e.json`; layer windows (Kaggle wrappers `kaggle/acds/ctwin_{1,2}/run.py`) → `oct10/ctwin_{1,2}.json`; round 3: `acds2_ct_probe.py --lite 1 --ranks 32,48,64` (wrapper `kaggle/acds/kernel/run.py`) → `acds3_ct_probe.json`, E2E (wrapper `kaggle/acds/e2e3_kernel/run.py`) → `acds_e2e3.json` |
 | §6.5 (a) RLL | `experiments/probes/astra_rll_test.py` → `astra_rll_test.json` |
 | §6.5 (b) γ-patch | `experiments/variants/v56_fbg.py` (runner sets `kaggle/fbg/set_{1..5}`) → `kaggle_fbg_100mlp.json`; per-MLP outputs `data/kaggle_out/fbg_{1..5}/`, compared with `kaggle_pair_compare.py --ref base_fbg` |
+| §2.2 parity theorem and floor | `experiments/probes/parity_check.py` → `parity_check.json` |
 | §3.6 V56 call-site ledger | `experiments/probes/site_ledger.py submissions/v56As_fs/estimator.py <weights.npz>` → `site_ledger_v56As_fs.json` |
 | §3.6, §6.6 (f) Wu et al. read | `consultations/wu_paper_deep_read_2026-10-10.md` (cost table, idea-by-idea check against V56, trace-projection kill; no separate result file) |
 | §6.6 (a) single pool | `experiments/probes/pool_ceiling.py --layers 11,14,15` → `pool_ceiling.json` |

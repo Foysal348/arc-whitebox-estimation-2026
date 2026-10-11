@@ -20,7 +20,7 @@ We started from 504aldo's public, MIT-licensed factorised third-cumulant chain (
 
 **Mechanistic contributions.** These are what we consider our contribution to the understanding of white-box estimation:
 1. **A spherical-input identity** (§3.1; derived, injection check measured, graded −1.1 % raw at zero cost).
-2. **A parity theorem** (§3.2; derived): old κ₃ is odd in the later weights, so every closure built on even statistics loses it.
+2. **A parity theorem** (§3.2; derived, verified numerically): old κ₃ is odd in the later weights, so every closure built on even statistics loses it.
 3. **An error map with channel oracles** (§4; measured on 6·10⁷-sample Monte-Carlo teachers). The closures are accurate when given true inputs; the error is input error made at each ReLU and accumulated through depth; the teacher's κ₃ and κ₄ inputs together would take the raw MSE to ×0.272 on MLP #0; the κ₄ gain lives in the **per-neuron pattern** of the κ₄ diagonal, not its level.
 4. **A Hermite cubic-star feature, V56** (§5.2; identity derived and verified numerically to ≤ 8.1e-16; graded −4.4 %), motivated by a measured ceiling ladder: second-order births cap the κ₄ pattern at 0.45–0.55, cubic births reach 0.80–0.85.
 5. **An analysis of the κ₃-dressed C·T channel** (§4.5; oracle and component level, not graded): with the star it reaches the cubic-birth ceiling, and the chain's own legs reproduce it, but not yet at an affordable cost.
@@ -68,7 +68,7 @@ The sphere input has C = I and κ₃ = 0, and its κ₄ is an exact harmonic cor
 
 The idea came from a public Phase-2 repository, surfaced by an outside-AI consultation (App. §2.1). The derivation for this chain and its integration are ours.
 
-### 3.2 Parity theorem: no mean-field part of the deep κ₃ (derived; App. §2.2)
+### 3.2 Parity theorem: no mean-field part of the deep κ₃ (derived and verified; App. §2.2)
 
 Take a source born at layer b. At any later layer l its legs are P = Wᵀ⁽ˡ⁾ D P′ and A = P a_b, where P′, a_b and the birth coefficients do not depend on W⁽ˡ⁾. Every quantity linear in the source's κ₃ (the slice products and D3) is therefore **odd** in W⁽ˡ⁾, while C⁽ˡ⁾, the leg Grams and the per-neuron variances are **even**. Because the weight ensemble is sign-symmetric,
 
@@ -79,7 +79,7 @@ Consequences:
 - Replacing a source by its conditional expectation given one fresh weight row has a relative-error floor of √(6/(r+8)) in the retained dimension r: 12 % at r = 384, far above the 2 % tolerance.
 - κ₄ terms built from two κ₃ factors are even, and C⊗C is the only even invariant available. We read this as the reason the regenerated law G_off = λ_l C_off works (conjecture beyond the derivation; not tested separately).
 
-*Status:* derived, not tested numerically as such. The argument originated in a Claude subagent consultation and was checked by us; a final written hand-verification is still pending (App. §2.2).
+*Status:* derived, then verified (11 Oct; `experiments/probes/parity_check.py`). On the frozen V56 chain (width 128), flipping W⁽ˡ⁾ leaves every earlier layer and C⁽ˡ⁾, var⁽ˡ⁾ bit-identical and flips μ, d3 and D21 exactly (difference 0.0; tested at l = 5, 10). The floor's algebra holds by Monte Carlo, and the bound ‖τ‖² ≤ (r+2)‖T‖²/3 is the exact operator norm (eigen-computation, r = 2–8); a written proof is in App. §2.2. The floor is a statement about the idealised fresh-row model. The mean μ⁽ˡ⁾ is also odd, so closures that condition on μ are not covered. The argument originated in a Claude subagent consultation.
 
 ### 3.3 A half-carried feedback term (derived and measured; shipped as tuned FB 1.25)
 
@@ -251,7 +251,7 @@ A second hidden limit appeared with V56. Two 3-D broadcast forms of the cubic st
 | Idea | Gate | Measured | Kill |
 |---|---|---|---|
 | Compensating closure with no old tier (8 models proposed variants) | ≤ chain MSE | 7.43e-7, 32× the chain; every knob 6.8–9.9e-7 | C |
-| Mean-field / even-statistic closures of old κ₃ | — | Zero by the parity theorem: old κ₃ is odd in later weights (derived, §3.2) | derived |
+| Mean-field / even-statistic closures of old κ₃ | — | Zero by the parity theorem: old κ₃ is odd in later weights (§3.2) | derived, verified |
 | Low-rank Hadamard products of source legs | low rank | A∘P needs 681–778 of 1024 directions for 99 % energy | C |
 | Query surrogates: trace, diagonal Hermite, TensorSketch | D21 ≤ 2 % | 98.2 %, 95.4 %, 790 % at L14 | C/P |
 | Source-free dressed hypertree (DHMP) | next D21 ≤ 2.5 % | 36–40 % | P |
@@ -334,9 +334,9 @@ Most proposals were killed (§7); several outside documents reported passing mea
 **Validation.** Apart from the cited figures of 504aldo, Wu et al. and the public leaderboard, and the numbers marked as estimates, every number here was produced by our own scripts (or derived from them) or by the official grader. Every outside claim was re-derived or re-measured before we used it. On 11 Oct 2026 an automated, AI-run fact-check compared every number in this document with the result files, and the errors it found were corrected. No leaderboard feedback entered any fitted coefficient: the V55 map was fitted against our own teacher for MLP #0, and the shipped V56 maps against our own teacher for the synthetic network.
 
 **Understanding: what was verified numerically and what is only derived.** The team directed the work and reviewed the results, but several derivations were produced with AI assistance.
-- *Verified numerically:* the cubic-star and Wick identities (to ≤ 8.1e-16) and their readout factors (to ≤ 9.0e-15); the spherical identity's scale shift (to 0.3 %); the age-collapse and anchor-grouping identities (to 2.6–3.2e-7); the closure accuracy given true inputs (§4.1); the implementation parity checks (PM364's flopscope and PyTorch versions agree to 2.8e-7).
+- *Verified numerically:* the cubic-star and Wick identities (to ≤ 8.1e-16) and their readout factors (to ≤ 9.0e-15); the spherical identity's scale shift (to 0.3 %); the age-collapse and anchor-grouping identities (to 2.6–3.2e-7); the closure accuracy given true inputs (§4.1); the implementation parity checks (PM364's flopscope and PyTorch versions agree to 2.8e-7); the parity theorem's sign flip on the real chain (exact) and the √(6/(r+8)) floor (Monte Carlo plus exact operator norm, with a written proof).
 - *Derived, consistent with measurements but not exactly confirmed:* the half-carried feedback term (regression −0.55 to −0.9 against −1/2).
-- *Derived only:* the parity theorem (written hand-verification pending), the √(6/(r+8)) floor, the slice-state argument and the C(n+2, 3) count, and the Wu et al. cost comparison.
+- *Derived only:* the slice-state argument and the C(n+2, 3) count, and the Wu et al. cost comparison.
 - *Conjectures:* the error-cancellation reading of §7.1 (2), the common cause in §7.1 (3), and the link from parity to the G_off = λ_l C_off law (§3.2).
 
 ---
