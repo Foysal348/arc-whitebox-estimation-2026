@@ -31,7 +31,7 @@ ap.add_argument("--epochs", type=int, default=16); ap.add_argument("--seed", typ
 ap.add_argument("--lr", type=float, default=2e-3); ap.add_argument("--accum", type=int, default=8)
 ap.add_argument("--ablate", default="none"); ap.add_argument("--eval-only", default="")
 ap.add_argument("--max-train", type=int, default=0); ap.add_argument("--max-eval", type=int, default=0)
-ap.add_argument("--init", default=""); ap.add_argument("--patience", type=int, default=4)
+ap.add_argument("--val-from-train", type=int, default=0); ap.add_argument("--init", default=""); ap.add_argument("--patience", type=int, default=4)
 args = ap.parse_args()
 os.makedirs(args.out, exist_ok=True)
 dev = "cuda" if torch.cuda.is_available() else "cpu"
@@ -41,6 +41,8 @@ for f in glob.glob(os.path.join(args.data, "**", "net_*.npz"), recursive=True):
     s = int(os.path.basename(f)[4:-4]); files[s] = f
 split = {"train": sorted(s for s in files if 100000 <= s < 200000), "val": sorted(s for s in files if 200000 <= s < 300000),
          "test": sorted(s for s in files if 300000 <= s < 400000)}
+if args.val_from_train:   # hold out the last K train seeds as validation (never trained on)
+    split["val"] = split["train"][-args.val_from_train:]; split["train"] = split["train"][:-args.val_from_train]
 if args.max_train: split["train"] = split["train"][:args.max_train]
 if args.max_eval: split["val"] = split["val"][:args.max_eval]; split["test"] = split["test"][:args.max_eval]
 print("device", dev, {k: len(v) for k, v in split.items()}, flush=True)

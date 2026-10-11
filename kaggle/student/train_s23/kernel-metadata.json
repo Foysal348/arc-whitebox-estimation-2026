@@ -1,0 +1,21 @@
+{
+ "id": "foysalemonshanto/student-train-s23",
+ "title": "student-train-s23",
+ "code_file": "run.py",
+ "language": "python",
+ "kernel_type": "script",
+ "is_private": true,
+ "enable_gpu": true,
+ "enable_internet": true,
+ "dataset_sources": [
+  "foysalemonshanto/student-train-code"
+ ],
+ "competition_sources": [],
+ "kernel_sources": [
+  "foysalemonshanto/student-labels-train-1",
+  "foysalemonshanto/student-labels-train-2",
+  "foysalemonshanto/student-labels-train-3",
+  "foysalemonshanto/student-labels-train-4",
+  "foysalemonshanto/student-labels-train-5"
+ ]
+}
