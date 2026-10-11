@@ -1,8 +1,19 @@
-"""Build writeup/ALGORITHM_TRACK_PAPER.pdf from the Markdown source (python-markdown + Edge headless print).
-Usage: python writeup/build_pdf.py"""
-import re, subprocess, os, markdown
+"""Build a PDF from a Markdown write-up (python-markdown + Edge headless print).
+Usage:
+    python writeup/build_pdf.py                                              # the full paper -> ALGORITHM_TRACK_PAPER.pdf
+    python writeup/build_pdf.py writeup/WRITEUP_MAIN.md --out WRITEUP_MAIN   # the main write-up -> WRITEUP_MAIN.pdf
+The output name defaults to the input file's stem; .html and .pdf are written next to the script (writeup/)."""
+import re, subprocess, os, argparse, html, markdown
 HERE = os.path.dirname(os.path.abspath(__file__))
-src = open(os.path.join(HERE, "ALGORITHM_TRACK_PAPER.md"), encoding="utf-8").read().splitlines()
+ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+ap.add_argument("src", nargs="?", default=os.path.join(HERE, "ALGORITHM_TRACK_PAPER.md"), help="input Markdown file (default: the full paper)")
+ap.add_argument("--compact", action="store_true", help="10 pt, tighter margins (main write-up)")
+ap.add_argument("--out", "-o", default=None, help="output base name without extension (default: the input file's stem)")
+args = ap.parse_args()
+src_path = os.path.abspath(args.src)
+out_name = args.out or os.path.splitext(os.path.basename(src_path))[0]
+src = open(src_path, encoding="utf-8").read().splitlines()
+title = next((l[2:].strip() for l in src if l.startswith("# ")), out_name)
 item = re.compile(r"^\s*([-*+]|\d+\.)\s")
 out, in_code = [], False
 for line in src:
@@ -15,6 +26,7 @@ for line in src:
     out.append(line)
 body = markdown.markdown("\n".join(out), extensions=["tables", "fenced_code", "toc", "mdx_truly_sane_lists"],
                          extension_configs={"mdx_truly_sane_lists": {"nested_indent": 2, "truly_sane": True}})
+css_compact = "@page { size: A4; margin: 14mm 14mm 14mm 14mm; } body { font-size: 10pt !important; line-height: 1.35 !important; } table { font-size: 8.6pt !important; }"
 css = """
 @page { size: A4; margin: 18mm 16mm 18mm 16mm; }
 body { font-family: 'Cambria', 'Segoe UI', 'Times New Roman', serif; font-size: 10.5pt; line-height: 1.45; color: #111; }
@@ -27,8 +39,8 @@ code { font-family: Consolas, 'Courier New', monospace; font-size: 8.8pt; backgr
 pre { background: #f5f5f5; border: 1px solid #ddd; padding: 6pt; font-size: 8.5pt; white-space: pre-wrap; page-break-inside: avoid; }
 pre code { background: none; padding: 0; }
 """
-html_path = os.path.join(HERE, "ALGORITHM_TRACK_PAPER.html"); pdf_path = os.path.join(HERE, "ALGORITHM_TRACK_PAPER.pdf")
-open(html_path, "w", encoding="utf-8").write(f"<!doctype html><html><head><meta charset='utf-8'><title>Algorithm Track Paper - Hack2Publish</title><style>{css}</style></head><body>{body}</body></html>")
+html_path = os.path.join(HERE, out_name + ".html"); pdf_path = os.path.join(HERE, out_name + ".pdf")
+open(html_path, "w", encoding="utf-8").write(f"<!doctype html><html><head><meta charset='utf-8'><title>{html.escape(title)} - Hack2Publish</title><style>{css}{css_compact if args.compact else ""}</style></head><body>{body}</body></html>")
 edge = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
 subprocess.run([edge, "--headless", "--disable-gpu", "--no-pdf-header-footer", f"--print-to-pdf={pdf_path}", "file:///" + html_path.replace("\\", "/")], capture_output=True)
 print("wrote", pdf_path, os.path.getsize(pdf_path))

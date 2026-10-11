@@ -1,0 +1,8 @@
+{
+ "note": "Measured in the main session on 11 Oct 2026 (console output); recorded here for provenance.",
+ "closure_port_parity_teacher_forced_net300000": {"post_mean_rel_per_layer": "4.5e-8 to 6.3e-8 (L2-15)", "post_d3_rel": "1e-7 to 8e-5", "final_prediction_rel": 4.134e-6, "final_mse_vs_teacher": 1.4609e-11},
+ "torch_vs_flopscope_theta0_n128_rel": 2.7624e-7,
+ "flopscope_ops_n128": 9729, "flopscope_flops_n128": 462107835, "estimated_u_n1024": "about 93 (6 n^3 products per transition x 15 + O(n^2) work)",
+ "zero_theta_baseline_net300000": {"mse_to_teacher": 9.4223e-7, "D21_rel_L2_16": "0.58-0.79", "d3_rel": "0.24-0.37"},
+ "gpu_T4": {"fwd_bwd_s": 0.95, "peak_GB": 7.5}
+}
