@@ -14,12 +14,12 @@ We start from the public, MIT-licensed factorised third-cumulant chain of team 5
 1. **Two exact identities that we ship.** A spherical-input identity turns the Gaussian input into a uniform-sphere input plus one exact scalar, a₁ = 0.99975589. It is free and graded −1.1 % raw (#331787).
 2. **A parity theorem.** It explains why every "mean-field" closure of the deep third cumulant fails.
 3. **Cubic curvature-birth identities.** These come with readout factors, verified to ≤ 1e-14.
-4. **Cost engineering under a metered budget.** Our tools are dead-neuron compaction, basis-side Strassen, aliased Grams, and an operation budget derived from a residual-time grader failure. Together they remove 23 % of the metered FLOPs for +2.8 % raw. With the zero-cost accuracy fixes they take the score from 5.418e-9 to 4.078e-9.
+4. **Cost engineering under a metered budget.** Our tools are dead-neuron compaction, basis-side Strassen, aliased Grams, and an operation budget derived from a residual-time grader failure. Together they remove 22 % of the metered FLOPs for +2.8 % raw (util 0.2437 → 0.189, #332110 → #332420). With the zero-cost accuracy fixes they take the score from 5.418e-9 to 4.078e-9.
 5. **An error map built from 6·10⁷-sample Monte-Carlo teachers.** The closures are exact given true inputs. The error is fresh input error that accumulates through depth. The single most valuable missing input is the **per-neuron pattern** of the κ₄ diagonal: the teacher's pattern at the chain's own level would take the raw MSE from 2.290e-8 to 1.551e-8, which is the leaders' raw range.
 6. **A κ₄-pattern programme with graded gains.**
    - A zero-FLOP linear corrector (V55) graded −5.4 % (#334591).
    - A cubic Hermite-star feature built from the chain's own young legs (V56) graded a further −4.4 % (#334805), reaching 3.6521e-9 (#334870).
-7. **A ceiling ladder that explains why every earlier κ₄ carrier stalled near correlation 0.45.**
+7. **A ceiling ladder consistent with every earlier κ₄ carrier stalling near correlation 0.45** (consistent with, not a proof of, the cause).
    - Carriers whose births stop at second order in the Hermite expansion of the ReLU are capped at 0.45–0.56.
    - Cubic births over a 6-layer horizon reach 0.80–0.85.
    - An age-resolved ceiling (9 Oct) shows that ages 1–6 are jointly needed. Ages 1–4 give 0.68–0.74, ages 2–6 give 0.69–0.71, and ages 4–6 give only 0.37–0.41.
@@ -147,7 +147,7 @@ Because the weight ensemble is sign-symmetric,
 **Consequences.**
 1. Any closure that replaces old sources by a function of even statistics discards the entire contribution. This covers mean-field closures, scale mixtures and polynomials in C. The failures of such closures reported in the public log (9.1e-7 and 2.3e-6) are therefore structural.
 2. Replacing a source by its conditional expectation given one fresh weight row has a relative-error floor of √(6/(r+8)) in the retained support dimension r. That is 12 % at r = 384 and 16 % at r = 224, an order of magnitude above the 2 % tolerance.
-3. κ₄ terms built from two κ₃ factors are even, and C⊗C is the only even invariant available. This explains the empirical law G_off = λ_l C_off.
+3. κ₄ terms built from two κ₃ factors are even, and C⊗C is the only even invariant available. We conjecture that this is why the empirical law G_off = λ_l C_off works (not proven).
 
 The argument originated in an LLM consultation (Fable 5) and was checked by us. The floor was derived independently by two other models with the same constant. A final written hand-verification is still listed as pending in our notes **[OPEN]**.
 
@@ -248,11 +248,11 @@ Each step below is exact or near-exact. "Util" is the grader's figure, or adjust
 | v48 compaction (26 Sep) | w₁ := 0 for Φ < 1e-2; live-row contraction, widths padded to multiples of 32 | 4.6294e-9 (#332391) | 2.1462e-8 | — |
 | v49 basis-side Strassen + aliased Grams | Projections, rotations, Qc and the D21 lift through Strassen; joiner Grams as YYᵀ (billed at half) | 4.4157e-9 (#332401) | 2.1463e-8 | — |
 | v50 D21 live columns | D21 columns of dead neurons never computed | 4.2512e-9 (#332404) | 2.1537e-8 | — |
-| v51 D21 rows, Φ < 3e-3 / 7e-3 | D21 rows of very dead neurons never computed | 4.1081e-9 (#332418) / 4.0902e-9 (#332420) | 2.1545e-8 / 2.1636e-8 | 0.189 |
+| v51 D21 rows, Φ < 3e-3 / 7e-3 | D21 rows of very dead neurons never computed | 4.1081e-9 (#332418) / 4.0902e-9 (#332420) | 2.1545e-8 / 2.1636e-8 | 0.191 / 0.189 |
 | v52 op budget, safe B / A (27 Sep) | Strassen only where it saves ≥ ~2 u per 1,000 ops (§3.3) | 4.1696e-9 (#332566) / 4.1228e-9 (#332567) | — | — |
-| + R_OLD 352, Tq from the QR R factor, R_FB 2 | Exact or near-exact trims | B: 4.0995e-9 (#332626); A: 4.0784e-9 (#332621) | 2.197e-8 (B) | — |
+| + R_OLD 352, Tq from the QR R factor, R_FB 2 | Exact or near-exact trims | B: 4.0995e-9 (#332626); A (R_OLD 352 only): 4.0784e-9 (#332621) | 2.197e-8 (B) | — |
 
-**Net effect.** From V29 to these variants, the trims removed 23 % of the metered FLOPs (util 0.244 → 0.189) for +2.8 % raw (2.105e-8 → 2.164e-8). On 26 Sep alone, the score fell from 4.8066e-9 to 4.1081e-9 (−14.5 %).
+**Net effect.** Over the whole cost programme, the trims removed 22 % of the metered FLOPs (util 0.2437 → 0.189, #332110 → #332420) for +2.8 % raw (2.105e-8 → 2.164e-8). On 26 Sep alone, the score fell from 4.8066e-9 to 4.1081e-9 (−14.5 %).
 
 **What could not be compacted.** Only the *input* side of dead neurons can be compacted. Each of the following loses, measured on the teacher pair:
 
@@ -516,7 +516,7 @@ Reading the table:
 - **The two inputs compound more than multiplicatively.** The product of the single-input ratios would be 0.416 on MLP #0 and 0.634 on the synthetic net; jointly they give 0.272 and 0.569. Each channel's error is partly inherited from the other (§4.2).
 - **With the true κ₄, the true d3 matters.** On MLP #0, adding the teacher's d3 to the teacher's slice takes 0.438 to 0.272.
 - **The κ₄ pattern is again enough.** The teacher's pattern at the chain's level gives 0.294 against 0.272 for the full diagonal (compare §5.1). Injecting κ₄ only from L8 loses little (0.287).
-- **What remains is mostly the variance channel.** After κ₃ and κ₄, the remaining ×0.27 is consistent with §4.2, where adding the true variance takes the joint ratio to the noise floor (0.057), and with §4.4, where the variance error is inherited covariance error.
+- **What remains is mostly the variance channel.** After κ₃ and κ₄, the remaining ×0.27 is consistent with the channel oracle of §4.2 (base 2.290e-8), where the true variance, κ₃ diagonal and κ₄ diagonal together take MLP #0 to the noise floor (×0.057), and with §4.4, where the variance error is inherited covariance error. (The two oracles differ: §4.2 injects the κ₃ diagonal, not the slice + d3.)
 
 ### 4.9 Which Hermite order each channel needs, one step at a time (measured 9 Oct)
 
@@ -634,7 +634,7 @@ A young carrier spanning 2–3 layers is therefore dead from the start. An ideal
 
 ### 5.3 V55: a zero-FLOP linear pattern corrector (graded)
 
-**Construction.** At every layer ≥ LMIN, a fixed linear map turns per-neuron quantities the chain already holds into a predicted pattern of κ₄/v². The inputs are:
+**Construction.** At every layer ≥ LMIN (LMIN = 6; LMIN = 4 from #334762 on), a fixed linear map turns per-neuron quantities the chain already holds into a predicted pattern of κ₄/v². The inputs are:
 - s3sq = (D3/v^1.5)²;
 - the row and column energies of the standardised D21;
 - the correlation-row energy of C_pre;
@@ -644,7 +644,7 @@ A young carrier spanning 2–3 layers is therefore dead from the start. An ideal
 
 The pattern is rescaled to the chain's layer-mean level and fed to the **mean closure only**; the pair closure keeps the chain's κ₄.
 
-The map is fitted once, offline, against the teacher on decisive neurons. The last layer uses a reduced map. The cost is 0 u and +310 metered ops (17,961 in total for the B class).
+The map is fitted once, offline, against our MLP #0 teacher on decisive neurons (|μ/σ| < 1.5); the synthetic net is held out. The last layer uses a reduced map. The cost is 0 u and +310 metered ops (17,961 in total for the B class).
 
 **Pattern correlation.**
 - MLP #0: 0.41–0.55, against 0.24–0.41 for the chain (layers 6–15).
@@ -1418,7 +1418,7 @@ The 1024-wide leaders therefore pair a raw MSE 1.2–1.35× lower with a cost 1.
 - The entry at rank 11 has V29-level raw MSE (2.10e-8) at util 0.102, the floor.
 - At our raw MSE, util 0.10 would score about 2.0e-9 and util 0.14 about 2.8e-9 (derived).
 
-On that board the remaining gap is mostly **cost**, not accuracy. This motivated the cost-side tests of §3.6 and §6.6–§6.7. Within the sum-of-sources family, they confirm that cost and accuracy trade one for one (§6.6 (c)). Every source-free or pooled alternative we could build fails its 2 % D21 gate, by factors from about 1.25 (DEJ at r = 512) to about 35 (PM364).
+On that board the leaders are ahead of us on both factors, and the entries ranked 11–40, whose raw MSE is comparable to ours, differ from us mainly in cost. This motivated the cost-side tests of §3.6 and §6.6–§6.7. Within the sum-of-sources family, they confirm that cost and accuracy trade one for one (§6.6 (c)). Every source-free or pooled alternative we could build fails its 2 % D21 gate, by factors from about 1.25 (DEJ at r = 512) to about 35 (PM364).
 
 ### 7.4 Open design target [OPEN]
 
@@ -1460,7 +1460,7 @@ Again and again in this project, a change that makes one channel locally more co
 - **Single κ₄ inputs:** injected alone, the off-diagonal κ₄ slices give ×1.03–1.22 (§4.2), and the chain's κ₄ pattern at the teacher's level gives +21.5 % (§5.1).
 - **The κ₃ level** (§6.6 (e)): the chain's d3 is 1.4 % too small at L16, yet raising it by 2 % at L9–16 costs ×1.032 / ×1.015 on the two networks. The one rescaling that helps on MLP #0, D21 ×0.98 (×0.984), hurts on the synthetic net (×1.021).
 
-Only **joint** input oracles give large gains. The teacher's κ₃ and κ₄ together give ×0.272, against ×0.607 and ×0.686 alone (§4.8), and adding the variance takes the ratio to the noise floor (×0.057, §4.2).
+Only **joint** input oracles give large gains. The teacher's κ₃ and κ₄ together give ×0.272, against ×0.607 and ×0.686 alone (§4.8). In the channel oracle of §4.2 (base 2.290e-8), the true variance, κ₃ diagonal and κ₄ diagonal together reach the noise floor (×0.057).
 
 The pattern is consistent with the chain's channel errors partly cancelling in the mean closure: correcting one channel uncovers the errors it was offsetting in the others. We have not measured this cancellation directly **[OPEN]**. In the feed case, Monte-Carlo noise in the injected quantity is a competing explanation.
 
@@ -1565,7 +1565,7 @@ Unless a path is given, probe scripts are in `experiments/probes/`. All scripts 
 
 ## 9. Disclosure of LLM use
 
-**Primary assistant.** The main engineering and research assistant was Claude Code (Claude Opus 5 and 5.5), directed by the participant. It wrote and ran most of the probes, implemented the estimator variants, and maintained the notes. Internal Claude subagents did specific measurement tasks; every number they reported was measured. These subagents were:
+**Primary assistant.** The main engineering and research assistant was Claude Code (Claude Opus 5 and 5.5), directed by the team. It wrote and ran most of the probes, implemented the estimator variants, and maintained the notes. Internal Claude subagents did specific measurement tasks; every number they reported was measured. These subagents were:
 - Fable 5 (Rounds 7–8: the all-distinct κ₃ decomposition, the FB scale and the K₃×C term);
 - Opus (Round 12: κ₄ as carried memory);
 - Sonnet (Round 10: the young-tier count).
@@ -1585,7 +1585,9 @@ Unless a path is given, probe scripts are in `experiments/probes/`. All scripts 
 | HTQB star | Round-18 proposal, built on our Round-17 ceilings |
 | Parity argument | Fable 5 consultation |
 
-**Verification.** Every outside claim was re-derived or re-measured by us before entering this paper. Several claimed measurements were found to be unsupported, and §6.4 says which. The 10–11 Oct consultations (§6.6 (g), §6.7) ran no network inference. Their one numerical result, the routing ceiling, is an audit of our own archived run files. The PM364 student was implemented, trained and evaluated by us. No leaderboard feedback entered any fitted coefficient. The V55 and V56 maps were fitted only on MLP #0 and the synthetic network against our own Monte-Carlo teachers.
+**Verification.** Every outside claim was re-derived or re-measured by us before entering this paper. Several claimed measurements were found to be unsupported, and §6.4 says which. The 10–11 Oct consultations (§6.6 (g), §6.7) ran no network inference. Their one numerical result, the routing ceiling, is an audit of our own archived run files. The PM364 student was implemented, trained and evaluated by us. No leaderboard feedback entered any fitted coefficient. The V55 map was fitted against our own Monte-Carlo teacher for MLP #0 (the synthetic network held out); the shipped V56 maps (#334869, #334870) were fitted against our own teacher for the synthetic network.
+
+**Verified versus derived.** The split of our mathematical claims into numerically verified, derived-and-consistent, derived-only and conjectural is given in the main write-up, §9.
 
 **Licensing and attribution.** The baseline estimator is 504aldo's V29, used under the MIT licence with its copyright header and LICENSE retained. All other changes are ours.
 
