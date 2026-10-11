@@ -1240,7 +1240,12 @@ Reading:
 - **The chain's feed has the right shape and the wrong size**, and the correction points along the residual.
 - **Every injection is nevertheless worse than the base, the exact feed included** (×1.115, KILL by its own gate). The chain's feed sits at a sharp optimum at scale 1.0: −5 % costs 0.45 % and ±10 % costs 4.3 % / 9.4 %. Scaling it up by 10 % hurts, although the exact feed is 14–24 % larger.
 - **The sampled feed is noisy at the level that matters.** Its sampling noise, 3.3–6.0 % of |Y21|, is comparable to the chain's whole slice residual at L9–16 (about 5–7 %, §4.10). This would explain why the exact feed raises the slice residual although its correction is correlated with it.
-- **The Gaussian star has the opposite sign to the sampled born feed** (corr −0.87 to −0.92). We have not established whether this is a sign-convention error in the closed form or a physical sign **[OPEN]**. Neither sign helps: ×21.0 as computed and ×1.872 flipped.
+- **The Gaussian star has the opposite sign to the sampled born feed** (corr −0.87 to −0.92). Neither sign helps: ×21.0 as computed and ×1.872 flipped. The sign is physical, not a convention error (measured 11 Oct on the κ₄ diagonal of the §5.8 ceiling run, 2·10⁶ samples of MLP #0, ages 1–6 summed at L9–16; `experiments/probes/star_sign_check.py` → `star_sign_check.json`):
+  - **No convention error.** The closed-form star has the sign of the sampled cubic-vertex birth Cu1, of which it is the Gaussian part: corr +0.97 to +0.98. It is negative at every neuron. Its coefficient c = −(μ/σ)φ/(6σ²) is negative wherever μ > 0.
+  - **The quadratic-squared birth dominates.** Q2 = 6κ(B, B, A, A) has the opposite sign (corr with the star −0.91 to −0.93) and 1.8–2.5× its norm. Its Gaussian part on the diagonal, 48 Σ_a g_a² v_a Ȳ_ai² X_ai² (derived: κ(He₂, He₂, u, u) = 8 v C C by Wick), is never negative.
+  - **The total follows Q2.** The exact births correlate −0.48 to −0.60 with the star alone, +0.64 to +0.74 with Q2 and +0.59 to +0.80 with star + Q2.
+  
+  A star-only feed therefore carries the wrong-signed part of the births. The feed contraction is linear in the same κ₄, so we read the feed-level sign the same way (derived reading; a Q2-fed feed was not computed).
 
 *Verdict: KILL as measured.* The experiment is decisive about the N = 10⁶ estimate of the exact feed, not about the true feed. The ceiling is noise-limited: reliability is 0.87–0.97, and the validity sub-gate failed at L9–10. Bringing the feed noise well below the residual would need about 10× more samples. With noise ∝ 1/√N, that would put it at about 1.0–1.9 % of |Y21| (estimate). A definitive ceiling, and the sampled C·T part, remain **[OPEN]**.
 
@@ -1547,6 +1552,7 @@ Result files are in `results/summaries/` unless a path is given.
 | §2.2 parity theorem and floor | `experiments/probes/parity_check.py` → `parity_check.json` |
 | §3.6 V56 call-site ledger | `experiments/probes/site_ledger.py submissions/v56As_fs/estimator.py <weights.npz>` → `site_ledger_v56As_fs.json` |
 | §3.6, §6.6 (f) Wu et al. read | `consultations/wu_paper_deep_read_2026-10-10.md` (cost table, idea-by-idea check against V56, trace-projection kill; no separate result file) |
+| §6.5 (c) star sign | `experiments/probes/star_sign_check.py data/kaggle_out/fable_ceiling_all/fable_ceiling_all.npz` → `star_sign_check.json` |
 | §6.6 (a) single pool | `experiments/probes/pool_ceiling.py --layers 11,14,15` → `pool_ceiling.json` |
 | §6.6 (b) DEJ-4 | `pool_ceiling.py --ranks 352,448,512 --young k` (Kaggle wrapper `kaggle/dej/kernel/run.py`) → `oct10/dej_young{1..4}.json` |
 | §6.6 (c) age/rank grid | `submissions/v56As_fs/estimator.py` with `V21_AGE_OLD` / `V21_R_OLD` (runner sets `kaggle/agegrid/set_{1..5}`, `variants.json`) → `kaggle_agegrid_100mlp.json`; base `base_fbg` in `kaggle_fbg_100mlp.json` |
