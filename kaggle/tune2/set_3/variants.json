@@ -1,0 +1,14 @@
+{
+ "A_b11_lam093": {
+  "file": "v56As_fsb11.py",
+  "env": {
+   "V17_LAM_SCALE": "0.93"
+  }
+ },
+ "A_b11_beta130": {
+  "file": "v56As_fsb11.py",
+  "env": {
+   "V25_BETA": "1.3"
+  }
+ }
+}

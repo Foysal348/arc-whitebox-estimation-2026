@@ -1,0 +1,5 @@
+default     flops 201.20 u, ops 21989 | final MSE vs teacher 1.8771e-08
+A_b12_small5 flops 201.21 u, ops 22035 | final MSE vs teacher 1.8210e-08 | rel change vs default 1.61e-05 | MSE ratio 0.9701
+A_b11_d21thr020 flops 199.92 u, ops 22063 | final MSE vs teacher 1.8712e-08 | rel change vs default 7.47e-06 | MSE ratio 0.9969
+B_b12_small4 flops 200.58 u, ops 19641 | final MSE vs teacher 1.8299e-08 | rel change vs default 1.86e-05 | MSE ratio 0.9748
+B_b11_d21thr020 flops 199.28 u, ops 19715 | final MSE vs teacher 1.8629e-08 | rel change vs default 1.09e-05 | MSE ratio 0.9924

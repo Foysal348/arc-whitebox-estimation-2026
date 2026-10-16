@@ -2,10 +2,10 @@
 
 **WhestBench Phase 2, Algorithm track. Team Hack2Publish: mdhamidhosen, esfer_sami, foyshal_sk.**
 
-**Submission #334870** (v56As_fs, A class): adjusted score **3.6521e-9**, raw final-layer MSE **1.950e-8**.
-**Nomination-safe submission #334869** (v56s_fs, B class, ≤ ~18k warm-call operations, estimate): adjusted score **3.6723e-9**.
+**Submission #336377** (E299, team best): adjusted score **3.3946e-9**, raw final-layer MSE **1.8824e-8**, util 0.180.
+It is **#334870** (v56As_fs: 3.6521e-9, raw 1.950e-8), the chain this write-up analyses, plus a fitted calibration and exact cost-rewrite layer by md.hamidhosen (§6.4).
 
-*11 October 2026. This is the main write-up. The full technical report is attached as the **Appendix (full technical report)**, and "App. §x" refers to its sections. Each number and claim is labelled by its source:*
+*16 October 2026. This is the main write-up. The full technical report is attached as the **Appendix (full technical report)**, and "App. §x" refers to its sections. Each number and claim is labelled by its source:*
 - *graded: an official grade, with its submission id;*
 - *measured: a run of our own scripts, with the result file named in App. §8.3;*
 - *derived: algebra or arithmetic, with the derivation in the Appendix;*
@@ -16,7 +16,7 @@
 
 ## 1. Summary
 
-We started from 504aldo's public, MIT-licensed factorised third-cumulant chain ("V29"), which graded 5.418e-9 when submitted verbatim. Our changes take it to **3.6521e-9 (−32.6 %)**: raw MSE falls by 8.6 % (2.133e-8 → 1.950e-8) and util by 26 % (0.254 → 0.187) (derived).
+We started from 504aldo's public, MIT-licensed factorised third-cumulant chain ("V29"), which graded 5.418e-9 when submitted verbatim. Our changes take it to **3.6521e-9 (−32.6 %)**: raw MSE falls by 8.6 % (2.133e-8 → 1.950e-8) and util by 26 % (0.254 → 0.187) (derived). A final calibration and cost layer by md.hamidhosen on this chain (E282–E299, §6.4) takes it to **3.3946e-9 (#336377, −7.0 %)**, the team's best; that layer is fitted and engineering, not new understanding.
 
 **Mechanistic contributions.** These are what we consider our contribution to the understanding of white-box estimation:
 1. **A spherical-input identity** (§3.1; derived, injection check measured, graded −1.1 % raw at zero cost).
@@ -26,7 +26,7 @@ We started from 504aldo's public, MIT-licensed factorised third-cumulant chain (
 5. **An analysis of the κ₃-dressed C·T channel** (§4.5; oracle and component level, not graded): with the star it reaches the cubic-birth ceiling, and the chain's own legs reproduce it, but not yet at an affordable cost.
 6. **A negative-result atlas** (§7): 24 of the more than 60 architecture and representation ideas we killed, each with its gate and measured number, and three working conclusions that we label as empirical, not proven.
 
-**Engineering and fitted components.** We state these plainly. Most of the gain from 5.418e-9 to 4.0784e-9 is **cost engineering**: Strassen placement, a transport join, dead-neuron compaction, D21 trimming and an operation budget for the grader's hidden limits (§6). This is performance optimisation, not new understanding. The κ₄ gain from 4.0784e-9 to 3.6521e-9 (−10.5 %) passes through **V55, a linear map fitted offline** to our own Monte-Carlo teacher (§5.1); the V56 star enters as one more feature of that fitted map. FB 1.25, β 1.2, the s3sq coefficient ×1.25, AGE_OLD 5 and R_OLD 352 are **tuned constants**.
+**Engineering and fitted components.** We state these plainly. Most of the gain from 5.418e-9 to 4.0784e-9 is **cost engineering**: Strassen placement, a transport join, dead-neuron compaction, D21 trimming and an operation budget for the grader's hidden limits (§6). This is performance optimisation, not new understanding. The κ₄ gain from 4.0784e-9 to 3.6521e-9 (−10.5 %) passes through **V55, a linear map fitted offline** to our own Monte-Carlo teacher (§5.1); the V56 star enters as one more feature of that fitted map. FB 1.25, β 1.2, the s3sq coefficient ×1.25, AGE_OLD 5 and R_OLD 352 are **tuned constants**. The last −7.0 % (§6.4) is a Gauss-Newton calibration fitted on public MLPs plus exact cost rewrites.
 
 **Leaderboard context.** On the 10 Oct leaderboard the six highest entries are ahead of us on both factors (raw MSE 1.14–1.65e-8 at util 0.106–0.144). Our raw MSE is comparable to entries ranked 11–40. Their methods are not public, and we make no claim about what they are.
 
@@ -221,7 +221,10 @@ These sections are performance engineering. We report them because they carry mo
 | + s3sq coefficient ×1.25, B / A | Map coefficient (tuned) | 3.8539e-9 (#334762) / 3.8331e-9 (#334763) | — | — |
 | V56 cubic star, B / A | §5.2 | 3.6829e-9 (#334805) / 3.6597e-9 (#334811) | 1.9706e-8 / 1.9539e-8 | — |
 | + map fitted on the synthetic net, B | | **3.6723e-9 (#334869)** | — | — |
-| + map fitted on the synthetic net, A | | **3.6521e-9 (#334870)** | **1.950e-8** | 0.187 |
+| + map fitted on the synthetic net, A | | 3.6521e-9 (#334870) | 1.950e-8 | 0.187 |
+| E282: 24-group calibration (md.hamidhosen) | §6.4 (fitted) | 3.5890e-9 (#335603) | 1.9154e-8 | 0.187 |
+| E285–E291: rider, κ₄-corrector refits | §6.4 (fitted) | 3.5085e-9 (#335729) | 1.8722e-8 | 0.187 |
+| E294–E299: exact cost rewrites, thresholds | §6.4 | **3.3946e-9 (#336377)** | **1.8824e-8** | 0.180 |
 
 Util is the grader's figure or adjusted ÷ raw. "—" means the value is not listed here. The B class keeps ≤ ~18k warm-call operations for a safety margin under the residual-time cap; the A class runs at about 20k.
 
@@ -241,6 +244,13 @@ Two variants that ran cleanly on our machines graded catastrophically: #332402 a
 The fix was an **operation budget**: Strassen only where it saves at least about 2 u per 1,000 operations, since each top-level Strassen call costs 110–240 operations. This defines our classes: **B** (nomination-safe), ≤ ~18k operations; **A**, about 20k. The budget cost +1.9 % / +0.8 % graded against v51, and neither class has had a capped MLP since (#332566, #332567).
 
 A second hidden limit appeared with V56. Two 3-D broadcast forms of the cubic star passed in-process runs but failed the grader's smoke test four times (#334786, #334787, #334798, #334799). The first failed the address-space limit ("Unable to allocate 450 MiB"), which only `whest run --runner subprocess` reproduced; the in-place form failed although our subprocess repro passed. The per-slot 2-D form passed (#334805). `whest validate` catches neither limit, so our pre-submission check is an operation count plus a subprocess run.
+
+### 6.4 Final calibration and cost layer (E282–E299, md.hamidhosen; fitted and engineering)
+
+From 12 Oct md.hamidhosen built on #334870 (numbers from his ledger, re-checked against the grader):
+- **Calibration (fitted).** A Gauss-Newton fit of 24 per-layer calibration groups (scales of the closure inputs and λ) on public mini MLPs 0–47 gave −1.66 % ± 0.20 % on unseen MLPs 48–99 (E282, graded 3.5890e-9); two further steps and a cubic final-layer ridge rider trained on 900 full-split MLPs followed. Four end-to-end refits of the V56 κ₄ corrector (per-block level, map coefficients) then gave −0.77 / −0.48 / −0.33 / −0.37 % unseen (E291, 3.5085e-9). Every lever converged: further steps of the groups, the corrector and the rider, and α-dependent scales, gave ≤ 0.08 % unseen.
+- **Exact cost rewrites (engineering).** Grouped PK2 einsums (util −0.75 %), Strassen floor 4 and Strassen on the nested projections (−0.3 %, −0.48 %), and the Strassen-Winograd kernel (−0.77 % FLOPs) leave predictions unchanged up to rounding. With the D21 and dead-neuron thresholds raised (approximations; −0.73 % graded, E296 → E298) they give **3.3946e-9 (#336377, E299)**.
+- **Our 16 Oct knob sweep** on #334870 (100 Kaggle MLPs) found K4C blend 1.1 at ×0.9953 (graded ×0.9953, #336382); we expect the E-series corrector refits to contain such level changes already (not tested on E299). **E299-B** (#336440) is E299 with three Strassen paths off and floor 8, exact rewrites that cut warm operations from 21,953 to 18,095 for +1.9 % FLOPs (measured on MLP #0): the residual-safe variant of E299.
 
 ---
 
@@ -290,7 +300,7 @@ A second hidden limit appeared with V56. Two 3-D broadcast forms of the cubic st
 
 **Where our cost goes.** A V56 call-site ledger puts 193.8 u in one warm call: about 70 u in the D21 hub readout, 63 u in young-leg transport, 20 u in the old basis, and about 40 u elsewhere, which issues 11.3k of the 20.6k operations. The 133 u in the two per-source families grows with depth, and nothing we tested removes it without at least a comparable accuracy loss. For comparison, the reference algorithm of Wu et al. costs about 4,150 u at our size (derived from their cost table), about 21× V56.
 
-**Relation to the leaderboard.** On the 10 Oct board the six highest entries have raw MSE 1.14–1.65e-8 at util 0.106–0.144; our row shows raw 1.97e-8 at util 0.187 (it links #334805, which displays the same 3.7e-9 as #334870). One entry at rank 11 has V29-level raw MSE (2.10e-8) at util 0.102. At our raw MSE, util 0.10 would score about 2.0e-9 (derived). We do not know the leaders' mechanisms. Our measurements exclude only the specific κ₃ representations in the table above as cheaper drop-in replacements inside our chain.
+**Relation to the leaderboard.** On the 10 Oct board the six highest entries have raw MSE 1.14–1.65e-8 at util 0.106–0.144. On 16 Oct our row shows 3.4e-9 at rank 46 (tied); the board rounds to two significant figures and lists the earliest of tied entries (#335834), not #336377. One entry at rank 11 has V29-level raw MSE (2.10e-8) at util 0.102. At our raw MSE, util 0.10 would score about 2.0e-9 (derived). We do not know the leaders' mechanisms. Our measurements exclude only the specific κ₃ representations in the table above as cheaper drop-in replacements inside our chain.
 
 ---
 
@@ -301,6 +311,7 @@ A second hidden limit appeared with V56. Two 3-D broadcast forms of the cubic st
 | Path | Contents |
 |---|---|
 | `submissions/<variant>/estimator.py` | Every shipped estimator, with a lineage header naming each change. #334870 is `submissions/v56As_fs/`, #334869 is `submissions/v56s_fs/`, the reference is `submissions/v29/`. |
+| github.com/hamidhosen42/ARC-White-Box | md.hamidhosen's E-series: `experiments/k3/E2*_estimator.py` (E299 = #336377), the ledgers `experiments/results.csv` and `experiments/submissions.csv`, and the calibration tools |
 | `experiments/variants/` | Research variants and oracles (`r20_joint_oracle.py`, `r20_cba.py`, `r20_feed_oracle.py`, `v55_k4c.py`, `v56_star.py`, `v56_fbg.py`) |
 | `experiments/probes/` | Probes (`site_ledger.py`, `pool_ceiling.py`, `k3_error_profile.py`, `r17_hermite_family_ceiling.py`, `r20_onestep_channels.py`, `astra_rll_test.py`, `kaggle_pair_compare.py`) |
 | `experiments/student/` | The PM364 student (PyTorch and flopscope versions, V56 label dump, trainer) |
@@ -319,7 +330,7 @@ App. §8.3 maps every Appendix section to its script and result file; known gaps
 
 ## 9. Disclosure of AI use
 
-**Code.** Apart from 504aldo's reference code, essentially all code and probe scripts were written by AI coding assistants (Anthropic Claude models, mainly Claude Opus 5 and 5.5, via Claude Code) under the team's direction. This includes every estimator variant, oracle, probe, harness runner and the PM364 student. Claude subagents also carried out specific derivations and measurement tasks.
+**Code.** The E-series layer of §6.4 (E282–E299) and its calibration fits are md.hamidhosen's, in his repository (§8). Apart from that layer and 504aldo's reference code, essentially all code and probe scripts were written by AI coding assistants (Anthropic Claude models, mainly Claude Opus 5 and 5.5, via Claude Code) under the team's direction. This includes every estimator variant, oracle, probe, harness runner and the PM364 student. Claude subagents also carried out specific derivations and measurement tasks.
 
 **Ideas.** Many architecture proposals came from consultations with outside AI systems (GPT-5.6, Astra 6, Gemini 3.1 Pro, Grok, DeepSeek, Copilot, SciMaster/Bohrium, and several unsigned answers) over more than 18 rounds (App. §6.4, §9). Of the shipped ideas:
 - the spherical-input reparameterisation was pointed out in an outside consultation, which referred to a public repository;
@@ -331,7 +342,7 @@ Most proposals were killed (§7); several outside documents reported passing mea
 
 **Write-up.** The text of this write-up and of the Appendix was drafted by AI and checked by the team.
 
-**Validation.** Apart from the cited figures of 504aldo, Wu et al. and the public leaderboard, and the numbers marked as estimates, every number here was produced by our own scripts (or derived from them) or by the official grader. Every outside claim was re-derived or re-measured before we used it. On 11 Oct 2026 an automated, AI-run fact-check compared every number in this document with the result files, and the errors it found were corrected. No leaderboard feedback entered any fitted coefficient: the V55 map was fitted against our own teacher for MLP #0, and the shipped V56 maps against our own teacher for the synthetic network.
+**Validation.** Apart from the cited figures of 504aldo, Wu et al. and the public leaderboard, and the numbers marked as estimates, every number here was produced by our own scripts (or derived from them) or by the official grader. Every outside claim was re-derived or re-measured before we used it. On 11 Oct 2026 an automated, AI-run fact-check compared every number in this document with the result files, and the errors it found were corrected. No leaderboard feedback entered any fitted coefficient: the V55 map was fitted against our own teacher for MLP #0, the shipped V56 maps against our own teacher for the synthetic network, and the E-series calibration on public dataset MLPs with their published truth (mini 0–47, rider on full-split 100–999), validated on unseen mini MLPs 48–99.
 
 **Understanding: what was verified numerically and what is only derived.** The team directed the work and reviewed the results, but several derivations were produced with AI assistance.
 - *Verified numerically:* the cubic-star and Wick identities (to ≤ 8.1e-16) and their readout factors (to ≤ 9.0e-15); the spherical identity's scale shift (to 0.3 %); the age-collapse and anchor-grouping identities (to 2.6–3.2e-7); the closure accuracy given true inputs (§4.1); the implementation parity checks (PM364's flopscope and PyTorch versions agree to 2.8e-7); the parity theorem's sign flip on the real chain (exact) and the √(6/(r+8)) floor (Monte Carlo plus exact operator norm, with a written proof).

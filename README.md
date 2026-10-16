@@ -8,25 +8,33 @@ within a hard budget of 2⁴¹ FLOPs per network, without sampling the network.
 The score is `final_layer_mse × max(0.1, C/B)`, where `C` is the metered FLOP count and `B = 2⁴¹`, so accuracy and cost are
 multiplied: a 1 % cost saving is worth exactly as much as a 1 % accuracy gain.
 
-**Participant:** foyshal_sk · **Best public submission:** `#331787` — adjusted **5.137e-9** (raw final-layer MSE 2.108e-8,
-0.244 B), public rank ≈ 28.
+**Team Hack2Publish:** mdhamidhosen, esfer_sami, foyshal_sk. **Team best:** `#336377` (E299, md.hamidhosen) — adjusted
+**3.3946e-9** (raw final-layer MSE 1.8824e-8, util 0.180), built on this repository's `#334870`. Public board 16 Oct 2026:
+rank 46 (tied, displayed 3.4e-9). Work in this repository ended on 16 Oct 2026 (submissions close 17 Oct 2026 23:59 UTC); the final state is below.
 
 ---
 
-## Status
+## Status (final, 16 Oct 2026)
 
-| Submission | Change | Adjusted score | Raw MSE | Utilisation |
+| Submission | Change | Adjusted score | Raw MSE | Util |
 |---|---|---|---|---|
 | #331681 | 504aldo's public V29 chain, verbatim (MIT, attributed) | 5.418e-9 | 2.133e-8 | 0.254 |
-| #331686 | `STRASSEN_MIN` 32 → 8 | 5.220e-9 | 2.132e-8 | 0.244 |
-| #331732 | + `STRASSEN_FIRST` 4 → 5 | 5.195e-9 | 2.132e-8 | 0.2436 |
-| **#331787** | **+ spherical-input reparameterisation (V31)** | **5.137e-9** | **2.108e-8** | **0.2437** |
-| #331805 | + re-tuned κ₄ constants (rejected: worse) | 5.194e-9 | 2.131e-8 | 0.2437 |
+| #331787 | + Strassen floor, spherical-input reparameterisation (V31) | 5.137e-9 | 2.108e-8 | 0.244 |
+| #332257 | + feedback scale 1.25, β 1.2, transport join | 4.9519e-9 | 2.1788e-8 | 0.227 |
+| #332420 | + dead-neuron compaction, D21 column/row trims, basis-side Strassen | 4.0902e-9 | 2.1636e-8 | 0.189 |
+| #334591 | + V55 κ₄-pattern corrector (A class) | 3.8582e-9 | — | — |
+| #334870 | + V56 cubic star, map fitted on the synthetic net (A) — the chain the write-up analyses | 3.6521e-9 | 1.950e-8 | 0.187 |
+| #336377 | md.hamidhosen's E299: 24-group and κ₄-corrector calibration + exact cost rewrites | **3.3946e-9** | **1.8824e-8** | **0.180** |
+| #336440 | E299-B: E299 in the safe operation class (18.1k warm ops; exact rewrites) | see `writeup/` | | |
+
+- **Write-up:** `writeup/WRITEUP_MAIN.pdf` (12 pages) with `writeup/ALGORITHM_TRACK_PAPER.pdf` as its appendix. It names
+  one graded submission and is sent by e-mail to arc-whestbench@aicrowd.com by 24 Oct 2026 23:59 UTC.
+- **Nominations** (up to two, chosen after the close on the AIcrowd submissions page): the best score plus a hedge with lower
+  residual-time and memory risk; see the write-up header.
+- **E-series** (md.hamidhosen): https://github.com/hamidhosen42/ARC-White-Box.
 
 The starting point is the K = 3 factorised cumulant-propagation chain released under MIT by team **504aldo**
 ([whest-p2-cumulant-k3](https://github.com/504aldo/whest-p2-cumulant-k3)); all derived estimators keep that attribution.
-Everything beyond it — the engineering trims, the spherical-input reparameterisation, and about forty measurements that
-close alternative formulations — is the work in this repository.
 
 ## Principal findings
 
