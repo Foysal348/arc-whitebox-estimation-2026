@@ -1,0 +1,14 @@
+{
+ "beta110": {
+  "file": "v56As_fs.py",
+  "env": {
+   "V25_BETA": "1.1"
+  }
+ },
+ "beta130": {
+  "file": "v56As_fs.py",
+  "env": {
+   "V25_BETA": "1.3"
+  }
+ }
+}

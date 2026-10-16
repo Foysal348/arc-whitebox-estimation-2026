@@ -1,0 +1,14 @@
+{
+ "fb1125": {
+  "file": "v56As_fs.py",
+  "env": {
+   "R7_FB_SCALE": "1.125"
+  }
+ },
+ "fb1375": {
+  "file": "v56As_fs.py",
+  "env": {
+   "R7_FB_SCALE": "1.375"
+  }
+ }
+}

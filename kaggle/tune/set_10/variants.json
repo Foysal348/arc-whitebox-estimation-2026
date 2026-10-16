@@ -1,0 +1,14 @@
+{
+ "ages5": {
+  "file": "v56As_fs.py",
+  "env": {
+   "V56_K4S_AGES": "5"
+  }
+ },
+ "lmin3": {
+  "file": "v56As_fs.py",
+  "env": {
+   "V55_K4C_LMIN": "3"
+  }
+ }
+}

@@ -1,0 +1,14 @@
+{
+ "blend110": {
+  "file": "v56As_fs.py",
+  "env": {
+   "V55_K4C_BLEND": "1.1"
+  }
+ },
+ "blend090": {
+  "file": "v56As_fs.py",
+  "env": {
+   "V55_K4C_BLEND": "0.9"
+  }
+ }
+}

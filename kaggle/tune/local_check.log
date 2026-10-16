@@ -1,0 +1,21 @@
+default     flops 201.20 u, ops 21989 | final MSE vs teacher 1.8771e-08
+lam093      flops 201.20 u, ops 21989 | final MSE vs teacher 1.8762e-08 | rel change vs default 2.44e-06 | MSE ratio 0.9995
+lam097      flops 201.20 u, ops 21989 | final MSE vs teacher 1.8773e-08 | rel change vs default 2.56e-06 | MSE ratio 1.0001
+beta110     flops 201.20 u, ops 21989 | final MSE vs teacher 1.8756e-08 | rel change vs default 1.88e-06 | MSE ratio 0.9992
+beta130     flops 201.20 u, ops 21989 | final MSE vs teacher 1.8751e-08 | rel change vs default 1.72e-06 | MSE ratio 0.9989
+fb1125      flops 201.20 u, ops 21989 | final MSE vs teacher 1.8825e-08 | rel change vs default 4.68e-06 | MSE ratio 1.0028
+fb1375      flops 201.20 u, ops 21989 | final MSE vs teacher 1.8729e-08 | rel change vs default 4.70e-06 | MSE ratio 0.9978
+star115     flops 201.20 u, ops 21989 | final MSE vs teacher 1.8574e-08 | rel change vs default 7.02e-06 | MSE ratio 0.9895
+star125     flops 201.20 u, ops 21989 | final MSE vs teacher 1.8502e-08 | rel change vs default 1.22e-05 | MSE ratio 0.9856
+blend110    flops 201.20 u, ops 21989 | final MSE vs teacher 1.8584e-08 | rel change vs default 3.75e-06 | MSE ratio 0.9900
+blend090    flops 201.20 u, ops 21989 | final MSE vs teacher 1.8964e-08 | rel change vs default 3.82e-06 | MSE ratio 1.0102
+lambD105    flops 201.20 u, ops 21989 | final MSE vs teacher 1.8761e-08 | rel change vs default 2.87e-06 | MSE ratio 0.9994
+lambD095    flops 201.20 u, ops 21989 | final MSE vs teacher 1.8796e-08 | rel change vs default 2.85e-06 | MSE ratio 1.0013
+lambM105    flops 201.20 u, ops 21989 | final MSE vs teacher 1.8834e-08 | rel change vs default 3.79e-06 | MSE ratio 1.0034
+lambM095    flops 201.20 u, ops 21989 | final MSE vs teacher 1.8723e-08 | rel change vs default 3.69e-06 | MSE ratio 0.9974
+dead020     flops 199.39 u, ops 22055 | final MSE vs teacher 1.9003e-08 | rel change vs default 1.95e-05 | MSE ratio 1.0123
+dead005     flops 203.03 u, ops 22044 | final MSE vs teacher 1.8660e-08 | rel change vs default 1.29e-05 | MSE ratio 0.9941
+d21rowc012  flops 199.48 u, ops 21998 | final MSE vs teacher 1.9386e-08 | rel change vs default 2.48e-05 | MSE ratio 1.0328
+d21thr020   flops 199.92 u, ops 22063 | final MSE vs teacher 1.8888e-08 | rel change vs default 6.83e-06 | MSE ratio 1.0062
+ages5       flops 201.20 u, ops 21989 | final MSE vs teacher 1.8771e-08 | rel change vs default 0.00e+00 | MSE ratio 1.0000
+lmin3       flops 201.21 u, ops 22035 | final MSE vs teacher 1.8710e-08 | rel change vs default 2.38e-06 | MSE ratio 0.9967

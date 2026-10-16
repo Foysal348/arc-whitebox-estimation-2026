@@ -1,0 +1,14 @@
+{
+ "d21rowc012": {
+  "file": "v56As_fs.py",
+  "env": {
+   "V51_D21ROWC_THR": "0.012"
+  }
+ },
+ "d21thr020": {
+  "file": "v56As_fs.py",
+  "env": {
+   "V50_D21_THR": "0.02"
+  }
+ }
+}

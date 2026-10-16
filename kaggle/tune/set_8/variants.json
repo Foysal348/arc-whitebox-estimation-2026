@@ -1,0 +1,14 @@
+{
+ "dead020": {
+  "file": "v56As_fs.py",
+  "env": {
+   "V48_DEAD_THR": "0.02"
+  }
+ },
+ "dead005": {
+  "file": "v56As_fs.py",
+  "env": {
+   "V48_DEAD_THR": "0.005"
+  }
+ }
+}

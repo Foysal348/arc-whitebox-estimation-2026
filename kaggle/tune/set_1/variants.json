@@ -1,0 +1,14 @@
+{
+ "lam093": {
+  "file": "v56As_fs.py",
+  "env": {
+   "V17_LAM_SCALE": "0.93"
+  }
+ },
+ "lam097": {
+  "file": "v56As_fs.py",
+  "env": {
+   "V17_LAM_SCALE": "0.97"
+  }
+ }
+}

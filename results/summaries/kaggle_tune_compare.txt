@@ -1,0 +1,22 @@
+reference base_fbg: raw 2.0194e-08 util 0.1861 score 3.7586e-09
+blend110         [tune_5                ] n 100 raw 2.0098e-08 util 0.1861 failed 0 | geo ratio 0.9953 (90% 0.9947-0.9959) wins 89/100 | score ratio 0.9953 | resid p50 1.274 max 1.511
+star115          [tune_4                ] n 100 raw 2.0152e-08 util 0.1861 failed 0 | geo ratio 0.9981 (90% 0.9969-0.9993) wins 64/100 | score ratio 0.9979 | resid p50 1.193 max 1.328
+dead005          [tune_8                ] n 100 raw 2.0156e-08 util 0.1875 failed 0 | geo ratio 0.9980 (90% 0.9961-1.0000) wins 53/100 | score ratio 1.0057 | resid p50 1.340 max 1.606
+lambM095         [tune_7                ] n 100 raw 2.0168e-08 util 0.1861 failed 0 | geo ratio 0.9988 (90% 0.9983-0.9993) wins 62/100 | score ratio 0.9987 | resid p50 1.308 max 1.495
+lam093           [tune_1                ] n 100 raw 2.0174e-08 util 0.1861 failed 0 | geo ratio 0.9991 (90% 0.9987-0.9995) wins 70/100 | score ratio 0.9990 | resid p50 1.357 max 1.564
+beta130          [tune_2                ] n 100 raw 2.0181e-08 util 0.1861 failed 0 | geo ratio 0.9993 (90% 0.9990-0.9997) wins 67/100 | score ratio 0.9993 | resid p50 0.814 max 0.922
+lmin3            [tune_10               ] n 100 raw 2.0181e-08 util 0.1861 failed 0 | geo ratio 0.9994 (90% 0.9990-0.9998) wins 58/100 | score ratio 0.9994 | resid p50 1.321 max 1.603
+lambD095         [tune_6                ] n 100 raw 2.0186e-08 util 0.1861 failed 0 | geo ratio 0.9997 (90% 0.9994-0.9999) wins 55/100 | score ratio 0.9996 | resid p50 1.295 max 1.537
+star125          [tune_4                ] n 100 raw 2.0187e-08 util 0.1861 failed 0 | geo ratio 1.0000 (90% 0.9979-1.0020) wins 54/100 | score ratio 0.9996 | resid p50 1.231 max 1.407
+base_fbg         [fbg_1                 ] n 100 raw 2.0194e-08 util 0.1861 failed 0 | geo ratio 1.0000 (90% 1.0000-1.0000) wins 0/100 | score ratio 1.0000 | resid p50 1.365 max 1.571
+ages5            [tune_10               ] n 100 raw 2.0194e-08 util 0.1861 failed 0 | geo ratio 1.0000 (90% 1.0000-1.0000) wins 0/100 | score ratio 1.0000 | resid p50 1.199 max 1.395
+fb1375           [tune_3                ] n 100 raw 2.0202e-08 util 0.1861 failed 0 | geo ratio 1.0003 (90% 0.9997-1.0009) wins 49/100 | score ratio 1.0004 | resid p50 1.306 max 1.529
+beta110          [tune_2                ] n 100 raw 2.0212e-08 util 0.1861 failed 0 | geo ratio 1.0009 (90% 1.0005-1.0012) wins 38/100 | score ratio 1.0009 | resid p50 0.818 max 0.967
+lambD105         [tune_6                ] n 100 raw 2.0214e-08 util 0.1861 failed 0 | geo ratio 1.0009 (90% 1.0006-1.0012) wins 30/100 | score ratio 1.0010 | resid p50 1.292 max 1.432
+fb1125           [tune_3                ] n 100 raw 2.0215e-08 util 0.1861 failed 0 | geo ratio 1.0011 (90% 1.0005-1.0017) wins 40/100 | score ratio 1.0010 | resid p50 1.267 max 1.342
+lam097           [tune_1                ] n 100 raw 2.0221e-08 util 0.1861 failed 0 | geo ratio 1.0013 (90% 1.0009-1.0017) wins 29/100 | score ratio 1.0013 | resid p50 1.434 max 1.818
+lambM105         [tune_7                ] n 100 raw 2.0238e-08 util 0.1861 failed 0 | geo ratio 1.0021 (90% 1.0016-1.0026) wins 26/100 | score ratio 1.0022 | resid p50 1.282 max 1.410
+d21thr020        [tune_9                ] n 100 raw 2.0269e-08 util 0.1845 failed 0 | geo ratio 1.0037 (90% 1.0028-1.0046) wins 22/100 | score ratio 0.9950 | resid p50 1.445 max 1.786
+blend090         [tune_5                ] n 100 raw 2.0312e-08 util 0.1861 failed 0 | geo ratio 1.0058 (90% 1.0052-1.0064) wins 6/100 | score ratio 1.0058 | resid p50 1.324 max 1.486
+dead020          [tune_8                ] n 100 raw 2.0423e-08 util 0.1844 failed 0 | geo ratio 1.0114 (90% 1.0085-1.0142) wins 23/100 | score ratio 1.0017 | resid p50 1.271 max 1.386
+d21rowc012       [tune_9                ] n 100 raw 2.0600e-08 util 0.1848 failed 0 | geo ratio 1.0202 (90% 1.0175-1.0230) wins 12/100 | score ratio 1.0129 | resid p50 1.324 max 1.482
