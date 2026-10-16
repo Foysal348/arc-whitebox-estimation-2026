@@ -25,7 +25,7 @@ rank 46 (tied, displayed 3.4e-9). Work in this repository ended on 16 Oct 2026 (
 | #334591 | + V55 κ₄-pattern corrector (A class) | 3.8582e-9 | — | — |
 | #334870 | + V56 cubic star, map fitted on the synthetic net (A) — the chain the write-up analyses | 3.6521e-9 | 1.950e-8 | 0.187 |
 | #336377 | md.hamidhosen's E299: 24-group and κ₄-corrector calibration + exact cost rewrites | **3.3946e-9** | **1.8824e-8** | **0.180** |
-| #336440 | E299-B: E299 in the safe operation class (18.1k warm ops; exact rewrites) | see `writeup/` | | |
+| #336440 | E299-B: E299 in the safe operation class (18.1k warm ops; exact rewrites) | 3.4719e-9 | 1.8825e-8 | 0.184 |
 
 - **Write-up:** `writeup/WRITEUP_MAIN.pdf` (12 pages) with `writeup/ALGORITHM_TRACK_PAPER.pdf` as its appendix. It names
   one graded submission and is sent by e-mail to arc-whestbench@aicrowd.com by 24 Oct 2026 23:59 UTC.
