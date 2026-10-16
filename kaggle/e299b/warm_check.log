@@ -1,0 +1,4 @@
+E299               cold 194.58 u 23273 ops resid 2.840 s | warm 186.67 u 21953 ops resid 1.616 s wall 137.4 s | MSE 1.7485e-08
+B1_fap0            cold 195.54 u 21816 ops resid 2.553 s | warm 187.65 u 20523 ops resid 1.338 s wall 129.8 s | MSE 1.7478e-08 | MSE ratio 0.99960 | warm util ratio 1.0052 | score ratio 1.0048
+B2_fap0_qc0_lift0  cold 197.45 u 19581 ops resid 1.733 s | warm 189.67 u 18438 ops resid 2.126 s wall 178.2 s | MSE 1.7496e-08 | MSE ratio 1.00064 | warm util ratio 1.0161 | score ratio 1.0167
+B3_B2_min8         cold 198.19 u 19269 ops resid 2.171 s | warm 190.29 u 18095 ops resid 1.845 s wall 141.2 s | MSE 1.7493e-08 | MSE ratio 1.00048 | warm util ratio 1.0194 | score ratio 1.0199
