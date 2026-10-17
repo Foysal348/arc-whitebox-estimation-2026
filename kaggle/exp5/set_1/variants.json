@@ -1,0 +1,13 @@
+{
+ "base_e30a": {
+  "file": "e30a_k4c.py",
+  "env": {}
+ },
+ "k4c_s025": {
+  "file": "e30a_k4c.py",
+  "env": {
+   "X5_K4C": "1",
+   "X5_K4C_SCALE": "0.25"
+  }
+ }
+}

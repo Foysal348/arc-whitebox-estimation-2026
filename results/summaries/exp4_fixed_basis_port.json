@@ -1,0 +1,20 @@
+{
+ "experiment": "EXP4: e30_a fixed-basis old level (X_FIJA) and hot-row rule (X_VB_HOT) ported into E299",
+ "date": "2026-10-17",
+ "variant_file": "experiments/variants/e299_fija.py",
+ "base_file": "kaggle/e299b/E299_estimator.py",
+ "local_measurements": null,
+ "local_status": "No local estimator run completed. The run lock was held by other agents for about 1.5 h, then the user stopped local runs (laptop overloaded). Static checks only: syntax OK, pyflakes clean, module import OK, no plain numpy import.",
+ "reference_E299_MLP0": {"warm_flops_u": 186.6741841752082, "warm_ops": 21953, "mse": 1.7484848188035433e-08, "source": "results/summaries/e299b_warm_check.json"},
+ "kaggle_variants": {
+  "base": {},
+  "fija": {"X4_FIJA": "1"},
+  "hot3": {"X4_HOT": "3.0"},
+  "fija_hot3": {"X4_FIJA": "1", "X4_HOT": "3.0"}
+ },
+ "kaggle_variants_optional": {
+  "fija_hot2.5": {"X4_FIJA": "1", "X4_HOT": "2.5"}
+ },
+ "untested_locally": ["base", "fija", "hot3", "fija_hot3", "fija_hot2.5"],
+ "first_check": "base must reproduce E299 exactly (MLP #0: MSE 1.7484848188035433e-08, warm 186.674 u, 21953 ops). If it does not, stop: the default path is not bit-identical."
+}

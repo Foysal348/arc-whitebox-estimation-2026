@@ -1,0 +1,18 @@
+{
+ "k4c_s030_nostar": {
+  "file": "e30a_k4c.py",
+  "env": {
+   "X5_K4C": "1",
+   "X5_K4C_SCALE": "0.3",
+   "X5_K4S": "0"
+  }
+ },
+ "k4c_s030_rider": {
+  "file": "e30a_k4c.py",
+  "env": {
+   "X5_K4C": "1",
+   "X5_K4C_SCALE": "0.3",
+   "X5_RIDER": "1"
+  }
+ }
+}

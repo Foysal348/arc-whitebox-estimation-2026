@@ -1,0 +1,16 @@
+{
+ "k4c_s030_lvl": {
+  "file": "e30a_k4c.py",
+  "env": {
+   "X5_K4C": "1",
+   "X5_K4C_SCALE": "0.3",
+   "X5_K4LVL": "1"
+  }
+ },
+ "lvl_only": {
+  "file": "e30a_k4c.py",
+  "env": {
+   "X5_K4LVL": "1"
+  }
+ }
+}

@@ -1,0 +1,15 @@
+{
+ "hot3": {
+  "file": "e299_fija.py",
+  "env": {
+   "X4_HOT": "3.0"
+  }
+ },
+ "fija_hot3": {
+  "file": "e299_fija.py",
+  "env": {
+   "X4_FIJA": "1",
+   "X4_HOT": "3.0"
+  }
+ }
+}

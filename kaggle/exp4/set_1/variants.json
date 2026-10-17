@@ -1,0 +1,12 @@
+{
+ "base_fija": {
+  "file": "e299_fija.py",
+  "env": {}
+ },
+ "fija": {
+  "file": "e299_fija.py",
+  "env": {
+   "X4_FIJA": "1"
+  }
+ }
+}

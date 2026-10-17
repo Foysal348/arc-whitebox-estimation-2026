@@ -1,0 +1,3 @@
+base               cold 194.58 u 23273 ops resid 3.281 s | warm 186.67 u 21953 ops resid 2.043 s wall 161.8 s | MSE 1.7485e-08
+k31                cold 194.60 u 23371 ops resid 2.208 s | warm 186.69 u 22051 ops resid 1.697 s wall 140.4 s | MSE 1.6758e-08 | MSE ratio 0.95844 | warm util ratio 1.0001 | score ratio 0.9585
+k31_mix05          cold 194.62 u 23413 ops resid 2.659 s | warm 186.72 u 22093 ops resid 1.960 s wall 138.1 s | MSE 1.6956e-08 | MSE ratio 0.96974 | warm util ratio 1.0002 | score ratio 0.9700
