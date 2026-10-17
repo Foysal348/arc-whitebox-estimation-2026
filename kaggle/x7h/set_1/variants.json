@@ -1,0 +1,15 @@
+{
+ "cpre": {
+  "file": "e299_x7.py",
+  "env": {
+   "X7_CPRE": "1"
+  }
+ },
+ "cpre_arriba": {
+  "file": "e299_x7.py",
+  "env": {
+   "X7_CPRE": "1",
+   "X7_DEAD_ROUND": "arriba"
+  }
+ }
+}
