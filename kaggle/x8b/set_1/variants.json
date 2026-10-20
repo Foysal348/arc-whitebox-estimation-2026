@@ -1,0 +1,14 @@
+{
+ "tauB22": {
+  "file": "e30k_x8.py",
+  "env": {
+   "X_DEAD_TAU_B": "2.2"
+  }
+ },
+ "tauB24": {
+  "file": "e30k_x8.py",
+  "env": {
+   "X_DEAD_TAU_B": "2.4"
+  }
+ }
+}

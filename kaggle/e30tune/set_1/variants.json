@@ -1,0 +1,12 @@
+{
+ "base_e30k": {
+  "file": "e30k.py",
+  "env": {}
+ },
+ "tilt_m02": {
+  "file": "e30k.py",
+  "env": {
+   "X_LAM_TILT": "-0.2"
+  }
+ }
+}

@@ -1,0 +1,14 @@
+{
+ "tilt_00": {
+  "file": "e30k.py",
+  "env": {
+   "X_LAM_TILT": "0.0"
+  }
+ },
+ "tau_260": {
+  "file": "e30k.py",
+  "env": {
+   "X_DEAD_TAU": "2.6"
+  }
+ }
+}

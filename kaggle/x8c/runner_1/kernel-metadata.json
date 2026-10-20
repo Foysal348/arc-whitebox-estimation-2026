@@ -1,0 +1,15 @@
+{
+ "id": "esfersami50/whest-runner-x8c-1",
+ "title": "whest-runner-x8c-1",
+ "code_file": "whest-runner.ipynb",
+ "language": "python",
+ "kernel_type": "notebook",
+ "is_private": true,
+ "enable_gpu": false,
+ "enable_internet": true,
+ "dataset_sources": [
+  "esfersami50/whest-estimators-x8c-1"
+ ],
+ "competition_sources": [],
+ "kernel_sources": []
+}

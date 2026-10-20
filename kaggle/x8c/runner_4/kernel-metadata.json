@@ -1,0 +1,15 @@
+{
+ "id": "foysalemonshanto/whest-runner-x8c-4",
+ "title": "whest-runner-x8c-4",
+ "code_file": "whest-runner.ipynb",
+ "language": "python",
+ "kernel_type": "notebook",
+ "is_private": true,
+ "enable_gpu": false,
+ "enable_internet": true,
+ "dataset_sources": [
+  "foysalemonshanto/whest-estimators-x8c-4"
+ ],
+ "competition_sources": [],
+ "kernel_sources": []
+}

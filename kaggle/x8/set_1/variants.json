@@ -1,0 +1,13 @@
+{
+ "base_x8": {
+  "file": "e30k_x8.py",
+  "env": {}
+ },
+ "st06_lo01": {
+  "file": "e30k_x8.py",
+  "env": {
+   "X8_SLOC": "0.1",
+   "X8_SSTAR": "0.6"
+  }
+ }
+}

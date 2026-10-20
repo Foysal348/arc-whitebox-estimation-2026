@@ -1,0 +1,59 @@
+nets 70 [0, 1, 2] ... [67, 68, 69]
+net 0 check: table delta recompute max|diff| L8 = 8.51e-11 (|delta| max 9.61e-05); st nonzero layers: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+
+== T0 (87 features): per layer CV one-step SSE ratio vs the original table (and vs no table)
+  L 0 lam 0.0e+00   cv/orig 1.0001  cv/zero 1.0000  orig/zero 1.0000
+  L 1 lam 3.2e-07   cv/orig 1.0021  cv/zero 0.5111  orig/zero 0.5100
+  L 2 lam 3.2e-08   cv/orig 1.0023  cv/zero 0.6612  orig/zero 0.6597
+  L 3 lam 1.0e-08   cv/orig 0.9849  cv/zero 0.7968  orig/zero 0.8090
+  L 4 lam 1.0e-06   cv/orig 0.9928  cv/zero 0.7836  orig/zero 0.7892
+  L 5 lam 3.2e-06   cv/orig 0.9865  cv/zero 0.8240  orig/zero 0.8353
+  L 6 lam 1.0e-06   cv/orig 0.9925  cv/zero 0.8429  orig/zero 0.8493
+  L 7 lam 3.2e-06   cv/orig 0.9889  cv/zero 0.8588  orig/zero 0.8684
+  L 8 lam 3.2e-06   cv/orig 0.9871  cv/zero 0.8569  orig/zero 0.8681
+  L 9 lam 1.0e-05   cv/orig 0.9892  cv/zero 0.8701  orig/zero 0.8796
+  L10 lam 3.2e-05   cv/orig 0.9877  cv/zero 0.8777  orig/zero 0.8886
+  L11 lam 1.0e-05   cv/orig 0.9848  cv/zero 0.8772  orig/zero 0.8908
+  L12 lam 1.0e-05   cv/orig 0.9801  cv/zero 0.8809  orig/zero 0.8988
+  L13 lam 3.2e-05   cv/orig 0.9750  cv/zero 0.8818  orig/zero 0.9045
+  L14 lam 3.2e-05   cv/orig 0.9688  cv/zero 0.8809  orig/zero 0.9092
+  L15 lam 1.0e-05   cv/orig 0.9830  cv/zero 0.9118  orig/zero 0.9275
+  all-layer cv/orig 0.9836   last layer cv/orig 0.9830
+
+== T1 (94 features): per layer CV one-step SSE ratio vs the original table (and vs no table)
+  L 0 lam 0.0e+00   cv/orig 1.0001  cv/zero 1.0000  orig/zero 1.0000
+  L 1 lam 3.2e-07   cv/orig 1.0021  cv/zero 0.5111  orig/zero 0.5100
+  L 2 lam 3.2e-08   cv/orig 1.0023  cv/zero 0.6612  orig/zero 0.6597
+  L 3 lam 1.0e-07   cv/orig 0.9426  cv/zero 0.7626  orig/zero 0.8090
+  L 4 lam 1.0e-06   cv/orig 0.9650  cv/zero 0.7616  orig/zero 0.7892
+  L 5 lam 3.2e-06   cv/orig 0.9579  cv/zero 0.8002  orig/zero 0.8353
+  L 6 lam 3.2e-06   cv/orig 0.9651  cv/zero 0.8196  orig/zero 0.8493
+  L 7 lam 3.2e-06   cv/orig 0.9651  cv/zero 0.8381  orig/zero 0.8684
+  L 8 lam 3.2e-06   cv/orig 0.9618  cv/zero 0.8349  orig/zero 0.8681
+  L 9 lam 1.0e-05   cv/orig 0.9660  cv/zero 0.8497  orig/zero 0.8796
+  L10 lam 3.2e-05   cv/orig 0.9626  cv/zero 0.8554  orig/zero 0.8886
+  L11 lam 1.0e-05   cv/orig 0.9585  cv/zero 0.8539  orig/zero 0.8908
+  L12 lam 1.0e-05   cv/orig 0.9543  cv/zero 0.8578  orig/zero 0.8988
+  L13 lam 3.2e-05   cv/orig 0.9498  cv/zero 0.8590  orig/zero 0.9045
+  L14 lam 3.2e-05   cv/orig 0.9459  cv/zero 0.8600  orig/zero 0.9092
+  L15 lam 1.0e-05   cv/orig 0.9830  cv/zero 0.9118  orig/zero 0.9275
+  all-layer cv/orig 0.9621   last layer cv/orig 0.9830
+
+== T2 (101 features): per layer CV one-step SSE ratio vs the original table (and vs no table)
+  L 0 lam 0.0e+00   cv/orig 1.0001  cv/zero 1.0000  orig/zero 1.0000
+  L 1 lam 3.2e-07   cv/orig 1.0021  cv/zero 0.5111  orig/zero 0.5100
+  L 2 lam 3.2e-08   cv/orig 1.0023  cv/zero 0.6612  orig/zero 0.6597
+  L 3 lam 3.2e-07   cv/orig 0.9351  cv/zero 0.7566  orig/zero 0.8090
+  L 4 lam 3.2e-07   cv/orig 0.9513  cv/zero 0.7508  orig/zero 0.7892
+  L 5 lam 1.0e-06   cv/orig 0.9361  cv/zero 0.7820  orig/zero 0.8353
+  L 6 lam 3.2e-07   cv/orig 0.9431  cv/zero 0.8010  orig/zero 0.8493
+  L 7 lam 3.2e-06   cv/orig 0.9494  cv/zero 0.8245  orig/zero 0.8684
+  L 8 lam 1.0e-05   cv/orig 0.9468  cv/zero 0.8219  orig/zero 0.8681
+  L 9 lam 1.0e-05   cv/orig 0.9520  cv/zero 0.8374  orig/zero 0.8796
+  L10 lam 1.0e-04   cv/orig 0.9536  cv/zero 0.8474  orig/zero 0.8886
+  L11 lam 1.0e-05   cv/orig 0.9518  cv/zero 0.8478  orig/zero 0.8908
+  L12 lam 1.0e-05   cv/orig 0.9504  cv/zero 0.8543  orig/zero 0.8988
+  L13 lam 1.0e-04   cv/orig 0.9439  cv/zero 0.8537  orig/zero 0.9045
+  L14 lam 3.2e-05   cv/orig 0.9421  cv/zero 0.8566  orig/zero 0.9092
+  L15 lam 3.2e-06   cv/orig 0.9827  cv/zero 0.9114  orig/zero 0.9275
+  all-layer cv/orig 0.9536   last layer cv/orig 0.9827

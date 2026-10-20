@@ -1,0 +1,14 @@
+{
+ "tau_310": {
+  "file": "e30k.py",
+  "env": {
+   "X_DEAD_TAU": "3.1"
+  }
+ },
+ "hot_25": {
+  "file": "e30k.py",
+  "env": {
+   "X_VB_HOT": "2.5"
+  }
+ }
+}
