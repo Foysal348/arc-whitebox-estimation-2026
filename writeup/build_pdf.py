@@ -26,7 +26,7 @@ for line in src:
     out.append(line)
 body = markdown.markdown("\n".join(out), extensions=["tables", "fenced_code", "toc", "mdx_truly_sane_lists"],
                          extension_configs={"mdx_truly_sane_lists": {"nested_indent": 2, "truly_sane": True}})
-css_compact = "@page { size: A4; margin: 14mm 14mm 14mm 14mm; } body { font-size: 10pt !important; line-height: 1.35 !important; } table { font-size: 8.6pt !important; } p, li { text-align: left !important; } code { word-break: break-all; }"
+css_compact = "@page { size: A4; margin: 14mm 14mm 14mm 14mm; } body { font-size: 10pt !important; line-height: 1.35 !important; } table { font-size: 8.6pt !important; } p, li { text-align: left !important; } code { word-break: break-all; } table { page-break-inside: auto !important; } tr { page-break-inside: avoid; }"
 css = """
 @page { size: A4; margin: 18mm 16mm 18mm 16mm; }
 body { font-family: 'Cambria', 'Segoe UI', 'Times New Roman', serif; font-size: 10.5pt; line-height: 1.45; color: #111; }

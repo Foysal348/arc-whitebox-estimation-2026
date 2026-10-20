@@ -1,8 +1,8 @@
 # Where the Error of the Factorised Cumulant Chain Lives: Exact Identities, Cost Engineering, and a Cubic-Birth κ₄-Pattern Programme for Deep ReLU MLPs
 
 **WhestBench Phase 2, algorithmic-contribution write-up. Team Hack2Publish (mdhamidhosen, esfer_sami, foyshal_sk).**
-**Team best graded submission: #336377 (E299), adjusted score 3.3946e-9, raw final-layer MSE 1.8824e-8: md.hamidhosen's calibration and cost layer (§3.7) on #334870 (v56As_fs, 3.6521e-9, raw 1.950e-8), the chain this paper analyses.**
-*Version of 16 October 2026. Every number is either a graded leaderboard result (submission id given) or a measurement whose result file is named in §8. Items still open are marked **[OPEN]**. Unmeasured quantities are marked **(estimate)** or **(untested)**. Claims are labelled **derived** (algebra), **measured** (run by us) or **graded** (official grader).*
+**Team best graded submission: #337336, adjusted score 2.8256e-9, raw final-layer MSE 1.8869e-8: our κ₄-pattern corrector on LordProcciuto's public e30_a chain with a refitted mean-correction table (§3.9). Own-lineage best: #337049 (3.2529e-9), built on #334870 (v56As_fs, 3.6521e-9), the chain this paper analyses.**
+*Version of 20 October 2026. Every number is either a graded leaderboard result (submission id given) or a measurement whose result file is named in §8. Items still open are marked **[OPEN]**. Unmeasured quantities are marked **(estimate)** or **(untested)**. Claims are labelled **derived** (algebra), **measured** (run by us) or **graded** (official grader).*
 
 ---
 
@@ -403,6 +403,32 @@ From #334870 to #336377 the score falls 7.0 %: raw −3.5 %, util −3.7 % (deri
 Blend 1.1 graded ×0.9953 on the A class (#336382, 3.6348e-9) and ×0.9948 on the B class (#336383, 3.6533e-9). Of the combinations, only one runner finished before the sweep was stopped: blend 1.1 with λ block 8–11 ×0.95 gave 0.9939 and with star ×1.15 gave 0.9947. By then E299 was 7 % ahead, and its corrector refits (§3.7) adjust the same levels, so the sweep was closed without a test on E299.
 
 **E299-B: E299 in the safe operation class.** E299 issues 21,953 warm-call operations (measured, MLP #0), close to the 21.7–22.3k at which v49–v51 variants were capped (§3.3). Turning off three Strassen paths (nested projections, Qc, D21 lift) and raising the Strassen floor to 8 are exact rewrites: on MLP #0 the final MSE moves by ×1.0005 (rounding), the warm operations fall to 18,095 and the warm FLOPs rise by 1.9 % (`e299b_warm_check.json`). Peak working set on Windows, two calls on MLP #0 (`e299b_mem_check.json`): E299 4.87 GB, E299-B 5.22 GB, E295 5.19 GB, all below the 8 GB limit (md.hamidhosen's macOS figures for E295–E299 were 6.2–8.3 GB, so the platform matters). E299-B graded 3.4719e-9 (#336440): raw 1.8825e-8 against E299's 1.8824e-8 (×1.00005, rounding), util 0.1844 (+2.3 %), no failed MLP. An intermediate variant with only the nested projections off (20,523 operations, +0.5 % FLOPs) is prepared as `submissions/e299b1/`.
+
+### 3.9 Final days, 17–20 Oct: a public base chain, our corrector, and a refitted table (measured and graded)
+
+On 17 Oct the organisers extended Phase 2 to 21 Oct and moved the grader to flopscope 0.12.3. On 100 Kaggle MLPs E299 and E299-B bill exactly as under 0.12.1 (util 0.1788 both; `data/kaggle_out/fs123_*`). We then read the new forum write-ups and public code and ran ten parallel reviews (outside-AI documents, forum, e30_a's write-up, our kill table, corrector refit, cost, md.hamidhosen's ledger, error map, reference paper; brief in `consultations/AGENT_BRIEF_2026-10-19.md`). All of them judged a top-10 jump (≈ −37 %) infeasible in the remaining time; every candidate below was measured on the 100-MLP harness (paired, same nets) before grading.
+
+| Step | Change | Harness (paired) | Graded |
+|---|---|---|---|
+| e299x / e299xr | e30_a's exact cost savings in E299 (Gram core skipped, QR-factor rotation, folded constants, …) | −0.97 % / −1.4 % FLOPs, predictions unchanged up to rounding | 3.3619e-9 (#336711), 3.3461e-9 (#336719) |
+| e299k31 | kai_leal_gonzalez's two-term (3,1) closure (MIT), full strength | ×1.0075 | 3.4192e-9 (#336697, worse) |
+| e299xrk | the same at mix 0.25 | ×0.9960 (73/100) | 3.3325e-9 (#336757) |
+| e299safe | + e30_a's fixed old basis and C_pre compaction (own lineage) | ×0.972 (MLP #0) | 3.2529e-9 (#337049) |
+| e30ak4c | our V55/V56 corrector on e30_a (LordProcciuto, MIT; published 3.1163e-9), scale 0.3 | ×0.9768 (94/100) | 3.0519e-9 (#336774) |
+| e30ak4c40 | scale 0.4 | ×0.9752 (87/100) | 3.0506e-9 (#337041) |
+| e30ak4c40k31 | + (3,1) closure at mix 0.25 | ×0.9945 (87/100) | 3.0302e-9 (#337175) |
+| e30kang | + V31 spherical identity | ×0.985 (MLP #0 only) | 3.1473e-9 (#337221, worse) |
+| c1 | + D21 ×0.98 at L ≥ 9, closure mix 0.4, corrector local 0.2 / star 0.7 | singly ×0.9949 / ×0.9974 / ×0.9967; jointly ×1.0035 (n.s.) | 2.9956e-9 (#337258) |
+| c1 + N2 | e30_a's mean-correction table refitted on this trajectory (§ below) | ×0.9346 (99/100); held-out nets 70–99 ×0.9304 (30/30) | 2.8475e-9 (#337301) |
+| + τ_B 2.4 | e30_a's near-dead column cut | ×0.9930 (21/30 held-out) | **2.8256e-9 (#337336)** |
+
+**Why the corrector transfers only partly.** Call-site ledgers on MLP #0 put e30_a at 158.8 u against our 184.1 u (`data/kaggle_out/ledger/`). On e30_a the corrector at full strength costs ×1.085 (MLP #0); the gain comes entirely from the V56 star (no-star arm ×1.0024), because e30_a's 87-feature ridge mean-correction table already contains the local κ₄-pattern features and was fitted on e30_a's uncorrected trajectory.
+
+**Table refit (fitted).** We dumped teacher-forced per-layer features on public mini nets 0–69 under our trajectory and refitted the table per layer by ridge regression with grouped 5-fold CV over nets, adding star modulators (N1, 94 features) and the corrector's own κ₄ change (N2, 101 features). One-step CV error against the original table: 0.96 (all layers). End to end on 100 MLPs: N0 ×0.9496, N1 ×0.9369, N2 ×0.9346; the gain on held-out nets 70–99 is as large as on nets 0–69, so the fit does not overfit the public set. A table fitted on one trajectory does not help another (×1.0005 one-step), so the refit must follow every change of the chain. Pipelines: `kaggle/x10/`, `kaggle/x11/` (self-contained Kaggle kernels).
+
+**Measured and rejected (17–20 Oct):** separate star/local corrector scales other than 0.7/0.2 (×1.004–1.019); table reading the corrected κ₄ (×1.021); FB 1.25/1.4 on e30_a (×0.999/×1.002); D21 ×0.96/0.97 (×1.055/×1.022); λ tilt, hot rows 2.5, dead τ 2.6/3.1 (×1.000–1.16); e30_a's strided Strassen views (`X_STV`, all 100 MLPs failed); e30_a's row compaction in E299 (×1.063); "cheaper setting, then refit" (rank 352: ×1.04 with or without refit; τ_B 2.4: refit adds nothing). Results: `data/kaggle_out/{exp5_*,e30k31_*,e30tune_*,x8_*,x8c_*,x10_eval,x11_*}`.
+
+**Rules.** The organisers allow building on another participant's public MIT code with attribution, provided the team adds substantial work of its own (forum topic 18240). #337336's base chain is LordProcciuto's; ours are the corrector (§5), the closure settings and the refitted table. Our own-lineage best is #337049.
 
 ---
 

@@ -1,0 +1,15 @@
+{
+ "id": "foysalemonshanto/whest-x11-c2e-3",
+ "title": "whest-x11-c2e-3",
+ "code_file": "x10-runner.ipynb",
+ "language": "python",
+ "kernel_type": "notebook",
+ "is_private": true,
+ "enable_gpu": false,
+ "enable_internet": true,
+ "dataset_sources": [
+  "foysalemonshanto/whest-x11-code-foysal"
+ ],
+ "competition_sources": [],
+ "kernel_sources": []
+}

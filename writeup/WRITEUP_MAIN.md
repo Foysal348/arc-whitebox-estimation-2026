@@ -2,10 +2,10 @@
 
 **WhestBench Phase 2, Algorithm track. Team Hack2Publish: mdhamidhosen, esfer_sami, foyshal_sk.**
 
-**Submission #336377** (E299, team best): adjusted score **3.3946e-9**, raw final-layer MSE **1.8824e-8**, util 0.180.
-It is **#334870** (v56As_fs: 3.6521e-9, raw 1.950e-8), the chain this write-up analyses, plus a fitted calibration and exact cost-rewrite layer by md.hamidhosen (§6.4).
+**Submission #337336** (team best): adjusted score **2.8256e-9**, raw final-layer MSE **1.8869e-8**, util 0.150. It runs our κ₄-pattern corrector (§5) on LordProcciuto's public e30_a chain (MIT; 3.1163e-9 as published), with a mean-correction table refitted on our trajectory and other measured additions (§6.5).
+**Own-lineage best #337049** (e299safe, 3.2529e-9): our chain **#334870** (v56As_fs, 3.6521e-9), the chain this write-up analyses, plus md.hamidhosen's calibration and cost layer (§6.4) and the safe cost rewrites of §6.5.
 
-*16 October 2026. This is the main write-up. The full technical report is attached as the **Appendix (full technical report)**, and "App. §x" refers to its sections. Each number and claim is labelled by its source:*
+*20 October 2026. This is the main write-up. The full technical report is attached as the **Appendix (full technical report)**, and "App. §x" refers to its sections. Each number and claim is labelled by its source:*
 - *graded: an official grade, with its submission id;*
 - *measured: a run of our own scripts, with the result file named in App. §8.3;*
 - *derived: algebra or arithmetic, with the derivation in the Appendix;*
@@ -16,7 +16,7 @@ It is **#334870** (v56As_fs: 3.6521e-9, raw 1.950e-8), the chain this write-up a
 
 ## 1. Summary
 
-We started from 504aldo's public, MIT-licensed factorised third-cumulant chain ("V29"), which graded 5.418e-9 when submitted verbatim. Our changes take it to **3.6521e-9 (−32.6 %)**: raw MSE falls by 8.6 % (2.133e-8 → 1.950e-8) and util by 26 % (0.254 → 0.187) (derived). A final calibration and cost layer by md.hamidhosen on this chain (E282–E299, §6.4) takes it to **3.3946e-9 (#336377, −7.0 %)**, the team's best; that layer is fitted and engineering, not new understanding.
+We started from 504aldo's public, MIT-licensed factorised third-cumulant chain ("V29"), which graded 5.418e-9 when submitted verbatim. Our changes take it to **3.6521e-9 (−32.6 %)**: raw MSE falls by 8.6 % (2.133e-8 → 1.950e-8) and util by 26 % (0.254 → 0.187) (derived). A final calibration and cost layer by md.hamidhosen on this chain (E282–E299, §6.4) takes it to **3.3946e-9 (#336377, −7.0 %)**; that layer is fitted and engineering, not new understanding. Moved onto a cheaper public chain (e30_a) with a refitted correction table, our corrector reaches **2.8256e-9 (#337336)** (§6.5).
 
 **Mechanistic contributions.** These are what we consider our contribution to the understanding of white-box estimation:
 1. **A spherical-input identity** (§3.1; derived, injection check measured, graded −1.1 % raw at zero cost).
@@ -224,33 +224,43 @@ These sections are performance engineering. We report them because they carry mo
 | + map fitted on the synthetic net, A | | 3.6521e-9 (#334870) | 1.950e-8 | 0.187 |
 | E282: 24-group calibration (md.hamidhosen) | §6.4 (fitted) | 3.5890e-9 (#335603) | 1.9154e-8 | 0.187 |
 | E285–E291: rider, κ₄-corrector refits | §6.4 (fitted) | 3.5085e-9 (#335729) | 1.8722e-8 | 0.187 |
-| E294–E299: exact cost rewrites, thresholds | §6.4 | **3.3946e-9 (#336377)** | **1.8824e-8** | 0.180 |
+| E294–E299: exact cost rewrites, thresholds | §6.4 | 3.3946e-9 (#336377) | 1.8824e-8 | 0.180 |
+| + e30_a's exact cost savings, (3,1) closure at 0.25 | §6.5 | 3.3325e-9 (#336757) | 1.8742e-8 | 0.178 |
+| + fixed old basis, C_pre compaction (own lineage) | §6.5 | 3.2529e-9 (#337049) | 1.9107e-8 | 0.170 |
+| Our corrector on public e30_a (scale 0.4), (3,1) closure | §6.5 | 3.0302e-9 (#337175) | 1.9953e-8 | 0.152 |
+| + D21 ×0.98, closure mix 0.4, corrector split | §6.5 | 2.9956e-9 (#337258) | 1.9723e-8 | 0.152 |
+| + e30_a's table refitted on our trajectory (N2) | §6.5 (fitted) | 2.8475e-9 (#337301) | 1.8747e-8 | 0.152 |
+| + near-dead column cut (τ_B 2.4) | §6.5 | **2.8256e-9 (#337336)** | **1.8869e-8** | **0.150** |
 
 Util is the grader's figure or adjusted ÷ raw. "—" means the value is not listed here. The B class keeps ≤ ~18k warm-call operations for a safety margin under the residual-time cap; the A class runs at about 20k.
 
 ### 6.2 Cost levers
 
-- **Transport join.** V29 rebuilds the shared basis at each join with a randomized range finder; we **transport the previous basis** through the layer and append the joiner. Raw rises slightly (2.1046e-8 → 2.1788e-8), util falls from 0.2437 to 0.2273, and the score improves by 3.4 % (#332257; harness predicted ×0.959).
-- **AGE_OLD 5, feedback rank 4.** One more young age kept dense, feedback rank 16 → 4: −2.9 % (#332324, derived). On V56, five nearby age/rank settings score ×1.026 to ×1.104 on 100 MLPs; the shipped setting is the best we tested.
-- **Dead-neuron compaction (input side only).** A neuron with small Φ = P(z > 0) has a near-zero post-ReLU response. v48 drops neurons with Φ < 1e-2 from the next transport's inner dimension (−3.7 %, #332391); v50 skips their D21 columns (−3.7 %, #332404); v51 skips the D21 rows of very dead neurons (Φ < 3e-3 or 7e-3; −3.4 % / −3.8 %, #332418 / #332420). Compacting the *output* side failed in every form we tried (measured on the teacher pair): removing dead neurons as hubs of the new source ×6.40 / ×6.74; zeroing their transported-covariance entries ×1.59 / ×1.46; treating always-on neurons as hubs ×10.0 / ×8.0.
-- **Strassen placement and aliased Grams.** Lowering V29's recursion floor from 32 to 8 added two levels on the rank-384/224 families: −3.7 % (#331686; prediction drift 4.9e-13, peak 5.97 GB). v49 routes the basis-side products (join projections, factor rotations, Qc, the D21 lift) through Strassen and writes the joiner Grams as YYᵀ, which the meter bills at half: −4.6 % (#332401). Level 6 peaked at 8.13 GB, above the cap.
+- **Transport join:** the shared basis is transported through each layer instead of rebuilt by a range finder: −3.4 % (#332257).
+- **AGE_OLD 5, feedback rank 4:** −2.9 % (#332324); nearby age/rank settings score ×1.026–1.104 on 100 MLPs.
+- **Dead-neuron compaction (input side only):** neurons with Φ < 1e-2 leave the next transport's inner dimension, and their D21 columns and rows are skipped: −3.7 %, −3.7 %, −3.4 % (#332391, #332404, #332418). Compacting the output side failed in every form (×1.6 to ×10 on the teacher pair).
+- **Strassen placement and aliased Grams:** recursion floor 32 → 8 (−3.7 %, #331686); basis-side Strassen and joiner Grams written as YYᵀ (billed at half): −4.6 % (#332401). Level 6 exceeded 8 GB.
 
-On 26 Sep alone, compaction, trimming and Strassen placement took the score from 4.8066e-9 to 4.1081e-9 (−14.5 %). Over the whole cost programme, the trims removed 22 % of the metered FLOPs (util 0.2437 → 0.189, #332110 → #332420) for +2.8 % raw.
+Over the cost programme the trims removed 22 % of the metered FLOPs (util 0.2437 → 0.189) for +2.8 % raw.
 
 ### 6.3 The residual-time cap and the operation budget
 
-Two variants that ran cleanly on our machines graded catastrophically: #332402 at 0.0434 (≈ 12 % of MLPs capped) and #332425 at 0.0204 (≈ 6 %). Memory was not the cause (local peak 5.51 GiB). We measured that the residual Python time tracks the **number of metered operations**, with no other dependence on the variant that we found: 0.053–0.059 ms per op on Kaggle for every variant, and about 0.02 ms per op inferred (not measured) for the grader. The failing variants issued 21.7k–22.3k operations; one at about 16.4k had passed.
-
-The fix was an **operation budget**: Strassen only where it saves at least about 2 u per 1,000 operations, since each top-level Strassen call costs 110–240 operations. This defines our classes: **B** (nomination-safe), ≤ ~18k operations; **A**, about 20k. The budget cost +1.9 % / +0.8 % graded against v51, and neither class has had a capped MLP since (#332566, #332567).
-
-A second hidden limit appeared with V56. Two 3-D broadcast forms of the cubic star passed in-process runs but failed the grader's smoke test four times (#334786, #334787, #334798, #334799). The first failed the address-space limit ("Unable to allocate 450 MiB"), which only `whest run --runner subprocess` reproduced; the in-place form failed although our subprocess repro passed. The per-slot 2-D form passed (#334805). `whest validate` catches neither limit, so our pre-submission check is an operation count plus a subprocess run.
+Two variants that ran cleanly locally graded catastrophically (#332402 at 0.0434, #332425 at 0.0204: about 12 % and 6 % of MLPs capped). The residual Python time tracks the number of metered operations (0.053–0.059 ms per op on Kaggle for every variant); the failing variants issued 21.7–22.3k operations. Our fix is an **operation budget**: Strassen only where it saves at least about 2 u per 1,000 operations. Class **B** (nomination-safe) keeps ≤ ~18k operations, class **A** about 20k; neither has had a capped MLP since (#332566, #332567). A second hidden limit (an address-space cap) failed four 3-D forms of the V56 star (#334786–#334799) that passed in-process; `whest validate` catches neither limit, so our pre-submission check is an operation count plus a subprocess run.
 
 ### 6.4 Final calibration and cost layer (E282–E299, md.hamidhosen; fitted and engineering)
 
 From 12 Oct md.hamidhosen built on #334870 (numbers from his ledger, re-checked against the grader):
 - **Calibration (fitted).** A Gauss-Newton fit of 24 per-layer calibration groups (scales of the closure inputs and λ) on public mini MLPs 0–47 gave −1.66 % ± 0.20 % on unseen MLPs 48–99 (E282, graded 3.5890e-9); two further steps and a cubic final-layer ridge rider trained on 900 full-split MLPs followed. Four end-to-end refits of the V56 κ₄ corrector (per-block level, map coefficients) then gave −0.77 / −0.48 / −0.33 / −0.37 % unseen (E291, 3.5085e-9). Every lever converged: further steps of the groups, the corrector and the rider, and α-dependent scales, gave ≤ 0.08 % unseen.
 - **Exact cost rewrites (engineering).** Grouped PK2 einsums (util −0.75 %), Strassen floor 4 and Strassen on the nested projections (−0.3 %, −0.48 %), and the Strassen-Winograd kernel (−0.77 % FLOPs) leave predictions unchanged up to rounding. With the D21 and dead-neuron thresholds raised (approximations; −0.73 % graded, E296 → E298) they give **3.3946e-9 (#336377, E299)**.
-- **Our 16 Oct knob sweep** on #334870 (100 Kaggle MLPs) found K4C blend 1.1 at ×0.9953 (graded ×0.9953, #336382); we expect the E-series corrector refits to contain such level changes already (not tested on E299). **E299-B** (#336440) is E299 with three Strassen paths off and floor 8, exact rewrites that cut warm operations from 21,953 to 18,095 for +1.9 % FLOPs (measured on MLP #0); it graded 3.4719e-9 with raw 1.8825e-8, equal to E299's up to rounding: the residual-safe variant of E299.
+
+### 6.5 Final days: our corrector on a public chain, and a refitted table (17–20 Oct; measured and graded)
+
+After the 17 Oct extension (grader on flopscope 0.12.3, which bills our chains identically on 100 Kaggle MLPs), we reviewed the new public write-ups and code and measured every candidate on the 100-MLP harness before grading (App. §3.8).
+- **Exact cost savings from e30_a in our chain:** Gram-core skipping, R-factor rotation, folded constants: −1.4 % FLOPs, predictions unchanged up to rounding (#336711, #336719). kai_leal_gonzalez's two-term (3,1) closure (MIT, forum write-up) hurt at full strength (#336697, +0.7 %) but helped at mix 0.25 (#336757, −0.4 %). e30_a's fixed old basis and C_pre compaction gave our own-lineage best (#337049, 3.2529e-9).
+- **Our corrector on LordProcciuto's public e30_a chain** (MIT; 158.8 u vs our 184.1 u per MLP, call-site ledger): at full strength it hurt (×1.085, MLP #0); at scale 0.3–0.4 it gave ×0.975–0.977 on 100 MLPs (94/100 at 0.3), graded ×0.979. The gain comes entirely from the V56 star; the local features duplicate e30_a's 87-feature mean-correction table.
+- **Refitting e30_a's table on our trajectory (fitted).** The table was fitted on e30_a's own uncorrected trajectory. Refitted by ridge regression (grouped 5-fold CV) on teacher-forced dumps of public mini nets 0–69, with star modulators added (101 features), it gave ×0.930 on held-out nets 70–99 (30/30) and graded −4.9 % (#337301). A table only helps on the trajectory it was fitted on.
+- **Measured and rejected:** V31 on e30_a (×0.985 on MLP #0, graded +3.9 %, #337221); e30_a's row compaction in our chain (×1.063); refitting the table after cheaper settings (rank 352: ×1.04 even with refit).
+- **Rules note:** the organisers allow building on public MIT code with attribution if the team adds substantial work of its own (forum topic 18240). Our own contribution in #337336 is the corrector (V55/V56), the closure settings and the refitted table; the base chain is LordProcciuto's.
 
 ---
 
@@ -300,7 +310,7 @@ From 12 Oct md.hamidhosen built on #334870 (numbers from his ledger, re-checked 
 
 **Where our cost goes.** A V56 call-site ledger puts 193.8 u in one warm call: about 70 u in the D21 hub readout, 63 u in young-leg transport, 20 u in the old basis, and about 40 u elsewhere, which issues 11.3k of the 20.6k operations. The 133 u in the two per-source families grows with depth, and nothing we tested removes it without at least a comparable accuracy loss. For comparison, the reference algorithm of Wu et al. costs about 4,150 u at our size (derived from their cost table), about 21× V56.
 
-**Relation to the leaderboard.** On the 10 Oct board the six highest entries have raw MSE 1.14–1.65e-8 at util 0.106–0.144. On 16 Oct our row shows 3.4e-9 at rank 46 (tied); the board rounds to two significant figures and lists the earliest of tied entries (#335834), not #336377. One entry at rank 11 has V29-level raw MSE (2.10e-8) at util 0.102. At our raw MSE, util 0.10 would score about 2.0e-9 (derived). We do not know the leaders' mechanisms. Our measurements exclude only the specific κ₃ representations in the table above as cheaper drop-in replacements inside our chain.
+**Relation to the leaderboard.** On the 10 Oct board the six highest entries have raw MSE 1.14–1.65e-8 at util 0.106–0.144. On 20 Oct our row shows 2.8e-9 at rank 34 (tied; the board rounds to two significant figures). One entry at rank 11 has V29-level raw MSE (2.10e-8) at util 0.102. At our raw MSE, util 0.10 would score about 2.0e-9 (derived). We do not know the leaders' mechanisms. Our measurements exclude only the specific κ₃ representations in the table above as cheaper drop-in replacements inside our chain.
 
 ---
 
@@ -311,6 +321,7 @@ From 12 Oct md.hamidhosen built on #334870 (numbers from his ledger, re-checked 
 | Path | Contents |
 |---|---|
 | `submissions/<variant>/estimator.py` | Every shipped estimator, with a lineage header naming each change. #334870 is `submissions/v56As_fs/`, #334869 is `submissions/v56s_fs/`, the reference is `submissions/v29/`. |
+| `submissions/e30*`, `experiments/variants/e30k_x8.py`–`e30k_x12.py`, `kaggle/x8*`, `kaggle/x10`–`x12` | The final-days line (§6.5): e30_a-based estimators, the 100-MLP harness rounds, and the self-contained Kaggle pipelines that dump, refit and evaluate the mean-correction table. e30_a is LordProcciuto's MIT release (github.com/siming767-creator/whestbench-lordprocciuto; copy in `external/`), the two-term (3,1) closure is kai_leal_gonzalez's (MIT, github.com/al07-alt/whest-p2-k31-two-term) |
 | github.com/hamidhosen42/ARC-White-Box | md.hamidhosen's E-series: `experiments/k3/E2*_estimator.py` (E299 = #336377), the ledgers `experiments/results.csv` and `experiments/submissions.csv`, and the calibration tools |
 | `experiments/variants/` | Research variants and oracles (`r20_joint_oracle.py`, `r20_cba.py`, `r20_feed_oracle.py`, `v55_k4c.py`, `v56_star.py`, `v56_fbg.py`) |
 | `experiments/probes/` | Probes (`site_ledger.py`, `pool_ceiling.py`, `k3_error_profile.py`, `r17_hermite_family_ceiling.py`, `r20_onestep_channels.py`, `astra_rll_test.py`, `kaggle_pair_compare.py`) |
@@ -330,6 +341,8 @@ App. §8.3 maps every Appendix section to its script and result file; known gaps
 
 ## 9. Disclosure of AI use
 
+**Public code we build on.** #337336 runs on LordProcciuto's e30_a (MIT; its README discloses Claude assistance) and uses kai_leal_gonzalez's two-term (3,1) closure (MIT); both licences and attributions are kept in the shipped files. The corrector, the closure settings and the refitted table are ours (§6.5).
+
 **Code.** The E-series layer of §6.4 (E282–E299) and its calibration fits are md.hamidhosen's, in his repository (§8). Apart from that layer and 504aldo's reference code, essentially all code and probe scripts were written by AI coding assistants (Anthropic Claude models, mainly Claude Opus 5 and 5.5, via Claude Code) under the team's direction. This includes every estimator variant, oracle, probe, harness runner and the PM364 student. Claude subagents also carried out specific derivations and measurement tasks.
 
 **Ideas.** Many architecture proposals came from consultations with outside AI systems (GPT-5.6, Astra 6, Gemini 3.1 Pro, Grok, DeepSeek, Copilot, SciMaster/Bohrium, and several unsigned answers) over more than 18 rounds (App. §6.4, §9). Of the shipped ideas:
@@ -342,7 +355,7 @@ Most proposals were killed (§7); several outside documents reported passing mea
 
 **Write-up.** The text of this write-up and of the Appendix was drafted by AI and checked by the team.
 
-**Validation.** Apart from the cited figures of 504aldo, Wu et al. and the public leaderboard, and the numbers marked as estimates, every number here was produced by our own scripts (or derived from them) or by the official grader. Every outside claim was re-derived or re-measured before we used it. On 11 Oct 2026 an automated, AI-run fact-check compared every number in this document with the result files, and the errors it found were corrected. No leaderboard feedback entered any fitted coefficient: the V55 map was fitted against our own teacher for MLP #0, the shipped V56 maps against our own teacher for the synthetic network, and the E-series calibration on public dataset MLPs with their published truth (mini 0–47, rider on full-split 100–999), validated on unseen mini MLPs 48–99.
+**Validation.** Apart from the cited figures of 504aldo, Wu et al. and the public leaderboard, and the numbers marked as estimates, every number here was produced by our own scripts (or derived from them) or by the official grader. Every outside claim was re-derived or re-measured before we used it. On 11 Oct 2026 an automated, AI-run fact-check compared every number in this document with the result files, and the errors it found were corrected. No leaderboard feedback entered any fitted coefficient: the V55 map was fitted against our own teacher for MLP #0, the shipped V56 maps against our own teacher for the synthetic network, and the E-series calibration on public dataset MLPs with their published truth (mini 0–47, rider on full-split 100–999), validated on unseen mini MLPs 48–99; the refitted e30_a table (§6.5) on public mini nets 0–69, validated on unseen nets 70–99.
 
 **Understanding: what was verified numerically and what is only derived.** The team directed the work and reviewed the results, but several derivations were produced with AI assistance.
 - *Verified numerically:* the cubic-star and Wick identities (to ≤ 8.1e-16) and their readout factors (to ≤ 9.0e-15); the spherical identity's scale shift (to 0.3 %); the age-collapse and anchor-grouping identities (to 2.6–3.2e-7); the closure accuracy given true inputs (§4.1); the implementation parity checks (PM364's flopscope and PyTorch versions agree to 2.8e-7); the parity theorem's sign flip on the real chain (exact) and the √(6/(r+8)) floor (Monte Carlo plus exact operator norm, with a written proof).
