@@ -1,7 +1,7 @@
 # Where the Error of the Factorised Cumulant Chain Lives: Exact Identities, Cost Engineering, and a Cubic-Birth κ₄-Pattern Programme for Deep ReLU MLPs
 
 **WhestBench Phase 2, algorithmic-contribution write-up. Team Hack2Publish (mdhamidhosen, esfer_sami, foyshal_sk).**
-**Team best graded submission: #337457, adjusted score 2.7858e-9, raw final-layer MSE 1.8592e-8: our κ₄-pattern corrector on LordProcciuto's public e30_a chain with a refitted mean-correction table (§3.9). Own-lineage best: #337049 (3.2529e-9), built on #334870 (v56As_fs, 3.6521e-9), the chain this paper analyses.**
+**This write-up refers to submission #337457** (graded in Phase 2): adjusted score 2.7858e-9, raw final-layer MSE 1.8592e-8. It is LordProcciuto's public e30_a chain (MIT) with kai_leal_gonzalez's (3,1) closure (MIT), plus our κ₄-pattern corrector, our settings and our refit and extension of e30_a's mean-correction table; §1.4 separates their parts from ours. *For reference only:* our best result without e30_a's base chain is #337049 (3.2529e-9), built on #334870 (v56As_fs, 3.6521e-9), the chain this paper analyses.
 *Version of 21 October 2026. Every number is either a graded leaderboard result (submission id given) or a measurement whose result file is named in §8. Items still open are marked **[OPEN]**. Unmeasured quantities are marked **(estimate)** or **(untested)**. Claims are labelled **derived** (algebra), **measured** (run by us) or **graded** (official grader).*
 
 ---
@@ -11,16 +11,16 @@
 We start from the public, MIT-licensed factorised third-cumulant chain of team 504aldo ("V29", raw 2.13e-8 at 0.254 of the budget) and pursue two questions: where its error is made, and what an estimator must contain to remove that error at an affordable cost.
 
 **Contributions.**
-1. **Two exact identities that we ship.** A spherical-input identity turns the Gaussian input into a uniform-sphere input plus one exact scalar, a₁ = 0.99975589. It is free and graded −1.1 % raw (#331787).
-2. **A parity theorem** (derived, with a written proof of its floor, and verified numerically on the real chain). It explains why every "mean-field" closure of the deep third cumulant fails.
+1. **An exact identity, shipped in our own chain (not in #337457).** A spherical-input identity turns the Gaussian input into a uniform-sphere input plus one exact scalar, a₁ = 0.99975589. It is free and graded −1.1 % raw (#331787).
+2. **A parity theorem** (derived, with a written proof of its floor, and verified numerically on the real chain). It shows that closures built only on even statistics (mean-field closures, scale mixtures, polynomials in C) carry none of the old κ₃; closures that condition on the mean μ are not covered.
 3. **Cubic curvature-birth identities.** These come with readout factors, verified to ≤ 1e-14.
-4. **Cost engineering under a metered budget.** Our tools are dead-neuron compaction, basis-side Strassen, aliased Grams, and an operation budget derived from a residual-time grader failure. Together they remove 22 % of the metered FLOPs for +2.8 % raw (util 0.2437 → 0.189, #332110 → #332420). With the zero-cost accuracy fixes they take the score from 5.418e-9 to 4.078e-9.
-5. **An error map built from 6·10⁷-sample Monte-Carlo teachers.** The closures are exact given true inputs. The error is fresh input error that accumulates through depth. The single most valuable missing input is the **per-neuron pattern** of the κ₄ diagonal: the teacher's pattern at the chain's own level would take the raw MSE from 2.290e-8 to 1.551e-8, which is the leaders' raw range.
+4. **Cost engineering under a metered budget.** Our tools are dead-neuron compaction, basis-side Strassen, aliased Grams, and an operation budget derived from a residual-time grader failure. Together they remove 22 % of the metered FLOPs for +2.8 % raw (util 0.2437 → 0.189, #331787 → #332420). With the zero-cost accuracy fixes they take the score from 5.418e-9 to 4.078e-9.
+5. **An error map built from 6·10⁷-sample Monte-Carlo teachers.** The closures are accurate given true inputs (mean closure to 5e-11–1.5e-10; covariance closure down to the teacher's noise). The error is fresh input error that accumulates through depth. The single most valuable missing input is the **per-neuron pattern** of the κ₄ diagonal: the teacher's pattern at the chain's own level would take the raw MSE from 2.290e-8 to 1.551e-8, which is the leaders' raw range.
 6. **A κ₄-pattern programme with graded gains.**
    - A zero-FLOP linear corrector (V55) graded −5.4 % (#334591).
    - A cubic Hermite-star feature built from the chain's own young legs (V56) graded a further −4.4 % (#334805), reaching 3.6521e-9 (#334870).
 7. **A ceiling ladder consistent with every earlier κ₄ carrier stalling near correlation 0.45** (consistent with, not a proof of, the cause).
-   - Carriers whose births stop at second order in the Hermite expansion of the ReLU are capped at 0.45–0.56.
+   - Carriers whose births stop at second order in the Hermite expansion of the ReLU are capped at 0.45–0.55.
    - Cubic births over a 6-layer horizon reach 0.80–0.85.
    - An age-resolved ceiling (9 Oct) shows that ages 1–6 are jointly needed. Ages 1–4 give 0.68–0.74, ages 2–6 give 0.69–0.71, and ages 4–6 give only 0.37–0.41.
 8. **A table of the more than 60 architecture and representation ideas we killed, with their ceiling numbers.** It includes outside-AI proposals and states which of them came with no measurement.
@@ -28,7 +28,7 @@ We start from the public, MIT-licensed factorised third-cumulant chain of team 5
 10. **The κ₃ input and the κ₃-dressed C·T channel (9–10 Oct, oracle and component level; not graded).**
     - A joint oracle shows that the teacher's κ₃ input is the larger single lever: ×0.607 against ×0.686 for the κ₄ diagonal on MLP #0, and ×0.716 against ×0.885 on the synthetic net. Together the two give ×0.272.
     - A C·T readout built from the chain's own κ₃ legs, ct_i = 24 Σ_a g_a Ȳ_ai X_ai Q_ai, lifts the star's ceiling from 0.47–0.52 to 0.82–0.85. Used as a feature in a teacher-fitted (oracle) affine map, it takes the plain chain to ×0.773, which is about 75 % of the perfect-κ₄ gain.
-    - An exact age-collapse identity, Γ_a = G_a + Ystep_a Γ_{a+1}, together with grouping into dense A/P anchors plus exact low-rank anchors, cuts the source contraction to two dense products per source and target, plus one shared backward recursion. Low-rank sketches keep only ×0.843–0.885. At an estimated 40 u this is about score-neutral, so the channel is real but not yet affordable. A rank-32 eigen-sketch (10 Oct) keeps ×0.874 at half the rank-64 thin-product count, an estimated 3–4 % score gain on the plain chain under the same oracle map (untested on V56).
+    - An exact age-collapse identity, Γ(a) = G(a) + Ystep(a) Γ(a+1), together with grouping into dense A/P anchors plus exact low-rank anchors, cuts the source contraction to two dense products per source and target, plus one shared backward recursion. Low-rank sketches keep only ×0.843–0.885 (round 2; ×0.874–0.913 for the round-3 variants). At an estimated 40 u this is about score-neutral, so the channel is real but not yet affordable. A rank-32 eigen-sketch (10 Oct) keeps ×0.874 at half the rank-64 thin-product count, an estimated 3–4 % score gain on the plain chain under the same oracle map (untested on V56).
 11. **Where the κ₃ error is, and three mechanisms killed (10 Oct; oracle and component level; not graded).**
     - Measured against an estimate of the teacher's own sampling noise, the chain's early-layer κ₃ "error" is mostly teacher noise. The real (2,1)-slice error grows from about 3 % at L4 to about 7 % at L16, and the d3 level shrinks by 1.4 % at L16. The teacher's κ₃ helps only at L9–16 (§4.10).
     - A missing cubic-response C×κ₃ term, a feedback-scale confound and the κ₄→κ₃ feed channel were each tested and killed. The last kill holds only for the tested sample size, N = 10⁶ (§6.5).
@@ -38,8 +38,9 @@ We start from the public, MIT-licensed factorised third-cumulant chain of team 5
     - One shared basis cannot hold the whole κ₃: at rank 512 the D21 error is 3.4–6.3 % at L11–15, and only rank 768 reaches 0.2–1 % (§6.6 (a)). Keeping only the youngest source exact (a deferred exact join) leaves 2.5–8 % (§6.6 (b)).
     - On 100 MLPs every age/rank setting near V56's scores worse (×1.026 to ×1.104), so the one-for-one law of §3.5 holds on V56 (§6.6 (c)).
     - Zeroing κ₃ in the closures for a window of layers costs ×15 to ×125, and the damage does not recover after the window (§6.6 (d)). A ±2 % change in the κ₃ level is not a gain either (§6.6 (e)).
-    - The reference K = 3 implementation of Wu et al. costs about 4,150 u at our size, about 21× V56 (derived from their cost table, §3.6). Its trace projection of old κ₃ leaves 26–42 % D21 error (§6.6 (f)).
+    - The factorised K = 3 algorithm of Wu et al., priced from their cost table with naive products, costs about 4,150 u at our size, about 21× V56 (derived, §3.6); the released ARC reference code measured 1523 u (§6.3). Its trace projection of old κ₃ leaves 26–42 % D21 error (§6.6 (f)).
 13. **A learned pair-memory student, PM364 (11 Oct; killed).** We distilled V56 into a source-free state with two n×n pair memories, an exact port of V56's closure and 364 learned parameters. The student fits under the 0.1 floor (about 93 u, estimate). It trained on 448 V56-labelled networks, and its held-out error moved by only −0.9 %. Its D21 error stays at 58–70 %, against a 2 % gate (§6.7). Per-row heads cannot rebuild the all-distinct post-ReLU κ₃, which agrees with a derived first-order obstruction for slice-only states (§6.6 (g)).
+14. **The submission this paper refers to (#337457, 2.7858e-9; §1.4, §3.9; graded).** Our V55/V56 corrector, our settings and our refit and extension of e30_a's mean-correction table, on LordProcciuto's public e30_a chain (MIT) with kai_leal_gonzalez's two-term (3,1) closure (MIT): −10.6 % on e30_a's published 3.1163e-9, of which −6.3 % comes from the fitted table. Before that, mdhamidhosen's calibration and cost layer took #334870 to 3.3946e-9 (#336377, §3.7). Our best result without e30_a's base chain is 3.2529e-9 (#337049).
 
 ---
 
@@ -108,6 +109,23 @@ All of the following are described in §8.
 
 **The project κ₄ metric.** Throughout §5, the metric is the correlation of the standardised κ₄ diagonal, κ₄/v², with the teacher's, computed on *decisive* neurons (|μ/σ| < 1.5) at layers 12, 15 and 16. Raw (unstandardised) correlations inflate every candidate because they contain v², which the chain already gets right. One outside proposal scored 0.80–0.87 on raw correlation and 0.43 on this metric.
 
+
+### 1.4 The base of submission #337457 (LordProcciuto's e30_a and kai_leal_gonzalez's closure; MIT; not claimed)
+
+The submission this write-up refers to, #337457, is built on **LordProcciuto's public e30_a** (github.com/siming767-creator/whestbench-lordprocciuto, MIT, Copyright 504aldo and LordProcciuto; graded 3.1163e-9 as #335981, cited). e30_a descends from V29 (§1.2). Its author's changes are: physical removal of neurons with α < −2.85; a fixed-basis old level (rank 416/224) used only in non-hot rows; Strassen with a Winograd leaf; exact fixed-cost savings; a λ tilt; a near-dead column cut (τ_B); and an **87-feature ridge mean-correction table** fitted on 70 public nets. #337457 also uses **kai_leal_gonzalez's two-term closure of the (3,1) slice of κ₄** (github.com/al07-alt/whest-p2-k31-two-term, MIT; forum topic 18246) with the author's per-layer coefficients.
+
+| Component of #337457 | Origin |
+|---|---|
+| Sum-of-sources K = 3 chain, shared basis, memoryless κ₄ law, feedback legs, pooled Strassen | 504aldo (V29), via e30_a |
+| Dead-neuron removal, fixed-basis old level, hot rows, Winograd leaf, exact fixed-cost savings, λ tilt, τ_B column cut (value 2.4 chosen by us) | LordProcciuto (e30_a) |
+| Mean-correction table: the 87 original features and the ridge-table design | LordProcciuto (e30_a) |
+| Two-term (3,1) closure and its coefficients | kai_leal_gonzalez |
+| κ₄-pattern corrector: V55 map and V56 cubic star (§5), coefficients refitted end to end in mdhamidhosen's E-series (§3.7) | **ours** |
+| Corrector scale 0.4, star/local split 0.7/0.2, closure mix 0.4, D21 ×0.98 at L ≥ 9 | **ours** (tuned constants) |
+| Table refitted on our trajectory, plus 77 new features (star modulators, the corrector's κ₄ change, star², d3·star, corrector-local, D21/C row energies, carried delta and star; 164 in all) | **ours** (fitted) |
+
+Not in #337457: V31 (§2.1; graded worse on e30_a, #337221), FB 1.25 (§2.4; neutral on e30_a), our cost engineering (§3.1–§3.6; e30_a has its own) and the E-series calibration groups and rider (§3.7). Our changes take e30_a from 3.1163e-9 to 2.7858e-9 (−10.6 %, derived): corrector −2.1 %, closure and corrector settings −1.8 %, the fitted table refit and extension −6.3 %, and e30_a's own τ_B knob −0.8 %. Of our mechanistic contributions, the V56 star (§5.5) and the analysis that motivated it (§5.1–§5.4) act in #337457: at scale 0.3 on 100 MLPs the corrector gave ×0.9768 with the star and ×1.0024 without it. The rest of §2–§7 was measured on our own V29-based chain #334870, where the corrector was developed.
+
 ---
 
 ## 2. Exact identities and derivations
@@ -145,8 +163,8 @@ Because the weight ensemble is sign-symmetric,
   E[ H_s⁽ˡ⁾ | C⁽ˡ⁾, Gram(A_s, P_s), all state before l ] = 0, exactly.
 
 **Consequences.**
-1. Any closure that replaces old sources by a function of even statistics discards the entire contribution. This covers mean-field closures, scale mixtures and polynomials in C. The failures of such closures reported in the public log (9.1e-7 and 2.3e-6) are therefore structural.
-2. Replacing a source by its conditional expectation given one fresh weight row has a relative-error floor of √(6/(r+8)) in the retained support dimension r. That is 12 % at r = 384 and 16 % at r = 224, an order of magnitude above the 2 % tolerance.
+1. Any closure that replaces old sources by a function of even statistics discards the entire contribution. This covers mean-field closures, scale mixtures and polynomials in C. The failures of such closures reported in the public log (9.1e-7 and 2.3e-6) are consistent with this (we did not rerun those closures).
+2. Replacing a source by its conditional expectation given one fresh weight row has a relative-error floor of √(6/(r+8)) in the retained support dimension r. That is 12 % at r = 384 and 16 % at r = 224, six to eight times the 2 % tolerance.
 3. κ₄ terms built from two κ₃ factors are even, and C⊗C is the only even invariant available. We conjecture that this is why the empirical law G_off = λ_l C_off works (not proven).
 
 **Proof of the floor (written out, 11 Oct).** Absorb the gates and the fresh-row covariance square root into a symmetric 3-tensor T, so that two distinct fresh weight rows become independent g, h ~ N(0, I_r) and the source contributes y = T(g, g, h). Let τ_c = Σ_a T_aac.
@@ -160,12 +178,12 @@ The floor is therefore exact for this idealised fresh-row model. The modelling s
 
 **Numerical verification (11 Oct; `experiments/probes/parity_check.py`, `results/summaries/parity_check.json`).**
 - **Sign flip on the real chain.** On the frozen V56 chain (width 128, depth 16), flipping W⁽ˡ⁾ → −W⁽ˡ⁾ at l = 5 and l = 10 leaves every earlier layer bit-identical. At layer l, C and var are unchanged and μ, d3 and the full D21 flip sign, with difference exactly 0.0. The (W, −W) average of d3 and D21 is therefore exactly zero.
-- **Floor.** Monte Carlo (4·10⁵ draws, r = 8–32, random and extremal T) reproduces E[y²] = ‖τ‖² + 2‖T‖² and the residual 2‖T‖² to within sampling error (≤ 0.6 %). The extremal T attains relative errors 0.5000 (r = 16) and 0.3873 (r = 32), equal to √(6/(r+8)).
+- **Floor.** Monte Carlo (4·10⁵ draws, r = 8–32, random and extremal T) reproduces E[y²] = ‖τ‖² + 2‖T‖² and the residual 2‖T‖² to within sampling error (≤ 0.7 %). The extremal T attains relative errors 0.5000 (r = 16) and 0.3873 (r = 32), equal to √(6/(r+8)).
 - **Bound.** The largest eigenvalue of the trace map on the symmetric-tensor space is (r+2)/3 to six digits for r = 2, 3, 4, 6 and 8, so the bound is the exact operator norm.
 
 **Scope.** The mean μ⁽ˡ⁾ is also odd in W⁽ˡ⁾. The theorem therefore covers closures built on even statistics (C, Grams, variances, earlier state), not closures that condition on μ⁽ˡ⁾. Sources born at layer l itself, after the ReLU, are not old sources and are outside the statement.
 
-The argument originated in an LLM consultation (Fable 5). We checked it, wrote out the proof above and verified it numerically. Two other models derived the floor independently with the same constant.
+The argument originated in a consultation with Fable 5 (an Anthropic Claude model, run as a Claude Code subagent). We checked it, wrote out the proof above and verified it numerically. Two other models derived the floor independently with the same constant.
 
 The learned-residual experiment in §4.7 is the data-side counterpart of this theorem.
 
@@ -220,12 +238,12 @@ These identities are the algebraic basis of §5.4–§5.5.
 
 ### 2.6 Counting results on the sum-of-sources family (derived or enumerated)
 
-- **Young-tier floor.** An exact enumeration of contraction orders gives 193 square products for the young tier in every order: 39 P + 54 A + 100 D21 = 98.4 u at the measured 0.505 u per product. Two independent outside validators reproduced the count.
+- **Young-tier floor.** An exact enumeration of contraction orders gives 193 square products for the young tier in every order: 39 P + 54 A + 100 D21 = 98.4 u at the measured 0.505 u per product. Two outside AI models (Round 10) reproduced the count with counting scripts.
 - **Duality.** Storing only birth matrices and layer maps and reading slices by reverse-mode differentiation (the "lazy cubic circuit") costs about 4l products at depth l, about 245 u in total, against 249 u for the source chain. The two are dual contraction orders of one tensor network.
 - **Irreducibility.** Sym³ is an irreducible GL(n) representation. A linear state closed under every dense M^⊗3 therefore needs C(n+2, 3) ≈ 1.8·10⁸ numbers.
   - *Caveat:* with fixed, known weights, only what future readouts can observe matters, which is at most n² per remaining layer.
   - The statement is a count over known contraction orders, not a lower bound on arithmetic cost.
-- **Algebraic floor per source.** Exactly evaluating one old source's D21 costs at least min(2n²r, 4nr³) per source-layer.
+- **Algebraic floor per source.** Over the contraction orders we enumerated, exactly evaluating one old source's D21 costs at least min(2n²r, 4nr³) per source-layer (not a lower bound on arithmetic cost in general).
 
 ---
 
@@ -255,7 +273,7 @@ Each step below is exact or near-exact. "Util" is the grader's figure, or adjust
 | Step (date) | Mechanism | Graded score (id) | Raw | Util |
 |---|---|---|---|---|
 | V29 verbatim (20 Sep) | — | 5.418e-9 (#331681) | 2.133e-8 | 0.254 |
-| STRASSEN_MIN 32→8 | Two more Strassen levels on the rank-384/224 families. Prediction drift 4.9e-13, peak 5.97 GB | 5.220e-9 (#331686) | 2.132e-8 | 0.244 |
+| STRASSEN_MIN 32→8 | Two more Strassen levels on the rank-384/224 families. Prediction drift 4.9e-13, peak 5.97 GB | 5.220e-9 (#331686) | 2.132e-8 | 0.245 |
 | + STRASSEN_FIRST 5 | First call per worker at full depth | 5.195e-9 (#331732) | 2.132e-8 | 0.2436 |
 | + V31 sphere (§2.1) | Accuracy, 0 FLOPs | 5.137e-9 (#331787) | 2.108e-8 | 0.2437 |
 | + FB 1.25, β 1.2 (§2.4) | Accuracy, 0 FLOPs | 5.1284e-9 (#332110) | 2.1046e-8 | — |
@@ -268,7 +286,7 @@ Each step below is exact or near-exact. "Util" is the grader's figure, or adjust
 | v52 op budget, safe B / A (27 Sep) | Strassen only where it saves ≥ ~2 u per 1,000 ops (§3.3) | 4.1696e-9 (#332566) / 4.1228e-9 (#332567) | — | — |
 | + R_OLD 352, Tq from the QR R factor, R_FB 2 | Exact or near-exact trims | B: 4.0995e-9 (#332626); A (R_OLD 352 only): 4.0784e-9 (#332621) | 2.197e-8 (B) | — |
 
-**Net effect.** Over the whole cost programme, the trims removed 22 % of the metered FLOPs (util 0.2437 → 0.189, #332110 → #332420) for +2.8 % raw (2.105e-8 → 2.164e-8). On 26 Sep alone, the score fell from 4.8066e-9 to 4.1081e-9 (−14.5 %).
+**Net effect.** Over the whole cost programme, the trims removed 22 % of the metered FLOPs (util 0.2437 → 0.189, #331787 → #332420) for +2.8 % raw (2.105e-8 → 2.164e-8). On 26 Sep alone, the score fell from 4.8066e-9 to 4.1081e-9 (−14.5 %).
 
 **What could not be compacted.** Only the *input* side of dead neurons can be compacted. Each of the following loses, measured on the teacher pair:
 
@@ -308,7 +326,7 @@ The failing variants issued 21.7k–22.3k operations; v48, at ≈ 16.4k, had pas
 | C slot | 1.27k | 0 u |
 
 Both classes graded with no capped MLP (#332566 and #332567). This produced our two submission classes:
-- **B (nomination-safe):** ≤ ~18k warm-call ops.
+- **B (wider safety margin):** ≤ ~18k warm-call ops.
 - **A:** ~19.9k–20k ops.
 
 ### 3.4 The 8 GB limit (graded failures)
@@ -317,13 +335,13 @@ The first V56 implementation batched the cubic star as a 3-D broadcast. It faile
 
 Kaggle reproduced the failure only under `whest run --runner subprocess`, which gave "Unable to allocate 450. MiB for an array with shape (118013952,)". In-process runs passed, with maxrss 5371 MB against 5346 MB for the V55 base.
 
-A bisection submission with the star disabled graded exactly as V55 (3.8546e-9, #334803). The per-slot 2-D-plus-mat-vec form then passed (#334805). Strassen level 6 was ruled out earlier for the same reason, with a peak of 8.13 GB.
+A bisection submission with the star disabled graded the same raw MSE as V55 (2.0648e-8, bit for bit, as #334762; score 3.8546e-9, #334803). The per-slot 2-D-plus-mat-vec form then passed (#334805). Strassen level 6 was ruled out earlier for the same reason, with a peak of 8.13 GB.
 
 **Lesson.** `whest validate` catches neither the residual cap nor the address-space limit. Subprocess runs on the mini split are the minimum pre-submission check.
 
 ### 3.5 The one-for-one law, and where it breaks
 
-Inside the chain, every *accuracy knob* we swept on the 100-MLP harness trades about 1 % cost for 1 % accuracy, and the shipped constants sit at the score optimum:
+Inside the chain, every *accuracy knob* we swept on the 100-MLP harness trades about 1 % cost for 1 % accuracy, and the shipped constants sit at, or within about 0.5 % of, the score optimum (§3.8):
 
 | Knob | Score ratio |
 |---|---|
@@ -362,11 +380,11 @@ Reading the ledger:
 
 This ledger is one network. The harness mean util of the same estimator is 0.1861, about 190.6 u (§6.5 (b)).
 
-**Comparison with the reference implementation (derived).** Wu et al. price their factorised K = 3 algorithm at about 4,150 u for n = 1024 and L = 16 (their Table 1, naive matrix products, as read in `consultations/wu_paper_deep_read_2026-10-10.md`). V56 is therefore about 21× cheaper than the reference algorithm it descends from. The paper's factor count grows as 6nℓ, and it has no source merging, truncation or compression. The savings from V29's shared basis and from our trims (§3.2) are what make the method fit the budget at all.
+**Comparison with the reference algorithm's cost table (derived; the released reference code measured 1523 u, §6.3).** Wu et al. price their factorised K = 3 algorithm at about 4,150 u for n = 1024 and L = 16 (their Table 1, naive matrix products, as read in `consultations/wu_paper_deep_read_2026-10-10.md`). V56 is therefore about 21× cheaper than the reference algorithm it descends from. The paper's factor count grows as 6nℓ, and it has no source merging, truncation or compression. The savings from V29's shared basis and from our trims (§3.2) are what make the method fit the budget at all.
 
-### 3.7 Final calibration and cost layer: E282–E299 (md.hamidhosen, 12–16 Oct; fitted and engineering)
+### 3.7 Final calibration and cost layer: E282–E299 (mdhamidhosen, 12–16 Oct; fitted and engineering)
 
-From 12 Oct md.hamidhosen continued from #334870 in his E-series. Each step was screened on public mini MLPs (fit 0–47, validation on unseen 48–99) and then graded. Scores below were re-read from the grader on 16 Oct (round 1429); util is adjusted ÷ raw.
+From 12 Oct mdhamidhosen continued from #334870 in his E-series. Each step was screened on public mini MLPs (fit 0–47, validation on unseen 48–99) and then graded. Scores below were re-read from the grader on 16 Oct (round 1429); util is adjusted ÷ raw.
 
 | Submission | Estimator | Change | Adjusted | Raw | Util |
 |---|---|---|---|---|---|
@@ -377,7 +395,7 @@ From 12 Oct md.hamidhosen continued from #334870 in his E-series. Each step was 
 | #335720 | E288 | + GN11 + end-to-end refit of the V56 κ₄ corrector (GN13; unseen −0.77 %) | 3.5421e-9 | 1.8903e-8 | 0.1874 |
 | #335724 | E290 | + corrector refits GN14, GN15 (−0.48 %, −0.33 %) | 3.5156e-9 | 1.8766e-8 | 0.1873 |
 | #335729 | E291 | + GN16 (−0.37 %) | 3.5085e-9 | 1.8722e-8 | 0.1874 |
-| #335805 | E294 | + grouped PK2 einsums (exact; util −0.75 %) | 3.4815e-9 | 1.8722e-8 | 0.1860 |
+| #335805 | E294 | + grouped PK2 einsums (exact; util −0.77 %) | 3.4815e-9 | 1.8722e-8 | 0.1860 |
 | #335816 | E295 | + Strassen floor 4 (exact up to rounding) | 3.4663e-9 | 1.8723e-8 | 0.1851 |
 | #335834 | E296 | + Strassen on the nested projections (exact; +1.55k ops) | 3.4452e-9 | 1.8722e-8 | 0.1840 |
 | #335843 | E297 | + D21 dead-column threshold 0.03 (approximation) | 3.4319e-9 | 1.8915e-8 | 0.1814 |
@@ -402,18 +420,18 @@ From #334870 to #336377 the score falls 7.0 %: raw −3.5 %, util −3.7 % (deri
 
 Blend 1.1 graded ×0.9953 on the A class (#336382, 3.6348e-9) and ×0.9948 on the B class (#336383, 3.6533e-9). Of the combinations, only one runner finished before the sweep was stopped: blend 1.1 with λ block 8–11 ×0.95 gave 0.9939 and with star ×1.15 gave 0.9947. By then E299 was 7 % ahead, and its corrector refits (§3.7) adjust the same levels, so the sweep was closed without a test on E299.
 
-**E299-B: E299 in the safe operation class.** E299 issues 21,953 warm-call operations (measured, MLP #0), close to the 21.7–22.3k at which v49–v51 variants were capped (§3.3). Turning off three Strassen paths (nested projections, Qc, D21 lift) and raising the Strassen floor to 8 are exact rewrites: on MLP #0 the final MSE moves by ×1.0005 (rounding), the warm operations fall to 18,095 and the warm FLOPs rise by 1.9 % (`e299b_warm_check.json`). Peak working set on Windows, two calls on MLP #0 (`e299b_mem_check.json`): E299 4.87 GB, E299-B 5.22 GB, E295 5.19 GB, all below the 8 GB limit (md.hamidhosen's macOS figures for E295–E299 were 6.2–8.3 GB, so the platform matters). E299-B graded 3.4719e-9 (#336440): raw 1.8825e-8 against E299's 1.8824e-8 (×1.00005, rounding), util 0.1844 (+2.3 %), no failed MLP. An intermediate variant with only the nested projections off (20,523 operations, +0.5 % FLOPs) is prepared as `submissions/e299b1/`.
+**E299-B: E299 in the safe operation class.** E299 issues 21,953 warm-call operations (measured, MLP #0), close to the 21.7–22.3k at which v49–v51 variants were capped (§3.3). Turning off three Strassen paths (nested projections, Qc, D21 lift) and raising the Strassen floor to 8 are exact rewrites: on MLP #0 the final MSE moves by ×1.0005 (rounding), the warm operations fall to 18,095 and the warm FLOPs rise by 1.9 % (`e299b_warm_check.json`). Peak working set on Windows, two calls on MLP #0 (`e299b_mem_check.json`): E299 4.87 GB, E299-B 5.22 GB, E295 5.19 GB, all below the 8 GB limit (mdhamidhosen's macOS figures for E295–E299 were 6.2–8.3 GB, so the platform matters). E299-B graded 3.4719e-9 (#336440): raw 1.8825e-8 against E299's 1.8824e-8 (×1.00005, rounding), util 0.1844 (+2.3 %), no failed MLP. An intermediate variant with only the nested projections off (20,523 operations, +0.5 % FLOPs) is prepared as `submissions/e299b1/`.
 
-### 3.9 Final days, 17–20 Oct: a public base chain, our corrector, and a refitted table (measured and graded)
+### 3.9 Final days, 17–21 Oct: a public base chain, our corrector, and a refitted table (measured and graded)
 
-On 17 Oct the organisers extended Phase 2 to 21 Oct and moved the grader to flopscope 0.12.3. On 100 Kaggle MLPs E299 and E299-B bill exactly as under 0.12.1 (util 0.1788 both; `data/kaggle_out/fs123_*`). We then read the new forum write-ups and public code and ran ten parallel reviews (outside-AI documents, forum, e30_a's write-up, our kill table, corrector refit, cost, md.hamidhosen's ledger, error map, reference paper; brief in `consultations/AGENT_BRIEF_2026-10-19.md`). All of them judged a top-10 jump (≈ −37 %) infeasible in the remaining time; every candidate below was measured on the 100-MLP harness (paired, same nets) before grading.
+On 17 Oct the organisers extended Phase 2 to 21 Oct and moved the grader to flopscope 0.12.3. On 100 Kaggle MLPs E299 and E299-B bill exactly as under 0.12.1 (util 0.1788 and 0.1830, identical under both versions; `data/kaggle_out/fs123_*`). We then read the new forum write-ups and public code and ran ten parallel AI-agent reviews (Claude subagents through Claude Code; outside-AI documents, forum, e30_a's write-up, our kill table, corrector refit, cost, mdhamidhosen's ledger, error map, reference paper; brief in `consultations/AGENT_BRIEF_2026-10-19.md`). All of them judged a top-10 jump (≈ −37 %) infeasible in the remaining time; every candidate below except e299safe and e30kang (MLP #0 only) was measured on the 100-MLP harness (paired, same nets) before grading.
 
 | Step | Change | Harness (paired) | Graded |
 |---|---|---|---|
 | e299x / e299xr | e30_a's exact cost savings in E299 (Gram core skipped, QR-factor rotation, folded constants, …) | −0.97 % / −1.4 % FLOPs, predictions unchanged up to rounding | 3.3619e-9 (#336711), 3.3461e-9 (#336719) |
 | e299k31 | kai_leal_gonzalez's two-term (3,1) closure (MIT), full strength | ×1.0075 | 3.4192e-9 (#336697, worse) |
-| e299xrk | the same at mix 0.25 | ×0.9960 (73/100) | 3.3325e-9 (#336757) |
-| e299safe | + e30_a's fixed old basis and C_pre compaction (own lineage) | ×0.972 (MLP #0) | 3.2529e-9 (#337049) |
+| e299xrk | the same at mix 0.25 | ×0.9960 (76/100; 73/100 on the E299 base) | 3.3325e-9 (#336757) |
+| e299safe | + e30_a's fixed old basis and C_pre compaction | ×0.972 (MLP #0; `kaggle/safe/out/safe_results.json`) | 3.2529e-9 (#337049) |
 | e30ak4c | our V55/V56 corrector on e30_a (LordProcciuto, MIT; published 3.1163e-9), scale 0.3 | ×0.9768 (94/100) | 3.0519e-9 (#336774) |
 | e30ak4c40 | scale 0.4 | ×0.9752 (87/100) | 3.0506e-9 (#337041) |
 | e30ak4c40k31 | + (3,1) closure at mix 0.25 | ×0.9945 (87/100) | 3.0302e-9 (#337175) |
@@ -424,15 +442,15 @@ On 17 Oct the organisers extended Phase 2 to 21 Oct and moved the grader to flop
 | N3 | table refit with 21 more modulators (h_k·st², h_k·D3·st/var^1.5, h_k·corrector-local), 122 features | ×0.9901 held-out (24/30) | 2.7975e-9 (#337368) |
 | N4a | + 42 modulators (standardised D21 row/column energies, C_pre correlation-row energy, \|α\|·st, previous-layer delta and star carried through W), 164 features | ×0.9966 held-out (21/30; CI 0.994–0.999) | **2.7858e-9 (#337457)** |
 
-**Why the corrector transfers only partly.** Call-site ledgers on MLP #0 put e30_a at 158.8 u against our 184.1 u (`data/kaggle_out/ledger/`). On e30_a the corrector at full strength costs ×1.085 (MLP #0); the gain comes entirely from the V56 star (no-star arm ×1.0024), because e30_a's 87-feature ridge mean-correction table already contains the local κ₄-pattern features and was fitted on e30_a's uncorrected trajectory.
+**Why the corrector transfers only partly.** Call-site ledgers on MLP #0 put e30_a at 158.8 u against our 184.1 u (`data/kaggle_out/ledger/`). On e30_a the corrector at full strength costs ×1.085 (MLP #0); the gain comes from the V56 star (at scale 0.3 on 100 MLPs: ×0.9768 with the star, ×1.0024 without it), because e30_a's 87-feature ridge mean-correction table already contains the local κ₄-pattern features and was fitted on e30_a's uncorrected trajectory.
 
-**Table refit (fitted).** We dumped teacher-forced per-layer features on public mini nets 0–69 under our trajectory and refitted the table per layer by ridge regression with grouped 5-fold CV over nets, adding star modulators (N1, 94 features) and the corrector's own κ₄ change (N2, 101 features). One-step CV error against the original table: 0.96 (all layers). End to end on 100 MLPs: N0 ×0.9496, N1 ×0.9369, N2 ×0.9346; the gain on held-out nets 70–99 is as large as on nets 0–69, so the fit does not overfit the public set. A table fitted on one trajectory does not help another (×1.0005 one-step), so the refit must follow every change of the chain. Pipelines: `kaggle/x10/`, `kaggle/x11/` (self-contained Kaggle kernels).
+**Table refit (fitted).** We dumped teacher-forced per-layer features on public mini nets 0–69 under our trajectory and refitted the table per layer by ridge regression with grouped 5-fold CV over nets, adding star modulators (N1, 94 features) and the corrector's own κ₄ change (N2, 101 features). One-step CV error against the original table: 0.96 (all layers). End to end on 100 MLPs: N0 ×0.9496, N1 ×0.9369, N2 ×0.9346; the gain on held-out nets 70–99 is as large as on nets 0–69, so the fit does not overfit the public set. The original table transfers poorly to our trajectory (refitting the same 87 features, N0, alone gives ×0.9496), so the table should be refitted after larger changes of the chain (for the small τ_B 2.4 change a refit added nothing, ×0.9999 held-out). Pipelines: `kaggle/x10/`, `kaggle/x11/` (self-contained Kaggle kernels).
 
-**Further table experiments (20–21 Oct).** Refitting N2 on 341 nets (mini 0–69 + 271 full-split nets) gave ×0.9997 held-out (32/62): the remaining error is a feature limit, not a data limit. An on-policy refit (free-running dumps) gave ×0.997–1.005; the (3,1) orientation fix (T21) ×1.0005. Pipelines: `kaggle/x12/`–`x14/`.
+**Further table experiments (20–21 Oct).** Refitting N2 on 341 nets (mini 0–69 + 271 full-split nets) gave ×0.9997 on held-out mini nets 70–99 (13/30) and ×0.9993 on 32 held-out full-split nets (19/32): the remaining error is a feature limit, not a data limit. An on-policy refit (free-running dumps) gave ×0.997–1.005; the (3,1) orientation fix (T21) ×1.0005. Pipelines: `kaggle/x12/`–`x14/`.
 
-**Measured and rejected (17–20 Oct):** separate star/local corrector scales other than 0.7/0.2 (×1.004–1.019); table reading the corrected κ₄ (×1.021); FB 1.25/1.4 on e30_a (×0.999/×1.002); D21 ×0.96/0.97 (×1.055/×1.022); λ tilt, hot rows 2.5, dead τ 2.6/3.1 (×1.000–1.16); e30_a's strided Strassen views (`X_STV`, all 100 MLPs failed); e30_a's row compaction in E299 (×1.063); "cheaper setting, then refit" (rank 352: ×1.04 with or without refit; τ_B 2.4: refit adds nothing). Results: `data/kaggle_out/{exp5_*,e30k31_*,e30tune_*,x8_*,x8c_*,x10_eval,x11_*}`.
+**Measured and rejected (17–21 Oct):** separate star/local corrector scales other than 0.7/0.2 (×1.004–1.019); table reading the corrected κ₄ (×1.021); FB 1.25/1.4 on e30_a (×0.999/×1.002); D21 ×0.96/0.97 (×1.055/×1.022); λ tilt, hot rows 2.5, dead τ 2.6/3.1 (×1.000–1.16); e30_a's strided Strassen views (`X_STV`, all 100 MLPs failed); e30_a's row compaction in E299 (×1.063, MLP #0); "cheaper setting, then refit" (rank 352: ×1.04 with or without refit; τ_B 2.4: refit adds nothing). Results: `data/kaggle_out/{exp5_*,e30k31_*,e30tune_*,x8_*,x8c_*,x10_eval,x11_*}`.
 
-**Rules.** The organisers allow building on another participant's public MIT code with attribution, provided the team adds substantial work of its own (forum topic 18240). #337336's base chain is LordProcciuto's; ours are the corrector (§5), the closure settings and the refitted table. Our own-lineage best is #337049.
+**Rules.** The organisers allow building on another participant's public MIT code with attribution, provided the team adds substantial work of its own (forum topic 18240). #337457's base chain is LordProcciuto's and its (3,1) closure is kai_leal_gonzalez's; ours are the corrector (§5), the closure and corrector settings and the refitted, extended table (§1.4). Our best result without e30_a's base chain is #337049 (for reference; it is not the submission this write-up refers to).
 
 ---
 
@@ -440,7 +458,7 @@ On 17 Oct the organisers extended Phase 2 to 21 Oct and moved the grader to flop
 
 All results in this section are measured on MLP #0 against the 6·10⁷-sample teacher, and partly replicated on the synthetic network. The plain chain's final MSE in these runs is 2.290e-8.
 
-### 4.1 The closures are exact; the error is accumulated input error
+### 4.1 The closures are accurate; the error is accumulated input error
 
 - **Mean closure.** The Edgeworth mean closure, evaluated on the teacher's true marginals (μ, var, κ₃ᵢᵢᵢ, κ₄ᵢᵢᵢᵢ), matches the teacher's ReLU mean to 5e-11–1.5e-10 at every layer (9.3e-11 at L16).
 - **Bivariate closure.** Teacher-forced at one layer, the bivariate covariance closure falls to the teacher's noise:
@@ -694,7 +712,7 @@ The whole κ₄ gap is the per-neuron *pattern* of the deep diagonal. The level 
 | AGE_OLD 2, R_OLD 256/128 | 0.1784 | 1.288e-7 | 1.244e-7 | ×0.966 |
 | AGE_OLD 1, R_OLD 192/96 | 0.1381 | 6.511e-7 | 6.665e-7 | ×1.024 |
 
-The route "cut κ₃ cost, recover with κ₄" is therefore closed. A κ₄ improvement must ride on the full κ₃ chain.
+In these three configurations on MLP #0, cutting κ₃ cost and recovering with κ₄ did not pay, and we did not pursue it; the κ₄ improvements we shipped ride on the full κ₃ chain.
 
 ### 5.2 The deep pattern is carried memory
 
@@ -721,7 +739,7 @@ A young carrier spanning 2–3 layers is therefore dead from the start. An ideal
 ### 5.3 V55: a zero-FLOP linear pattern corrector (graded)
 
 **Construction.** At every layer ≥ LMIN (LMIN = 6; LMIN = 4 from #334762 on), a fixed linear map turns per-neuron quantities the chain already holds into a predicted pattern of κ₄/v². The inputs are:
-- s3sq = (D3/v^1.5)²;
+- s3sq = (d3/v^(3/2))²;
 - the row and column energies of the standardised D21;
 - the correlation-row energy of C_pre;
 - |μ/σ|;
@@ -761,7 +779,7 @@ Each is −5.4 % against its base. The s3sq coefficient ×1.25 then graded 3.853
 | c2 ×1.5 / ×0 | ×1.0563 / ×1.0131 |
 | Chain coefficient ×0.9–×1.2 | within ×1.0011 |
 | Last-layer corrector off | ×1.0116 |
-| Lever-weighted "lean" fit | ×0.9957 against the decisive-neuron map, i.e. the lean fit is worse |
+| Lever-weighted "lean" fit | worse: the decisive-neuron map scores ×0.9957 against it |
 
 **Saturation.** Squares, products and logs of the features add only +0.02–0.03 in sample. Previous-layer features carried by (W∘W)ᵀ add nothing held out.
 
@@ -808,7 +826,7 @@ To find out why, we measured the ceiling of entire *families* of birth laws (`r1
 | True state 6 back, K = 3 | 0.915 | 0.927 | 0.949 |
 
 Findings:
-1. **Quadratic births are capped near 0.45–0.55.** This is exactly the band every second-order carrier landed in.
+1. **Quadratic births are capped near 0.45–0.55.** Every second-order carrier landed in, near or below this band (−0.35 to 0.56).
 2. **K = 3 is necessary and sufficient.** K = 3 tracks the true ReLU at every horizon, and K = 4 adds ≤ 0.02.
 3. **Both pieces are needed.** Dropping the quadratic term loses as much as dropping the cubic one.
 4. **Compounding K = 2 diverges.** Applied over all 16 layers, it blows the level up by ×1e12. Even from the true state, quadratic births lose the pattern step by step: 0.85–0.88 after one step, 0.69–0.74 after three and 0.48–0.58 after six (one-step channel errors in §4.9).
@@ -871,7 +889,7 @@ The 8-feature map reaches 0.53–0.71 per layer on MLP #0 and 0.54–0.66 on the
 | #334805 v56s_loop | B | 3.6829e-9 | 1.9706e-8 | −4.4 % vs the best B |
 | #334811 v56As_loop | A | 3.6597e-9 | 1.9539e-8 | |
 | #334869 v56s_fs (synthetic-fit map) | B | 3.6723e-9 | — | −0.29 % |
-| **#334870 v56As_fs** | A | **3.6521e-9** | 1.950e-8 | −0.21 %, current best |
+| **#334870 v56As_fs** | A | **3.6521e-9** | 1.950e-8 | −0.21 %, the chain this paper analyses |
 | #334871 fs + star ×1.25 | B | 3.6724e-9 | — | no extra gain |
 
 **Tuning is closed** (`kaggle_v56_tuning.txt`). Ratios are against v56_ref (raw 2.0409e-8):
@@ -985,13 +1003,13 @@ The C·T content is therefore available from the chain's existing κ₃ legs. Th
 
 Let a_s be the first window layer that holds source s. Its anchor legs are transported, L_s(m) = (Ystep_{a_s} ⋯ Ystep_{m−1})ᵀ L_s(a_s), so the sum over ages collapses onto one matrix per anchor layer:
 
-  ct_i = 8 Σ_s Σ_roles Σ_h (L_s(a_s)ᵀ Γ_{a_s})_hi H_s(t)_ih,   Γ_a = G_a + Ystep_a Γ_{a+1}.
+  ct_i = 8 Σ_s Σ_roles Σ_h (L_s(a_s)ᵀ Γ(a_s))_hi H_s(t)_ih,   Γ(a) = G(a) + Ystep(a) Γ(a+1).
 
 Γ is built once per target by a backward recursion over the window. On the captures, the collapsed form matches the per-age route to a relative error of 2.9–3.0e-7 at L12 / L15 / L16 (`acds_ct_probe.json`) and 2.9–3.9e-7 at L7–L16 (`acds2_ct_probe.json`), which is float32 rounding.
 
 **Anchor grouping (derived; measured exact).** The nine anchor legs of a source are linear in its two dense legs, A_s and P_s, plus thin legs (the low-rank feedback and residual columns). Grouping the roles by dense anchor gives
 
-  ct_i = 8 Σ_s [ Σ_h (A_sᵀ Γ_{a_s})_hi (H_A,s)_ih + Σ_h (P_sᵀ Γ_{a_s})_hi (H_P,s)_ih + thin_s,i ],
+  ct_i = 8 Σ_s [ Σ_h (A_sᵀ Γ(a_s))_hi (H_A,s)_ih + Σ_h (P_sᵀ Γ(a_s))_hi (H_P,s)_ih + thin_s,i ],
 
 where H_A,s and H_P,s collect the target Hadamards of all roles anchored on A_s or on P_s. The thin_s,i terms are evaluated exactly through the thin products Z_sᵀ Γ. The grouped form matches the per-age route to 2.6–3.2e-7 at every target L7–L16. What remains is **two dense products per source and target**, plus building G_m and Γ.
 
@@ -1146,7 +1164,7 @@ The kill types are:
 | Per-source pair innovations γ, η (scalar form) | ×0.92 in sample, ×1.05 out of sample | P |
 | Exchange vertex 3YC⁻¹Y | corr −0.07 to −0.23; error ×26–95 | P |
 | Source-resolved skew energy | +≤ 0.004 corr | C |
-| Every second-order carrier in §5.4 | 0.03–0.56 (gate 0.70) | C |
+| Every second-order carrier in §5.4 | −0.35 to 0.56 (gate 0.70) | C |
 | Augmented dense κ₄ core (504aldo F105) | 2.04e-8 vs 2.23e-8 at +3 dense units per source-layer | C (cost) |
 | T·T: κ₃ squared at a cubic vertex (§5.8) | Alone −0.16 to −0.06; adds ≤ 0.006 to star + C·T; oracle E2E ×0.792 against ×0.773 without it | C/E |
 | LKV readouts injected as the raw κ₄ diagonal | Level ratio of the ages 1–6 sum −0.02 to 0.00 (§5.8); usable only as a feature | C |
@@ -1168,7 +1186,7 @@ The kill types are:
 
 ### 6.4 Outside-AI proposals
 
-We consulted outside models in 18 numbered rounds and in further consultations on 10–11 Oct. Below, "In PDF?" states whether the proposal itself contained a measurement on our data. Every verdict is our own measurement.
+We consulted outside models in 20 numbered rounds (the last ones on 10–11 Oct, including Round 20, §6.7); ten internal Claude-subagent reviews followed on 19 Oct (§3.9). Below, "In PDF?" states whether the proposal itself contained a measurement on our data. Every verdict is our own measurement.
 
 | Round, author | Proposal | In PDF? | Our verdict |
 |---|---|---|---|
@@ -1303,12 +1321,12 @@ The removal runs are in `teacher_eval_feedor2.json` and the injections in `resul
 - At L9–L15, the chain's own feed correlates +0.95 to +0.97 with the exact feed. The exact feed is 12–26 % larger.
 - The correction (exact − chain feed) correlates +0.41 to +0.59 with the chain's slice residual.
 - Yet replacing the chain's feed with the exact one still increases the slice residual: from 5.2–6.2 % to 6.0–6.8 % of |Y21|.
-- The best scalar rescaling of the chain's feed (β = +0.03 to +0.08) lowers the slice residual by only 0.5–3 %.
+- The best scalar rescaling of the chain's feed (β = +0.03 to +0.08) lowers the slice residual by only 0.6–3 %.
 
 Reading:
 - **The feed is large, and the chain needs it.** It is 22–24 % of |Y21|, and removing it costs ×7.5 (L9–16) or ×12 (all layers).
 - **The chain's feed has the right shape and the wrong size**, and the correction points along the residual.
-- **Every injection is nevertheless worse than the base, the exact feed included** (×1.115, KILL by its own gate). The chain's feed sits at a sharp optimum at scale 1.0: −5 % costs 0.45 % and ±10 % costs 4.3 % / 9.4 %. Scaling it up by 10 % hurts, although the exact feed is 14–24 % larger.
+- **Every injection is nevertheless worse than the base, the exact feed included** (×1.115, KILL by its own gate). The chain's feed sits at a sharp optimum at scale 1.0: −5 % costs 0.45 % and ±10 % costs 4.3 % / 9.4 %. Scaling it up by 10 % hurts, although the exact feed is 12–26 % larger.
 - **The sampled feed is noisy at the level that matters.** Its sampling noise, 3.3–6.0 % of |Y21|, is comparable to the chain's whole slice residual at L9–16 (about 5–7 %, §4.10). This would explain why the exact feed raises the slice residual although its correction is correlated with it.
 - **The Gaussian star has the opposite sign to the sampled born feed** (corr −0.87 to −0.92). Neither sign helps: ×21.0 as computed and ×1.872 flipped. The sign is physical, not a convention error (measured 11 Oct on the κ₄ diagonal of the §5.8 ceiling run, 2·10⁶ samples of MLP #0, ages 1–6 summed at L9–16; `experiments/probes/star_sign_check.py` → `star_sign_check.json`):
   - **No convention error.** The closed-form star has the sign of the sampled cubic-vertex birth Cu1, of which it is the Gaussian part: corr +0.97 to +0.98. It is negative at every neuron. Its coefficient c = −(μ/σ)φ/(6σ²) is negative wherever μ > 0.
@@ -1405,9 +1423,10 @@ The ceiling ranking of (b) predicts the raw ranking, but every move away from th
 1. **No qualifying representation.** The consultation declared that it had none, and it declined to present a measured-dead compression or slice recursion as one. The budget arithmetic is that of §3.6.
 2. **A slice-only state cannot be exact to first order (derived in the consultation; we restate it because it is short).** Let S(T)_ik = T_iik be the (2,1) slice, and let U = Wᵀ diag(w₁) be the transport. Take three distinct indices a, b, c and the perturbation H = ε Sym(e_a, e_b, e_c). Then S(H) = 0 and diag₃(H) = 0, so the current mean, covariance and slice cannot see H. After one transport, with u_a the a-th column of U,
 
-     S(U^⊗3 H) = (ε/3) [ (u_a∘u_b) u_cᵀ + (u_a∘u_c) u_bᵀ + (u_b∘u_c) u_aᵀ ],  diag₃(U^⊗3 H) = ε u_a∘u_b∘u_c,
+     S(U⊗³ H) = (ε/3) [ (u_a∘u_b) u_cᵀ + (u_a∘u_c) u_bᵀ + (u_b∘u_c) u_aᵀ ],  diag₃(U⊗³ H) = ε u_a∘u_b∘u_c,
 
    which is generically nonzero at first order in ε. A recursion on the slice alone therefore cannot be exact through first order for general third cumulants. A linear state that is closed under every invertible transport and returns every diagonal must be injective on Sym³, which takes n(n+1)(n+2)/6 ≈ 1.8·10⁸ numbers (compare §2.6). The argument does not exclude nonlinear encodings such as the source chain itself, restricted families, or approximate ones. Its measured counterparts are: 91–96 % of the chain's slice error sits in the all-distinct entries (§4.5); slice-to-slice recursion has R² 0.03–0.05 (§6.1); and PM364 fails (§6.7).
+
 3. **Routing between budgets has a ceiling of 0.8 %.** The proposal was to inspect each network's weights cheaply and select one of several complete chains of different cost. An audit of our archived 100-MLP runs (`Architecture Analysis/routing_oracle_audit.py` → `archived_routing_audit.json`, supplied with the consultation) covers 86 variants matched on the same 100 MLPs. A selector that knew every variant's true per-MLP score would improve on the best fixed variant (3.7586e-9) by only 0.80 %, before any selector overhead (0.86 % over the 10 V56 tuning variants). The cheapest archived variant costs 188.9 u, so the bank holds no cheap expert. A bank with a genuinely cheaper expert is untested. The router was not built.
 
 ### 6.7 Round 20: a learned pair-memory student, PM364 (11 Oct; killed)
@@ -1464,13 +1483,13 @@ A source-free state must carry all-distinct content in some form. No fixed-size 
    - The mean closure needs κ₃ to about 1 % (§5.6) and D21 to about 2 % (tolerance law).
    - Cheap κ₃ cannot be bought back with κ₄ (§5.1).
    - The κ₃ memory is ≥ 10 ages long, coherent, and not low-rank (§4.5).
-   - No compressed linear κ₃ state is closed under transport (§2.6), and none of the more than 20 κ₃ representations we tried came within 5× of its gate (§6.1).
+   - No compressed linear κ₃ state is closed under transport (§2.6), and none of the more than 20 κ₃ representations of §6.1 came within 5× of its gate; the later pooled and deferred designs of §6.6 missed by about 1.25–3×.
 2. **Carry odd information.** Any closure built from even statistics of the weights loses the deep κ₃ entirely (§2.2).
 3. **Deliver the κ₄ pattern, not the level, on decisive neurons.**
    - The pattern alone is worth 108 % of the κ₄-oracle gain.
-   - Reaching correlation ≥ 0.70 at L12 / L15 / L16 requires births that contain **both the quadratic and the cubic Hermite response** of each ReLU.
+   - In the birth families we measured, reaching correlation ≥ 0.70 at L12 / L15 / L16 needed births that contain **both the quadratic and the cubic Hermite response** of each ReLU.
    - These births must cover at least ages 1–4, and ideally 1–6 (§5.4, set C).
-   - Second-order births of any form are capped near 0.45–0.56.
+   - Second-order births of any form are capped near 0.45–0.55 in our ceiling model.
    - The V56 star plus a κ₃-dressed C·T readout meets this (ceiling 0.82–0.85), and the chain's own legs already carry its inputs (§5.8). It must enter as a feature of a rescaled map, because its level is near zero.
 4. **Improve the κ₃ input first.**
    - The teacher's κ₃ slice and d3 are worth more than the κ₄ diagonal on both networks (×0.607 against ×0.686, and ×0.716 against ×0.885), and the two together give ×0.272 (§4.8).
@@ -1497,15 +1516,15 @@ A source-free state must carry all-distinct content in some form. No fixed-size 
 |---|---|
 | 3.0e-9 | κ₄-oracle raw (1.61e-8) at today's util of ≈ 0.187, or today's raw (1.95e-8) at util 0.154 (≈ 158 u) |
 | Rank 12 on the 8–9 Oct board (2.2e-9) | raw 1.18e-8 at util 0.187, or 1.47e-8 at 0.15 |
-| Leader class | raw 1.4–1.76e-8 at util 0.10–0.16 |
+| Leader class (10 Oct board) | raw 1.14–1.65e-8 at util 0.106–0.144 |
 
-**Cost alone cannot get there.** Today's raw at the 0.1 floor would give 1.95e-9. That needs a 47 % cost cut, which §2.6 and §6.1 show is unavailable inside the sum-of-sources family.
+**Cost alone cannot get there.** Today's raw at the 0.1 floor would give 1.95e-9. That needs a 47 % cost cut, which we did not find inside the sum-of-sources family (§2.6, §6.1); e30_a, also a sum-of-sources chain, is 14 % cheaper than ours (158.8 u against 184.1 u, §3.9).
 
-The 1024-wide leaders therefore pair a raw MSE 1.2–1.35× lower with a cost 1.25–1.9× lower. Their mechanisms are not public.
+The 1024-wide leaders therefore pair a raw MSE 1.2–1.7× lower with a cost 1.3–1.8× lower (derived from the 10 Oct board). Their mechanisms are not public.
 
 **The 10 Oct board** (`consultations/competition_scan_2026-10-10.md`).
 - The six highest entries have raw MSE 1.14–1.65e-8 at util 0.106–0.144.
-- Our leaderboard entry shows raw 1.97e-8 at util 0.187 (rank 42 on 10 Oct). The row links #334805, which displays the same 3.7e-9 as our best #334870 (§8.4). Entries ranked 11–40 have raw MSE comparable to ours (1.7–2.5e-8 among those listed).
+- Our leaderboard entry shows raw 1.97e-8 at util 0.187 (rank 42 on 10 Oct). The row links #334805, which displays the same 3.7e-9 as our then-best #334870 (§8.4). Entries ranked 11–40 have raw MSE comparable to ours (1.7–2.5e-8 among those listed).
 - The entry at rank 11 has V29-level raw MSE (2.10e-8) at util 0.102, the floor.
 - At our raw MSE, util 0.10 would score about 2.0e-9 and util 0.14 about 2.8e-9 (derived).
 
@@ -1583,7 +1602,7 @@ FB 1.25 is the only correction in this list that gained (§2.4), and it did so a
 
 ### 8.1 Versions and data
 
-- Software: whestbench 0.16.1, flopscope 0.12.1.
+- Software: whestbench 0.16.1, flopscope 0.12.1 (grader on 0.12.3 from 17 Oct, including #337457; identical billing, §3.9).
 - Dataset revision: v2-phase2.
 - Every graded number in this paper carries its AIcrowd submission id. The shipped estimators are in `submissions/<variant>/estimator.py`, each with a lineage header naming every change; for example, `submissions/v56As_fs/estimator.py` (#334870) and `submissions/v56s_fs/estimator.py` (#334869).
 
@@ -1602,14 +1621,14 @@ The base is bit-identical across runners, and paired standard errors are 0.01–
 
 | Change | Harness | Graded |
 |---|---|---|
-| V55 B / A | Projected 3.8764e-9 / 3.8562e-9 | 3.8762e-9 / 3.8582e-9 (within 0.05 %) |
+| V55 B / A | Projected 3.8764e-9 / 3.8562e-9 | 3.8762e-9 / 3.8582e-9 (within 0.06 %) |
 | Transport join | ×0.959 | −3.4 % |
 | R_OLD 352 | ×0.9930 | −1.1 % |
 | v52 safe B / A vs v51 | +2.1 % / +0.9 % | +1.9 % / +0.8 % |
 | V56 synthetic-fit map | ×0.9964 | −0.29 % (B) / −0.21 % (A) |
 | Star ×1.25 | ×0.9972 additional | No additional gain |
 
-Every predicted sign matched the grade. For single changes worth more than about 1 %, the predicted size was accurate to within 0.05–0.7 percentage points. For gains under 0.5 % the size was unreliable: the graded gain came in at roughly 0 to 2× the predicted one.
+Up to 16 Oct every predicted sign matched the grade (in §3.9, c1's non-significant joint ×1.0035 graded −1.1 %, and N2's ×0.935 graded ×0.951). For single changes worth more than about 1 %, the predicted size was accurate to within 0.05–0.7 percentage points. For gains under 0.5 % the size was unreliable: the graded gain came in at roughly 0 to 2× the predicted one.
 
 The harness measures residual time but does not enforce the cap. Its in-process mode did not reproduce the V56 memory failure; only `whest run --runner subprocess` did (§3.4).
 
@@ -1640,6 +1659,8 @@ Result files are in `results/summaries/` unless a path is given.
 | §6.5 (c) star sign | `experiments/probes/star_sign_check.py data/kaggle_out/fable_ceiling_all/fable_ceiling_all.npz` → `star_sign_check.json` |
 | §7.5 channel cancellation | `experiments/probes/channel_cancellation.py` → `channel_cancellation.json` |
 | §3.8 knob sweep | `kaggle/tune/`, `kaggle/tune2/` (variants, runners, `local_check.py`) → `kaggle_tune_100mlp.json`, `kaggle_tune_compare.txt`, `tune_local_check.json`; per-MLP outputs `data/kaggle_out/tune_{1..10}/`, `tune2_2/` |
+| §3.7 E-series | github.com/hamidhosen42/ARC-White-Box: `experiments/results.csv`, `experiments/submissions.csv` |
+| §3.9 final days | `kaggle/x8*`, `kaggle/x10/`–`x14/`, `experiments/variants/e30k_x8.py`–`e30k_x14.py`, `submissions/e30*`, `submissions/e299safe/` → `data/kaggle_out/{fs123_*,ledger,exp5_*,e30k31_*,e30tune_*,x8_*,x8c_*,x10_eval,x11_*,x12_*,x13_*,x14_*}` |
 | §3.8 E299-B | `kaggle/e299b/warm_check.py`, `mem_check.py` → `e299b_warm_check.json`, `e299b_mem_check.json`; `submissions/e299b/`, `submissions/e299b1/` |
 | §6.6 (a) single pool | `experiments/probes/pool_ceiling.py --layers 11,14,15` → `pool_ceiling.json` |
 | §6.6 (b) DEJ-4 | `pool_ceiling.py --ranks 352,448,512 --young k` (Kaggle wrapper `kaggle/dej/kernel/run.py`) → `oct10/dej_young{1..4}.json` |
@@ -1659,7 +1680,7 @@ Unless a path is given, probe scripts are in `experiments/probes/`. All scripts 
 - The κ₄-diagonal oracle appears as 1.600e-8 and 1.609e-8 in two runs.
 - The κ₄-diagonal oracle ratio is ×0.702 in §4.2 (base 2.290e-8), ×0.686 in §4.8 (base 2.273e-8, every layer) and ×0.700 in §5.8 (same base, layers 7–16 only). The bases and injection windows differ; none of the three is a typo.
 - The chain's κ₄ correlation is 0.78–0.83 over all neurons but 0.26–0.34 on decisive neurons. Both figures are correct for their populations.
-- The grade of #332395 (last-block λ ×1.25) is not recorded in our files.
+- #332395 (last-block λ ×1.25, 26 Sep) graded 4.6768e-9 (raw 2.1682e-8), +1.0 % against v48 (#332391, 4.6294e-9); re-read from the grader on 21 Oct.
 - The id of the failed v54A submission (7 Oct) is not recorded in our files.
 - The chain's slice error is "6.7 % at L15" in §4.5 (base 2.290e-8) and 6.6 % at L15 in §4.10 (the §5.8 captures). Its d3 error is 3.2 / 3.8 / 4.6 / 4.7 % at L7 / L11 / L15 / L16 in §4.3 and 3.0 / 3.6 / 4.4 / 4.6 % in `chain_k3_error_profile.json`. The two come from different chain runs; both include teacher noise.
 - Our working notes priced eig r = 32 at "≈ 18 u". The probe's thin-product count is 13.8 u (`acds3_ct_probe.json`), which excludes G_m and Γ. §5.8 therefore quotes 18–20 u as an estimate, scaled from the 40 u estimate for r = 64.
@@ -1670,21 +1691,23 @@ Unless a path is given, probe scripts are in `experiments/probes/`. All scripts 
 - The V56 ledger counts 20,586 operations in the warm call (§3.6), against ~19.9k–20k quoted for the A class in §3.3. The ledger counts each outermost flopscope call as one operation on one network; the two counts are not from the same instrument.
 - The ledger's 193.8 u is one network; the harness mean for the same estimator is util 0.1861 (≈ 190.6 u).
 - On 16 Oct the board showed the team at rank 46 (tied) with 3.4e-9, linking #335834 (E296, 13 Oct), the earliest submission with that displayed score; #336377 (3.3946e-9) displays the same value.
-- The leaderboard lists our entry at raw 1.97e-8, while the grader reported 1.950e-8 for #334870. Resolved 11 Oct: the board's row links #334805 (8 Oct; score 3.6829e-9, raw 1.9706e-8, util 0.1869). #334870 (3.6521e-9, raw 1.9497e-8) is graded in the same Phase-2 round (1429), as are #334869 and #334871. All four display as 3.7e-9. Entries with equal displayed scores share a rank on the board (rank 43 on 11 Oct, tied with another 3.7e-9 entry), so the board appears to keep the earlier submission (inferred, not documented by the organisers).
+- The leaderboard lists our entry at raw 1.97e-8, while the grader reported 1.950e-8 for #334870. Resolved 11 Oct: the board's row links #334805 (8 Oct; score 3.6829e-9, raw 1.9706e-8, util 0.1869). #334870 (3.6521e-9, raw 1.9497e-8) is graded in the same Phase-2 round (1429), as are #334869 and #334871. All four display as 3.7e-9. Entries with equal displayed scores share a rank on the board (rank 43 on 11 Oct, tied with another 3.7e-9 entry), so the board appears to keep the earlier submission (inferred, not documented by the organisers). On 20–21 Oct the board showed rank 34 (tied) with 2.8e-9, linking #337301; #337457 (2.7858e-9) displays the same value.
 - The CBA ratios are quoted to one decimal from the files (×63.7, ×125.6, ×102.6); our working notes rounded them to ×64, ×125 and ×103.
 
 ---
 
 ## 9. Disclosure of LLM use
 
-**Primary assistant.** The main engineering and research assistant was Claude Code (Claude Opus 5 and 5.5), directed by the team. It wrote and ran most of the probes, implemented the estimator variants, and maintained the notes. Internal Claude subagents did specific measurement tasks; every number they reported was measured. These subagents were:
-- Fable 5 (Rounds 7–8: the all-distinct κ₃ decomposition, the FB scale and the K₃×C term);
+**Primary assistant.** The main engineering and research assistant was Claude Code (Claude Opus 5 and 5.5), directed by the team. Apart from the public code we build on (504aldo, LordProcciuto, kai_leal_gonzalez) and the E-series layer (below), it wrote essentially all code in our repository: every estimator variant, oracle, probe, harness runner and Kaggle pipeline (including the 17–21 Oct table dump-and-refit kernels) and the PM364 student. The team chose what to build, ordered every run and reviewed the results. The new table features of §3.9 (N1–N4a) were proposed by Claude Code and selected by held-out measurement. Internal Claude subagents did specific derivations and measurement tasks; every number they reported was measured. These subagents were:
+- Fable 5, an Anthropic Claude model run as a Claude Code subagent (Rounds 7–8: the all-distinct κ₃ decomposition, the FB scale and the K₃×C term; the parity argument; the 9 Oct C·T/LKV design of §5.8 and the 10 Oct κ₄→κ₃ feed design of §6.5 (c));
 - Opus (Round 12: κ₄ as carried memory);
 - Sonnet (Round 10: the young-tier count).
 
+On 19 Oct ten further Claude subagents reviewed outside documents, the forum and our records (§3.9); their joint judgement that a top-10 jump was infeasible in the time left was an AI judgement, not a measurement. On 21 Oct five Claude subagents reviewed this paper and the main write-up for numbers, consistency, rules and attribution; the team checked each finding before accepting an edit.
+
 **Outside models consulted.** We sent prompts to:
-- GPT-5.6 Sol and Terra;
-- Astra 6;
+- GPT-5.6 (Sol, Terra);
+- GPT Astra 6;
 - Gemini 3.1 Pro, Grok, DeepSeek and Copilot;
 - SciMaster/Bohrium;
 - several unsigned answers.
@@ -1697,19 +1720,21 @@ Unless a path is given, probe scripts are in `experiments/probes/`. All scripts 
 | HTQB star | Round-18 proposal, built on our Round-17 ceilings |
 | Parity argument | Fable 5 consultation |
 
-**Verification.** Every outside claim was re-derived or re-measured by us before entering this paper. Several claimed measurements were found to be unsupported, and §6.4 says which. The 10–11 Oct consultations (§6.6 (g), §6.7) ran no network inference. Their one numerical result, the routing ceiling, is an audit of our own archived run files. The PM364 student was implemented, trained and evaluated by us. No leaderboard feedback entered any fitted coefficient. The V55 map was fitted against our own Monte-Carlo teacher for MLP #0 (the synthetic network held out); the shipped V56 maps (#334869, #334870) were fitted against our own teacher for the synthetic network.
+**Verification.** Every outside claim was re-derived or re-measured by us before entering this paper. Several claimed measurements were found to be unsupported, and §6.4 says which. The 10–11 Oct consultations (§6.6 (g), §6.7) ran no network inference. Their one numerical result, the routing ceiling, is an audit of our own archived run files. The PM364 student was implemented, trained and evaluated by us. No leaderboard feedback entered any fitted coefficient. The V55 map was fitted against our own Monte-Carlo teacher for MLP #0 (the synthetic network held out); the shipped V56 maps (#334869, #334870) were fitted against our own teacher for the synthetic network. The refitted e30_a tables N2–N4a (§3.9) were fitted on public mini nets 0–69 and validated on 70–99. Discrete choices (corrector scale, A or B class, which variant to keep) were made on the harness and, in a few cases, between graded submissions.
 
 **Verified versus derived.** The split of our mathematical claims into numerically verified, derived-and-consistent, derived-only and conjectural is given in the main write-up, §9.
 
-**E-series layer.** The calibration and cost layer of §3.7 (E282–E299, including #336377) and its fits are md.hamidhosen's work in his repository (github.com/hamidhosen42/ARC-White-Box); the numbers in §3.7 are taken from his ledger and re-checked against the grader.
+**E-series layer.** The calibration and cost layer of §3.7 (E282–E299, including #336377) and its fits are mdhamidhosen's work in his own repository (github.com/hamidhosen42/ARC-White-Box; private until release, available to the organisers on request). This disclosure covers our repository; the E-series is covered by its author's own statement. The numbers in §3.7 are taken from his ledger and re-checked against the grader.
 
-**Licensing and attribution.** The baseline estimator is 504aldo's V29, used under the MIT licence with its copyright header and LICENSE retained. All other changes are ours.
+**Text.** Almost all of the text of this paper and of the main write-up was drafted by Claude (Claude Code) from our result files and notes, and revised by the team, which takes responsibility for every claim.
+
+**Licensing and attribution.** Our own lineage (#334870 and earlier) starts from 504aldo's V29 (MIT), with its copyright header and LICENSE retained. The submission this write-up refers to, #337457, starts from LordProcciuto's e30_a (MIT; Copyright 504aldo and LordProcciuto) and uses kai_leal_gonzalez's two-term (3,1) closure (MIT). #337049 also uses e30_a's exact cost savings, fixed old basis and C_pre compaction, and kai_leal_gonzalez's closure at mix 0.25. The spherical-input idea is from barnobarno666's public repository (idea only). The E-series layer (§3.7) is mdhamidhosen's. §1.4 lists which parts of #337457 are whose; only the parts marked as ours there, and the analysis of §2–§7, are claimed.
 
 ---
 
 ## References
 
-1. Wu et al., arXiv:2605.05179 (title to be filled in from the arXiv entry) (the K3 "simple" chain, §4.3, and the reference implementations used in §6.3).
+1. Wilson Wu, Victor Lecomte, Michael Winer, George Robinson, Jacob Hilton, Paul Christiano. *Estimating the expected output of wide random MLPs more efficiently than sampling.* arXiv:2605.05179 (v2, 14 May 2026) (the K3 "simple" chain, §4.3, and the reference implementations used in §6.3).
 2. 504aldo, *whest-p2-cumulant-k3* (GitHub, MIT licence): the V29 factorised third-cumulant chain with memoryless κ₄ regeneration, D21 feedback, an age-gated shared basis and pooled Strassen–Winograd. Forum post #18218. Finding F105 on the r = 1 κ₄ core.
 3. WhestBench Phase 2 forum threads:
    - #18218 (504aldo chain);
@@ -1720,4 +1745,7 @@ Unless a path is given, probe scripts are in `experiments/probes/`. All scripts 
    - #18199 (keenanpepper, no heavy tail across MLPs);
    - #18175 (Puffi, Phase 1 SSC stack).
 4. barnobarno666, public Phase-2 repository, Phase 8 (spherical-input reparameterisation).
-5. Organiser ruling of 11 Sep 2026 that Strassen–Winograd is legal at any recursion depth (competition forum).
+5. LordProcciuto, *e30_a*, github.com/siming767-creator/whestbench-lordprocciuto (MIT), and Phase-2 write-up (graded #335981).
+6. kai_leal_gonzalez, two-term closure of the (3,1) slice of κ₄, github.com/al07-alt/whest-p2-k31-two-term (MIT), forum topic 18246.
+7. Organiser ruling on building on other participants' public MIT code, forum topic 18240 (5 Oct 2026).
+8. Organiser ruling of 11 Sep 2026 that Strassen–Winograd is legal at any recursion depth (competition forum).

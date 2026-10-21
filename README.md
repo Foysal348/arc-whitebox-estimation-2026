@@ -5,7 +5,7 @@ Research repository for the [ARC White-Box Estimation Challenge 2026](https://ww
 He-initialised weights), the per-neuron mean of every post-activation layer under a standard Gaussian input — analytically,
 within a hard budget of 2⁴¹ FLOPs per network, without sampling the network.
 
-The score is `final_layer_mse × max(0.1, C/B)`, where `C` is the metered FLOP count and `B = 2⁴¹`, so accuracy and cost are
+The score is `final_layer_mse × max(0.1, FLOPs/B)`, where FLOPs is the metered count and `B = 2⁴¹`, so accuracy and cost are
 multiplied: a 1 % cost saving is worth exactly as much as a 1 % accuracy gain.
 
 **Team Hack2Publish:** mdhamidhosen, esfer_sami, foyshal_sk. **Team best:** `#337457` — adjusted **2.7858e-9** (raw 1.8592e-8, util 0.150): our κ₄ corrector on LordProcciuto's public
@@ -14,7 +14,7 @@ rank 34 (tied, displayed 2.8e-9). Submissions close 21 Oct 2026 23:59 UTC, nomin
 
 ---
 
-## Status (final, 16 Oct 2026)
+## Status (final, 21 Oct 2026)
 
 | Submission | Change | Adjusted score | Raw MSE | Util |
 |---|---|---|---|---|
@@ -24,16 +24,16 @@ rank 34 (tied, displayed 2.8e-9). Submissions close 21 Oct 2026 23:59 UTC, nomin
 | #332420 | + dead-neuron compaction, D21 column/row trims, basis-side Strassen | 4.0902e-9 | 2.1636e-8 | 0.189 |
 | #334591 | + V55 κ₄-pattern corrector (A class) | 3.8582e-9 | — | — |
 | #334870 | + V56 cubic star, map fitted on the synthetic net (A) — the chain the write-up analyses | 3.6521e-9 | 1.950e-8 | 0.187 |
-| #336377 | md.hamidhosen's E299: 24-group and κ₄-corrector calibration + exact cost rewrites | **3.3946e-9** | **1.8824e-8** | **0.180** |
+| #336377 | mdhamidhosen's E299: 24-group and κ₄-corrector calibration + exact cost rewrites | **3.3946e-9** | **1.8824e-8** | **0.180** |
 | #336440 | E299-B: E299 in the safe operation class (18.1k warm ops; exact rewrites) | 3.4719e-9 | 1.8825e-8 | 0.184 |
 | #337049 | e299safe: own-lineage best (+ e30_a cost savings, fixed old basis, C_pre compaction, (3,1) closure) | 3.2529e-9 | 1.9107e-8 | 0.170 |
 | #337457 | **team best**: our κ₄ corrector on LordProcciuto's public e30_a (MIT) + refitted mean-correction table (N4a) + knobs | **2.7858e-9** | **1.8592e-8** | **0.150** |
 
 - **Write-up:** `writeup/WRITEUP_MAIN.pdf` (12 pages) with `writeup/ALGORITHM_TRACK_PAPER.pdf` as its appendix. It names
-  one graded submission and is sent by e-mail to arc-whestbench@aicrowd.com by 24 Oct 2026 23:59 UTC.
+  one graded submission and is sent by e-mail to arc-whestbench@aicrowd.com by 28 Oct 2026 23:59 UTC.
 - **Nominations** (up to two, chosen after the close on the AIcrowd submissions page): the best score plus a hedge with lower
-  residual-time and memory risk; see the write-up header.
-- **E-series** (md.hamidhosen): https://github.com/hamidhosen42/ARC-White-Box.
+  residual-time and memory risk; nominations close 22 Oct 2026 23:59 UTC.
+- **E-series** (mdhamidhosen): https://github.com/hamidhosen42/ARC-White-Box.
 
 The starting point is the K = 3 factorised cumulant-propagation chain released under MIT by team **504aldo**
 ([whest-p2-cumulant-k3](https://github.com/504aldo/whest-p2-cumulant-k3)); all derived estimators keep that attribution.
@@ -43,17 +43,19 @@ The starting point is the K = 3 factorised cumulant-propagation chain released u
 1. **A parity theorem.** Every third-cumulant source contributes an *odd* function of the current layer's weights, so its
    conditional expectation given any even statistic (covariance, Gram matrices, per-neuron variances) is exactly zero.
    Mean-field and "self-averaging" closures of the deep tier therefore lose the entire contribution, not merely some accuracy.
-2. **The old-source tier is irreducible inside this formulation.** Rank reduction, pooled Tucker/TT cores, aggregate
+2. **No cheaper old-source tier was found inside this formulation (empirical).** Rank reduction, pooled Tucker/TT cores, aggregate
    vector–metric states, sketches, birth-column screening, source-index coding, birth-operator compression, slice recursion
    and adjoint contraction were each measured and each is net negative. See `writeup/UNTESTED_IDEAS.md` for the board.
 3. **The error is not where it was assumed to be.** An unconfined (exact) old tier differs from the shipped chain by an MSE of
    7.6e-10 — about 3 % of the chain's error — so ~97 % of the remaining error is the K3 + memoryless-κ₄ truncation itself.
 4. **A free accuracy gain.** Because a bias-free ReLU network is positively homogeneous, the Gaussian input factorises exactly
    as `X = (R/√n)·Y` with `Y` uniform on the sphere and `R ~ χ_n` independent; the sphere's fourth cumulant can be injected at
-   layer 0 through the chain's own κ₄ machinery and the output rescaled by `a₁ = E[R/√n]`. Cost +0.02 %, graded −1.1 % raw.
+   layer 0 through the chain's own κ₄ machinery and the output rescaled by `a₁ = E[R/√n]`. Zero FLOPs, graded −1.1 % raw.
 5. **V29's fitted λ has a derivation.** A Monte-Carlo κ₄ teacher (10⁷–10⁸ samples per layer, two independent networks) shows
    that the true (3,1) cumulant slice is weighted *per row* by `κ₄(i)/var(i)`, and that 504aldo's per-layer scalar λ equals the
    **mean** of that ratio to within 2 %. Only the row-to-row variation is unexploited.
+
+The current contribution list (error map with channel oracles, κ₄ pattern vs level, the cubic-star feature V56, the parity theorem, the negative-result atlas and the final-days refitted table) is in `writeup/WRITEUP_MAIN.pdf` §1.
 
 The full experiment log — about forty measurements, each with its method and its falsifier — is
 `docs/ARC_WhestBench_2026_Complete_Notes.pdf`, Part K.
@@ -70,7 +72,7 @@ experiments/
   variants/        Estimator variants built from a shipped submission by patching (angular, per-row λ, oracle, f64)
 kaggle/            Kernel notebooks and metadata for every Kaggle run (runners, κ₄ teacher, dumps, one-step, kprop)
 results/           Small JSON summaries and run logs
-consultations/     Prompts sent to external models and their reports (rounds 1–5)
+consultations/     Prompts sent to external models and their reports (rounds 1–20 and later reviews)
 correspondence/    Security report to the organisers and forum post drafts
 data/              Large artefacts: .npz dumps and downloaded Kaggle outputs  (git-ignored)
 ```

@@ -1,7 +1,7 @@
 """Build a PDF from a Markdown write-up (python-markdown + Edge headless print).
 Usage:
     python writeup/build_pdf.py                                              # the full paper -> ALGORITHM_TRACK_PAPER.pdf
-    python writeup/build_pdf.py writeup/WRITEUP_MAIN.md --out WRITEUP_MAIN   # the main write-up -> WRITEUP_MAIN.pdf
+    python writeup/build_pdf.py writeup/WRITEUP_MAIN.md --out WRITEUP_MAIN --compact   # the main write-up -> WRITEUP_MAIN.pdf
 The output name defaults to the input file's stem; .html and .pdf are written next to the script (writeup/)."""
 import re, subprocess, os, argparse, html, markdown
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -26,14 +26,17 @@ for line in src:
     out.append(line)
 body = markdown.markdown("\n".join(out), extensions=["tables", "fenced_code", "toc", "mdx_truly_sane_lists"],
                          extension_configs={"mdx_truly_sane_lists": {"nested_indent": 2, "truly_sane": True}})
-css_compact = "@page { size: A4; margin: 14mm 14mm 14mm 14mm; } body { font-size: 10pt !important; line-height: 1.35 !important; } table { font-size: 8.6pt !important; } p, li { text-align: left !important; } code { word-break: break-all; } table { page-break-inside: auto !important; } tr { page-break-inside: avoid; }"
+# keep numbers such as 4.0902e-9 on one line, and let code paths break only after "/" or "_"
+body = re.sub(r"(\d)e-(\d)", "\\1e\u2011\\2", body)
+body = re.sub(r"<code>(.*?)</code>", lambda m: "<code>" + m.group(1).replace("/", "/\u200b").replace("_", "_\u200b") + "</code>", body, flags=re.S)
+css_compact = "@page { size: A4; margin: 13mm 13mm 13mm 13mm; } body { font-size: 10pt !important; line-height: 1.31 !important; } table { font-size: 8.6pt !important; } p, li { text-align: left !important; } code { word-break: normal; overflow-wrap: break-word; } table { page-break-inside: auto !important; } tr { page-break-inside: avoid; }"
 css = """
 @page { size: A4; margin: 18mm 16mm 18mm 16mm; }
 body { font-family: 'Cambria', 'Segoe UI', 'Times New Roman', serif; font-size: 10.5pt; line-height: 1.45; color: #111; }
 h1 { font-size: 20pt; margin: 0 0 6pt; } h2 { font-size: 14.5pt; margin: 18pt 0 6pt; border-bottom: 1px solid #999; padding-bottom: 2pt; page-break-after: avoid; }
 h3 { font-size: 12pt; margin: 12pt 0 4pt; page-break-after: avoid; } h4 { font-size: 11pt; margin: 10pt 0 4pt; }
-p, li { text-align: left; } code { word-break: break-all; } ul, ol { padding-left: 18pt; margin: 3pt 0; } li { margin: 1.5pt 0; }
-table { border-collapse: collapse; margin: 6pt 0 10pt; font-size: 9pt; page-break-inside: avoid; }
+p, li { text-align: left; } code { word-break: normal; overflow-wrap: break-word; } ul, ol { padding-left: 18pt; margin: 3pt 0; } li { margin: 1.5pt 0; }
+table { border-collapse: collapse; margin: 6pt 0 10pt; font-size: 9pt; page-break-inside: auto; } tr { page-break-inside: avoid; }
 th, td { border: 1px solid #888; padding: 2.5pt 5pt; vertical-align: top; } th { background: #e8e8e8; }
 code { font-family: Consolas, 'Courier New', monospace; font-size: 8.8pt; background: #f3f3f3; padding: 0 2px; }
 pre { background: #f5f5f5; border: 1px solid #ddd; padding: 6pt; font-size: 8.5pt; white-space: pre-wrap; page-break-inside: avoid; }

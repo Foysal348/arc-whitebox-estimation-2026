@@ -3,19 +3,19 @@
 body { font-family: 'Cambria', 'Segoe UI', 'Times New Roman', serif; font-size: 10.5pt; line-height: 1.45; color: #111; }
 h1 { font-size: 20pt; margin: 0 0 6pt; } h2 { font-size: 14.5pt; margin: 18pt 0 6pt; border-bottom: 1px solid #999; padding-bottom: 2pt; page-break-after: avoid; }
 h3 { font-size: 12pt; margin: 12pt 0 4pt; page-break-after: avoid; } h4 { font-size: 11pt; margin: 10pt 0 4pt; }
-p, li { text-align: left; } code { word-break: break-all; } ul, ol { padding-left: 18pt; margin: 3pt 0; } li { margin: 1.5pt 0; }
-table { border-collapse: collapse; margin: 6pt 0 10pt; font-size: 9pt; page-break-inside: avoid; }
+p, li { text-align: left; } code { word-break: normal; overflow-wrap: break-word; } ul, ol { padding-left: 18pt; margin: 3pt 0; } li { margin: 1.5pt 0; }
+table { border-collapse: collapse; margin: 6pt 0 10pt; font-size: 9pt; page-break-inside: auto; } tr { page-break-inside: avoid; }
 th, td { border: 1px solid #888; padding: 2.5pt 5pt; vertical-align: top; } th { background: #e8e8e8; }
 code { font-family: Consolas, 'Courier New', monospace; font-size: 8.8pt; background: #f3f3f3; padding: 0 2px; }
 pre { background: #f5f5f5; border: 1px solid #ddd; padding: 6pt; font-size: 8.5pt; white-space: pre-wrap; page-break-inside: avoid; }
 pre code { background: none; padding: 0; }
-@page { size: A4; margin: 14mm 14mm 14mm 14mm; } body { font-size: 10pt !important; line-height: 1.35 !important; } table { font-size: 8.6pt !important; } p, li { text-align: left !important; } code { word-break: break-all; } table { page-break-inside: auto !important; } tr { page-break-inside: avoid; }</style></head><body><h1 id="team-hack2publish-research-effort-summary">Team Hack2Publish — Research Effort Summary</h1>
+@page { size: A4; margin: 13mm 13mm 13mm 13mm; } body { font-size: 10pt !important; line-height: 1.31 !important; } table { font-size: 8.6pt !important; } p, li { text-align: left !important; } code { word-break: normal; overflow-wrap: break-word; } table { page-break-inside: auto !important; } tr { page-break-inside: avoid; }</style></head><body><h1 id="team-hack2publish-research-effort-summary">Team Hack2Publish — Research Effort Summary</h1>
 <p><strong>ARC White-Box Estimation Challenge 2026, Phase 2.</strong> Team: mdhamidhosen, esfer_sami, foyshal_sk. Status as of 21 October 2026.</p>
 <p>Counted from the repositories and experiment ledgers, the team ran <strong>more than 500 experiments</strong>. Because the counts come from files, a few experiments may be counted in two places; the overall scale is correct.</p>
 <h2 id="architectures-and-new-methods">Architectures and new methods</h2>
 <ul>
 <li><strong>More than 60</strong> distinct architecture and representation ideas were tested to a decision.</li>
-<li><strong>20 consultation rounds</strong> with outside AI systems (GPT, Astra, Gemini, Grok, DeepSeek, Fable and others); every proposal was measured before use.</li>
+<li><strong>20 consultation rounds</strong> with outside AI systems (GPT, Astra, Gemini, Grok, DeepSeek and others; plus internal Claude subagents); every proposal was measured before use.</li>
 <li>The kill register lists <strong>about 80</strong> measured and closed avenues.</li>
 </ul>
 <p><strong>Architectures that survived and were submitted:</strong></p>
@@ -44,7 +44,7 @@ pre code { background: none; padding: 0; }
 <td>−4.4 %</td>
 </tr>
 <tr>
-<td>E-series calibration (md.hamidhosen)</td>
+<td>E-series calibration (mdhamidhosen)</td>
 <td>Gauss-Newton refit of 24 calibration groups and the κ₄ corrector</td>
 <td>−3.9 %</td>
 </tr>
@@ -95,7 +95,7 @@ pre code { background: none; padding: 0; }
 <td>132</td>
 </tr>
 <tr>
-<td>E-series ledger (md.hamidhosen)</td>
+<td>E-series ledger (mdhamidhosen)</td>
 <td>133 experiments, 117 estimator versions</td>
 </tr>
 <tr>
@@ -106,12 +106,12 @@ pre code { background: none; padding: 0; }
 </table>
 <h2 id="grader-submissions">Grader submissions</h2>
 <ul>
-<li>About <strong>134 graded submissions</strong> in total for the team (board count, 20 October): about 66 E-series submissions by md.hamidhosen and the rest from the V-series and the final-days line.</li>
-<li>Score improved from <strong>5.418e-9 to 2.7858e-9 (−48.6 %)</strong>.</li>
-<li>Best public rank was <strong>24</strong> (26 September); the rank on 20 October is <strong>34</strong> (displayed 2.8e-9).</li>
+<li>About <strong>134 graded submissions</strong> in total for the team (board count, 20 October): about 66 E-series submissions by mdhamidhosen and the rest from the V-series and the final-days line.</li>
+<li>Score improved from <strong>5.418e‑9 to 2.7858e‑9 (−48.6 %)</strong>.</li>
+<li>Best public rank was <strong>24</strong> (26 September); the rank on 20 October is <strong>34</strong> (displayed 2.8e‑9).</li>
 </ul>
 <h2 id="writing-and-verified-results">Writing and verified results</h2>
 <ul>
-<li>Main write-up: 12 pages. Full technical report (appendix): 58 pages.</li>
-<li>Four mathematical results verified: the parity theorem, the proof of the √(6/(r+8)) floor, the sign of the Gaussian star, and the direct measurement of channel-error cancellation.</li>
+<li>Main write-up: 12 pages. Full technical report (appendix): 56 pages.</li>
+<li>Four results verified numerically: the parity theorem, the proof of the √(6/(r+8)) floor, the sign of the Gaussian star, and the direct measurement of channel-error cancellation.</li>
 </ul></body></html>
