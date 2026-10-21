@@ -11,8 +11,8 @@ pre { background: #f5f5f5; border: 1px solid #ddd; padding: 6pt; font-size: 8.5p
 pre code { background: none; padding: 0; }
 </style></head><body><h1 id="where-the-error-of-the-factorised-cumulant-chain-lives-exact-identities-cost-engineering-and-a-cubic-birth-4-pattern-programme-for-deep-relu-mlps">Where the Error of the Factorised Cumulant Chain Lives: Exact Identities, Cost Engineering, and a Cubic-Birth κ₄-Pattern Programme for Deep ReLU MLPs</h1>
 <p><strong>WhestBench Phase 2, algorithmic-contribution write-up. Team Hack2Publish (mdhamidhosen, esfer_sami, foyshal_sk).</strong>
-<strong>Team best graded submission: #337336, adjusted score 2.8256e-9, raw final-layer MSE 1.8869e-8: our κ₄-pattern corrector on LordProcciuto's public e30_a chain with a refitted mean-correction table (§3.9). Own-lineage best: #337049 (3.2529e-9), built on #334870 (v56As_fs, 3.6521e-9), the chain this paper analyses.</strong>
-<em>Version of 20 October 2026. Every number is either a graded leaderboard result (submission id given) or a measurement whose result file is named in §8. Items still open are marked </em><em>[OPEN]</em><em>. Unmeasured quantities are marked </em><em>(estimate)</em><em> or </em><em>(untested)</em><em>. Claims are labelled </em><em>derived</em><em> (algebra), </em><em>measured</em><em> (run by us) or </em><em>graded</em><em> (official grader).</em></p>
+<strong>Team best graded submission: #337457, adjusted score 2.7858e-9, raw final-layer MSE 1.8592e-8: our κ₄-pattern corrector on LordProcciuto's public e30_a chain with a refitted mean-correction table (§3.9). Own-lineage best: #337049 (3.2529e-9), built on #334870 (v56As_fs, 3.6521e-9), the chain this paper analyses.</strong>
+<em>Version of 21 October 2026. Every number is either a graded leaderboard result (submission id given) or a measurement whose result file is named in §8. Items still open are marked </em><em>[OPEN]</em><em>. Unmeasured quantities are marked </em><em>(estimate)</em><em> or </em><em>(untested)</em><em>. Claims are labelled </em><em>derived</em><em> (algebra), </em><em>measured</em><em> (run by us) or </em><em>graded</em><em> (official grader).</em></p>
 <hr />
 <h2 id="abstract">Abstract</h2>
 <p>We start from the public, MIT-licensed factorised third-cumulant chain of team 504aldo ("V29", raw 2.13e-8 at 0.254 of the budget) and pursue two questions: where its error is made, and what an estimator must contain to remove that error at an affordable cost.</p>
@@ -848,12 +848,25 @@ pre code { background: none; padding: 0; }
 <td>+ τ_B 2.4</td>
 <td>e30_a's near-dead column cut</td>
 <td>×0.9930 (21/30 held-out)</td>
-<td><strong>2.8256e-9 (#337336)</strong></td>
+<td>2.8256e-9 (#337336)</td>
+</tr>
+<tr>
+<td>N3</td>
+<td>table refit with 21 more modulators (h_k·st², h_k·D3·st/var^1.5, h_k·corrector-local), 122 features</td>
+<td>×0.9901 held-out (24/30)</td>
+<td>2.7975e-9 (#337368)</td>
+</tr>
+<tr>
+<td>N4a</td>
+<td>+ 42 modulators (standardised D21 row/column energies, C_pre correlation-row energy, |α|·st, previous-layer delta and star carried through W), 164 features</td>
+<td>×0.9966 held-out (21/30; CI 0.994–0.999)</td>
+<td><strong>2.7858e-9 (#337457)</strong></td>
 </tr>
 </tbody>
 </table>
 <p><strong>Why the corrector transfers only partly.</strong> Call-site ledgers on MLP #0 put e30_a at 158.8 u against our 184.1 u (<code>data/kaggle_out/ledger/</code>). On e30_a the corrector at full strength costs ×1.085 (MLP #0); the gain comes entirely from the V56 star (no-star arm ×1.0024), because e30_a's 87-feature ridge mean-correction table already contains the local κ₄-pattern features and was fitted on e30_a's uncorrected trajectory.</p>
 <p><strong>Table refit (fitted).</strong> We dumped teacher-forced per-layer features on public mini nets 0–69 under our trajectory and refitted the table per layer by ridge regression with grouped 5-fold CV over nets, adding star modulators (N1, 94 features) and the corrector's own κ₄ change (N2, 101 features). One-step CV error against the original table: 0.96 (all layers). End to end on 100 MLPs: N0 ×0.9496, N1 ×0.9369, N2 ×0.9346; the gain on held-out nets 70–99 is as large as on nets 0–69, so the fit does not overfit the public set. A table fitted on one trajectory does not help another (×1.0005 one-step), so the refit must follow every change of the chain. Pipelines: <code>kaggle/x10/</code>, <code>kaggle/x11/</code> (self-contained Kaggle kernels).</p>
+<p><strong>Further table experiments (20–21 Oct).</strong> Refitting N2 on 341 nets (mini 0–69 + 271 full-split nets) gave ×0.9997 held-out (32/62): the remaining error is a feature limit, not a data limit. An on-policy refit (free-running dumps) gave ×0.997–1.005; the (3,1) orientation fix (T21) ×1.0005. Pipelines: <code>kaggle/x12/</code>–<code>x14/</code>.</p>
 <p><strong>Measured and rejected (17–20 Oct):</strong> separate star/local corrector scales other than 0.7/0.2 (×1.004–1.019); table reading the corrected κ₄ (×1.021); FB 1.25/1.4 on e30_a (×0.999/×1.002); D21 ×0.96/0.97 (×1.055/×1.022); λ tilt, hot rows 2.5, dead τ 2.6/3.1 (×1.000–1.16); e30_a's strided Strassen views (<code>X_STV</code>, all 100 MLPs failed); e30_a's row compaction in E299 (×1.063); "cheaper setting, then refit" (rank 352: ×1.04 with or without refit; τ_B 2.4: refit adds nothing). Results: <code>data/kaggle_out/{exp5_*,e30k31_*,e30tune_*,x8_*,x8c_*,x10_eval,x11_*}</code>.</p>
 <p><strong>Rules.</strong> The organisers allow building on another participant's public MIT code with attribution, provided the team adds substantial work of its own (forum topic 18240). #337336's base chain is LordProcciuto's; ours are the corrector (§5), the closure settings and the refitted table. Our own-lineage best is #337049.</p>
 <hr />

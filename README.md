@@ -8,7 +8,7 @@ within a hard budget of 2⁴¹ FLOPs per network, without sampling the network.
 The score is `final_layer_mse × max(0.1, C/B)`, where `C` is the metered FLOP count and `B = 2⁴¹`, so accuracy and cost are
 multiplied: a 1 % cost saving is worth exactly as much as a 1 % accuracy gain.
 
-**Team Hack2Publish:** mdhamidhosen, esfer_sami, foyshal_sk. **Team best:** `#337336` — adjusted **2.8256e-9** (raw 1.8869e-8, util 0.150): our κ₄ corrector on LordProcciuto's public
+**Team Hack2Publish:** mdhamidhosen, esfer_sami, foyshal_sk. **Team best:** `#337457` — adjusted **2.7858e-9** (raw 1.8592e-8, util 0.150): our κ₄ corrector on LordProcciuto's public
 e30_a chain with a refitted table (writeup §6.5). Own-lineage best `#337049` (3.2529e-9). Public board 20 Oct 2026:
 rank 34 (tied, displayed 2.8e-9). Submissions close 21 Oct 2026 23:59 UTC, nominations 22 Oct, write-up 28 Oct (organiser update, forum topic 18251).
 
@@ -27,7 +27,7 @@ rank 34 (tied, displayed 2.8e-9). Submissions close 21 Oct 2026 23:59 UTC, nomin
 | #336377 | md.hamidhosen's E299: 24-group and κ₄-corrector calibration + exact cost rewrites | **3.3946e-9** | **1.8824e-8** | **0.180** |
 | #336440 | E299-B: E299 in the safe operation class (18.1k warm ops; exact rewrites) | 3.4719e-9 | 1.8825e-8 | 0.184 |
 | #337049 | e299safe: own-lineage best (+ e30_a cost savings, fixed old basis, C_pre compaction, (3,1) closure) | 3.2529e-9 | 1.9107e-8 | 0.170 |
-| #337336 | **team best**: our κ₄ corrector on LordProcciuto's public e30_a (MIT) + refitted mean-correction table + knobs | **2.8256e-9** | **1.8869e-8** | **0.150** |
+| #337457 | **team best**: our κ₄ corrector on LordProcciuto's public e30_a (MIT) + refitted mean-correction table (N4a) + knobs | **2.7858e-9** | **1.8592e-8** | **0.150** |
 
 - **Write-up:** `writeup/WRITEUP_MAIN.pdf` (12 pages) with `writeup/ALGORITHM_TRACK_PAPER.pdf` as its appendix. It names
   one graded submission and is sent by e-mail to arc-whestbench@aicrowd.com by 24 Oct 2026 23:59 UTC.

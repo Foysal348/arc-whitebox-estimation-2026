@@ -1,8 +1,8 @@
 # Where the Error of the Factorised Cumulant Chain Lives: Exact Identities, Cost Engineering, and a Cubic-Birth κ₄-Pattern Programme for Deep ReLU MLPs
 
 **WhestBench Phase 2, algorithmic-contribution write-up. Team Hack2Publish (mdhamidhosen, esfer_sami, foyshal_sk).**
-**Team best graded submission: #337336, adjusted score 2.8256e-9, raw final-layer MSE 1.8869e-8: our κ₄-pattern corrector on LordProcciuto's public e30_a chain with a refitted mean-correction table (§3.9). Own-lineage best: #337049 (3.2529e-9), built on #334870 (v56As_fs, 3.6521e-9), the chain this paper analyses.**
-*Version of 20 October 2026. Every number is either a graded leaderboard result (submission id given) or a measurement whose result file is named in §8. Items still open are marked **[OPEN]**. Unmeasured quantities are marked **(estimate)** or **(untested)**. Claims are labelled **derived** (algebra), **measured** (run by us) or **graded** (official grader).*
+**Team best graded submission: #337457, adjusted score 2.7858e-9, raw final-layer MSE 1.8592e-8: our κ₄-pattern corrector on LordProcciuto's public e30_a chain with a refitted mean-correction table (§3.9). Own-lineage best: #337049 (3.2529e-9), built on #334870 (v56As_fs, 3.6521e-9), the chain this paper analyses.**
+*Version of 21 October 2026. Every number is either a graded leaderboard result (submission id given) or a measurement whose result file is named in §8. Items still open are marked **[OPEN]**. Unmeasured quantities are marked **(estimate)** or **(untested)**. Claims are labelled **derived** (algebra), **measured** (run by us) or **graded** (official grader).*
 
 ---
 
@@ -420,11 +420,15 @@ On 17 Oct the organisers extended Phase 2 to 21 Oct and moved the grader to flop
 | e30kang | + V31 spherical identity | ×0.985 (MLP #0 only) | 3.1473e-9 (#337221, worse) |
 | c1 | + D21 ×0.98 at L ≥ 9, closure mix 0.4, corrector local 0.2 / star 0.7 | singly ×0.9949 / ×0.9974 / ×0.9967; jointly ×1.0035 (n.s.) | 2.9956e-9 (#337258) |
 | c1 + N2 | e30_a's mean-correction table refitted on this trajectory (§ below) | ×0.9346 (99/100); held-out nets 70–99 ×0.9304 (30/30) | 2.8475e-9 (#337301) |
-| + τ_B 2.4 | e30_a's near-dead column cut | ×0.9930 (21/30 held-out) | **2.8256e-9 (#337336)** |
+| + τ_B 2.4 | e30_a's near-dead column cut | ×0.9930 (21/30 held-out) | 2.8256e-9 (#337336) |
+| N3 | table refit with 21 more modulators (h_k·st², h_k·D3·st/var^1.5, h_k·corrector-local), 122 features | ×0.9901 held-out (24/30) | 2.7975e-9 (#337368) |
+| N4a | + 42 modulators (standardised D21 row/column energies, C_pre correlation-row energy, \|α\|·st, previous-layer delta and star carried through W), 164 features | ×0.9966 held-out (21/30; CI 0.994–0.999) | **2.7858e-9 (#337457)** |
 
 **Why the corrector transfers only partly.** Call-site ledgers on MLP #0 put e30_a at 158.8 u against our 184.1 u (`data/kaggle_out/ledger/`). On e30_a the corrector at full strength costs ×1.085 (MLP #0); the gain comes entirely from the V56 star (no-star arm ×1.0024), because e30_a's 87-feature ridge mean-correction table already contains the local κ₄-pattern features and was fitted on e30_a's uncorrected trajectory.
 
 **Table refit (fitted).** We dumped teacher-forced per-layer features on public mini nets 0–69 under our trajectory and refitted the table per layer by ridge regression with grouped 5-fold CV over nets, adding star modulators (N1, 94 features) and the corrector's own κ₄ change (N2, 101 features). One-step CV error against the original table: 0.96 (all layers). End to end on 100 MLPs: N0 ×0.9496, N1 ×0.9369, N2 ×0.9346; the gain on held-out nets 70–99 is as large as on nets 0–69, so the fit does not overfit the public set. A table fitted on one trajectory does not help another (×1.0005 one-step), so the refit must follow every change of the chain. Pipelines: `kaggle/x10/`, `kaggle/x11/` (self-contained Kaggle kernels).
+
+**Further table experiments (20–21 Oct).** Refitting N2 on 341 nets (mini 0–69 + 271 full-split nets) gave ×0.9997 held-out (32/62): the remaining error is a feature limit, not a data limit. An on-policy refit (free-running dumps) gave ×0.997–1.005; the (3,1) orientation fix (T21) ×1.0005. Pipelines: `kaggle/x12/`–`x14/`.
 
 **Measured and rejected (17–20 Oct):** separate star/local corrector scales other than 0.7/0.2 (×1.004–1.019); table reading the corrected κ₄ (×1.021); FB 1.25/1.4 on e30_a (×0.999/×1.002); D21 ×0.96/0.97 (×1.055/×1.022); λ tilt, hot rows 2.5, dead τ 2.6/3.1 (×1.000–1.16); e30_a's strided Strassen views (`X_STV`, all 100 MLPs failed); e30_a's row compaction in E299 (×1.063); "cheaper setting, then refit" (rank 352: ×1.04 with or without refit; τ_B 2.4: refit adds nothing). Results: `data/kaggle_out/{exp5_*,e30k31_*,e30tune_*,x8_*,x8c_*,x10_eval,x11_*}`.
 

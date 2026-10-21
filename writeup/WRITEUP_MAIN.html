@@ -11,9 +11,9 @@ pre { background: #f5f5f5; border: 1px solid #ddd; padding: 6pt; font-size: 8.5p
 pre code { background: none; padding: 0; }
 @page { size: A4; margin: 14mm 14mm 14mm 14mm; } body { font-size: 10pt !important; line-height: 1.35 !important; } table { font-size: 8.6pt !important; } p, li { text-align: left !important; } code { word-break: break-all; } table { page-break-inside: auto !important; } tr { page-break-inside: avoid; }</style></head><body><h1 id="where-the-error-of-the-factorised-cumulant-chain-lives-and-what-it-costs">Where the Error of the Factorised Cumulant Chain Lives, and What It Costs</h1>
 <p><strong>WhestBench Phase 2, Algorithm track. Team Hack2Publish: mdhamidhosen, esfer_sami, foyshal_sk.</strong></p>
-<p><strong>Submission #337336</strong> (team best): adjusted score <strong>2.8256e-9</strong>, raw final-layer MSE <strong>1.8869e-8</strong>, util 0.150. It runs our κ₄-pattern corrector (§5) on LordProcciuto's public e30_a chain (MIT; 3.1163e-9 as published), with a mean-correction table refitted on our trajectory and other measured additions (§6.5).
+<p><strong>Submission #337457</strong> (team best): adjusted score <strong>2.7858e-9</strong>, raw final-layer MSE <strong>1.8592e-8</strong>, util 0.150. It runs our κ₄-pattern corrector (§5) on LordProcciuto's public e30_a chain (MIT; 3.1163e-9 as published), with a mean-correction table refitted on our trajectory with new non-local features and other measured additions (§6.5).
 <strong>Own-lineage best #337049</strong> (e299safe, 3.2529e-9): our chain <strong>#334870</strong> (v56As_fs, 3.6521e-9), the chain this write-up analyses, plus md.hamidhosen's calibration and cost layer (§6.4) and the safe cost rewrites of §6.5.</p>
-<p><em>20 October 2026. This is the main write-up. The full technical report is attached as the </em><em>Appendix (full technical report)</em><em>, and "App. §x" refers to its sections. Each number and claim is labelled by its source:</em></p>
+<p><em>21 October 2026. This is the main write-up. The full technical report is attached as the </em><em>Appendix (full technical report)</em><em>, and "App. §x" refers to its sections. Each number and claim is labelled by its source:</em></p>
 <ul>
 <li><em>graded: an official grade, with its submission id;</em></li>
 <li><em>measured: a run of our own scripts, with the result file named in App. §8.3;</em></li>
@@ -23,7 +23,7 @@ pre code { background: none; padding: 0; }
 </ul>
 <hr />
 <h2 id="1-summary">1. Summary</h2>
-<p>We started from 504aldo's public, MIT-licensed factorised third-cumulant chain ("V29"), which graded 5.418e-9 when submitted verbatim. Our changes take it to <strong>3.6521e-9 (−32.6 %)</strong>: raw MSE falls by 8.6 % (2.133e-8 → 1.950e-8) and util by 26 % (0.254 → 0.187) (derived). A final calibration and cost layer by md.hamidhosen on this chain (E282–E299, §6.4) takes it to <strong>3.3946e-9 (#336377, −7.0 %)</strong>; that layer is fitted and engineering, not new understanding. Moved onto a cheaper public chain (e30_a) with a refitted correction table, our corrector reaches <strong>2.8256e-9 (#337336)</strong> (§6.5).</p>
+<p>We started from 504aldo's public, MIT-licensed factorised third-cumulant chain ("V29"), which graded 5.418e-9 when submitted verbatim. Our changes take it to <strong>3.6521e-9 (−32.6 %)</strong>: raw MSE falls by 8.6 % (2.133e-8 → 1.950e-8) and util by 26 % (0.254 → 0.187) (derived). A final calibration and cost layer by md.hamidhosen on this chain (E282–E299, §6.4) takes it to <strong>3.3946e-9 (#336377, −7.0 %)</strong>; that layer is fitted and engineering, not new understanding. Moved onto a cheaper public chain (e30_a) with a refitted correction table, our corrector reaches <strong>2.7858e-9 (#337457)</strong> (§6.5).</p>
 <p><strong>Mechanistic contributions.</strong> These are what we consider our contribution to the understanding of white-box estimation:</p>
 <ol>
 <li><strong>A spherical-input identity</strong> (§3.1; derived, injection check measured, graded −1.1 % raw at zero cost).</li>
@@ -464,8 +464,22 @@ pre code { background: none; padding: 0; }
 <tr>
 <td>+ near-dead column cut (τ_B 2.4)</td>
 <td>§6.5</td>
-<td><strong>2.8256e-9 (#337336)</strong></td>
-<td><strong>1.8869e-8</strong></td>
+<td>2.8256e-9 (#337336)</td>
+<td>1.8869e-8</td>
+<td>0.150</td>
+</tr>
+<tr>
+<td>+ table features: star², D3·star, corrector-local (N3, 122)</td>
+<td>§6.5 (fitted)</td>
+<td>2.7975e-9 (#337368)</td>
+<td>1.8681e-8</td>
+<td>0.150</td>
+</tr>
+<tr>
+<td>+ D21/C row energies, carried delta and star (N4a, 164)</td>
+<td>§6.5 (fitted)</td>
+<td><strong>2.7858e-9 (#337457)</strong></td>
+<td><strong>1.8592e-8</strong></td>
 <td><strong>0.150</strong></td>
 </tr>
 </tbody>
@@ -492,7 +506,7 @@ pre code { background: none; padding: 0; }
 <ul>
 <li><strong>Exact cost savings from e30_a in our chain:</strong> Gram-core skipping, R-factor rotation, folded constants: −1.4 % FLOPs, predictions unchanged up to rounding (#336711, #336719). kai_leal_gonzalez's two-term (3,1) closure (MIT, forum write-up) hurt at full strength (#336697, +0.7 %) but helped at mix 0.25 (#336757, −0.4 %). e30_a's fixed old basis and C_pre compaction gave our own-lineage best (#337049, 3.2529e-9).</li>
 <li><strong>Our corrector on LordProcciuto's public e30_a chain</strong> (MIT; 158.8 u vs our 184.1 u per MLP, call-site ledger): at full strength it hurt (×1.085, MLP #0); at scale 0.3–0.4 it gave ×0.975–0.977 on 100 MLPs (94/100 at 0.3), graded ×0.979. The gain comes entirely from the V56 star; the local features duplicate e30_a's 87-feature mean-correction table.</li>
-<li><strong>Refitting e30_a's table on our trajectory (fitted).</strong> The table was fitted on e30_a's own uncorrected trajectory. Refitted by ridge regression (grouped 5-fold CV) on teacher-forced dumps of public mini nets 0–69, with star modulators added (101 features), it gave ×0.930 on held-out nets 70–99 (30/30) and graded −4.9 % (#337301). A table only helps on the trajectory it was fitted on.</li>
+<li><strong>Refitting e30_a's table on our trajectory (fitted).</strong> The table was fitted on e30_a's own uncorrected trajectory. Refitted by ridge regression (grouped 5-fold CV) on teacher-forced dumps of public mini nets 0–69, with star modulators added (101 features), it gave ×0.930 on held-out nets 70–99 (30/30) and graded −4.9 % (#337301). A table only helps on the trajectory it was fitted on. New non-local features paid further (N3: ×0.990 held-out, graded −1.0 %, #337368; N4a: ×0.9966, graded −0.42 %, #337457); fitting on 341 instead of 70 nets, an on-policy refit and the (3,1) orientation fix of forum topic 18246 did not (×0.9997, ×0.997–1.005, ×1.0005).</li>
 <li><strong>Measured and rejected:</strong> V31 on e30_a (×0.985 on MLP #0, graded +3.9 %, #337221); e30_a's row compaction in our chain (×1.063); refitting the table after cheaper settings (rank 352: ×1.04 even with refit).</li>
 <li><strong>Rules note:</strong> the organisers allow building on public MIT code with attribution if the team adds substantial work of its own (forum topic 18240). Our own contribution in #337336 is the corrector (V55/V56), the closure settings and the refitted table; the base chain is LordProcciuto's.</li>
 </ul>

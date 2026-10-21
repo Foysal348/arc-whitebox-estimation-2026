@@ -2,10 +2,10 @@
 
 **WhestBench Phase 2, Algorithm track. Team Hack2Publish: mdhamidhosen, esfer_sami, foyshal_sk.**
 
-**Submission #337336** (team best): adjusted score **2.8256e-9**, raw final-layer MSE **1.8869e-8**, util 0.150. It runs our κ₄-pattern corrector (§5) on LordProcciuto's public e30_a chain (MIT; 3.1163e-9 as published), with a mean-correction table refitted on our trajectory and other measured additions (§6.5).
+**Submission #337457** (team best): adjusted score **2.7858e-9**, raw final-layer MSE **1.8592e-8**, util 0.150. It runs our κ₄-pattern corrector (§5) on LordProcciuto's public e30_a chain (MIT; 3.1163e-9 as published), with a mean-correction table refitted on our trajectory with new non-local features and other measured additions (§6.5).
 **Own-lineage best #337049** (e299safe, 3.2529e-9): our chain **#334870** (v56As_fs, 3.6521e-9), the chain this write-up analyses, plus md.hamidhosen's calibration and cost layer (§6.4) and the safe cost rewrites of §6.5.
 
-*20 October 2026. This is the main write-up. The full technical report is attached as the **Appendix (full technical report)**, and "App. §x" refers to its sections. Each number and claim is labelled by its source:*
+*21 October 2026. This is the main write-up. The full technical report is attached as the **Appendix (full technical report)**, and "App. §x" refers to its sections. Each number and claim is labelled by its source:*
 - *graded: an official grade, with its submission id;*
 - *measured: a run of our own scripts, with the result file named in App. §8.3;*
 - *derived: algebra or arithmetic, with the derivation in the Appendix;*
@@ -16,7 +16,7 @@
 
 ## 1. Summary
 
-We started from 504aldo's public, MIT-licensed factorised third-cumulant chain ("V29"), which graded 5.418e-9 when submitted verbatim. Our changes take it to **3.6521e-9 (−32.6 %)**: raw MSE falls by 8.6 % (2.133e-8 → 1.950e-8) and util by 26 % (0.254 → 0.187) (derived). A final calibration and cost layer by md.hamidhosen on this chain (E282–E299, §6.4) takes it to **3.3946e-9 (#336377, −7.0 %)**; that layer is fitted and engineering, not new understanding. Moved onto a cheaper public chain (e30_a) with a refitted correction table, our corrector reaches **2.8256e-9 (#337336)** (§6.5).
+We started from 504aldo's public, MIT-licensed factorised third-cumulant chain ("V29"), which graded 5.418e-9 when submitted verbatim. Our changes take it to **3.6521e-9 (−32.6 %)**: raw MSE falls by 8.6 % (2.133e-8 → 1.950e-8) and util by 26 % (0.254 → 0.187) (derived). A final calibration and cost layer by md.hamidhosen on this chain (E282–E299, §6.4) takes it to **3.3946e-9 (#336377, −7.0 %)**; that layer is fitted and engineering, not new understanding. Moved onto a cheaper public chain (e30_a) with a refitted correction table, our corrector reaches **2.7858e-9 (#337457)** (§6.5).
 
 **Mechanistic contributions.** These are what we consider our contribution to the understanding of white-box estimation:
 1. **A spherical-input identity** (§3.1; derived, injection check measured, graded −1.1 % raw at zero cost).
@@ -230,7 +230,9 @@ These sections are performance engineering. We report them because they carry mo
 | Our corrector on public e30_a (scale 0.4), (3,1) closure | §6.5 | 3.0302e-9 (#337175) | 1.9953e-8 | 0.152 |
 | + D21 ×0.98, closure mix 0.4, corrector split | §6.5 | 2.9956e-9 (#337258) | 1.9723e-8 | 0.152 |
 | + e30_a's table refitted on our trajectory (N2) | §6.5 (fitted) | 2.8475e-9 (#337301) | 1.8747e-8 | 0.152 |
-| + near-dead column cut (τ_B 2.4) | §6.5 | **2.8256e-9 (#337336)** | **1.8869e-8** | **0.150** |
+| + near-dead column cut (τ_B 2.4) | §6.5 | 2.8256e-9 (#337336) | 1.8869e-8 | 0.150 |
+| + table features: star², D3·star, corrector-local (N3, 122) | §6.5 (fitted) | 2.7975e-9 (#337368) | 1.8681e-8 | 0.150 |
+| + D21/C row energies, carried delta and star (N4a, 164) | §6.5 (fitted) | **2.7858e-9 (#337457)** | **1.8592e-8** | **0.150** |
 
 Util is the grader's figure or adjusted ÷ raw. "—" means the value is not listed here. The B class keeps ≤ ~18k warm-call operations for a safety margin under the residual-time cap; the A class runs at about 20k.
 
@@ -258,7 +260,7 @@ From 12 Oct md.hamidhosen built on #334870 (numbers from his ledger, re-checked 
 After the 17 Oct extension (grader on flopscope 0.12.3, which bills our chains identically on 100 Kaggle MLPs), we reviewed the new public write-ups and code and measured every candidate on the 100-MLP harness before grading (App. §3.8).
 - **Exact cost savings from e30_a in our chain:** Gram-core skipping, R-factor rotation, folded constants: −1.4 % FLOPs, predictions unchanged up to rounding (#336711, #336719). kai_leal_gonzalez's two-term (3,1) closure (MIT, forum write-up) hurt at full strength (#336697, +0.7 %) but helped at mix 0.25 (#336757, −0.4 %). e30_a's fixed old basis and C_pre compaction gave our own-lineage best (#337049, 3.2529e-9).
 - **Our corrector on LordProcciuto's public e30_a chain** (MIT; 158.8 u vs our 184.1 u per MLP, call-site ledger): at full strength it hurt (×1.085, MLP #0); at scale 0.3–0.4 it gave ×0.975–0.977 on 100 MLPs (94/100 at 0.3), graded ×0.979. The gain comes entirely from the V56 star; the local features duplicate e30_a's 87-feature mean-correction table.
-- **Refitting e30_a's table on our trajectory (fitted).** The table was fitted on e30_a's own uncorrected trajectory. Refitted by ridge regression (grouped 5-fold CV) on teacher-forced dumps of public mini nets 0–69, with star modulators added (101 features), it gave ×0.930 on held-out nets 70–99 (30/30) and graded −4.9 % (#337301). A table only helps on the trajectory it was fitted on.
+- **Refitting e30_a's table on our trajectory (fitted).** The table was fitted on e30_a's own uncorrected trajectory. Refitted by ridge regression (grouped 5-fold CV) on teacher-forced dumps of public mini nets 0–69, with star modulators added (101 features), it gave ×0.930 on held-out nets 70–99 (30/30) and graded −4.9 % (#337301). A table only helps on the trajectory it was fitted on. New non-local features paid further (N3: ×0.990 held-out, graded −1.0 %, #337368; N4a: ×0.9966, graded −0.42 %, #337457); fitting on 341 instead of 70 nets, an on-policy refit and the (3,1) orientation fix of forum topic 18246 did not (×0.9997, ×0.997–1.005, ×1.0005).
 - **Measured and rejected:** V31 on e30_a (×0.985 on MLP #0, graded +3.9 %, #337221); e30_a's row compaction in our chain (×1.063); refitting the table after cheaper settings (rank 352: ×1.04 even with refit).
 - **Rules note:** the organisers allow building on public MIT code with attribution if the team adds substantial work of its own (forum topic 18240). Our own contribution in #337336 is the corrector (V55/V56), the closure settings and the refitted table; the base chain is LordProcciuto's.
 
