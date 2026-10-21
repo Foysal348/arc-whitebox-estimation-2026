@@ -1,0 +1,17 @@
+{
+ "id": "foysalemonshanto/whest-x13-d1-1",
+ "title": "whest-x13-d1-1",
+ "code_file": "x13-runner.ipynb",
+ "language": "python",
+ "kernel_type": "notebook",
+ "is_private": true,
+ "enable_gpu": false,
+ "enable_internet": true,
+ "dataset_sources": [
+  "foysalemonshanto/whest-x13-code-foysal"
+ ],
+ "competition_sources": [],
+ "kernel_sources": [
+  "foysalemonshanto/whest-x11-c2-3"
+ ]
+}

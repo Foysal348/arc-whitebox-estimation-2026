@@ -1,0 +1,15 @@
+{
+ "id": "esfersami50/whest-x14-e-2",
+ "title": "whest-x14-e-2",
+ "code_file": "x14-runner.ipynb",
+ "language": "python",
+ "kernel_type": "notebook",
+ "is_private": true,
+ "enable_gpu": false,
+ "enable_internet": true,
+ "dataset_sources": [
+  "esfersami50/whest-x14-code-esfer"
+ ],
+ "competition_sources": [],
+ "kernel_sources": []
+}

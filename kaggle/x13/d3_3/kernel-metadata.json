@@ -1,0 +1,15 @@
+{
+ "id": "esfersami50/whest-x13-d3-3",
+ "title": "whest-x13-d3-3",
+ "code_file": "x13-runner.ipynb",
+ "language": "python",
+ "kernel_type": "notebook",
+ "is_private": true,
+ "enable_gpu": false,
+ "enable_internet": true,
+ "dataset_sources": [
+  "esfersami50/whest-x13-code-esfer"
+ ],
+ "competition_sources": [],
+ "kernel_sources": []
+}
