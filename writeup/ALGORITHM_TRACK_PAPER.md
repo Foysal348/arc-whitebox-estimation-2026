@@ -1680,7 +1680,7 @@ Unless a path is given, probe scripts are in `experiments/probes/`. All scripts 
 - The κ₄-diagonal oracle appears as 1.600e-8 and 1.609e-8 in two runs.
 - The κ₄-diagonal oracle ratio is ×0.702 in §4.2 (base 2.290e-8), ×0.686 in §4.8 (base 2.273e-8, every layer) and ×0.700 in §5.8 (same base, layers 7–16 only). The bases and injection windows differ; none of the three is a typo.
 - The chain's κ₄ correlation is 0.78–0.83 over all neurons but 0.26–0.34 on decisive neurons. Both figures are correct for their populations.
-- #332395 (last-block λ ×1.25, 26 Sep) graded 4.6768e-9 (raw 2.1682e-8), +1.0 % against v48 (#332391, 4.6294e-9); re-read from the grader on 21 Oct.
+- Submission #332395 (last-block λ ×1.25, 26 Sep) graded 4.6768e-9 (raw 2.1682e-8), +1.0 % against v48 (#332391, 4.6294e-9); re-read from the grader on 21 Oct.
 - The id of the failed v54A submission (7 Oct) is not recorded in our files.
 - The chain's slice error is "6.7 % at L15" in §4.5 (base 2.290e-8) and 6.6 % at L15 in §4.10 (the §5.8 captures). Its d3 error is 3.2 / 3.8 / 4.6 / 4.7 % at L7 / L11 / L15 / L16 in §4.3 and 3.0 / 3.6 / 4.4 / 4.6 % in `chain_k3_error_profile.json`. The two come from different chain runs; both include teacher noise.
 - Our working notes priced eig r = 32 at "≈ 18 u". The probe's thin-product count is 13.8 u (`acds3_ct_probe.json`), which excludes G_m and Γ. §5.8 therefore quotes 18–20 u as an estimate, scaled from the 40 u estimate for r = 64.
@@ -1737,13 +1737,13 @@ On 19 Oct ten further Claude subagents reviewed outside documents, the forum and
 1. Wilson Wu, Victor Lecomte, Michael Winer, George Robinson, Jacob Hilton, Paul Christiano. *Estimating the expected output of wide random MLPs more efficiently than sampling.* arXiv:2605.05179 (v2, 14 May 2026) (the K3 "simple" chain, §4.3, and the reference implementations used in §6.3).
 2. 504aldo, *whest-p2-cumulant-k3* (GitHub, MIT licence): the V29 factorised third-cumulant chain with memoryless κ₄ regeneration, D21 feedback, an age-gated shared basis and pooled Strassen–Winograd. Forum post #18218. Finding F105 on the r = 1 κ₄ core.
 3. WhestBench Phase 2 forum threads:
-   - #18218 (504aldo chain);
-   - #18216 (yujigon, zero-constant closure with CP κ₃);
-   - #18214 (venture_agent, exact bivariate ReLU covariance);
-   - #18200 (baghyeonsig, blended MC);
-   - #18219 (nkosi_ndwandwe, MC economics);
-   - #18199 (keenanpepper, no heavy tail across MLPs);
-   - #18175 (Puffi, Phase 1 SSC stack).
+   - topic 18218 (504aldo chain);
+   - topic 18216 (yujigon, zero-constant closure with CP κ₃);
+   - topic 18214 (venture_agent, exact bivariate ReLU covariance);
+   - topic 18200 (baghyeonsig, blended MC);
+   - topic 18219 (nkosi_ndwandwe, MC economics);
+   - topic 18199 (keenanpepper, no heavy tail across MLPs);
+   - topic 18175 (Puffi, Phase 1 SSC stack).
 4. barnobarno666, public Phase-2 repository, Phase 8 (spherical-input reparameterisation).
 5. LordProcciuto, *e30_a*, github.com/siming767-creator/whestbench-lordprocciuto (MIT), and Phase-2 write-up (graded #335981).
 6. kai_leal_gonzalez, two-term closure of the (3,1) slice of κ₄, github.com/al07-alt/whest-p2-k31-two-term (MIT), forum topic 18246.
