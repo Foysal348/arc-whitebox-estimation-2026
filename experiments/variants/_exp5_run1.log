@@ -1,0 +1,26 @@
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+e30a               cold 159.268 u 19917 ops | warm 158.841 u 19791 ops resid 2.084 s wall 117.8 s | MSE 2.08870e-08
+x5_off             cold 159.268 u 19917 ops | warm 158.841 u 19791 ops resid 1.148 s wall 106.7 s | MSE 2.08870e-08 | MSE ratio 1.00000 | dwarm +0.000 u | dops +0 | score ratio 1.00000
+k4c_s100           cold 159.484 u 20736 ops | warm 159.055 u 20606 ops resid 1.377 s wall 139.8 s | MSE 2.26626e-08 | MSE ratio 1.08501 | dwarm +0.214 u | dops +815 | score ratio 1.08647

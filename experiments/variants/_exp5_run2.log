@@ -1,0 +1,21 @@
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+  runlock busy, waiting 30 s
+k4c_s050           cold 159.484 u 20736 ops | warm 159.055 u 20606 ops resid 1.172 s wall 102.1 s | MSE 2.06411e-08 | MSE ratio 0.98822 | dwarm +0.214 u | dops +815 | score ratio 0.98955
+k4c_s075           cold 159.484 u 20736 ops | warm 159.055 u 20606 ops resid 1.152 s wall 100.2 s | MSE 2.13273e-08 | MSE ratio 1.02108 | dwarm +0.214 u | dops +815 | score ratio 1.02245
+k4c_s025           cold 159.484 u 20736 ops | warm 159.055 u 20606 ops resid 1.547 s wall 132.0 s | MSE 2.04751e-08 | MSE ratio 0.98028 | dwarm +0.214 u | dops +815 | score ratio 0.98160
+k4c_s100_nostar    cold 159.321 u 20285 ops | warm 158.894 u 20159 ops resid 0.927 s wall 87.4 s | MSE 2.29509e-08 | MSE ratio 1.09881 | dwarm +0.053 u | dops +368 | score ratio 1.09918
+rider              cold 159.270 u 19943 ops | warm 158.843 u 19817 ops resid 0.945 s wall 94.9 s | MSE 2.09513e-08 | MSE ratio 1.00308 | dwarm +0.002 u | dops +26 | score ratio 1.00309
+k4c_s100_lvl       cold 159.484 u 20751 ops | warm 159.055 u 20621 ops resid 0.833 s wall 72.3 s | MSE 2.20790e-08 | MSE ratio 1.05707 | dwarm +0.214 u | dops +830 | score ratio 1.05849

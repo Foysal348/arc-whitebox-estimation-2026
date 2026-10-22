@@ -1,0 +1,15 @@
+{
+ "id": "foysalemonshanto/whest-x10-ev1-3",
+ "title": "whest-x10-ev1-3",
+ "code_file": "x10-runner.ipynb",
+ "language": "python",
+ "kernel_type": "notebook",
+ "is_private": true,
+ "enable_gpu": false,
+ "enable_internet": true,
+ "dataset_sources": [
+  "foysalemonshanto/whest-x10-evc1-foysal"
+ ],
+ "competition_sources": [],
+ "kernel_sources": []
+}

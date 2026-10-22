@@ -1,0 +1,22 @@
+[{"stream_name":"stdout","time":12.575691588,"data":"━━━━━━━━━━━━━━━━━━━━━━━━━ 211.7/211.7 kB 9.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":12.575878204,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.0/2.0 MB 30.8 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":12.575886168,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 310.7/310.7 kB 9.5 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":12.575889498,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 475.8/475.8 kB 17.5 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":12.575892289,"data":"\n"}
+,{"stream_name":"stdout","time":12.907188946,"data":"copy /kaggle/input/datasets/esfersami50/whest-x7-data/weights_seed0.npz\n"}
+,{"stream_name":"stdout","time":14.074953762,"data":"copy /kaggle/input/datasets/esfersami50/whest-x7-data/truth.npz\n"}
+,{"stream_name":"stdout","time":14.080943718,"data":"copy /kaggle/input/datasets/esfersami50/whest-safe-data/e299_safe.py\n"}
+,{"stream_name":"stdout","time":14.091366912,"data":"copy /kaggle/input/datasets/esfersami50/whest-safe-data/e299xrk.py\n"}
+,{"stream_name":"stdout","time":234.439548912,"data":"ref_e299xrk    cold 192.02 u 22661 ops | warm 184.110 u 21341 ops resid 1.153 s wall 102.8 s | MSE 1.72202e-08\n"}
+,{"stream_name":"stdout","time":450.988008234,"data":"base           cold 192.02 u 22661 ops | warm 184.110 u 21341 ops resid 1.161 s wall 103.6 s | MSE 1.72202e-08\n"}
+,{"stream_name":"stdout","time":656.808291973,"data":"fija           cold 186.22 u 20372 ops | warm 178.375 u 19111 ops resid 1.051 s wall 98.4 s | MSE 1.71987e-08 | MSE ratio 0.99875 | FLOPs ratio 0.9689 | score ratio 0.9676 | max|d| vs base 1.207e-04\n"}
+,{"stream_name":"stdout","time":876.718593573,"data":"cpre_arriba    cold 191.60 u 24706 ops | warm 182.519 u 23089 ops resid 1.220 s wall 104.0 s | MSE 1.73892e-08 | MSE ratio 1.00982 | FLOPs ratio 0.9914 | score ratio 1.0011 | max|d| vs base 4.058e-05\n"}
+,{"stream_name":"stdout","time":1083.743950604,"data":"fija_cpre_arr  cold 185.75 u 22381 ops | warm 176.784 u 20859 ops resid 1.091 s wall 98.0 s | MSE 1.74281e-08 | MSE ratio 1.01207 | FLOPs ratio 0.9602 | score ratio 0.9718 | max|d| vs base 1.216e-04\n"}
+,{"stream_name":"stdout","time":1083.744402902,"data":"base vs e299xrk max|d| 0.0 bit-identical True\n"}
+,{"stream_name":"stderr","time":1086.24253533,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":1086.242575306,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":1086.580459132,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":1086.580490338,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":1087.50059602,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":1088.744907061,"data":"[NbConvertApp] Writing 293674 bytes to __results__.html\n"}
+]

@@ -1,0 +1,26 @@
+{
+  "scope": "Toy restricted-tensor identity only. No learned model, no ARC accuracy experiment.",
+  "n": 4,
+  "absolute_identity_error": 8.881784197001252e-16,
+  "absolute_odd_parity_error": 0.0,
+  "strassen_arithmetic": {
+    "0": {
+      "one_product_u": 0.99951171875,
+      "128_products_u": 127.9375
+    },
+    "3": {
+      "one_product_u": 0.6800765991210938,
+      "128_products_u": 87.0498046875
+    },
+    "4": {
+      "one_product_u": 0.6061496734619141,
+      "128_products_u": 77.587158203125
+    },
+    "5": {
+      "one_product_u": 0.5500502586364746,
+      "128_products_u": 70.40643310546875
+    }
+  },
+  "conditional_mean_mse_bound": 2.9576936408468857e-08,
+  "conditional_score_ratio_at_floor": 0.7924743022207364
+}
